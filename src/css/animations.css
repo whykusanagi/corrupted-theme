@@ -1,0 +1,319 @@
+/* animations.css — Keyframe animations and transition utilities */
+
+/* ========== FADE ANIMATIONS ========== */
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.fade-in-slow {
+  animation: fadeIn 1s ease-in-out;
+}
+
+.fade-in-fast {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* ========== SLIDE ANIMATIONS ========== */
+
+@keyframes slideIn {
+  0% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(40px);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(-40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideInRight {
+  0% {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.slide-in {
+  animation: slideIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.slide-in-slow {
+  animation: slideIn 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.slide-in-left {
+  animation: slideInLeft 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.slide-in-right {
+  animation: slideInRight 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ========== SCALE ANIMATIONS ========== */
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  0% {
+    transform: scale(1);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+.scale-in {
+  animation: scaleIn 0.4s ease-out;
+}
+
+.scale-up:hover {
+  animation: scaleUp 0.3s ease-out forwards;
+}
+
+/* ========== GLITCH ANIMATIONS ========== */
+/* Character-level glitch effect for text */
+
+@keyframes glitchShift1 {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  20% {
+    transform: translate(-1px, 1px);
+  }
+  40% {
+    transform: translate(-1px, -1px);
+  }
+  60% {
+    transform: translate(1px, 1px);
+  }
+  80% {
+    transform: translate(1px, -1px);
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+@keyframes glitchShift2 {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  25% {
+    transform: translate(1px, -1px);
+  }
+  50% {
+    transform: translate(-1px, 1px);
+  }
+  75% {
+    transform: translate(1px, 1px);
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+.glitch-word {
+  position: relative;
+  display: inline-block;
+  color: var(--text);
+  transition: all 0.3s ease;
+}
+
+.glitch-word::before,
+.glitch-word::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  color: var(--accent);
+  z-index: -1;
+  opacity: 0;
+}
+
+.glitch-word:hover::before,
+.glitch-word:hover::after {
+  opacity: 0.6;
+}
+
+.glitch-word::before {
+  animation: glitchShift1 0.3s linear alternate;
+}
+
+.glitch-word::after {
+  animation: glitchShift2 0.25s linear alternate;
+}
+
+.glitch-word:hover::before {
+  animation: glitchShift1 0.3s infinite linear alternate-reverse;
+}
+
+.glitch-word:hover::after {
+  animation: glitchShift2 0.25s infinite linear alternate;
+}
+
+/* ========== PULSE & BREATHING ANIMATIONS ========== */
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
+}
+
+@keyframes breathe {
+  0%, 100% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.breathe {
+  animation: breathe 3s ease-in-out infinite;
+}
+
+/* ========== FLOAT ANIMATION ========== */
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* ========== SHIMMER/LOADING ANIMATION ========== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(20, 12, 40, 0.5) 25%,
+    rgba(20, 12, 40, 0.8) 50%,
+    rgba(20, 12, 40, 0.5) 75%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* ========== TRANSITION UTILITIES ========== */
+
+.transition-fast {
+  transition: all var(--transition-fast);
+}
+
+.transition-normal {
+  transition: all var(--transition-normal);
+}
+
+.transition-slow {
+  transition: all var(--transition-slow);
+}
+
+.transition-easing {
+  transition: all var(--transition-normal) var(--transition-easing);
+}
+
+/* ========== HOVER LIFT EFFECT ========== */
+
+.lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(217, 79, 144, 0.4);
+}
+
+.lift-sm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(217, 79, 144, 0.2);
+}
+
+.lift-lg:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(217, 79, 144, 0.5);
+}
+
+/* ========== RESPONSIVENESS ========== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

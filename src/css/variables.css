@@ -1,0 +1,71 @@
+/* variables.css — Core CSS Variables for Corrupted Theme */
+/* These are the foundation colors and design tokens */
+
+:root {
+  /* ========== PRIMARY COLORS ========== */
+  --accent: #d94f90;           /* Main pink accent */
+  --accent-light: #e86ca8;     /* Lighter pink for hover states */
+  --accent-dark: #b61b70;      /* Darker pink for depth */
+
+  /* ========== BACKGROUNDS ========== */
+  --bg: #0a0a0a;               /* Pure black base */
+  --bg-secondary: #0f0f1a;     /* Deep purple-black */
+  --overlay: rgba(0, 0, 0, 0.85);  /* Dark overlay */
+
+  /* ========== GLASS MORPHISM EFFECTS ========== */
+  --glass: rgba(20, 12, 40, 0.7);       /* Frosted glass (dark) */
+  --glass-light: rgba(28, 18, 48, 0.5); /* Frosted glass (light) */
+
+  /* ========== BORDERS & DIVIDERS ========== */
+  --border: #3a2555;           /* Primary border color */
+  --border-light: #5a4575;     /* Lighter border for emphasis */
+
+  /* ========== TEXT COLORS ========== */
+  --text: #f5f1f8;             /* Primary text */
+  --text-secondary: #b8afc8;   /* Secondary text */
+  --text-muted: #7a7085;       /* Muted/disabled text */
+
+  /* ========== GRADIENTS ========== */
+  --gradient-accent: linear-gradient(135deg, #d94f90 0%, #b61b70 100%);
+  --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #d94f90 100%);
+
+  /* ========== SPACING SCALE ========== */
+  --spacing-xs: 0.25rem;       /* 4px */
+  --spacing-sm: 0.5rem;        /* 8px */
+  --spacing-md: 1rem;          /* 16px */
+  --spacing-lg: 1.5rem;        /* 24px */
+  --spacing-xl: 2rem;          /* 32px */
+  --spacing-2xl: 3rem;         /* 48px */
+
+  /* ========== BORDER RADIUS ========== */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+
+  /* ========== TRANSITIONS ========== */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition-easing: cubic-bezier(0.34, 1.56, 0.64, 1); /* Custom easing */
+
+  /* ========== Z-INDEX SCALE ========== */
+  --z-negative: -2;
+  --z-background: -1;
+  --z-base: 0;
+  --z-elevated: 1;
+  --z-navbar: 500;
+  --z-modal: 1000;
+}
+
+/* Reset defaults for consistency */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}

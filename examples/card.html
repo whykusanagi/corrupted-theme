@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Components - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .section h2 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.5rem;
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .card-demo {
+      position: relative;
+    }
+
+    .card-label {
+      position: absolute;
+      top: -30px;
+      left: 0;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 500;
+    }
+
+    .card-with-image {
+      overflow: hidden;
+    }
+
+    .card-image {
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #d94f90 0%, #b61b70 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 3rem;
+      margin-bottom: var(--spacing-md);
+      border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    }
+
+    .card-content {
+      padding: var(--spacing-lg);
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: var(--spacing-md);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .card-footer {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-top: var(--spacing-md);
+    }
+
+    .card-footer button {
+      flex: 1;
+    }
+
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .icon-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .icon-box {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 80px;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      color: var(--accent);
+      font-size: 2rem;
+    }
+
+    .testimonial-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      position: relative;
+    }
+
+    .quote-mark {
+      position: absolute;
+      top: var(--spacing-md);
+      left: var(--spacing-md);
+      font-size: 3rem;
+      color: var(--accent);
+      opacity: 0.3;
+    }
+
+    .testimonial-text {
+      margin-bottom: var(--spacing-md);
+      font-style: italic;
+      line-height: 1.8;
+      padding-left: var(--spacing-lg);
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .author-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--gradient-accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: bold;
+      font-size: 1.25rem;
+    }
+
+    .author-info {
+      flex: 1;
+    }
+
+    .author-name {
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .author-title {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+
+    .stat-card {
+      text-align: center;
+      padding: var(--spacing-lg);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border-radius: var(--radius-sm);
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-active {
+      background: rgba(34, 197, 94, 0.2);
+      color: var(--color-success);
+      border: 1px solid var(--color-success);
+    }
+
+    .status-pending {
+      background: rgba(234, 179, 8, 0.2);
+      color: var(--color-warning);
+      border: 1px solid var(--color-warning);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="navbar-logo"><i class="fas fa-arrow-left"></i> Back</a>
+      <div class="navbar-links">
+        <a href="#basic">Basic</a>
+        <a href="#with-image">Images</a>
+        <a href="#testimonial">Testimonials</a>
+        <a href="#stats">Stats</a>
+        <a href="#product">Product</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-rectangle"></i> Card Components</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Flexible card components for displaying content, products, testimonials, and more.
+    </p>
+
+    <!-- Basic Cards -->
+    <section id="basic" class="section">
+      <h2>Basic Cards</h2>
+
+      <div class="cards-grid">
+        <div class="card-demo">
+          <div class="card-label">Standard</div>
+          <div class="card">
+            <h3>Card Title</h3>
+            <p>This is a basic card component with standard glass morphism effects. Perfect for general content.</p>
+            <a href="#" style="color: var(--accent); text-decoration: none; display: inline-block; margin-top: var(--spacing-md);">
+              Learn more <i class="fas fa-arrow-right" style="margin-left: var(--spacing-xs);"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">Small</div>
+          <div class="card" style="padding: var(--spacing-md);">
+            <h4>Compact Card</h4>
+            <p style="font-size: 0.95rem;">A smaller card variant with reduced padding, ideal for dense layouts.</p>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">Large</div>
+          <div class="card" style="padding: var(--spacing-xl);">
+            <h2>Featured Card</h2>
+            <p style="line-height: 1.8;">A larger card with more breathing room, great for highlighting important content or promotions.</p>
+            <button class="btn btn-sm" style="margin-top: var(--spacing-lg);">Learn More</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="card"&gt;
+  &lt;h3&gt;Card Title&lt;/h3&gt;
+  &lt;p&gt;Card content goes here...&lt;/p&gt;
+  &lt;a href="#"&gt;Learn more&lt;/a&gt;
+&lt;/div&gt;
+
+&lt;!-- Small variant --&gt;
+&lt;div class="card" style="padding: var(--spacing-md);"&gt;...&lt;/div&gt;
+
+&lt;!-- Large variant --&gt;
+&lt;div class="card" style="padding: var(--spacing-xl);"&gt;...&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Cards with Images -->
+    <section id="with-image" class="section">
+      <h2>Cards with Images</h2>
+
+      <div class="cards-grid">
+        <div class="card-demo">
+          <div class="card-label">Image Header</div>
+          <div class="card card-with-image">
+            <div class="card-image">
+              <i class="fas fa-image"></i>
+            </div>
+            <div class="card-content">
+              <h3>Article Title</h3>
+              <p>A card with an image header. Great for blog posts, articles, and content showcases.</p>
+              <div class="card-meta">
+                <span><i class="fas fa-calendar"></i> Nov 23, 2025</span>
+                <span><i class="fas fa-user"></i> Author</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">Icon Badge</div>
+          <div class="card">
+            <div style="text-align: center; margin-bottom: var(--spacing-lg);">
+              <div style="
+                width: 80px;
+                height: 80px;
+                margin: 0 auto var(--spacing-md);
+                background: var(--gradient-accent);
+                border-radius: var(--radius-lg);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                color: white;
+                font-size: 2rem;
+              ">
+                <i class="fas fa-star"></i>
+              </div>
+              <h3>Feature Card</h3>
+              <p>Cards with icon badges for highlighting features or benefits.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">Image + Overlay</div>
+          <div class="card card-with-image">
+            <div style="
+              position: relative;
+              height: 200px;
+              background: linear-gradient(135deg, #8b5cf6 0%, #d94f90 100%);
+              border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: white;
+              font-size: 2rem;
+            ">
+              <i class="fas fa-video"></i>
+            </div>
+            <div class="card-content">
+              <h3>Video Content</h3>
+              <p>Cards can display media with overlay effects.</p>
+              <button class="btn btn-sm">
+                <i class="fas fa-play"></i> Watch
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="card card-with-image"&gt;
+  &lt;div class="card-image"&gt;
+    &lt;i class="fas fa-image"&gt;&lt;/i&gt;
+  &lt;/div&gt;
+  &lt;div class="card-content"&gt;
+    &lt;h3&gt;Title&lt;/h3&gt;
+    &lt;p&gt;Description...&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Testimonial Cards -->
+    <section id="testimonial" class="section">
+      <h2>Testimonial Cards</h2>
+
+      <div class="cards-grid">
+        <div class="card-demo">
+          <div class="card-label">Testimonial</div>
+          <div class="testimonial-card">
+            <div class="quote-mark">"</div>
+            <div class="testimonial-text">
+              This theme is absolutely amazing! The attention to detail and thoughtful design made it so easy to use.
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar">JD</div>
+              <div class="author-info">
+                <div class="author-name">Jane Doe</div>
+                <div class="author-title">Designer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">With Rating</div>
+          <div class="testimonial-card">
+            <div style="margin-bottom: var(--spacing-md);">
+              <i class="fas fa-star" style="color: #f59e0b;"></i>
+              <i class="fas fa-star" style="color: #f59e0b;"></i>
+              <i class="fas fa-star" style="color: #f59e0b;"></i>
+              <i class="fas fa-star" style="color: #f59e0b;"></i>
+              <i class="fas fa-star" style="color: #f59e0b;"></i>
+            </div>
+            <div class="quote-mark">"</div>
+            <div class="testimonial-text">
+              Best design system I've used. Highly recommended for any project!
+            </div>
+            <div class="testimonial-author">
+              <div class="author-avatar" style="background: linear-gradient(135deg, #3b82f6, #1e40af);">JW</div>
+              <div class="author-info">
+                <div class="author-name">John Wilson</div>
+                <div class="author-title">Developer</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">Multiple Reviews</div>
+          <div class="testimonial-card">
+            <div style="display: flex; gap: var(--spacing-md); margin-bottom: var(--spacing-md); overflow-x: auto;">
+              <div style="display: flex; gap: var(--spacing-xs);">
+                <i class="fas fa-star" style="color: #f59e0b;"></i>
+                <i class="fas fa-star" style="color: #f59e0b;"></i>
+                <i class="fas fa-star" style="color: #f59e0b;"></i>
+                <i class="fas fa-star" style="color: #f59e0b;"></i>
+                <i class="fas fa-star" style="color: #f59e0b;"></i>
+              </div>
+              <span style="color: var(--text-secondary); white-space: nowrap;">245 reviews</span>
+            </div>
+            <p style="font-size: 0.95rem; margin: 0;">
+              "Amazing quality and support. Exactly what I was looking for!"
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="testimonial-card"&gt;
+  &lt;div class="quote-mark"&gt;"&lt;/div&gt;
+  &lt;div class="testimonial-text"&gt;Great product!&lt;/div&gt;
+  &lt;div class="testimonial-author"&gt;
+    &lt;div class="author-avatar"&gt;JD&lt;/div&gt;
+    &lt;div class="author-info"&gt;
+      &lt;div class="author-name"&gt;Jane Doe&lt;/div&gt;
+      &lt;div class="author-title"&gt;Designer&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Stat Cards -->
+    <section id="stats" class="section">
+      <h2>Stat Cards</h2>
+
+      <div class="cards-grid">
+        <div class="card-demo">
+          <div class="card-label">Simple Stat</div>
+          <div class="card stat-card">
+            <div class="stat-number">2.5M</div>
+            <div class="stat-label">Users</div>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">With Icon</div>
+          <div class="card" style="text-align: center; padding: var(--spacing-lg);">
+            <div style="font-size: 3rem; color: var(--accent); margin-bottom: var(--spacing-md);">
+              <i class="fas fa-rocket"></i>
+            </div>
+            <div style="font-size: 2rem; font-weight: bold; color: var(--accent); margin-bottom: var(--spacing-sm);">
+              99.9%
+            </div>
+            <div style="font-size: 0.875rem; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 1px;">
+              Uptime
+            </div>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">With Progress</div>
+          <div class="card" style="padding: var(--spacing-lg);">
+            <div style="margin-bottom: var(--spacing-md);">
+              <h4 style="margin-bottom: var(--spacing-sm); font-size: 0.95rem;">Completion</h4>
+              <div style="
+                height: 8px;
+                background: var(--bg-secondary);
+                border-radius: var(--radius-sm);
+                overflow: hidden;
+              ">
+                <div style="
+                  height: 100%;
+                  width: 75%;
+                  background: var(--gradient-accent);
+                  border-radius: var(--radius-sm);
+                "></div>
+              </div>
+              <div style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--spacing-xs);">
+                75% Complete
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="card stat-card"&gt;
+  &lt;div class="stat-number"&gt;2.5M&lt;/div&gt;
+  &lt;div class="stat-label"&gt;Users&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class="card"&gt;
+  &lt;div style="font-size: 3rem; color: var(--accent);"&gt;
+    &lt;i class="fas fa-rocket"&gt;&lt;/i&gt;
+  &lt;/div&gt;
+  &lt;div style="font-size: 2rem; color: var(--accent);"&gt;99.9%&lt;/div&gt;
+  &lt;div&gt;Uptime&lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Product Cards -->
+    <section id="product" class="section">
+      <h2>Product Cards</h2>
+
+      <div class="cards-grid">
+        <div class="card-demo">
+          <div class="card-label">Product</div>
+          <div class="card card-with-image">
+            <div class="card-image" style="background: linear-gradient(135deg, #8b5cf6, #d94f90);">
+              <i class="fas fa-box"></i>
+            </div>
+            <div class="card-content">
+              <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: var(--spacing-md);">
+                <div>
+                  <h3 style="margin: 0;">Product Name</h3>
+                  <p style="margin: var(--spacing-xs) 0; color: var(--text-secondary); font-size: 0.85rem;">Category</p>
+                </div>
+                <span class="status-badge status-active">Active</span>
+              </div>
+              <p style="font-size: 0.95rem;">Great product with excellent features and quality.</p>
+              <div class="card-meta">
+                <span><strong>$29.99</strong></span>
+                <span>⭐ 4.8 (124)</span>
+              </div>
+              <div class="card-footer">
+                <button class="btn btn-sm">Add to Cart</button>
+                <button class="btn btn-sm btn-ghost">
+                  <i class="fas fa-heart"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">Sale Item</div>
+          <div class="card card-with-image">
+            <div style="
+              position: relative;
+              height: 200px;
+              background: linear-gradient(135deg, #d94f90, #b61b70);
+              border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              color: white;
+              font-size: 2rem;
+            ">
+              <i class="fas fa-shopping-bag"></i>
+              <div style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: var(--color-error);
+                color: white;
+                padding: var(--spacing-xs) var(--spacing-sm);
+                border-radius: var(--radius-sm);
+                font-size: 0.85rem;
+                font-weight: bold;
+              ">-30%</div>
+            </div>
+            <div class="card-content">
+              <h3>Sale Product</h3>
+              <p style="margin: var(--spacing-xs) 0; text-decoration: line-through; color: var(--text-secondary);">$59.99</p>
+              <p style="font-size: 1.25rem; color: var(--accent); font-weight: bold; margin: var(--spacing-xs) 0;">$41.99</p>
+              <button class="btn btn-sm" style="width: 100%; margin-top: var(--spacing-md);">Buy Now</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-demo">
+          <div class="card-label">Coming Soon</div>
+          <div class="card card-with-image">
+            <div class="card-image" style="opacity: 0.5;">
+              <i class="fas fa-eye-slash"></i>
+            </div>
+            <div class="card-content">
+              <h3>Upcoming Product</h3>
+              <p>Available soon! Notify me when this product launches.</p>
+              <span class="status-badge status-pending">Coming Soon</span>
+              <button class="btn btn-sm btn-ghost" style="width: 100%; margin-top: var(--spacing-md);">
+                Notify Me
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="card card-with-image"&gt;
+  &lt;div class="card-image"&gt;...&lt;/div&gt;
+  &lt;div class="card-content"&gt;
+    &lt;h3&gt;Product Name&lt;/h3&gt;
+    &lt;p&gt;Description...&lt;/p&gt;
+    &lt;div class="card-meta"&gt;
+      &lt;span&gt;&lt;strong&gt;$29.99&lt;/strong&gt;&lt;/span&gt;
+      &lt;span&gt;Rating&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="card-footer"&gt;
+      &lt;button class="btn btn-sm"&gt;Add to Cart&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Frosted Cards -->
+    <section class="section">
+      <h2>Frosted Glass Cards</h2>
+
+      <div class="cards-grid">
+        <div class="frosted-card">
+          <h3>Frosted Glass</h3>
+          <p>Enhanced glass effect with stronger blur and opacity for premium feel.</p>
+        </div>
+
+        <div class="frosted-card">
+          <i class="fas fa-lock" style="font-size: 2rem; color: var(--accent); margin-bottom: var(--spacing-md);"></i>
+          <h4>Secure & Safe</h4>
+          <p style="font-size: 0.95rem;">All data encrypted and protected.</p>
+        </div>
+
+        <div class="frosted-card">
+          <i class="fas fa-bolt" style="font-size: 2rem; color: var(--accent); margin-bottom: var(--spacing-md);"></i>
+          <h4>Lightning Fast</h4>
+          <p style="font-size: 0.95rem;">Optimized for speed and performance.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="frosted-card"&gt;
+  &lt;h3&gt;Title&lt;/h3&gt;
+  &lt;p&gt;Content...&lt;/p&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
+      <p>Card Components Documentation • Corrupted Theme v0.1.0</p>
+      <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
+        <a href="index.html" style="color: var(--accent); text-decoration: none;">← Back to Showcase</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

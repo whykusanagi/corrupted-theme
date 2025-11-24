@@ -1,0 +1,530 @@
+/* Corrupted Theme - Nikke Game-Specific Utilities
+ *
+ * This module provides optional styling for Nikke-related applications.
+ * It extends the base Corrupted Theme with game-specific components and utilities.
+ *
+ * Nikke Element System:
+ * - Water (Blue)
+ * - Wind (Green)
+ * - Iron (Yellow/Orange)
+ * - Electric (Purple/Pink)
+ * - Fire (Red)
+ */
+
+/* ============================================
+   ELEMENT SYSTEM
+   ============================================ */
+
+/* CSS Variables for Nikke Elements */
+:root {
+  /* Nikke Element Colors */
+  --nikke-element-water: #0066cc;
+  --nikke-element-wind: #22c55e;
+  --nikke-element-iron: #f59e0b;
+  --nikke-element-electric: #a855f7;
+  --nikke-element-fire: #ef4444;
+
+  /* Element backgrounds (with transparency) */
+  --nikke-element-water-bg: rgba(0, 102, 204, 0.15);
+  --nikke-element-wind-bg: rgba(34, 197, 94, 0.15);
+  --nikke-element-iron-bg: rgba(245, 158, 11, 0.15);
+  --nikke-element-electric-bg: rgba(168, 85, 247, 0.15);
+  --nikke-element-fire-bg: rgba(239, 68, 68, 0.15);
+}
+
+/* ============================================
+   ELEMENT PILLS & BADGES
+   ============================================ */
+
+/* Base element badge/pill style */
+.element-badge {
+  display: inline-block;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid;
+  white-space: nowrap;
+}
+
+/* Element variants - consistent across all uses */
+.element-water {
+  background-color: var(--nikke-element-water-bg);
+  color: var(--nikke-element-water);
+  border-color: var(--nikke-element-water);
+}
+
+.element-wind {
+  background-color: var(--nikke-element-wind-bg);
+  color: var(--nikke-element-wind);
+  border-color: var(--nikke-element-wind);
+}
+
+.element-iron {
+  background-color: var(--nikke-element-iron-bg);
+  color: var(--nikke-element-iron);
+  border-color: var(--nikke-element-iron);
+}
+
+.element-electric {
+  background-color: var(--nikke-element-electric-bg);
+  color: var(--nikke-element-electric);
+  border-color: var(--nikke-element-electric);
+}
+
+.element-fire {
+  background-color: var(--nikke-element-fire-bg);
+  color: var(--nikke-element-fire);
+  border-color: var(--nikke-element-fire);
+}
+
+/* Solid button versions (for prominent display) */
+.element-badge.solid {
+  color: white;
+  border: none;
+}
+
+.element-water.solid {
+  background-color: var(--nikke-element-water);
+}
+
+.element-wind.solid {
+  background-color: var(--nikke-element-wind);
+}
+
+.element-iron.solid {
+  background-color: var(--nikke-element-iron);
+}
+
+.element-electric.solid {
+  background-color: var(--nikke-element-electric);
+}
+
+.element-fire.solid {
+  background-color: var(--nikke-element-fire);
+}
+
+/* Outline versions (for subtle display) */
+.element-badge.outline {
+  background-color: transparent;
+  border: 2px solid;
+}
+
+/* ============================================
+   ELEMENT PILLS (For interactive selection)
+   ============================================ */
+
+/* Pill container - flex layout for element selection */
+.element-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+/* Individual pill button */
+.element-pill {
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-lg);
+  border: 2px solid;
+  background-color: transparent;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-size: 0.9rem;
+}
+
+.element-pill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.element-pill.water {
+  color: var(--nikke-element-water);
+  border-color: var(--nikke-element-water);
+}
+
+.element-pill.water:hover {
+  background-color: var(--nikke-element-water-bg);
+}
+
+.element-pill.water.active {
+  background-color: var(--nikke-element-water);
+  color: white;
+  border-color: var(--nikke-element-water);
+}
+
+.element-pill.wind {
+  color: var(--nikke-element-wind);
+  border-color: var(--nikke-element-wind);
+}
+
+.element-pill.wind:hover {
+  background-color: var(--nikke-element-wind-bg);
+}
+
+.element-pill.wind.active {
+  background-color: var(--nikke-element-wind);
+  color: white;
+  border-color: var(--nikke-element-wind);
+}
+
+.element-pill.iron {
+  color: var(--nikke-element-iron);
+  border-color: var(--nikke-element-iron);
+}
+
+.element-pill.iron:hover {
+  background-color: var(--nikke-element-iron-bg);
+}
+
+.element-pill.iron.active {
+  background-color: var(--nikke-element-iron);
+  color: white;
+  border-color: var(--nikke-element-iron);
+}
+
+.element-pill.electric {
+  color: var(--nikke-element-electric);
+  border-color: var(--nikke-element-electric);
+}
+
+.element-pill.electric:hover {
+  background-color: var(--nikke-element-electric-bg);
+}
+
+.element-pill.electric.active {
+  background-color: var(--nikke-element-electric);
+  color: white;
+  border-color: var(--nikke-element-electric);
+}
+
+.element-pill.fire {
+  color: var(--nikke-element-fire);
+  border-color: var(--nikke-element-fire);
+}
+
+.element-pill.fire:hover {
+  background-color: var(--nikke-element-fire-bg);
+}
+
+.element-pill.fire.active {
+  background-color: var(--nikke-element-fire);
+  color: white;
+  border-color: var(--nikke-element-fire);
+}
+
+/* ============================================
+   TEAM POSITION CARDS
+   ============================================ */
+
+/* Team position grid (5 squad slots) */
+.team-position-cards {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+/* Individual position card */
+.position-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--glass);
+  transition: all var(--transition-normal);
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.position-card:hover {
+  border-color: var(--accent);
+  box-shadow: 0 4px 12px rgba(217, 79, 144, 0.15);
+}
+
+/* Position card states */
+.position-card.filled {
+  border-color: var(--color-success);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.position-card.filled:hover {
+  border-color: #15803d;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+}
+
+.position-card.selected {
+  border-color: var(--accent);
+  background: rgba(217, 79, 144, 0.1);
+  box-shadow: 0 4px 12px rgba(217, 79, 144, 0.2);
+}
+
+.position-card.selected:hover {
+  border-color: #c41e3a;
+  box-shadow: 0 6px 16px rgba(217, 79, 144, 0.3);
+}
+
+/* Position card header */
+.position-header {
+  background: linear-gradient(135deg, var(--accent) 0%, #c41e3a 100%);
+  color: white;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.position-number {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: bold;
+  flex-shrink: 0;
+}
+
+.position-label {
+  font-size: 0.8rem;
+  flex: 1;
+  text-align: center;
+}
+
+/* Position card content area */
+.position-content {
+  flex: 1;
+  padding: var(--spacing-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.unit-display {
+  text-align: center;
+  width: 100%;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-slot {
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+.unit-name {
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9rem;
+  word-break: break-word;
+  line-height: 1.2;
+}
+
+.remove-unit {
+  position: absolute;
+  top: var(--spacing-xs);
+  right: var(--spacing-xs);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.remove-unit:hover {
+  background-color: var(--color-error);
+  border-color: var(--color-error);
+  color: white;
+}
+
+/* ============================================
+   DRAG & DROP FEEDBACK
+   ============================================ */
+
+/* Draggable unit styling */
+.team-unit {
+  position: relative;
+  cursor: move;
+  user-select: none;
+  transition: all var(--transition-normal);
+}
+
+.team-unit:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.team-unit.dragging {
+  opacity: 0.5;
+  transform: rotate(5deg) scale(0.95);
+  z-index: 1000;
+}
+
+.team-unit.drag-over {
+  border-color: var(--accent);
+  background: rgba(217, 79, 144, 0.1);
+}
+
+/* Drop zone styling */
+.drop-zone {
+  min-height: 40px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  background: transparent;
+}
+
+.drop-zone:hover {
+  border-color: var(--border-light);
+  background: rgba(139, 92, 246, 0.05);
+}
+
+.drop-zone.drag-over {
+  border-color: var(--accent);
+  background: rgba(217, 79, 144, 0.1);
+  color: var(--text);
+}
+
+.drop-zone.has-units {
+  border-style: solid;
+  border-color: var(--accent);
+  background: rgba(217, 79, 144, 0.05);
+}
+
+/* ============================================
+   UNIT SELECTION UTILITIES
+   ============================================ */
+
+/* Unit button for selection lists */
+.unit-btn {
+  margin: var(--spacing-xs);
+  font-size: 0.8rem;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: var(--glass);
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  font-weight: 500;
+}
+
+.unit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(217, 79, 144, 0.2);
+  border-color: var(--accent);
+}
+
+.unit-btn.selected {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+  box-shadow: 0 4px 8px rgba(217, 79, 144, 0.3);
+}
+
+.unit-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Unit list container */
+.available-units {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-md);
+  background: var(--glass);
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+@media (max-width: 1024px) {
+  .team-position-cards {
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  .position-card {
+    min-height: 100px;
+  }
+}
+
+@media (max-width: 768px) {
+  .team-position-cards {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-sm);
+  }
+
+  .position-card {
+    min-height: 90px;
+  }
+
+  .position-header {
+    padding: var(--spacing-xs);
+    font-size: 0.8rem;
+  }
+
+  .position-content {
+    padding: var(--spacing-sm);
+  }
+
+  .element-pills {
+    gap: var(--spacing-sm);
+  }
+
+  .element-pill {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-position-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-xs);
+  }
+
+  .position-card {
+    min-height: 80px;
+  }
+
+  .element-pills {
+    flex-direction: column;
+  }
+
+  .element-pill {
+    width: 100%;
+    text-align: center;
+  }
+}

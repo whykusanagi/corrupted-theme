@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nikke Team Builder - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
+  <link rel="stylesheet" href="../src/css/nikke-utilities.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .section h2 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.5rem;
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .boss-info {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .boss-name {
+      font-size: 1.5rem;
+      color: var(--text);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .boss-stat {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--spacing-sm) 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .boss-stat:last-child {
+      border-bottom: none;
+    }
+
+    .boss-stat-label {
+      color: var(--text-secondary);
+      font-weight: 600;
+    }
+
+    .boss-stat-value {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .element-showcase {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .element-demo {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      text-align: center;
+    }
+
+    .element-demo h4 {
+      color: var(--text);
+      margin-bottom: var(--spacing-md);
+      font-size: 1.1rem;
+    }
+
+    .badge-variants {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .variant-row {
+      display: flex;
+      gap: var(--spacing-md);
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .unit-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .unit-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      text-align: center;
+    }
+
+    .unit-card h5 {
+      color: var(--text);
+      margin-bottom: var(--spacing-sm);
+      font-size: 0.95rem;
+    }
+
+    .unit-card .element-badge {
+      display: inline-block;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .code-example {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .tabs {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-lg);
+      border-bottom: 2px solid var(--border);
+      padding-bottom: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .tab-button {
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-weight: 600;
+      transition: all var(--transition-normal);
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+    }
+
+    .tab-button:hover {
+      color: var(--text);
+    }
+
+    .tab-button.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="navbar-logo"><i class="fas fa-arrow-left"></i> Back</a>
+      <div class="navbar-links">
+        <a href="#elements">Elements</a>
+        <a href="#team">Team Builder</a>
+        <a href="#units">Units</a>
+        <a href="#code">Code</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-users"></i> Nikke Team Builder</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Build teams with proper element styling and team composition management.
+    </p>
+
+    <!-- Element System Section -->
+    <section id="elements" class="section">
+      <h2>Nikke Element System</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Five core elements with consistent color coding across all game features.
+      </p>
+
+      <!-- Element Pills -->
+      <div style="margin-bottom: var(--spacing-2xl);">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Element Selection Buttons</h3>
+        <div class="element-pills">
+          <button class="element-pill water">Water</button>
+          <button class="element-pill wind">Wind</button>
+          <button class="element-pill iron">Iron</button>
+          <button class="element-pill electric">Electric</button>
+          <button class="element-pill fire">Fire</button>
+        </div>
+      </div>
+
+      <!-- Element Badges -->
+      <div style="margin-bottom: var(--spacing-2xl);">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Element Badge Variants</h3>
+
+        <div class="element-showcase">
+          <div class="element-demo">
+            <h4>Water</h4>
+            <div class="badge-variants">
+              <div class="variant-row">
+                <span class="element-badge element-water">Outlined</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge solid element-water">Solid</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge outline element-water">Outline</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="element-demo">
+            <h4>Wind</h4>
+            <div class="badge-variants">
+              <div class="variant-row">
+                <span class="element-badge element-wind">Outlined</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge solid element-wind">Solid</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge outline element-wind">Outline</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="element-demo">
+            <h4>Iron</h4>
+            <div class="badge-variants">
+              <div class="variant-row">
+                <span class="element-badge element-iron">Outlined</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge solid element-iron">Solid</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge outline element-iron">Outline</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="element-demo">
+            <h4>Electric</h4>
+            <div class="badge-variants">
+              <div class="variant-row">
+                <span class="element-badge element-electric">Outlined</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge solid element-electric">Solid</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge outline element-electric">Outline</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="element-demo">
+            <h4>Fire</h4>
+            <div class="badge-variants">
+              <div class="variant-row">
+                <span class="element-badge element-fire">Outlined</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge solid element-fire">Solid</span>
+              </div>
+              <div class="variant-row">
+                <span class="element-badge outline element-fire">Outline</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Boss Information -->
+    <section class="section">
+      <h2>Boss Information</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Example boss showing element weakness display.
+      </p>
+
+      <div class="boss-info">
+        <div class="boss-name">
+          <i class="fas fa-dragon"></i> Phantom Gloom
+        </div>
+
+        <div class="boss-stat">
+          <span class="boss-stat-label">Element Weakness:</span>
+          <span class="boss-stat-value">
+            <span class="element-badge solid element-fire">Fire</span>
+          </span>
+        </div>
+
+        <div class="boss-stat">
+          <span class="boss-stat-label">HP:</span>
+          <span class="boss-stat-value">450,000</span>
+        </div>
+
+        <div class="boss-stat">
+          <span class="boss-stat-label">Attack Power:</span>
+          <span class="boss-stat-value">1,250</span>
+        </div>
+
+        <div class="boss-stat">
+          <span class="boss-stat-label">Recommended Level:</span>
+          <span class="boss-stat-value">42+</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team Builder Section -->
+    <section id="team" class="section">
+      <h2>Team Composition</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Build your 5-unit team with position cards and drag-and-drop support.
+      </p>
+
+      <div class="team-position-cards">
+        <div class="position-card filled">
+          <div class="position-header">
+            <span class="position-number">1</span>
+            <span class="position-label">Front Left</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="unit-name">Scarlet Priest Abe</div>
+            </div>
+            <button class="remove-unit" onclick="removeUnit(1)" aria-label="Remove unit">×</button>
+          </div>
+        </div>
+
+        <div class="position-card filled">
+          <div class="position-header">
+            <span class="position-number">2</span>
+            <span class="position-label">Front Middle</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="unit-name">Soldier A Rapi</div>
+            </div>
+            <button class="remove-unit" onclick="removeUnit(2)" aria-label="Remove unit">×</button>
+          </div>
+        </div>
+
+        <div class="position-card filled">
+          <div class="position-header">
+            <span class="position-number">3</span>
+            <span class="position-label">Front Right</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="unit-name">Trap Lyudmila</div>
+            </div>
+            <button class="remove-unit" onclick="removeUnit(3)" aria-label="Remove unit">×</button>
+          </div>
+        </div>
+
+        <div class="position-card filled">
+          <div class="position-header">
+            <span class="position-number">4</span>
+            <span class="position-label">Back Left</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="unit-name">Fortress Maid Dolla</div>
+            </div>
+            <button class="remove-unit" onclick="removeUnit(4)" aria-label="Remove unit">×</button>
+          </div>
+        </div>
+
+        <div class="position-card">
+          <div class="position-header">
+            <span class="position-number">5</span>
+            <span class="position-label">Back Right</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="empty-slot">Empty Slot</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Unit Selection Section -->
+    <section id="units" class="section">
+      <h2>Unit Roster</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Select units to add to your team. Each unit displays their element type.
+      </p>
+
+      <div class="unit-grid">
+        <div class="unit-card">
+          <h5>Scarlet Priest Abe</h5>
+          <span class="element-badge element-electric">Electric</span>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--spacing-sm);">
+            Fire Damage Dealer
+          </p>
+        </div>
+
+        <div class="unit-card">
+          <h5>Soldier A Rapi</h5>
+          <span class="element-badge element-fire">Fire</span>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--spacing-sm);">
+            Penetration Type
+          </p>
+        </div>
+
+        <div class="unit-card">
+          <h5>Trap Lyudmila</h5>
+          <span class="element-badge element-water">Water</span>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--spacing-sm);">
+            Support/Debuffer
+          </p>
+        </div>
+
+        <div class="unit-card">
+          <h5>Fortress Maid Dolla</h5>
+          <span class="element-badge element-iron">Iron</span>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--spacing-sm);">
+            Tanker/Defender
+          </p>
+        </div>
+
+        <div class="unit-card">
+          <h5>Sniper Rapunzel</h5>
+          <span class="element-badge element-wind">Wind</span>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--spacing-sm);">
+            Fire Damage Dealer
+          </p>
+        </div>
+
+        <div class="unit-card">
+          <h5>Mech Specialist Snow White</h5>
+          <span class="element-badge element-electric">Electric</span>
+          <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: var(--spacing-sm);">
+            Rocket Damage Dealer
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Examples Section -->
+    <section id="code" class="section">
+      <h2>Code Examples</h2>
+
+      <div class="tabs">
+        <button class="tab-button active" onclick="switchTab(event, 'element-pill')">Element Pill</button>
+        <button class="tab-button" onclick="switchTab(event, 'element-badge')">Element Badge</button>
+        <button class="tab-button" onclick="switchTab(event, 'position-card')">Position Card</button>
+        <button class="tab-button" onclick="switchTab(event, 'unit-selection')">Unit Selection</button>
+      </div>
+
+      <div id="element-pill" class="tab-content active">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Element Selection Pills</h3>
+        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
+          Use element pills for interactive element selection or filtering.
+        </p>
+        <div class="code-example">
+&lt;div class="element-pills"&gt;
+  &lt;button class="element-pill water"&gt;Water&lt;/button&gt;
+  &lt;button class="element-pill wind"&gt;Wind&lt;/button&gt;
+  &lt;button class="element-pill iron"&gt;Iron&lt;/button&gt;
+  &lt;button class="element-pill electric"&gt;Electric&lt;/button&gt;
+  &lt;button class="element-pill fire active"&gt;Fire&lt;/button&gt;
+&lt;/div&gt;
+        </div>
+      </div>
+
+      <div id="element-badge" class="tab-content">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Element Badges</h3>
+        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
+          Display element type consistently across units and bosses.
+        </p>
+        <div class="code-example">
+&lt;!-- Outlined badge (default) --&gt;
+&lt;span class="element-badge element-fire"&gt;Fire&lt;/span&gt;
+
+&lt;!-- Solid badge (prominent) --&gt;
+&lt;span class="element-badge solid element-fire"&gt;Fire&lt;/span&gt;
+
+&lt;!-- Outline only (subtle) --&gt;
+&lt;span class="element-badge outline element-fire"&gt;Fire&lt;/span&gt;
+        </div>
+      </div>
+
+      <div id="position-card" class="tab-content">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Position Cards</h3>
+        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
+          Build 5-unit teams with position cards and state management.
+        </p>
+        <div class="code-example">
+&lt;div class="team-position-cards"&gt;
+  &lt;div class="position-card filled"&gt;
+    &lt;div class="position-header"&gt;
+      &lt;span class="position-number"&gt;1&lt;/span&gt;
+      &lt;span class="position-label"&gt;Front Left&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;div class="position-content"&gt;
+      &lt;div class="unit-display"&gt;
+        &lt;div class="unit-name"&gt;Unit Name&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+        </div>
+      </div>
+
+      <div id="unit-selection" class="tab-content">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Unit Selection Buttons</h3>
+        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
+          Pill-style buttons for selecting units with element badge.
+        </p>
+        <div class="code-example">
+&lt;div class="unit-grid"&gt;
+  &lt;div class="unit-card"&gt;
+    &lt;h5&gt;Scarlet Priest Abe&lt;/h5&gt;
+    &lt;span class="element-badge element-electric"&gt;
+      Electric
+    &lt;/span&gt;
+    &lt;p&gt;Fire Damage Dealer&lt;/p&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+        </div>
+      </div>
+    </section>
+
+    <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
+      <p>Nikke Team Builder Example • Corrupted Theme v0.1.0</p>
+      <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
+        <a href="index.html" style="color: var(--accent); text-decoration: none;">← Back to Showcase</a> •
+        <a href="../docs/NIKKE_COMPONENTS.md" style="color: var(--accent); text-decoration: none;">Documentation</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    function removeUnit(position) {
+      alert(`Remove unit from position ${position}`);
+    }
+
+    function switchTab(event, tabName) {
+      // Hide all tab contents
+      const contents = document.querySelectorAll('.tab-content');
+      contents.forEach(content => content.classList.remove('active'));
+
+      // Remove active class from all buttons
+      const buttons = document.querySelectorAll('.tab-button');
+      buttons.forEach(button => button.classList.remove('active'));
+
+      // Show the selected tab
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+  </script>
+</body>
+</html>

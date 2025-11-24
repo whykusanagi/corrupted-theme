@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Button Component - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
+  <style>
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
+
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .button-demo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-md);
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+    }
+
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .button-variants {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .variant-showcase {
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      text-align: center;
+    }
+
+    .variant-showcase p {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: var(--spacing-md);
+    }
+
+    .states-demo {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+    }
+
+    .state-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-lg);
+    }
+
+    .state-label {
+      min-width: 120px;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+
+    .size-demo {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: var(--spacing-lg);
+    }
+
+    .icon-demo {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    .icon-example {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="navbar-logo"><i class="fas fa-arrow-left"></i> Back</a>
+      <div class="navbar-links">
+        <a href="#basic">Basic</a>
+        <a href="#variants">Variants</a>
+        <a href="#sizes">Sizes</a>
+        <a href="#states">States</a>
+        <a href="#icons">Icons</a>
+        <a href="#groups">Groups</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-square"></i> Button Component</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Complete button system with variants, sizes, states, and icon support.
+    </p>
+
+    <!-- Basic Buttons -->
+    <section id="basic" class="example-group">
+      <h3>Basic Buttons</h3>
+      <p>The fundamental button styles for your UI.</p>
+
+      <div class="button-grid">
+        <div class="button-demo">
+          <button class="btn">Primary</button>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">.btn</span>
+        </div>
+        <div class="button-demo">
+          <button class="btn btn-secondary">Secondary</button>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">.btn-secondary</span>
+        </div>
+        <div class="button-demo">
+          <button class="btn btn-ghost">Ghost</button>
+          <span style="font-size: 0.75rem; color: var(--text-muted);">.btn-ghost</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;button class="btn"&gt;Primary Button&lt;/button&gt;
+&lt;button class="btn btn-secondary"&gt;Secondary Button&lt;/button&gt;
+&lt;button class="btn btn-ghost"&gt;Ghost Button&lt;/button&gt;
+      </div>
+    </section>
+
+    <!-- Button Variants -->
+    <section id="variants" class="example-group">
+      <h3>Button Variants</h3>
+      <p>Different button styles for different purposes.</p>
+
+      <div class="button-variants">
+        <div class="variant-showcase">
+          <button class="btn">Primary</button>
+          <p>Default action button</p>
+        </div>
+        <div class="variant-showcase">
+          <button class="btn btn-secondary">Secondary</button>
+          <p>Alternative action</p>
+        </div>
+        <div class="variant-showcase">
+          <button class="btn btn-ghost">Ghost</button>
+          <p>Subtle, minimal style</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+/* Primary (default) */
+&lt;button class="btn"&gt;Primary Button&lt;/button&gt;
+
+/* Secondary variant */
+&lt;button class="btn btn-secondary"&gt;Secondary Button&lt;/button&gt;
+
+/* Ghost variant */
+&lt;button class="btn btn-ghost"&gt;Ghost Button&lt;/button&gt;
+      </div>
+    </section>
+
+    <!-- Button Sizes -->
+    <section id="sizes" class="example-group">
+      <h3>Button Sizes</h3>
+      <p>Adjust button size based on context and hierarchy.</p>
+
+      <div class="size-demo">
+        <button class="btn btn-sm">Small</button>
+        <button class="btn">Normal</button>
+        <button class="btn btn-lg">Large</button>
+        <button class="btn btn-block">Full Width</button>
+      </div>
+
+      <div class="code-block">
+&lt;button class="btn btn-sm"&gt;Small Button&lt;/button&gt;
+&lt;button class="btn"&gt;Normal Button&lt;/button&gt;
+&lt;button class="btn btn-lg"&gt;Large Button&lt;/button&gt;
+&lt;button class="btn btn-block"&gt;Full Width Button&lt;/button&gt;
+      </div>
+    </section>
+
+    <!-- Button States -->
+    <section id="states" class="example-group">
+      <h3>Button States</h3>
+      <p>Different states for user interaction.</p>
+
+      <div class="states-demo">
+        <div class="state-row">
+          <div class="state-label">Default:</div>
+          <button class="btn">Click Me</button>
+        </div>
+        <div class="state-row">
+          <div class="state-label">Hover:</div>
+          <button class="btn" style="transform: translateY(-2px); box-shadow: 0 8px 24px rgba(217, 79, 144, 0.4);">Hover State</button>
+        </div>
+        <div class="state-row">
+          <div class="state-label">Active:</div>
+          <button class="btn" style="opacity: 0.9;">Active State</button>
+        </div>
+        <div class="state-row">
+          <div class="state-label">Disabled:</div>
+          <button class="btn" disabled>Disabled</button>
+        </div>
+        <div class="state-row">
+          <div class="state-label">Loading:</div>
+          <button class="btn" disabled>
+            <i class="fas fa-spinner fa-spin"></i> Loading...
+          </button>
+        </div>
+      </div>
+
+      <div class="code-block">
+/* Default state (automatically applied) */
+&lt;button class="btn"&gt;Default&lt;/button&gt;
+
+/* Disabled state */
+&lt;button class="btn" disabled&gt;Disabled&lt;/button&gt;
+
+/* Loading state */
+&lt;button class="btn" disabled&gt;
+  &lt;i class="fas fa-spinner fa-spin"&gt;&lt;/i&gt; Loading...
+&lt;/button&gt;
+
+/* Active state */
+&lt;button class="btn" aria-pressed="true"&gt;Active&lt;/button&gt;
+      </div>
+    </section>
+
+    <!-- Icon Buttons -->
+    <section id="icons" class="example-group">
+      <h3>Buttons with Icons</h3>
+      <p>Buttons can include icons for better visual communication.</p>
+
+      <div class="icon-demo">
+        <div class="icon-example">
+          <button class="btn">
+            <i class="fas fa-download"></i> Download
+          </button>
+          <code>Icon + Text</code>
+        </div>
+        <div class="icon-example">
+          <button class="btn btn-secondary">
+            <i class="fas fa-heart"></i> Favorite
+          </button>
+          <code>Heart Icon</code>
+        </div>
+        <div class="icon-example">
+          <button class="btn btn-ghost">
+            <i class="fas fa-share-alt"></i> Share
+          </button>
+          <code>Share Icon</code>
+        </div>
+        <div class="icon-example">
+          <button class="btn btn-sm">
+            <i class="fas fa-plus"></i>
+          </button>
+          <code>Icon Only (Small)</code>
+        </div>
+        <div class="icon-example">
+          <button class="btn">
+            <i class="fas fa-trash"></i> Delete
+          </button>
+          <code>Delete Action</code>
+        </div>
+        <div class="icon-example">
+          <button class="btn btn-lg">
+            <i class="fas fa-check"></i> Confirm
+          </button>
+          <code>Confirm (Large)</code>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;!-- Icon with text --&gt;
+&lt;button class="btn"&gt;
+  &lt;i class="fas fa-download"&gt;&lt;/i&gt; Download
+&lt;/button&gt;
+
+&lt;!-- Icon only (needs aria-label) --&gt;
+&lt;button class="btn btn-sm" aria-label="Add item"&gt;
+  &lt;i class="fas fa-plus"&gt;&lt;/i&gt;
+&lt;/button&gt;
+
+&lt;!-- Icon after text --&gt;
+&lt;button class="btn"&gt;
+  Delete &lt;i class="fas fa-trash"&gt;&lt;/i&gt;
+&lt;/button&gt;
+      </div>
+    </section>
+
+    <!-- Button Groups -->
+    <section id="groups" class="example-group">
+      <h3>Button Groups</h3>
+      <p>Multiple buttons arranged together for related actions.</p>
+
+      <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-lg); margin-bottom: var(--spacing-lg);">
+        <div style="display: flex; gap: var(--spacing-sm);">
+          <button class="btn btn-sm">Left</button>
+          <button class="btn btn-sm">Middle</button>
+          <button class="btn btn-sm">Right</button>
+        </div>
+
+        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+          <button class="btn">Save</button>
+          <button class="btn btn-secondary">Cancel</button>
+          <button class="btn btn-ghost">Delete</button>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;!-- Compact button group --&gt;
+&lt;div style="display: flex; gap: var(--spacing-sm);"&gt;
+  &lt;button class="btn btn-sm"&gt;Left&lt;/button&gt;
+  &lt;button class="btn btn-sm"&gt;Middle&lt;/button&gt;
+  &lt;button class="btn btn-sm"&gt;Right&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Form button group --&gt;
+&lt;div style="display: flex; gap: var(--spacing-md);"&gt;
+  &lt;button class="btn"&gt;Save&lt;/button&gt;
+  &lt;button class="btn btn-secondary"&gt;Cancel&lt;/button&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Accessibility -->
+    <section id="accessibility" class="example-group">
+      <h3><i class="fas fa-universal-access"></i> Accessibility</h3>
+      <p>Best practices for accessible button implementations.</p>
+
+      <div class="code-block">
+&lt;!-- Good: Semantic button element --&gt;
+&lt;button class="btn"&gt;Click me&lt;/button&gt;
+
+&lt;!-- Good: Clear, descriptive text --&gt;
+&lt;button class="btn"&gt;Delete Account&lt;/button&gt;
+
+&lt;!-- Good: Icon button with label --&gt;
+&lt;button class="btn" aria-label="Close menu"&gt;
+  &lt;i class="fas fa-times"&gt;&lt;/i&gt;
+&lt;/button&gt;
+
+&lt;!-- Good: Disabled button clearly marked --&gt;
+&lt;button class="btn" disabled aria-disabled="true"&gt;
+  Disabled Action
+&lt;/button&gt;
+
+&lt;!-- Bad: Div acting as button --&gt;
+&lt;div onclick="..." role="button"&gt;Click me&lt;/div&gt;
+
+&lt;!-- Bad: No visible text --&gt;
+&lt;button class="btn"&gt;
+  &lt;i class="fas fa-arrow-right"&gt;&lt;/i&gt;
+&lt;/button&gt;
+      </div>
+    </section>
+
+    <!-- CSS Variables -->
+    <section id="variables" class="example-group">
+      <h3><i class="fas fa-code"></i> Customization via Variables</h3>
+      <p>Override button styles using CSS variables.</p>
+
+      <div class="code-block">
+/* Default button colors */
+:root {
+  --accent: #d94f90;
+  --accent-light: #e86ca8;
+  --accent-dark: #b61b70;
+  --text: #f5f1f8;
+}
+
+/* Override for your brand */
+:root {
+  --accent: #3b82f6;           /* Blue instead of pink */
+  --accent-light: #60a5fa;
+  --accent-dark: #1e40af;
+}
+
+/* Override button padding */
+:root {
+  --spacing-md: 1.25rem;
+  --spacing-lg: 2rem;
+}
+
+/* Change border radius */
+:root {
+  --radius-lg: 12px;
+}
+      </div>
+    </section>
+
+    <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
+      <p>Button Component Documentation • Corrupted Theme v0.1.0</p>
+      <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
+        <a href="index.html" style="color: var(--accent); text-decoration: none;">← Back to Showcase</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

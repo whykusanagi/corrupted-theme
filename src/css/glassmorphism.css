@@ -1,0 +1,217 @@
+/* glassmorphism.css — Glass morphism effect utilities and foundations */
+/* Creates the frosted glass aesthetic that defines the corrupted theme */
+
+/* ========== GLASS BACKDROP LAYER ========== */
+/* Apply to fixed/positioned background elements */
+
+.glass-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-background);
+  background: linear-gradient(180deg, rgba(5, 0, 16, 0.8), rgba(10, 10, 10, 0.8) 50%, rgba(15, 10, 25, 0.9));
+  backdrop-filter: blur(3px);
+  pointer-events: none;
+}
+
+/* ========== GLASS CONTAINER ========== */
+/* Main glass effect container for cards, sections, etc */
+
+.glass,
+.glass-container {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(15px);
+  border-radius: var(--radius-xl);
+}
+
+/* Light variant */
+.glass.light,
+.glass-container.light {
+  background: var(--glass-light);
+  border-color: rgba(90, 69, 117, 0.5);
+}
+
+/* Dark variant */
+.glass.dark,
+.glass-container.dark {
+  background: rgba(15, 15, 26, 0.9);
+  border-color: var(--border);
+}
+
+/* ========== GLASS SHADOW SYSTEM ========== */
+
+.glass-shadow-sm {
+  box-shadow: 0 4px 16px rgba(217, 79, 144, 0.1);
+}
+
+.glass-shadow {
+  box-shadow: 0 8px 32px rgba(217, 79, 144, 0.15), inset 0 0 20px rgba(217, 79, 144, 0.05);
+}
+
+.glass-shadow-lg {
+  box-shadow: 0 12px 48px rgba(217, 79, 144, 0.25), inset 0 0 30px rgba(217, 79, 144, 0.08);
+}
+
+.glass-shadow-xl {
+  box-shadow: 0 20px 60px rgba(217, 79, 144, 0.35), inset 0 0 40px rgba(217, 79, 144, 0.1);
+}
+
+/* ========== FROSTED GLASS CARD ========== */
+/* Complete card with glass effect, padding, and shadows */
+
+.frosted-card {
+  padding: 2rem;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 8px 32px rgba(217, 79, 144, 0.15), inset 0 0 20px rgba(217, 79, 144, 0.05);
+  transition: all var(--transition-normal) var(--transition-easing);
+}
+
+.frosted-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(217, 79, 144, 0.25);
+  border-color: var(--border-light);
+}
+
+/* Size variants */
+.frosted-card.sm {
+  padding: 1.5rem;
+  border-radius: var(--radius-lg);
+}
+
+.frosted-card.lg {
+  padding: 3rem;
+}
+
+/* ========== GLASS BUTTON BASE ========== */
+/* Glass effect for interactive elements */
+
+.glass-btn {
+  padding: 0.875rem 1.75rem;
+  background: var(--glass);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: all var(--transition-normal) var(--transition-easing);
+  backdrop-filter: blur(10px);
+  font-weight: 600;
+}
+
+.glass-btn:hover {
+  background: var(--glass-light);
+  border-color: var(--border-light);
+  transform: translateY(-2px);
+}
+
+.glass-btn:active {
+  transform: translateY(0);
+}
+
+/* ========== GLASS NAVBAR ========== */
+/* Navigation bar with glass effect */
+
+.glass-navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-navbar);
+  background: rgba(10, 10, 10, 0.95);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(15px);
+  padding: 0;
+}
+
+/* ========== GLASS MODAL OVERLAY ========== */
+/* Backdrop for modals and overlays */
+
+.glass-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  z-index: calc(var(--z-modal) - 1);
+}
+
+.glass-modal {
+  position: relative;
+  z-index: var(--z-modal);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 20px 60px rgba(217, 79, 144, 0.35), inset 0 0 40px rgba(217, 79, 144, 0.1);
+}
+
+/* ========== GLASS BORDER VARIANTS ========== */
+
+.glass-border {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.glass-border-light {
+  border: 1px solid rgba(90, 69, 117, 0.3);
+  border-radius: var(--radius-lg);
+}
+
+.glass-border-accent {
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-lg);
+}
+
+/* ========== OPACITY UTILITIES ========== */
+/* For layering glass effects */
+
+.glass-opacity-50 {
+  background: rgba(20, 12, 40, 0.5);
+}
+
+.glass-opacity-60 {
+  background: rgba(20, 12, 40, 0.6);
+}
+
+.glass-opacity-70 {
+  background: rgba(20, 12, 40, 0.7);
+}
+
+.glass-opacity-80 {
+  background: rgba(20, 12, 40, 0.8);
+}
+
+/* ========== BLUR UTILITIES ========== */
+
+.blur-sm {
+  backdrop-filter: blur(2px);
+}
+
+.blur-md {
+  backdrop-filter: blur(5px);
+}
+
+.blur-lg {
+  backdrop-filter: blur(10px);
+}
+
+.blur-xl {
+  backdrop-filter: blur(15px);
+}
+
+.blur-2xl {
+  backdrop-filter: blur(20px);
+}
+
+/* ========== RESPONSIVENESS ========== */
+
+@media screen and (max-width: 768px) {
+  .frosted-card {
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+  }
+
+  .glass-modal {
+    margin: 1rem;
+    border-radius: var(--radius-lg);
+  }
+}

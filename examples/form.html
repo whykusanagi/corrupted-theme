@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Form Components - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
+  <style>
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .form-section {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .form-section h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
+
+    .form-example {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .form-group {
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text);
+      font-weight: 500;
+      font-size: 0.95rem;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-family: inherit;
+      transition: all var(--transition-normal);
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(217, 79, 144, 0.1);
+      background: var(--bg);
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .form-inline {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-md);
+    }
+
+    .checkbox-group,
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-md);
+    }
+
+    .checkbox-item,
+    .radio-item {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .checkbox-item input,
+    .radio-item input {
+      width: auto;
+      margin: 0;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .checkbox-item label,
+    .radio-item label {
+      margin: 0;
+      font-weight: normal;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .form-hint {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-top: var(--spacing-xs);
+    }
+
+    .form-error {
+      font-size: 0.875rem;
+      color: var(--color-error);
+      margin-top: var(--spacing-xs);
+    }
+
+    .form-success {
+      font-size: 0.875rem;
+      color: var(--color-success);
+      margin-top: var(--spacing-xs);
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+
+    .input-with-icon input {
+      padding-left: 2.5rem;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: var(--spacing-md);
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      pointer-events: none;
+    }
+
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .demo-form {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .button-group {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-lg);
+      flex-wrap: wrap;
+    }
+
+    .required-note {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-lg);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="navbar-logo"><i class="fas fa-arrow-left"></i> Back</a>
+      <div class="navbar-links">
+        <a href="#text">Text Inputs</a>
+        <a href="#select">Selects</a>
+        <a href="#checkbox">Checkboxes</a>
+        <a href="#radio">Radio</a>
+        <a href="#demo">Full Form</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-form"></i> Form Components</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Complete form element styling with proper accessibility and validation states.
+    </p>
+
+    <!-- Text Inputs -->
+    <section id="text" class="form-section">
+      <h3>Text Inputs</h3>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Fully styled input elements with focus states and validation indicators.
+      </p>
+
+      <div class="form-grid">
+        <div class="form-example">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Basic Input</h4>
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Enter your name" value="John Doe">
+            <div class="form-hint">Required field</div>
+          </div>
+        </div>
+
+        <div class="form-example">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Email Input</h4>
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" placeholder="your@email.com">
+            <div class="form-hint">We'll never share your email</div>
+          </div>
+        </div>
+
+        <div class="form-example">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Password Input</h4>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="••••••••" value="12345678">
+            <div class="form-hint">Minimum 8 characters</div>
+          </div>
+        </div>
+
+        <div class="form-example">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Input with Error</h4>
+          <div class="form-group">
+            <label for="invalid">Username</label>
+            <input type="text" id="invalid" placeholder="username" style="border-color: var(--color-error);" value="in valid">
+            <div class="form-error"><i class="fas fa-exclamation-circle"></i> Invalid username format</div>
+          </div>
+        </div>
+
+        <div class="form-example">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Input with Success</h4>
+          <div class="form-group">
+            <label for="valid">Username</label>
+            <input type="text" id="valid" placeholder="username" style="border-color: var(--color-success);" value="myusername">
+            <div class="form-success"><i class="fas fa-check-circle"></i> Username available</div>
+          </div>
+        </div>
+
+        <div class="form-example">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Input with Icon</h4>
+          <div class="form-group">
+            <label for="search">Search</label>
+            <div class="input-with-icon">
+              <i class="fas fa-search input-icon"></i>
+              <input type="text" id="search" placeholder="Search...">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="form-group"&gt;
+  &lt;label for="email"&gt;Email Address&lt;/label&gt;
+  &lt;input type="email" id="email" placeholder="your@email.com" required&gt;
+  &lt;div class="form-hint"&gt;We'll never share your email&lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- With error state --&gt;
+&lt;input style="border-color: var(--color-error);" /&gt;
+&lt;div class="form-error"&gt;Error message&lt;/div&gt;
+
+&lt;!-- With success state --&gt;
+&lt;input style="border-color: var(--color-success);" /&gt;
+&lt;div class="form-success"&gt;Success message&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Textarea -->
+    <section class="form-section">
+      <h3>Textarea</h3>
+
+      <div class="form-example">
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" placeholder="Enter your message..." rows="5">This is a textarea element that can contain multiple lines of text.</textarea>
+          <div class="form-hint">Maximum 500 characters</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="form-group"&gt;
+  &lt;label for="message"&gt;Message&lt;/label&gt;
+  &lt;textarea id="message" placeholder="..." rows="5"&gt;&lt;/textarea&gt;
+  &lt;div class="form-hint"&gt;Maximum 500 characters&lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Select -->
+    <section id="select" class="form-section">
+      <h3>Select Dropdown</h3>
+
+      <div class="form-grid">
+        <div class="form-example">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Single Select</h4>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category">
+              <option>Select a category</option>
+              <option selected>General Inquiry</option>
+              <option>Technical Support</option>
+              <option>Feedback</option>
+              <option>Other</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-example">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Country Select</h4>
+          <div class="form-group">
+            <label for="country">Country</label>
+            <select id="country">
+              <option>Select a country</option>
+              <option selected>United States</option>
+              <option>Canada</option>
+              <option>United Kingdom</option>
+              <option>Japan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="form-group"&gt;
+  &lt;label for="category"&gt;Category&lt;/label&gt;
+  &lt;select id="category"&gt;
+    &lt;option&gt;Select a category&lt;/option&gt;
+    &lt;option&gt;General Inquiry&lt;/option&gt;
+    &lt;option&gt;Technical Support&lt;/option&gt;
+    &lt;option&gt;Feedback&lt;/option&gt;
+  &lt;/select&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Checkboxes -->
+    <section id="checkbox" class="form-section">
+      <h3>Checkboxes</h3>
+
+      <div class="form-example">
+        <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Multiple Checkboxes</h4>
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="check1" checked>
+            <label for="check1">I want to receive email updates</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="check2">
+            <label for="check2">I agree to the terms and conditions</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="check3" checked>
+            <label for="check3">I want marketing communications</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="check4" disabled>
+            <label for="check4">Disabled option</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="checkbox-group"&gt;
+  &lt;div class="checkbox-item"&gt;
+    &lt;input type="checkbox" id="agree" name="agree"&gt;
+    &lt;label for="agree"&gt;I agree to the terms&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class="checkbox-item"&gt;
+    &lt;input type="checkbox" id="updates" name="updates" checked&gt;
+    &lt;label for="updates"&gt;Send me updates&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Radio Buttons -->
+    <section id="radio" class="form-section">
+      <h3>Radio Buttons</h3>
+
+      <div class="form-example">
+        <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Select an Option</h4>
+        <div class="radio-group">
+          <div class="radio-item">
+            <input type="radio" id="option1" name="options" value="option1" checked>
+            <label for="option1">Option One</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="option2" name="options" value="option2">
+            <label for="option2">Option Two</label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="option3" name="options" value="option3">
+            <label for="option3">Option Three</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-example" style="margin-top: var(--spacing-xl);">
+        <h4 style="margin-bottom: var(--spacing-md); color: var(--text);">Plan Selection</h4>
+        <div class="radio-group">
+          <div class="radio-item">
+            <input type="radio" id="plan1" name="plan" value="free" checked>
+            <label for="plan1">
+              <strong>Free</strong> - $0/month
+            </label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="plan2" name="plan" value="pro">
+            <label for="plan2">
+              <strong>Pro</strong> - $19/month
+            </label>
+          </div>
+          <div class="radio-item">
+            <input type="radio" id="plan3" name="plan" value="enterprise">
+            <label for="plan3">
+              <strong>Enterprise</strong> - Custom pricing
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div class="radio-group"&gt;
+  &lt;div class="radio-item"&gt;
+    &lt;input type="radio" id="opt1" name="options" value="1" checked&gt;
+    &lt;label for="opt1"&gt;Option One&lt;/label&gt;
+  &lt;/div&gt;
+  &lt;div class="radio-item"&gt;
+    &lt;input type="radio" id="opt2" name="options" value="2"&gt;
+    &lt;label for="opt2"&gt;Option Two&lt;/label&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Complete Form -->
+    <section id="demo" class="form-section">
+      <h3><i class="fas fa-file-alt"></i> Complete Form Example</h3>
+
+      <form class="demo-form" onsubmit="return handleFormSubmit(event)">
+        <div class="required-note">
+          <span style="color: var(--accent);">*</span> Indicates required field
+        </div>
+
+        <div class="form-group">
+          <label for="full-name">Full Name <span style="color: var(--accent);">*</span></label>
+          <input type="text" id="full-name" placeholder="John Doe" required>
+        </div>
+
+        <div class="form-inline">
+          <div class="form-group">
+            <label for="email-form">Email <span style="color: var(--accent);">*</span></label>
+            <input type="email" id="email-form" placeholder="john@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="tel" id="phone" placeholder="+1 (555) 000-0000">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="subject">Subject <span style="color: var(--accent);">*</span></label>
+          <select id="subject" required>
+            <option>Select a subject</option>
+            <option>General Inquiry</option>
+            <option>Support Request</option>
+            <option>Feedback</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="message-form">Message <span style="color: var(--accent);">*</span></label>
+          <textarea id="message-form" placeholder="Your message here..." rows="5" required></textarea>
+          <div class="form-hint">Minimum 10 characters</div>
+        </div>
+
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="subscribe-form" name="subscribe">
+            <label for="subscribe-form">Subscribe to our newsletter</label>
+          </div>
+          <div class="checkbox-item">
+            <input type="checkbox" id="terms-form" name="terms" required>
+            <label for="terms-form">I agree to the terms and conditions <span style="color: var(--accent);">*</span></label>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <button type="submit" class="btn">Send Message</button>
+          <button type="reset" class="btn btn-secondary">Clear Form</button>
+          <button type="button" class="btn btn-ghost" onclick="this.closest('form').reset()">Cancel</button>
+        </div>
+      </form>
+
+      <div class="code-block">
+&lt;form onsubmit="handleFormSubmit(event)"&gt;
+  &lt;div class="form-group"&gt;
+    &lt;label for="name"&gt;Name &lt;span style="color: var(--accent);"&gt;*&lt;/span&gt;&lt;/label&gt;
+    &lt;input type="text" id="name" required&gt;
+  &lt;/div&gt;
+
+  &lt;div class="form-group"&gt;
+    &lt;label for="message"&gt;Message&lt;/label&gt;
+    &lt;textarea id="message" rows="5"&gt;&lt;/textarea&gt;
+  &lt;/div&gt;
+
+  &lt;div class="checkbox-item"&gt;
+    &lt;input type="checkbox" id="agree"&gt;
+    &lt;label for="agree"&gt;I agree to terms&lt;/label&gt;
+  &lt;/div&gt;
+
+  &lt;div class="button-group"&gt;
+    &lt;button type="submit" class="btn"&gt;Submit&lt;/button&gt;
+    &lt;button type="reset" class="btn btn-secondary"&gt;Reset&lt;/button&gt;
+  &lt;/div&gt;
+&lt;/form&gt;
+      </div>
+    </section>
+
+    <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
+      <p>Form Components Documentation • Corrupted Theme v0.1.0</p>
+      <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
+        <a href="index.html" style="color: var(--accent); text-decoration: none;">← Back to Showcase</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    function handleFormSubmit(event) {
+      event.preventDefault();
+      alert('Form submitted! (This is a demo - no data was actually sent)');
+      return false;
+    }
+  </script>
+</body>
+</html>

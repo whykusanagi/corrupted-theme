@@ -1,0 +1,33 @@
+# Don't publish these to npm
+
+# Development & testing
+.DS_Store
+._*
+.AppleDouble
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.travis.yml
+
+# Build artifacts
+dist/
+build/
+node_modules/
+*.log
+
+# Other
+*.tmp
+.env
+.env.local

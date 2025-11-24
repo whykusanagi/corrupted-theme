@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Layout Patterns - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .section h2 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.5rem;
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--border);
+    }
+
+    .layout-demo {
+      background: var(--glass);
+      border: 2px dashed var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .layout-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100px;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .two-column {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--spacing-lg);
+    }
+
+    .three-column {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--spacing-lg);
+    }
+
+    .four-column {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--spacing-lg);
+    }
+
+    .sidebar-layout {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: var(--spacing-lg);
+    }
+
+    .hero-section {
+      background: var(--gradient-accent);
+      color: white;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      border-radius: var(--radius-lg);
+      text-align: center;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .hero-section h3 {
+      color: white;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .grid-info {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--accent);
+    }
+
+    .responsive-note {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-top: var(--spacing-lg);
+      padding: var(--spacing-md);
+      background: var(--glass);
+      border-radius: var(--radius-md);
+      border-left: 3px solid var(--color-info);
+    }
+
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .flex-demo {
+      display: flex;
+      gap: var(--spacing-lg);
+      flex-wrap: wrap;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: var(--spacing-lg);
+    }
+
+    @media (max-width: 1024px) {
+      .two-column {
+        grid-template-columns: 1fr;
+      }
+
+      .three-column {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .four-column {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .sidebar-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .three-column {
+        grid-template-columns: 1fr;
+      }
+
+      .four-column {
+        grid-template-columns: 1fr;
+      }
+
+      .flex-demo {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="navbar-logo"><i class="fas fa-arrow-left"></i> Back</a>
+      <div class="navbar-links">
+        <a href="#grid">Grid</a>
+        <a href="#flex">Flexbox</a>
+        <a href="#sidebar">Sidebar</a>
+        <a href="#hero">Hero</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-th-large"></i> Layout Patterns</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Common layout patterns and grid systems for responsive page design.
+    </p>
+
+    <!-- Grid Layouts -->
+    <section id="grid" class="section">
+      <h2>Grid Layouts</h2>
+
+      <!-- Two Column -->
+      <div>
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Two Column (2fr 1fr)</h3>
+        <div class="grid-info">
+          Responsive: Stacks to single column on tablets and mobile
+        </div>
+        <div class="two-column">
+          <div class="layout-box">Main Content (2fr)</div>
+          <div class="layout-box">Sidebar (1fr)</div>
+        </div>
+      </div>
+
+      <!-- Three Column -->
+      <div style="margin-top: var(--spacing-2xl);">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Three Column (1fr 1fr 1fr)</h3>
+        <div class="grid-info">
+          Responsive: 2 columns on tablets, 1 column on mobile
+        </div>
+        <div class="three-column">
+          <div class="layout-box">Column 1</div>
+          <div class="layout-box">Column 2</div>
+          <div class="layout-box">Column 3</div>
+        </div>
+      </div>
+
+      <!-- Four Column -->
+      <div style="margin-top: var(--spacing-2xl);">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Four Column (1fr 1fr 1fr 1fr)</h3>
+        <div class="grid-info">
+          Responsive: 2 columns on tablets, 1 column on mobile
+        </div>
+        <div class="four-column">
+          <div class="layout-box">1</div>
+          <div class="layout-box">2</div>
+          <div class="layout-box">3</div>
+          <div class="layout-box">4</div>
+        </div>
+      </div>
+
+      <!-- Auto-fit Grid -->
+      <div style="margin-top: var(--spacing-2xl);">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Auto-fit Grid (Responsive)</h3>
+        <div class="grid-info">
+          Automatically fills columns - adapts to screen size
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--spacing-lg);">
+          <div class="layout-box">Item</div>
+          <div class="layout-box">Item</div>
+          <div class="layout-box">Item</div>
+          <div class="layout-box">Item</div>
+          <div class="layout-box">Item</div>
+          <div class="layout-box">Item</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+/* Two column layout */
+&lt;div style="display: grid; grid-template-columns: 2fr 1fr; gap: var(--spacing-lg);"&gt;
+  &lt;div&gt;Main content&lt;/div&gt;
+  &lt;div&gt;Sidebar&lt;/div&gt;
+&lt;/div&gt;
+
+/* Three column layout */
+&lt;div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--spacing-lg);"&gt;
+  &lt;div&gt;Column 1&lt;/div&gt;
+  &lt;div&gt;Column 2&lt;/div&gt;
+  &lt;div&gt;Column 3&lt;/div&gt;
+&lt;/div&gt;
+
+/* Auto-responsive grid */
+&lt;div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: var(--spacing-lg);"&gt;
+  &lt;!-- Items automatically flow --&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Flexbox Layouts -->
+    <section id="flex" class="section">
+      <h2>Flexbox Layouts</h2>
+
+      <!-- Row Layout -->
+      <div>
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Horizontal Row</h3>
+        <div class="grid-info">
+          Items arranged left to right, wraps on small screens
+        </div>
+        <div style="display: flex; gap: var(--spacing-lg); flex-wrap: wrap;">
+          <div style="flex: 1; min-width: 150px;" class="layout-box">Item 1</div>
+          <div style="flex: 1; min-width: 150px;" class="layout-box">Item 2</div>
+          <div style="flex: 1; min-width: 150px;" class="layout-box">Item 3</div>
+          <div style="flex: 1; min-width: 150px;" class="layout-box">Item 4</div>
+        </div>
+      </div>
+
+      <!-- Column Layout -->
+      <div style="margin-top: var(--spacing-2xl);">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Vertical Column</h3>
+        <div class="grid-info">
+          Items stacked vertically
+        </div>
+        <div style="display: flex; flex-direction: column; gap: var(--spacing-lg); max-width: 400px;">
+          <div class="layout-box">Item 1</div>
+          <div class="layout-box">Item 2</div>
+          <div class="layout-box">Item 3</div>
+        </div>
+      </div>
+
+      <!-- Space-between -->
+      <div style="margin-top: var(--spacing-2xl);">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Space-Between (Header/Footer)</h3>
+        <div class="grid-info">
+          First item left, last item right, space between
+        </div>
+        <div style="display: flex; justify-content: space-between; align-items: center; background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--spacing-lg); gap: var(--spacing-lg);">
+          <div class="layout-box" style="min-width: 150px;">Logo</div>
+          <div style="flex: 1;"></div>
+          <div class="layout-box" style="min-width: 150px;">User Menu</div>
+        </div>
+      </div>
+
+      <!-- Center -->
+      <div style="margin-top: var(--spacing-2xl);">
+        <h3 style="color: var(--accent); margin-bottom: var(--spacing-md);">Centered Layout</h3>
+        <div class="grid-info">
+          Items centered both horizontally and vertically
+        </div>
+        <div style="display: flex; justify-content: center; align-items: center; gap: var(--spacing-lg); background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--spacing-lg); min-height: 200px;">
+          <div class="layout-box">Centered Content</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+/* Horizontal row with wrapping */
+&lt;div style="display: flex; gap: var(--spacing-lg); flex-wrap: wrap;"&gt;
+  &lt;div style="flex: 1; min-width: 150px;"&gt;Item&lt;/div&gt;
+  &lt;div style="flex: 1; min-width: 150px;"&gt;Item&lt;/div&gt;
+&lt;/div&gt;
+
+/* Vertical column */
+&lt;div style="display: flex; flex-direction: column; gap: var(--spacing-lg);"&gt;
+  &lt;div&gt;Item 1&lt;/div&gt;
+  &lt;div&gt;Item 2&lt;/div&gt;
+&lt;/div&gt;
+
+/* Space between (header) */
+&lt;div style="display: flex; justify-content: space-between; align-items: center;"&gt;
+  &lt;div&gt;Logo&lt;/div&gt;
+  &lt;div&gt;Nav&lt;/div&gt;
+&lt;/div&gt;
+
+/* Centered */
+&lt;div style="display: flex; justify-content: center; align-items: center;"&gt;
+  &lt;div&gt;Centered&lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Sidebar Layout -->
+    <section id="sidebar" class="section">
+      <h2>Sidebar Layout</h2>
+
+      <div class="grid-info">
+        Main content + sidebar. Responsive: stacks on tablets
+      </div>
+
+      <div class="sidebar-layout">
+        <div class="layout-box" style="min-height: 300px;">
+          <div style="text-align: left; width: 100%;">
+            <h4 style="margin-top: 0; color: white;">Main Content Area</h4>
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+              Your article, post, or primary content goes here. This area takes up 2/3 of the space.
+            </p>
+          </div>
+        </div>
+        <div class="layout-box" style="min-height: 300px;">
+          <div style="text-align: left; width: 100%;">
+            <h4 style="margin-top: 0; color: white;">Sidebar</h4>
+            <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+              Secondary navigation, ads, or related content. Fixed width sidebar.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div style="display: grid; grid-template-columns: 1fr 300px; gap: var(--spacing-lg);"&gt;
+  &lt;div&gt;Main Content&lt;/div&gt;
+  &lt;div&gt;Sidebar (300px fixed)&lt;/div&gt;
+&lt;/div&gt;
+
+@media (max-width: 1024px) {
+  /* Stacks on smaller screens */
+  grid-template-columns: 1fr;
+}
+      </div>
+    </section>
+
+    <!-- Hero Section -->
+    <section id="hero" class="section">
+      <h2>Hero Sections</h2>
+
+      <div class="hero-section">
+        <h2>Hero Section Example</h2>
+        <p style="font-size: 1.1rem; margin-bottom: var(--spacing-lg);">
+          Large, attention-grabbing section at the top of a page
+        </p>
+        <button class="btn" style="background: rgba(255,255,255,0.2); border: 2px solid white; color: white;">
+          Call to Action
+        </button>
+      </div>
+
+      <div class="hero-section" style="background: linear-gradient(135deg, #8b5cf6, #d94f90); min-height: 300px; display: flex; flex-direction: column; justify-content: center;">
+        <h2 style="font-size: 2.5rem; margin-bottom: var(--spacing-md);">Large Hero</h2>
+        <p style="font-size: 1.2rem; max-width: 600px; margin-bottom: var(--spacing-lg);">
+          With more height and breathing room for important messaging
+        </p>
+        <div style="display: flex; gap: var(--spacing-md); flex-wrap: wrap;">
+          <button class="btn" style="background: white; color: var(--accent);">Get Started</button>
+          <button class="btn btn-ghost" style="border-color: white; color: white;">Learn More</button>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;section style="background: var(--gradient-accent); color: white; padding: var(--spacing-2xl); text-align: center;"&gt;
+  &lt;h2&gt;Hero Section&lt;/h2&gt;
+  &lt;p&gt;Tagline or description&lt;/p&gt;
+  &lt;button class="btn"&gt;Call to Action&lt;/button&gt;
+&lt;/section&gt;
+      </div>
+    </section>
+
+    <!-- Feature Grid -->
+    <section class="section">
+      <h2>Feature Grid</h2>
+
+      <div class="grid-info">
+        Auto-responsive grid for feature cards or service listings
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+        <div class="card">
+          <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: var(--spacing-md);">
+            <i class="fas fa-rocket"></i>
+          </div>
+          <h4>Feature One</h4>
+          <p>Description of the feature and its benefits.</p>
+        </div>
+        <div class="card">
+          <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: var(--spacing-md);">
+            <i class="fas fa-shield-alt"></i>
+          </div>
+          <h4>Feature Two</h4>
+          <p>Description of the feature and its benefits.</p>
+        </div>
+        <div class="card">
+          <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: var(--spacing-md);">
+            <i class="fas fa-zap"></i>
+          </div>
+          <h4>Feature Three</h4>
+          <p>Description of the feature and its benefits.</p>
+        </div>
+        <div class="card">
+          <div style="font-size: 2.5rem; color: var(--accent); margin-bottom: var(--spacing-md);">
+            <i class="fas fa-users"></i>
+          </div>
+          <h4>Feature Four</h4>
+          <p>Description of the feature and its benefits.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+&lt;div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);"&gt;
+  &lt;div class="card"&gt;
+    &lt;i&gt;Icon&lt;/i&gt;
+    &lt;h4&gt;Feature&lt;/h4&gt;
+    &lt;p&gt;Description&lt;/p&gt;
+  &lt;/div&gt;
+  &lt;!-- More cards --&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Responsive Tips -->
+    <section class="section">
+      <h2>Responsive Design Tips</h2>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: var(--spacing-lg);">
+        <div class="card">
+          <h4>Mobile First</h4>
+          <p>Design for mobile first, then add complexity for larger screens.</p>
+        </div>
+        <div class="card">
+          <h4>Breakpoints</h4>
+          <p>Use media queries at 768px (mobile/tablet) and 1024px (tablet/desktop).</p>
+        </div>
+        <div class="card">
+          <h4>Flexible Grid</h4>
+          <p>Use grid-template-columns: repeat(auto-fit, minmax(...)) for automatic wrapping.</p>
+        </div>
+        <div class="card">
+          <h4>Flexbox Wrap</h4>
+          <p>Enable flex-wrap for items to wrap to next line on small screens.</p>
+        </div>
+      </div>
+    </section>
+
+    <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
+      <p>Layout Patterns Documentation • Corrupted Theme v0.1.0</p>
+      <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
+        <a href="index.html" style="color: var(--accent); text-decoration: none;">← Back to Showcase</a>
+      </p>
+    </footer>
+  </div>
+</body>
+</html>

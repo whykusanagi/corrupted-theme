@@ -1,0 +1,69 @@
+{
+  "name": "@whykusanagi/corrupted-theme",
+  "version": "0.1.0",
+  "description": "A dark, glassmorphic design system with pink/purple accents. Perfect for creating modern, visually striking web applications.",
+  "main": "src/css/theme.css",
+  "style": "src/css/theme.css",
+  "exports": {
+    ".": {
+      "import": "./src/css/theme.css",
+      "require": "./src/css/theme.css"
+    },
+    "./variables": "./src/css/variables.css",
+    "./typography": "./src/css/typography.css",
+    "./glassmorphism": "./src/css/glassmorphism.css",
+    "./animations": "./src/css/animations.css",
+    "./components": "./src/css/components.css",
+    "./utilities": "./src/css/utilities.css",
+    "./nikke-utilities": "./src/css/nikke-utilities.css"
+  },
+  "files": [
+    "src",
+    "scripts",
+    "docs",
+    "examples",
+    "Dockerfile",
+    "docker-entrypoint.sh",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/whykusanagi/corrupted-theme.git"
+  },
+  "keywords": [
+    "css",
+    "theme",
+    "design-system",
+    "glassmorphism",
+    "dark-mode",
+    "ui-framework",
+    "styling",
+    "css-variables",
+    "celeste-widget",
+    "chat-widget",
+    "ai-chat"
+  ],
+  "author": "whykusanagi <contact@whykusanagi.xyz>",
+  "license": "MIT",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "devDependencies": {
+    "cssnano": "^6.0.0",
+    "postcss": "^8.4.0",
+    "postcss-cli": "^10.0.0"
+  },
+  "scripts": {
+    "build": "postcss src/css/theme.css -o dist/theme.min.css",
+    "watch": "postcss --watch src/css/theme.css -o dist/theme.min.css",
+    "dev:proxy": "node scripts/celeste-proxy-server.js",
+    "dev:static": "node scripts/static-server.js",
+    "start": "npm run dev:static"
+  },
+  "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
+  "bugs": {
+    "url": "https://github.com/whykusanagi/corrupted-theme/issues"
+  }
+}

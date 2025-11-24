@@ -15,11 +15,22 @@ A dark, glassmorphic design system with pink/purple accents. Perfect for creatin
 
 ## Quick Start
 
-### via NPM
+### via GitHub Packages
+
+First, configure your `.npmrc` to authenticate with GitHub Packages:
+
+```bash
+# Create ~/.npmrc (in your home directory) with:
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+Then install:
 
 ```bash
 npm install @whykusanagi/corrupted-theme
 ```
+
+**Note:** You'll need a GitHub personal access token with `read:packages` permission. [Create one here](https://github.com/settings/tokens/new) (select `read:packages` scope).
 
 Then import in your CSS:
 
@@ -34,10 +45,16 @@ Or import specific modules:
 @import '@whykusanagi/corrupted-theme/components';
 ```
 
-### via CDN
+### via CDN (when deployed)
 
 ```html
 <link rel="stylesheet" href="https://s3.whykusanagi.xyz/corrupted-theme/theme.css">
+```
+
+### via GitHub Raw CDN
+
+```html
+<link rel="stylesheet" href="https://raw.githubusercontent.com/whykusanagi/corrupted-theme/main/src/css/theme.css">
 ```
 
 ### Copy & Customize

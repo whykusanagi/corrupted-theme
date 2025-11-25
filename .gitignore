@@ -38,6 +38,7 @@ Thumbs.db
 # Temporary
 *.tmp
 .cache/
+celeste_widget_pack/
 
 # NPM registry (contains tokens)
 .npmrc

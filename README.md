@@ -345,22 +345,52 @@ docker run -d -p 8000:8000 --name corrupted-theme corrupted-theme:latest
 - GitHub Issues: [corrupted-theme/issues](https://github.com/whykusanagi/corrupted-theme/issues)
 - Email: contact@whykusanagi.xyz
 
-## Celeste Widget Integration (Optional)
+## Celeste Widget Integration (Secure Proxy)
+The theme ships with an optional Celeste AI widget that **never exposes credentials to the browser**. It relies on the hardened proxy bundle located in `celeste_widget_pack/`.
+
+### Environment Variables (required)
+| Variable | Purpose |
+|----------|---------|
+| `CELESTE_AGENT_KEY` | Bearer token for the Celeste API |
+| `CELESTE_AGENT_ID` | Agent identifier (UUID) |
+| `CELESTE_AGENT_BASE_URL` | API endpoint root |
+
+> Store these via your platform’s secret manager (Vault, Doppler, AWS Secrets Manager, etc.). Never commit them or inject them into client-side code.
+
+### Docker Workflow
 ```bash
-# Build + run showcase with widget + proxy
 docker build -t corrupted-theme:latest .
+
 docker run -d \
-  -p 8000:8000 \
-  -e CELESTE_AGENT_KEY="your-key" \
-  -e CELESTE_AGENT_ID="your-id" \
-  -e CELESTE_AGENT_BASE_URL="https://api.yourdomain.com" \
+  -p 8000:8000 \            # static showcase
+  -p 5001:5000 \            # exposes proxy externally
+  -e CELESTE_AGENT_KEY="$CELESTE_AGENT_KEY" \
+  -e CELESTE_AGENT_ID="$CELESTE_AGENT_ID" \
+  -e CELESTE_AGENT_BASE_URL="https://api.your-domain.com" \
   corrupted-theme:latest
 
-# Local split setup
-CELESTE_AGENT_KEY="..." node scripts/celeste-proxy-server.js   # port 5000
-npm run dev:static                                             # port 8000
+# Visit http://localhost:8000 (UI) and http://localhost:5001/api/health (proxy)
 ```
-Environment variables are the only requirement; the widget auto-detects the proxy URL exposed by `scripts/celeste-proxy-server.js`.
+
+### Local Development (split processes)
+```bash
+# Terminal 1 – proxy server (port defaults to 5000 inside container)
+CELESTE_AGENT_KEY="..." \
+CELESTE_AGENT_ID="..." \
+CELESTE_AGENT_BASE_URL="..." \
+PROXY_PORT=5000 node scripts/celeste-proxy-server.js
+
+# Terminal 2 – static showcase
+STATIC_PORT=8000 node scripts/static-server.js
+```
+
+### Security Guarantees
+- Browser never receives `CELESTE_*` variables (verified via DevTools/HTML scans)
+- All outbound API calls originate from the proxy (`/api/chat`, `/api/health`)
+- Health endpoint surfaces status without leaking secrets
+- Ready for Cloudflare Worker / Pages deployment (see secure pack doc)
+
+For the full hardening guide—including architecture diagrams, Cloudflare steps, and troubleshooting—see `celeste_widget_pack/docs/CELESTE_WIDGET_SECURE_SETUP.md`.
 
 ## License
 MIT © whykusanagi

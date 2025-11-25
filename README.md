@@ -28,11 +28,8 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 - **Dockerized showcase** at `examples/showcase-complete.html` for instant QA.
 
 ## Installation
-### GitHub Packages (preferred)
+### npm (public registry)
 ```bash
-# ~/.npmrc
-//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
-
 npm install @whykusanagi/corrupted-theme
 ```
 ```css
@@ -41,6 +38,7 @@ npm install @whykusanagi/corrupted-theme
 @import '@whykusanagi/corrupted-theme/variables';
 @import '@whykusanagi/corrupted-theme/components';
 ```
+> Tip: make sure you are logged in with `npm login` if the package is private. No `.npmrc` token is needed for the public release.
 
 ### CDN (when mirrored)
 ```html

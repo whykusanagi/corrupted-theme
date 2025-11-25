@@ -96,9 +96,9 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   let filePath = url.pathname;
 
-  // Default to index.html for root
+  // Default to showcase-complete.html for root (comprehensive component showcase)
   if (filePath === '/') {
-    filePath = '/index.html';
+    filePath = '/examples/showcase-complete.html';
   }
 
   // Remove leading slash

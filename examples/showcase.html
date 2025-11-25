@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corrupted Theme - Complete Component Showcase</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
+  <style>
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+    }
+
+    .showcase {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-xl);
+    }
+
+    .showcase-section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .showcase-section h2 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--border);
+      font-size: 2rem;
+    }
+
+    .showcase-section h3 {
+      color: var(--text);
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+      font-size: 1.25rem;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .code-example {
+      background: var(--glass-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
+      color: var(--text-secondary);
+    }
+
+    .demo-container {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .hero {
+      background: var(--gradient-accent);
+      color: white;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      border-radius: var(--radius-xl);
+      text-align: center;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-md);
+      color: white;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: var(--spacing-md);
+      opacity: 0.95;
+    }
+
+    .form-demo {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .form-demo label {
+      display: block;
+      margin-bottom: var(--spacing-sm);
+      color: var(--text);
+      font-weight: 500;
+      margin-top: var(--spacing-md);
+    }
+
+    .form-demo label:first-child {
+      margin-top: 0;
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .comparison-item {
+      padding: var(--spacing-md);
+    }
+
+    .comparison-item h4 {
+      margin-bottom: var(--spacing-md);
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="#" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="#glass-components" class="active">Glass Components</a></li>
+        <li><a href="#standard-components">Standard Components</a></li>
+        <li><a href="#forms">Forms</a></li>
+        <li><a href="#badges">Badges</a></li>
+        <li><a href="#utilities">Utilities</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="showcase">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>Corrupted Theme</h1>
+      <p>Complete Component Showcase</p>
+      <p style="font-size: 1rem; opacity: 0.9;">
+        A comprehensive dark design system with glassmorphism effects, ready for any application
+      </p>
+    </section>
+
+    <!-- Glass Components Section -->
+    <section class="showcase-section" id="glass-components">
+      <h2><i class="fas fa-cube"></i> Glass Components</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Reusable glass components perfect for API documentation, dashboards, and modern web applications.
+      </p>
+
+      <h3>Glass Card</h3>
+      <div class="showcase-grid">
+        <div class="glass-card" style="padding: var(--spacing-lg);">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">Glass Card</h4>
+          <p>This is a glass-card component with backdrop blur and hover effects. Perfect for containers and panels.</p>
+        </div>
+        <div class="glass-card" style="padding: var(--spacing-lg);">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">Hover Me</h4>
+          <p>Hover over this card to see the enhanced shadow and border effects.</p>
+        </div>
+      </div>
+      <div class="code-example">
+&lt;div class="glass-card" style="padding: 1.5rem;"&gt;
+  &lt;h4&gt;Card Title&lt;/h4&gt;
+  &lt;p&gt;Card content goes here&lt;/p&gt;
+&lt;/div&gt;
+      </div>
+
+      <h3>Glass Input</h3>
+      <div class="form-demo">
+        <label for="glass-name">Name</label>
+        <input type="text" id="glass-name" class="glass-input" placeholder="Enter your name">
+        
+        <label for="glass-email">Email</label>
+        <input type="email" id="glass-email" class="glass-input" placeholder="your@email.com">
+        
+        <label for="glass-message">Message</label>
+        <textarea id="glass-message" class="glass-input" rows="4" placeholder="Your message here..."></textarea>
+        
+        <label for="glass-select">Category</label>
+        <select id="glass-select" class="glass-input">
+          <option>Select a category</option>
+          <option>Feature Request</option>
+          <option>Bug Report</option>
+          <option>Feedback</option>
+        </select>
+      </div>
+      <div class="code-example">
+&lt;input type="text" class="glass-input" placeholder="Enter text..."&gt;
+&lt;textarea class="glass-input"&gt;&lt;/textarea&gt;
+&lt;select class="glass-input"&gt;
+  &lt;option&gt;Option 1&lt;/option&gt;
+&lt;/select&gt;
+      </div>
+
+      <h3>Glass Button</h3>
+      <div class="demo-container">
+        <button class="glass-button"><i class="fas fa-rocket"></i> Glass Button</button>
+        <a href="#" class="glass-button"><i class="fas fa-link"></i> Link Button</a>
+        <button class="glass-button" disabled>Disabled</button>
+      </div>
+      <div class="code-example">
+&lt;button class="glass-button"&gt;Click Me&lt;/button&gt;
+&lt;a href="#" class="glass-button"&gt;Link Button&lt;/a&gt;
+&lt;button class="glass-button" disabled&gt;Disabled&lt;/button&gt;
+      </div>
+
+      <h3>Glass Code</h3>
+      <div style="margin-bottom: var(--spacing-md);">
+        <pre class="glass-code">const example = "Hello, World!";
+const theme = {
+  accent: "#d94f90",
+  glass: "rgba(20, 12, 40, 0.7)"
+};</pre>
+      </div>
+      <div class="code-example">
+&lt;pre class="glass-code"&gt;const example = "Hello, World!";&lt;/pre&gt;
+&lt;code class="glass-code"&gt;inline code&lt;/code&gt;
+      </div>
+    </section>
+
+    <!-- Standard Components Section -->
+    <section class="showcase-section" id="standard-components">
+      <h2><i class="fas fa-shapes"></i> Standard Components</h2>
+
+      <h3>Cards</h3>
+      <div class="showcase-grid">
+        <div class="card">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">Standard Card</h4>
+          <p>This is a standard card component with glass effect.</p>
+          <button class="btn btn-sm" style="margin-top: var(--spacing-md);">Action</button>
+        </div>
+        <div class="card sm">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">Small Card</h4>
+          <p>Card with reduced padding.</p>
+        </div>
+        <div class="card lg">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">Large Card</h4>
+          <p>Card with increased padding for more content.</p>
+        </div>
+        <div class="frosted-card">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">Frosted Card</h4>
+          <p>Enhanced glass effect with stronger blur.</p>
+        </div>
+      </div>
+
+      <h3>Buttons</h3>
+      <div class="demo-container">
+        <button class="btn"><i class="fas fa-mouse"></i> Primary</button>
+        <button class="btn btn-secondary"><i class="fas fa-star"></i> Secondary</button>
+        <button class="btn btn-ghost"><i class="fas fa-ghost"></i> Ghost</button>
+        <button class="btn btn-sm">Small</button>
+        <button class="btn btn-lg">Large</button>
+        <button class="btn" disabled>Disabled</button>
+      </div>
+
+      <h3>Alerts</h3>
+      <div style="display: grid; gap: var(--spacing-md); max-width: 800px;">
+        <div class="alert alert-success">
+          <i class="fas fa-check-circle"></i> Success! Operation completed successfully.
+        </div>
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle"></i> Info: Here's some helpful information.
+        </div>
+        <div class="alert alert-warning">
+          <i class="fas fa-exclamation-triangle"></i> Warning: Please review this carefully.
+        </div>
+        <div class="alert alert-error">
+          <i class="fas fa-times-circle"></i> Error: Something went wrong.
+        </div>
+      </div>
+    </section>
+
+    <!-- Badges Section -->
+    <section class="showcase-section" id="badges">
+      <h2><i class="fas fa-tag"></i> Badges & Tags</h2>
+
+      <h3>Standard Badges</h3>
+      <div class="demo-container">
+        <span class="badge">Default</span>
+        <span class="badge badge-primary">Primary</span>
+        <span class="badge badge-secondary">Secondary</span>
+        <span class="badge badge-success">Success</span>
+        <span class="badge badge-warning">Warning</span>
+        <span class="badge badge-error">Error</span>
+      </div>
+
+      <h3>API Method Badges</h3>
+      <div class="demo-container">
+        <span class="badge badge-method">API</span>
+        <span class="badge badge-get">GET</span>
+        <span class="badge badge-post">POST</span>
+        <span class="badge badge-method">PUT</span>
+        <span class="badge badge-method">DELETE</span>
+      </div>
+      <div class="code-example">
+&lt;span class="badge badge-method"&gt;API&lt;/span&gt;
+&lt;span class="badge badge-get"&gt;GET&lt;/span&gt;
+&lt;span class="badge badge-post"&gt;POST&lt;/span&gt;
+      </div>
+
+      <h3>Tags</h3>
+      <div class="demo-container">
+        <span class="tag">React</span>
+        <span class="tag">Vue</span>
+        <span class="tag">Angular</span>
+        <span class="tag">Svelte</span>
+      </div>
+    </section>
+
+    <!-- Forms Section -->
+    <section class="showcase-section" id="forms">
+      <h2><i class="fas fa-edit"></i> Forms</h2>
+
+      <h3>Standard Form Inputs</h3>
+      <div class="form-demo">
+        <label for="name">Name *</label>
+        <input type="text" id="name" placeholder="Enter your name" required>
+
+        <label for="email">Email *</label>
+        <input type="email" id="email" placeholder="your@email.com" required>
+
+        <label for="category">Category</label>
+        <select id="category">
+          <option>Select a category</option>
+          <option>Feature</option>
+          <option>Bug Report</option>
+          <option>Feedback</option>
+        </select>
+
+        <label for="message">Message</label>
+        <textarea id="message" rows="4" placeholder="Your message here..."></textarea>
+
+        <label style="display: flex; align-items: center; margin-top: var(--spacing-md);">
+          <input type="checkbox" style="width: auto; margin-right: var(--spacing-sm);">
+          <span>I agree to the terms and conditions</span>
+        </label>
+
+        <button class="btn" style="width: 100%; margin-top: var(--spacing-lg);">Submit Form</button>
+      </div>
+
+      <h3>Component Comparison</h3>
+      <div class="comparison-grid">
+        <div class="comparison-item">
+          <h4>Standard Input</h4>
+          <input type="text" placeholder="Standard input style" style="width: 100%; margin-bottom: var(--spacing-md);">
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">
+            Uses default form styling with glass background.
+          </p>
+        </div>
+        <div class="comparison-item">
+          <h4>Glass Input</h4>
+          <input type="text" class="glass-input" placeholder="Glass input style" style="width: 100%; margin-bottom: var(--spacing-md);">
+          <p style="font-size: 0.875rem; color: var(--text-secondary);">
+            Enhanced glass effect with lighter background and better focus states.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Utilities Section -->
+    <section class="showcase-section" id="utilities">
+      <h2><i class="fas fa-tools"></i> Utilities & Layout</h2>
+
+      <h3>Grid System</h3>
+      <div class="grid grid-3">
+        <div class="card">
+          <h4 style="color: var(--accent);">Grid Item 1</h4>
+          <p>Responsive grid layout</p>
+        </div>
+        <div class="card">
+          <h4 style="color: var(--accent);">Grid Item 2</h4>
+          <p>Auto-fit columns</p>
+        </div>
+        <div class="card">
+          <h4 style="color: var(--accent);">Grid Item 3</h4>
+          <p>Mobile responsive</p>
+        </div>
+      </div>
+
+      <h3>Code Blocks</h3>
+      <div class="code-block" style="margin-bottom: var(--spacing-md);">
+        <pre style="margin: 0; color: var(--text-secondary);">// Standard code block
+const theme = {
+  accent: "#d94f90",
+  glass: "rgba(20, 12, 40, 0.7)"
+};</pre>
+      </div>
+      <pre class="glass-code" style="margin-bottom: var(--spacing-md);">// Glass code block
+const theme = {
+  accent: "#d94f90",
+  glass: "rgba(20, 12, 40, 0.7)"
+};</pre>
+
+      <h3>Dividers</h3>
+      <div style="max-width: 600px;">
+        <p>Content above divider</p>
+        <div class="divider"></div>
+        <p>Content below divider</p>
+        <div class="divider sm"></div>
+        <p>Small divider</p>
+        <div class="divider lg"></div>
+        <p>Large divider</p>
+      </div>
+    </section>
+
+    <!-- Color Palette Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-palette"></i> Color Palette</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: var(--spacing-lg);">
+        <div style="background: var(--accent); padding: var(--spacing-lg); border-radius: var(--radius-lg); text-align: center; color: white;">
+          <strong>Accent</strong><br>#d94f90
+        </div>
+        <div style="background: var(--accent-light); padding: var(--spacing-lg); border-radius: var(--radius-lg); text-align: center; color: white;">
+          <strong>Accent Light</strong><br>#e86ca8
+        </div>
+        <div style="background: var(--accent-dark); padding: var(--spacing-lg); border-radius: var(--radius-lg); text-align: center; color: white;">
+          <strong>Accent Dark</strong><br>#b61b70
+        </div>
+        <div style="background: var(--bg); border: 2px solid var(--border); padding: var(--spacing-lg); border-radius: var(--radius-lg); text-align: center;">
+          <strong>Background</strong><br>#0a0a0a
+        </div>
+        <div style="background: var(--text); padding: var(--spacing-lg); border-radius: var(--radius-lg); text-align: center; color: var(--bg);">
+          <strong>Text</strong><br>#f5f1f8
+        </div>
+        <div style="background: var(--glass); border: 1px solid var(--border); padding: var(--spacing-lg); border-radius: var(--radius-lg); text-align: center;">
+          <strong>Glass</strong><br>rgba(20, 12, 40, 0.7)
+        </div>
+        <div style="background: var(--glass-light); border: 1px solid var(--border); padding: var(--spacing-lg); border-radius: var(--radius-lg); text-align: center;">
+          <strong>Glass Light</strong><br>rgba(28, 18, 48, 0.5)
+        </div>
+        <div style="background: var(--glass-darker); border: 1px solid var(--border); padding: var(--spacing-lg); border-radius: var(--radius-lg); text-align: center;">
+          <strong>Glass Darker</strong><br>rgba(10, 5, 20, 0.6)
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
+      <p><strong>Corrupted Theme</strong> v0.1.0 • Built with <i class="fas fa-heart" style="color: var(--accent);"></i> by whykusanagi</p>
+      <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
+        <a href="../README.md" class="link">Documentation</a> •
+        <a href="../docs/CUSTOMIZATION.md" class="link">Customization</a> •
+        <a href="https://github.com/whykusanagi/corrupted-theme" class="link">GitHub</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    // Smooth scroll for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Update active state
+          document.querySelectorAll('.navbar-links a').forEach(link => {
+            link.classList.remove('active');
+          });
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Update active nav on scroll
+    const sections = document.querySelectorAll('.showcase-section');
+    const navLinks = document.querySelectorAll('.navbar-links a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.pageYOffset >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

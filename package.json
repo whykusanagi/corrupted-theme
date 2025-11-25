@@ -1,6 +1,7 @@
 {
   "name": "@whykusanagi/corrupted-theme",
   "version": "0.1.0",
+  "type": "module",
   "description": "A dark, glassmorphic design system with pink/purple accents. Perfect for creating modern, visually striking web applications.",
   "main": "src/css/theme.css",
   "style": "src/css/theme.css",

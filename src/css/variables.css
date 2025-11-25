@@ -15,6 +15,7 @@
   /* ========== GLASS MORPHISM EFFECTS ========== */
   --glass: rgba(20, 12, 40, 0.7);       /* Frosted glass (dark) */
   --glass-light: rgba(28, 18, 48, 0.5); /* Frosted glass (light) */
+  --glass-darker: rgba(10, 5, 20, 0.6);  /* Darker glass for code blocks */
 
   /* ========== BORDERS & DIVIDERS ========== */
   --border: #3a2555;           /* Primary border color */
@@ -45,9 +46,10 @@
   --radius-2xl: 20px;
 
   /* ========== TRANSITIONS ========== */
-  --transition-fast: 0.2s ease;
-  --transition-normal: 0.3s ease;
-  --transition-slow: 0.5s ease;
+  --transition: 0.3s ease;              /* Standard transition (alias for transition-normal) */
+  --transition-fast: 0.15s ease;        /* Fast transition for interactive elements */
+  --transition-normal: 0.3s ease;        /* Normal transition */
+  --transition-slow: 0.5s ease;          /* Slow transition */
   --transition-easing: cubic-bezier(0.34, 1.56, 0.64, 1); /* Custom easing */
 
   /* ========== Z-INDEX SCALE ========== */

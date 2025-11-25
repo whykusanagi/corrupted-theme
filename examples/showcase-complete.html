@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en" data-no-corruption-loading>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corrupted Theme - Complete Component Showcase</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
+  <link rel="stylesheet" href="../src/css/nikke-utilities.css">
+  <script src="../src/lib/corrupted-text.js"></script>
+  <script src="../src/lib/corruption-loading.js"></script>
+  <style>
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+    }
+
+    .showcase {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-xl);
+    }
+
+    .showcase-section {
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .showcase-section h2 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--border);
+      font-size: 2rem;
+    }
+
+    .showcase-section h3 {
+      color: var(--text);
+      margin-top: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+      font-size: 1.25rem;
+    }
+
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+
+    .code-example {
+      background: var(--glass-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.875rem;
+      overflow-x: auto;
+      color: var(--text-secondary);
+    }
+
+    .demo-container {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--spacing-md);
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--spacing-md);
+    }
+
+    .hero {
+      background: var(--gradient-accent);
+      color: white;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      border-radius: var(--radius-xl);
+      text-align: center;
+      margin-bottom: var(--spacing-2xl);
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      margin-bottom: var(--spacing-md);
+      color: white;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      margin-bottom: var(--spacing-md);
+      opacity: 0.95;
+    }
+
+    .bg-demo {
+      background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?w=800');
+      background-size: cover;
+      background-position: center;
+      min-height: 300px;
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="#" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="#glass-components" class="active">Glass</a></li>
+        <li><a href="#components">Components</a></li>
+        <li><a href="#navigation">Navigation</a></li>
+        <li><a href="#api-docs">API Docs</a></li>
+        <li><a href="#nikke">Nikke</a></li>
+        <li><a href="#corrupted">Corrupted</a></li>
+        <li><a href="#utilities">Utilities</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="showcase">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1>Corrupted Theme</h1>
+      <p>Complete Component Library</p>
+      <p style="font-size: 1rem; opacity: 0.9;">
+        A comprehensive dark design system with glassmorphism effects, ready for any application
+      </p>
+    </section>
+
+    <!-- Glass Components Section -->
+    <section class="showcase-section" id="glass-components">
+      <h2><i class="fas fa-cube"></i> Glass Components</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Reusable glass components perfect for API documentation, dashboards, and modern web applications.
+      </p>
+
+      <h3>Glass Card</h3>
+      <div class="showcase-grid">
+        <div class="glass-card" style="padding: var(--spacing-lg);">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">Glass Card</h4>
+          <p>This is a glass-card component with backdrop blur and hover effects.</p>
+        </div>
+        <div class="glass-card" style="padding: var(--spacing-lg);">
+          <h4 style="margin-bottom: var(--spacing-md); color: var(--accent);">Hover Me</h4>
+          <p>Hover over this card to see the enhanced shadow and border effects.</p>
+        </div>
+      </div>
+
+      <h3>Glass Input</h3>
+      <div style="max-width: 500px; margin-bottom: var(--spacing-lg);">
+        <input type="text" class="glass-input" placeholder="Enter your name" style="width: 100%; margin-bottom: var(--spacing-md);">
+        <textarea class="glass-input" rows="4" placeholder="Your message here..." style="width: 100%; margin-bottom: var(--spacing-md);"></textarea>
+        <select class="glass-input" style="width: 100%;">
+          <option>Select a category</option>
+          <option>Feature Request</option>
+          <option>Bug Report</option>
+        </select>
+      </div>
+
+      <h3>Glass Button</h3>
+      <div class="demo-container">
+        <button class="glass-button"><i class="fas fa-rocket"></i> Glass Button</button>
+        <a href="#" class="glass-button"><i class="fas fa-link"></i> Link Button</a>
+        <button class="glass-button" disabled>Disabled</button>
+      </div>
+
+      <h3>Glass Code</h3>
+      <pre class="glass-code" style="margin-bottom: var(--spacing-md);">const example = "Hello, World!";
+const theme = {
+  accent: "#d94f90",
+  glass: "rgba(20, 12, 40, 0.7)"
+};</pre>
+    </section>
+
+    <!-- Modals Section -->
+    <section class="showcase-section" id="components">
+      <h2><i class="fas fa-window-maximize"></i> Modals & Overlays</h2>
+      
+      <div class="demo-container">
+        <button class="btn" onclick="openModal('demo-modal')">Open Modal</button>
+        <button class="btn btn-secondary" onclick="openModal('large-modal')">Large Modal</button>
+      </div>
+
+      <!-- Modal -->
+      <div class="modal-overlay" id="demo-modal">
+        <div class="modal">
+          <div class="modal-header">
+            <h3 class="modal-title">Modal Title</h3>
+            <button class="modal-close" onclick="closeModal('demo-modal')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>This is a modal dialog with glass effect. You can add any content here.</p>
+            <p>Modals are perfect for confirmations, forms, or additional information.</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('demo-modal')">Cancel</button>
+            <button class="btn" onclick="closeModal('demo-modal')">Confirm</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-overlay" id="large-modal">
+        <div class="modal" style="max-width: 800px;">
+          <div class="modal-header">
+            <h3 class="modal-title">Large Modal</h3>
+            <button class="modal-close" onclick="closeModal('large-modal')">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>This is a larger modal for more content.</p>
+            <div class="card">
+              <h4>Card Inside Modal</h4>
+              <p>You can nest components inside modals.</p>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn" onclick="closeModal('large-modal')">Close</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading & Progress Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-spinner"></i> Loading & Progress</h2>
+
+      <h3>Spinners</h3>
+      <div class="demo-container">
+        <div class="spinner sm"></div>
+        <div class="spinner"></div>
+        <div class="spinner lg"></div>
+      </div>
+
+      <h3>Loading Bar</h3>
+      <div style="max-width: 600px; margin-bottom: var(--spacing-lg);">
+        <div class="loading-bar">
+          <div class="loading-bar-fill"></div>
+        </div>
+      </div>
+
+      <h3>Progress Bars</h3>
+      <div style="max-width: 600px; margin-bottom: var(--spacing-lg);">
+        <div class="progress" style="margin-bottom: var(--spacing-md);">
+          <div class="progress-bar" style="width: 25%;">25%</div>
+        </div>
+        <div class="progress" style="margin-bottom: var(--spacing-md);">
+          <div class="progress-bar" style="width: 50%;">50%</div>
+        </div>
+        <div class="progress" style="margin-bottom: var(--spacing-md);">
+          <div class="progress-bar success" style="width: 75%;">75%</div>
+        </div>
+        <div class="progress">
+          <div class="progress-bar" style="width: 100%;">100%</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tooltips Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-comment"></i> Tooltips</h2>
+
+      <div class="demo-container">
+        <span class="tooltip">
+          Hover me (top)
+          <span class="tooltip-content top">Tooltip on top</span>
+        </span>
+        <span class="tooltip">
+          Hover me (bottom)
+          <span class="tooltip-content bottom">Tooltip on bottom</span>
+        </span>
+        <span class="tooltip">
+          Hover me (left)
+          <span class="tooltip-content left">Tooltip on left</span>
+        </span>
+        <span class="tooltip">
+          Hover me (right)
+          <span class="tooltip-content right">Tooltip on right</span>
+        </span>
+      </div>
+    </section>
+
+    <!-- Navigation Menus Section -->
+    <section class="showcase-section" id="navigation">
+      <h2><i class="fas fa-bars"></i> Navigation Menus</h2>
+
+      <h3>Navbar (Sticky Navigation)</h3>
+      <div class="card" style="margin-bottom: var(--spacing-lg);">
+        <p style="margin-bottom: var(--spacing-md); color: var(--text-secondary);">
+          The navbar is sticky and stays at the top when scrolling. It includes logo and navigation links with hover effects.
+        </p>
+        <nav class="navbar" style="position: relative; margin: -1.5rem -1.5rem 1.5rem -1.5rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+          <div class="navbar-content">
+            <a href="#" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+            <ul class="navbar-links">
+              <li><a href="#glass-components" class="active"><i class="fas fa-cube"></i> Glass</a></li>
+              <li><a href="#components"><i class="fas fa-shapes"></i> Components</a></li>
+              <li><a href="#navigation"><i class="fas fa-bars"></i> Navigation</a></li>
+              <li><a href="#api-docs"><i class="fas fa-code"></i> API Docs</a></li>
+            </ul>
+          </div>
+        </nav>
+        <div class="code-example">
+&lt;nav class="navbar"&gt;
+  &lt;div class="navbar-content"&gt;
+    &lt;a href="#" class="navbar-logo"&gt;
+      &lt;i class="fas fa-palette"&gt;&lt;/i&gt; Logo
+    &lt;/a&gt;
+    &lt;ul class="navbar-links"&gt;
+      &lt;li&gt;&lt;a href="#home" class="active"&gt;Home&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#about"&gt;About&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href="#contact"&gt;Contact&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/div&gt;
+&lt;/nav&gt;
+        </div>
+      </div>
+
+      <h3>Navbar with Submenu</h3>
+      <div class="card" style="margin-bottom: var(--spacing-lg);">
+        <nav class="navbar" style="position: relative; margin: -1.5rem -1.5rem 1.5rem -1.5rem; border-radius: var(--radius-lg) var(--radius-lg) 0 0;">
+          <div class="navbar-content">
+            <a href="#" class="navbar-logo"><i class="fas fa-palette"></i> Theme</a>
+            <ul class="navbar-links">
+              <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+              <li class="has-submenu">
+                <a href="#"><i class="fas fa-folder"></i> Products <i class="fas fa-chevron-down" style="font-size: 0.7rem; margin-left: 0.25rem;"></i></a>
+                <div class="submenu">
+                  <a href="#"><i class="fas fa-box"></i> Product 1</a>
+                  <a href="#"><i class="fas fa-box"></i> Product 2</a>
+                  <a href="#"><i class="fas fa-box"></i> Product 3</a>
+                </div>
+              </li>
+              <li><a href="#"><i class="fas fa-info"></i> About</a></li>
+            </ul>
+          </div>
+        </nav>
+        <div class="code-example">
+&lt;ul class="navbar-links"&gt;
+  &lt;li&gt;&lt;a href="#"&gt;Home&lt;/a&gt;&lt;/li&gt;
+  &lt;li class="has-submenu"&gt;
+    &lt;a href="#"&gt;Products &lt;i class="fas fa-chevron-down"&gt;&lt;/i&gt;&lt;/a&gt;
+    &lt;div class="submenu"&gt;
+      &lt;a href="#"&gt;Product 1&lt;/a&gt;
+      &lt;a href="#"&gt;Product 2&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+        </div>
+      </div>
+
+      <h3>Dropdown Menus</h3>
+      <div class="demo-container">
+        <div class="dropdown">
+          <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+            Dropdown Menu <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item"><i class="fas fa-home"></i> Home</a>
+            <a href="#" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+            <a href="#" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item"><i class="fas fa-sign-out-alt"></i> Logout</a>
+          </div>
+        </div>
+
+        <div class="dropdown">
+          <button class="dropdown-toggle" onclick="toggleDropdown(this)">
+            Actions <i class="fas fa-chevron-down"></i>
+          </button>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item">Create New</a>
+            <a href="#" class="dropdown-item">Edit</a>
+            <a href="#" class="dropdown-item">Delete</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-example">
+&lt;div class="dropdown"&gt;
+  &lt;button class="dropdown-toggle" onclick="toggleDropdown(this)"&gt;
+    Menu &lt;i class="fas fa-chevron-down"&gt;&lt;/i&gt;
+  &lt;/button&gt;
+  &lt;div class="dropdown-menu"&gt;
+    &lt;a href="#" class="dropdown-item"&gt;Action 1&lt;/a&gt;
+    &lt;a href="#" class="dropdown-item"&gt;Action 2&lt;/a&gt;
+    &lt;div class="dropdown-divider"&gt;&lt;/div&gt;
+    &lt;a href="#" class="dropdown-item"&gt;Separated Action&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+      </div>
+    </section>
+
+    <!-- Tabs Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-folder"></i> Tabs</h2>
+
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(this, 'tab-1')">Tab 1</button>
+        <button class="tab" onclick="switchTab(this, 'tab-2')">Tab 2</button>
+        <button class="tab" onclick="switchTab(this, 'tab-3')">Tab 3</button>
+      </div>
+
+      <div id="tab-1" class="tab-content active">
+        <div class="card">
+          <h4>Tab 1 Content</h4>
+          <p>This is the content for the first tab.</p>
+        </div>
+      </div>
+
+      <div id="tab-2" class="tab-content">
+        <div class="card">
+          <h4>Tab 2 Content</h4>
+          <p>This is the content for the second tab.</p>
+        </div>
+      </div>
+
+      <div id="tab-3" class="tab-content">
+        <div class="card">
+          <h4>Tab 3 Content</h4>
+          <p>This is the content for the third tab.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tables Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-table"></i> Tables</h2>
+
+      <h3>Standard Table</h3>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>John Doe</td>
+            <td>john@example.com</td>
+            <td>Admin</td>
+            <td><span class="badge badge-success">Active</span></td>
+          </tr>
+          <tr>
+            <td>Jane Smith</td>
+            <td>jane@example.com</td>
+            <td>User</td>
+            <td><span class="badge badge-success">Active</span></td>
+          </tr>
+          <tr>
+            <td>Bob Johnson</td>
+            <td>bob@example.com</td>
+            <td>User</td>
+            <td><span class="badge badge-warning">Pending</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Striped Table</h3>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Stock</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Item 1</td>
+            <td>$29.99</td>
+            <td>In Stock</td>
+          </tr>
+          <tr>
+            <td>Item 2</td>
+            <td>$39.99</td>
+            <td>In Stock</td>
+          </tr>
+          <tr>
+            <td>Item 3</td>
+            <td>$19.99</td>
+            <td>Out of Stock</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- Pagination Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-list"></i> Pagination</h2>
+
+      <nav class="pagination">
+        <ul class="page-item">
+          <a href="#" class="page-link"><i class="fas fa-chevron-left"></i></a>
+        </ul>
+        <ul class="page-item">
+          <a href="#" class="page-link">1</a>
+        </ul>
+        <ul class="page-item active">
+          <a href="#" class="page-link">2</a>
+        </ul>
+        <ul class="page-item">
+          <a href="#" class="page-link">3</a>
+        </ul>
+        <ul class="page-item">
+          <a href="#" class="page-link">4</a>
+        </ul>
+        <ul class="page-item">
+          <a href="#" class="page-link"><i class="fas fa-chevron-right"></i></a>
+        </ul>
+      </nav>
+    </section>
+
+    <!-- Breadcrumbs Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-route"></i> Breadcrumbs</h2>
+
+      <nav class="breadcrumb">
+        <div class="breadcrumb-item">
+          <a href="#">Home</a>
+        </div>
+        <div class="breadcrumb-item">
+          <a href="#">Category</a>
+        </div>
+        <div class="breadcrumb-item">
+          <a href="#">Subcategory</a>
+        </div>
+        <div class="breadcrumb-item active">
+          Current Page
+        </div>
+      </nav>
+    </section>
+
+    <!-- List Groups Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-list-ul"></i> List Groups</h2>
+
+      <div class="list-group" style="max-width: 400px;">
+        <div class="list-group-item">Item 1</div>
+        <div class="list-group-item active">Active Item</div>
+        <div class="list-group-item">Item 3</div>
+        <div class="list-group-item disabled">Disabled Item</div>
+        <div class="list-group-item">Item 5</div>
+      </div>
+    </section>
+
+    <!-- API Documentation Section -->
+    <section class="showcase-section" id="api-docs">
+      <h2><i class="fas fa-code"></i> API Documentation Components</h2>
+
+      <div class="api-endpoint">
+        <div style="display: flex; align-items: center; margin-bottom: var(--spacing-md);">
+          <span class="api-method get">GET</span>
+          <code class="api-path">/api/v1/units</code>
+        </div>
+        <p class="api-description">
+          Retrieve a list of all available units. Supports filtering by element type and pagination.
+        </p>
+        <div class="api-params">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-md);">Query Parameters</h4>
+          <div class="api-param">
+            <span class="api-param-name">element</span>
+            <span class="api-param-type">string</span>
+            <span class="api-param-required">optional</span>
+            <p class="api-param-description">Filter units by element type (water, wind, iron, electric, fire)</p>
+          </div>
+          <div class="api-param">
+            <span class="api-param-name">page</span>
+            <span class="api-param-type">number</span>
+            <span class="api-param-required">optional</span>
+            <p class="api-param-description">Page number for pagination (default: 1)</p>
+          </div>
+        </div>
+        <div class="api-response">
+          <div class="api-response-title">Response (200 OK)</div>
+          <pre class="api-response-code">{
+  "data": [
+    {
+      "id": 1,
+      "name": "Scarlet Priest Abe",
+      "element": "electric"
+    }
+  ],
+  "meta": {
+    "page": 1,
+    "total": 100
+  }
+}</pre>
+        </div>
+      </div>
+
+      <div class="api-endpoint">
+        <div style="display: flex; align-items: center; margin-bottom: var(--spacing-md);">
+          <span class="api-method post">POST</span>
+          <code class="api-path">/api/v1/teams</code>
+        </div>
+        <p class="api-description">
+          Create a new team composition with up to 5 units.
+        </p>
+        <div class="api-params">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-md);">Request Body</h4>
+          <div class="api-param">
+            <span class="api-param-name">name</span>
+            <span class="api-param-type">string</span>
+            <span class="api-param-required">required</span>
+            <p class="api-param-description">Team name</p>
+          </div>
+          <div class="api-param">
+            <span class="api-param-name">units</span>
+            <span class="api-param-type">array</span>
+            <span class="api-param-required">required</span>
+            <p class="api-param-description">Array of unit IDs (max 5)</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Nikke Components Section -->
+    <section class="showcase-section" id="nikke">
+      <h2><i class="fas fa-gamepad"></i> Nikke Components</h2>
+
+      <h3>Element Badges</h3>
+      <div class="demo-container">
+        <span class="element-badge element-water">Water</span>
+        <span class="element-badge element-wind">Wind</span>
+        <span class="element-badge element-iron">Iron</span>
+        <span class="element-badge element-electric">Electric</span>
+        <span class="element-badge element-fire">Fire</span>
+      </div>
+
+      <h3>Element Pills (Interactive)</h3>
+      <div class="element-pills">
+        <button class="element-pill water" onclick="toggleElement(this)">Water</button>
+        <button class="element-pill wind active" onclick="toggleElement(this)">Wind</button>
+        <button class="element-pill iron" onclick="toggleElement(this)">Iron</button>
+        <button class="element-pill electric" onclick="toggleElement(this)">Electric</button>
+        <button class="element-pill fire" onclick="toggleElement(this)">Fire</button>
+      </div>
+
+      <h3>Team Position Cards</h3>
+      <div class="team-position-cards">
+        <div class="position-card filled">
+          <div class="position-header">
+            <span class="position-number">1</span>
+            <span class="position-label">Front Left</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="unit-name">Scarlet Priest Abe</div>
+            </div>
+            <button class="remove-unit" aria-label="Remove unit">×</button>
+          </div>
+        </div>
+        <div class="position-card filled">
+          <div class="position-header">
+            <span class="position-number">2</span>
+            <span class="position-label">Front Middle</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="unit-name">Soldier A Rapi</div>
+            </div>
+            <button class="remove-unit" aria-label="Remove unit">×</button>
+          </div>
+        </div>
+        <div class="position-card">
+          <div class="position-header">
+            <span class="position-number">3</span>
+            <span class="position-label">Front Right</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="empty-slot">Empty Slot</div>
+            </div>
+          </div>
+        </div>
+        <div class="position-card">
+          <div class="position-header">
+            <span class="position-number">4</span>
+            <span class="position-label">Back Left</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="empty-slot">Empty Slot</div>
+            </div>
+          </div>
+        </div>
+        <div class="position-card">
+          <div class="position-header">
+            <span class="position-number">5</span>
+            <span class="position-label">Back Right</span>
+          </div>
+          <div class="position-content">
+            <div class="unit-display">
+              <div class="empty-slot">Empty Slot</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Unit Selection</h3>
+      <div class="available-units">
+        <button class="unit-btn">Scarlet Priest Abe</button>
+        <button class="unit-btn selected">Soldier A Rapi</button>
+        <button class="unit-btn">Trap Lyudmila</button>
+        <button class="unit-btn">Fortress Maid Dolla</button>
+        <button class="unit-btn">Eggplant Helm</button>
+      </div>
+    </section>
+
+    <!-- Corrupted Animations & Text Highlighting Section -->
+    <section class="showcase-section" id="corrupted">
+      <h2><i class="fas fa-bug"></i> Corrupted Animations & Text Highlighting</h2>
+
+      <h3>Corruption Loading Screen</h3>
+      <div class="card" style="max-width: 800px; margin-bottom: var(--spacing-lg);">
+        <p style="margin-bottom: var(--spacing-md);">
+          The corruption loading animation plays automatically on first visit (or every 72 hours).
+        </p>
+        <p style="margin-bottom: var(--spacing-md);">
+          Features: Multi-language phrases (English/Romaji/Japanese), corrupted glyphs, typing animations, progress bar, and scanline effects.
+        </p>
+        <div class="demo-container">
+          <button class="btn" onclick="showCorruptionLoading({ force: true })">
+            <i class="fas fa-play"></i> Show Loading Animation
+          </button>
+          <button class="btn btn-secondary" onclick="localStorage.removeItem('corruptionLoadingLastPlayed'); alert('Loading animation reset! Refresh to see it.')">
+            <i class="fas fa-redo"></i> Reset 72-Hour Timer
+          </button>
+        </div>
+        <div class="code-example" style="margin-top: var(--spacing-md);">
+&lt;!-- Auto-plays on page load (every 72 hours) --&gt;
+&lt;script src="corruption-loading.js"&gt;&lt;/script&gt;
+
+&lt;!-- Disable auto-play --&gt;
+&lt;html data-no-corruption-loading&gt;
+
+&lt;!-- Manual trigger --&gt;
+&lt;script&gt;
+  showCorruptionLoading({ force: true });
+&lt;/script&gt;
+        </div>
+      </div>
+
+      <h3>Multi-Language Corrupted Text (Japanese/English/Romaji)</h3>
+      <div class="card" style="max-width: 800px; margin-bottom: var(--spacing-lg);">
+        <p style="margin-bottom: var(--spacing-md); color: var(--text-secondary);">
+          Cycles through different language variants with smooth transitions.
+        </p>
+      </div>
+      <div class="demo-container" style="flex-direction: column; align-items: flex-start; gap: var(--spacing-lg);">
+        <div style="width: 100%;">
+          <p style="font-size: 2rem; margin-bottom: var(--spacing-md); text-align: center; width: 100%;">
+            <span class="corrupted-multilang display" 
+                  data-english="Hello" 
+                  data-romaji="konnichiwa" 
+                  data-hiragana="こんにちは" 
+                  data-katakana="コンニチハ">
+            </span>
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; text-align: center;">
+            Cycles through English → Romaji → Hiragana → Katakana<br>
+            <small>Watch for subtle glitching and language transitions</small>
+          </p>
+        </div>
+        
+        <div style="width: 100%;">
+          <p style="font-size: 1.5rem; margin-bottom: var(--spacing-md); text-align: center;">
+            <span class="corrupted-multilang" 
+                  data-english="Welcome" 
+                  data-romaji="youkoso" 
+                  data-hiragana="ようこそ">
+            </span>
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; text-align: center;">
+            Three variants: English → Romaji → Hiragana
+          </p>
+        </div>
+
+        <div style="width: 100%;">
+          <p style="font-size: 1.2rem; margin-bottom: var(--spacing-md); text-align: center;">
+            <span class="corrupted-multilang" 
+                  data-english="Corrupted" 
+                  data-romaji="koraputo" 
+                  data-katakana="コラプト">
+            </span>
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; text-align: center;">
+            English → Romaji → Katakana
+          </p>
+        </div>
+      </div>
+
+      <div class="code-example" style="margin-top: var(--spacing-lg);">
+&lt;!-- Simple usage with data attributes --&gt;
+&lt;span class="corrupted-multilang" 
+      data-english="Hello" 
+      data-romaji="konnichiwa" 
+      data-hiragana="こんにちは" 
+      data-katakana="コンニチハ"&gt;
+&lt;/span&gt;
+
+&lt;!-- Display size variant --&gt;
+&lt;span class="corrupted-multilang display" 
+      data-english="Welcome" 
+      data-romaji="youkoso"&gt;
+&lt;/span&gt;
+      </div>
+
+      <h3>Standard Corrupted Text Animation</h3>
+      <div class="card" style="max-width: 800px; margin-bottom: var(--spacing-lg);">
+        <p style="margin-bottom: var(--spacing-md); color: var(--text-secondary);">
+          Continuous corruption effect with dual-layer glitching. Hover to see the layers separate slightly.
+        </p>
+      </div>
+      <div class="demo-container" style="flex-direction: column; align-items: flex-start; gap: var(--spacing-lg);">
+        <div>
+          <p style="font-size: 1.5rem; margin-bottom: var(--spacing-md);">
+            <span class="corrupted-text" data-text="CORRUPTED">CORRUPTED</span>
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Continuous corruption effect with glitch layers
+          </p>
+        </div>
+        <div>
+          <p style="font-size: 2rem; margin-bottom: var(--spacing-md);">
+            <span class="corrupted-strong">CORRUPTED STRONG</span>
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Strong corruption with intense glow effect
+          </p>
+        </div>
+        <div>
+          <p style="font-size: 1.2rem; margin-bottom: var(--spacing-md);">
+            <span class="glitch-word" data-text="GLITCH">GLITCH</span>
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Hover over this text to see the fragmented glitch effect with tearing noise
+          </p>
+        </div>
+        <div>
+          <p style="font-size: 1.5rem; margin-bottom: var(--spacing-md);">
+            <span class="glitch-kanji">
+              <span class="glitch-word" data-text="CORRUPTED TEXT">CORRUPTED TEXT</span>
+            </span>
+          </p>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Text fragments and distorts on hover with clip-path animations, scanlines, and Japanese flicker
+          </p>
+        </div>
+      </div>
+
+      <h3>Text Highlighting (Code-like)</h3>
+      <div class="card" style="max-width: 800px;">
+        <p style="margin-bottom: var(--spacing-md);">
+          Use <span class="text-highlight">text-highlight</span> for inline code-like highlighting.
+        </p>
+        <p style="margin-bottom: var(--spacing-md);">
+          Or use <span class="text-highlight code">text-highlight code</span> for a darker code block style.
+        </p>
+        <p style="margin-bottom: var(--spacing-md);">
+          You can also use <span class="text-highlight accent">accent</span>, 
+          <span class="text-highlight success">success</span>, 
+          <span class="text-highlight warning">warning</span>, or 
+          <span class="text-highlight error">error</span> variants.
+        </p>
+        <p style="margin-bottom: var(--spacing-md);">
+          Standard <code>code</code> tags also get the code block styling automatically.
+        </p>
+        <p>
+          Example: The function <code>getUserData()</code> returns a <span class="text-highlight">Promise</span>.
+        </p>
+      </div>
+
+      <h3>Syntax-like Highlighting</h3>
+      <div class="glass-code" style="margin-bottom: var(--spacing-md);">
+        <span class="code-keyword">const</span> <span class="code-variable">theme</span> = <span class="code-string">"corrupted"</span>;<br>
+        <span class="code-function">function</span> <span class="code-function">init</span>() {<br>
+        &nbsp;&nbsp;<span class="code-comment">// Initialize theme</span><br>
+        &nbsp;&nbsp;<span class="code-keyword">return</span> <span class="code-variable">theme</span>;<br>
+        }
+      </div>
+
+      <div class="code-example">
+&lt;span class="corrupted-text" data-text="CORRUPTED"&gt;CORRUPTED&lt;/span&gt;
+&lt;span class="corrupted-strong"&gt;CORRUPTED STRONG&lt;/span&gt;
+&lt;span class="text-highlight"&gt;highlighted text&lt;/span&gt;
+&lt;span class="text-highlight code"&gt;code-like text&lt;/span&gt;
+&lt;code&gt;inline code&lt;/code&gt;
+      </div>
+    </section>
+
+    <!-- Background Images Section -->
+    <section class="showcase-section">
+      <h2><i class="fas fa-image"></i> Background Images</h2>
+
+      <h3>Background Image with Overlay</h3>
+      <div class="bg-image bg-demo">
+        <div class="glass-card" style="padding: var(--spacing-xl); max-width: 500px;">
+          <h3 style="color: white; margin-bottom: var(--spacing-md);">Content Over Image</h3>
+          <p style="color: rgba(255, 255, 255, 0.9);">This card is displayed over a background image with automatic overlay.</p>
+        </div>
+      </div>
+
+      <h3>Background Overlay Utilities</h3>
+      <div class="showcase-grid">
+        <div class="bg-overlay bg-overlay-light" style="background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?w=400'); background-size: cover; padding: var(--spacing-xl); border-radius: var(--radius-lg); min-height: 200px;">
+          <h4 style="color: white;">Light Overlay</h4>
+          <p style="color: rgba(255, 255, 255, 0.9);">Content with light background overlay</p>
+        </div>
+        <div class="bg-overlay bg-overlay-dark" style="background-image: url('https://images.unsplash.com/photo-1557683316-973673baf926?w=400'); background-size: cover; padding: var(--spacing-xl); border-radius: var(--radius-lg); min-height: 200px;">
+          <h4 style="color: white;">Dark Overlay</h4>
+          <p style="color: rgba(255, 255, 255, 0.9);">Content with dark background overlay</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
+      <p><strong>Corrupted Theme</strong> v0.1.0 • Built with <i class="fas fa-heart" style="color: var(--accent);"></i> by whykusanagi</p>
+      <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
+        <a href="../README.md" class="link">Documentation</a> •
+        <a href="../docs/CUSTOMIZATION.md" class="link">Customization</a> •
+        <a href="https://github.com/whykusanagi/corrupted-theme" class="link">GitHub</a>
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    const lewdJapanesePhrases = [
+      "闇が...私を呼んでいる...",
+      "頭...溶けていく...",
+      "ずっと...してほしい... ♥",
+      "壊れちゃう...ああ...もうダメ...",
+      "許して...もう戻れない...",
+      "私...アビスの一部に...",
+      "もう逃げない...もうダメ...",
+      "好きにして...お願い...",
+      "ああ...これが本当の私...",
+      "ここは...天使の地獄..."
+    ];
+
+    function initGlitchKanji() {
+      const glitchElements = document.querySelectorAll('.glitch-kanji');
+      glitchElements.forEach(el => {
+        const setPhrase = () => {
+          const phrase = lewdJapanesePhrases[Math.floor(Math.random() * lewdJapanesePhrases.length)];
+          el.setAttribute('data-jp', phrase);
+        };
+        setPhrase();
+        setInterval(setPhrase, 3000);
+      });
+    }
+
+    // Modal functions
+    function openModal(id) {
+      document.getElementById(id).classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) {
+          this.classList.remove('active');
+          document.body.style.overflow = '';
+        }
+      });
+    });
+
+    // Dropdown functions
+    function toggleDropdown(button) {
+      const menu = button.nextElementSibling;
+      const isActive = menu.classList.contains('active');
+      
+      // Close all dropdowns
+      document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
+      document.querySelectorAll('.dropdown-toggle').forEach(b => b.classList.remove('active'));
+      
+      // Toggle current
+      if (!isActive) {
+        menu.classList.add('active');
+        button.classList.add('active');
+      }
+    }
+
+    // Close dropdowns on outside click
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.dropdown')) {
+        document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.dropdown-toggle').forEach(b => b.classList.remove('active'));
+      }
+    });
+
+    // Tab functions
+    function switchTab(button, contentId) {
+      // Remove active from all tabs and contents
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      
+      // Add active to clicked tab and corresponding content
+      button.classList.add('active');
+      document.getElementById(contentId).classList.add('active');
+    }
+
+    // Element pill toggle
+    function toggleElement(button) {
+      button.classList.toggle('active');
+    }
+
+    // Smooth scroll for navigation
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Update active nav
+          document.querySelectorAll('.navbar-links a').forEach(link => {
+            link.classList.remove('active');
+          });
+          this.classList.add('active');
+        }
+      });
+    });
+
+    // Update active nav on scroll
+    const sections = document.querySelectorAll('.showcase-section');
+    const navLinks = document.querySelectorAll('.navbar-links a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.pageYOffset >= sectionTop - 200) {
+          current = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${current}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    document.addEventListener('DOMContentLoaded', initGlitchKanji);
+  </script>
+</body>
+</html>
+

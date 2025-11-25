@@ -171,6 +171,7 @@
   display: inline-block;
   color: var(--text);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 
 .glitch-word::before,
@@ -180,30 +181,359 @@
   left: 0;
   top: 0;
   width: 100%;
-  color: var(--accent);
-  z-index: -1;
+  height: 100%;
   opacity: 0;
-}
-
-.glitch-word:hover::before,
-.glitch-word:hover::after {
-  opacity: 0.6;
+  pointer-events: none;
+  white-space: nowrap;
 }
 
 .glitch-word::before {
-  animation: glitchShift1 0.3s linear alternate;
+  color: var(--accent-light);
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+  z-index: -1;
 }
 
 .glitch-word::after {
-  animation: glitchShift2 0.25s linear alternate;
+  color: var(--accent-dark);
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+  z-index: -2;
+}
+
+.glitch-word:hover {
+  color: var(--accent);
+  text-shadow: 0 0 4px var(--accent);
 }
 
 .glitch-word:hover::before {
-  animation: glitchShift1 0.3s infinite linear alternate-reverse;
+  opacity: 0.9;
+  animation: glitchShift1 0.1s infinite linear, dataCorrupt 0.3s infinite;
+  transform: translate(-2px, 0);
 }
 
 .glitch-word:hover::after {
-  animation: glitchShift2 0.25s infinite linear alternate;
+  opacity: 0.9;
+  animation: glitchShift2 0.15s infinite linear reverse, dataCorrupt 0.4s infinite reverse;
+  transform: translate(2px, 0);
+}
+
+/* Additional fragmentation effect */
+.glitch-word:hover {
+  animation: glitch 0.2s infinite;
+  filter: blur(0.3px);
+}
+
+@keyframes textFragment {
+  0%, 100% {
+    clip-path: inset(0 0 0 0);
+    transform: translate(0, 0);
+  }
+  10% {
+    clip-path: inset(10% 5% 15% 0);
+    transform: translate(-1px, 1px);
+  }
+  20% {
+    clip-path: inset(5% 10% 0 5%);
+    transform: translate(1px, -1px);
+  }
+  30% {
+    clip-path: inset(15% 0 10% 10%);
+    transform: translate(-1px, -1px);
+  }
+  40% {
+    clip-path: inset(0 15% 5% 0);
+    transform: translate(1px, 1px);
+  }
+  50% {
+    clip-path: inset(8% 8% 8% 8%);
+    transform: translate(0, 0);
+  }
+  60% {
+    clip-path: inset(12% 2% 18% 3%);
+    transform: translate(-2px, 1px);
+  }
+  70% {
+    clip-path: inset(3% 12% 2% 18%);
+    transform: translate(2px, -1px);
+  }
+  80% {
+    clip-path: inset(18% 3% 12% 2%);
+    transform: translate(-1px, -2px);
+  }
+  90% {
+    clip-path: inset(2% 18% 3% 12%);
+    transform: translate(1px, 2px);
+  }
+}
+
+.glitch-word:hover::before {
+  animation: glitchShift1 0.1s infinite linear, textFragment 0.5s infinite;
+}
+
+.glitch-word:hover::after {
+  animation: glitchShift2 0.15s infinite linear reverse, textFragment 0.6s infinite reverse;
+}
+
+/* ========== CORRUPTED ANIMATION ========== */
+/* Continuous corruption effect for text and elements */
+
+@keyframes corrupt {
+  0% {
+    filter: hue-rotate(0deg) brightness(1);
+    transform: translate(0, 0);
+  }
+  10% {
+    filter: hue-rotate(90deg) brightness(1.1);
+    transform: translate(-1px, 1px);
+  }
+  20% {
+    filter: hue-rotate(180deg) brightness(0.9);
+    transform: translate(1px, -1px);
+  }
+  30% {
+    filter: hue-rotate(270deg) brightness(1.05);
+    transform: translate(-1px, -1px);
+  }
+  40% {
+    filter: hue-rotate(360deg) brightness(0.95);
+    transform: translate(1px, 1px);
+  }
+  50% {
+    filter: hue-rotate(0deg) brightness(1);
+    transform: translate(0, 0);
+  }
+  60% {
+    filter: hue-rotate(-90deg) brightness(1.1);
+    transform: translate(1px, 1px);
+  }
+  70% {
+    filter: hue-rotate(-180deg) brightness(0.9);
+    transform: translate(-1px, -1px);
+  }
+  80% {
+    filter: hue-rotate(-270deg) brightness(1.05);
+    transform: translate(1px, -1px);
+  }
+  90% {
+    filter: hue-rotate(-360deg) brightness(0.95);
+    transform: translate(-1px, 1px);
+  }
+  100% {
+    filter: hue-rotate(0deg) brightness(1);
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes corruptText {
+  0%, 100% {
+    text-shadow: 
+      0 0 2px var(--accent),
+      0 0 4px var(--accent),
+      0 0 6px var(--accent),
+      0 0 8px var(--accent-light);
+    filter: hue-rotate(0deg);
+  }
+  25% {
+    text-shadow: 
+      -1px 0 2px var(--accent-light),
+      1px 0 4px var(--accent),
+      -2px 0 6px var(--accent-dark),
+      2px 0 8px var(--accent);
+    filter: hue-rotate(90deg);
+  }
+  50% {
+    text-shadow: 
+      0 -1px 2px var(--accent),
+      0 1px 4px var(--accent-light),
+      0 -2px 6px var(--accent-dark),
+      0 2px 8px var(--accent);
+    filter: hue-rotate(180deg);
+  }
+  75% {
+    text-shadow: 
+      1px 1px 2px var(--accent-light),
+      -1px -1px 4px var(--accent),
+      2px 2px 6px var(--accent-dark),
+      -2px -2px 8px var(--accent);
+    filter: hue-rotate(270deg);
+  }
+}
+
+.corrupted {
+  animation: corrupt 3s ease-in-out infinite;
+  position: relative;
+}
+
+.corrupted-text {
+  animation: corruptText 2s ease-in-out infinite;
+  color: var(--accent);
+  font-weight: 600;
+  position: relative;
+  display: inline-block;
+}
+
+.corrupted-text::before,
+.corrupted-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.corrupted-text::before {
+  color: var(--accent-light);
+  animation: glitchShift1 0.15s infinite linear;
+  z-index: -1;
+  clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+}
+
+.corrupted-text::after {
+  color: var(--accent-dark);
+  animation: glitchShift2 0.2s infinite linear reverse;
+  z-index: -2;
+  clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+}
+
+/* Enhanced on hover */
+.corrupted-text:hover {
+  animation: corruptText 1s ease-in-out infinite;
+}
+
+/* Advanced glitch wrapper with scanlines + Japanese scatter */
+.glitch-kanji {
+  position: relative;
+  display: inline-block;
+  background-image:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(217, 79, 144, 0.15) 2px,
+      rgba(217, 79, 144, 0.15) 3px
+    );
+  background-size: 100% 4px;
+  animation: scanlines 0.12s linear infinite;
+  padding: 0.1rem 0.25rem;
+}
+
+.glitch-kanji::before {
+  content: attr(data-jp);
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.6em;
+  color: rgba(217, 79, 144, 0.45);
+  letter-spacing: 0.2em;
+  pointer-events: none;
+  opacity: 0;
+  mix-blend-mode: screen;
+  animation: japaneseScatter 2.5s ease-in-out infinite;
+  text-shadow:
+    0 0 3px var(--accent),
+    0 0 6px rgba(217, 79, 144, 0.8);
+}
+
+.glitch-kanji:hover::before {
+  animation-duration: 1.2s;
+  opacity: 0.9;
+}
+
+@keyframes scanlines {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 4px;
+  }
+}
+
+@keyframes japaneseScatter {
+  0%, 100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.95);
+  }
+  25% {
+    opacity: 0.4;
+    transform: translate(-60%, -60%) scale(1.05);
+  }
+  50% {
+    opacity: 0.7;
+    transform: translate(-40%, -40%) scale(0.9);
+  }
+  75% {
+    opacity: 0.4;
+    transform: translate(-55%, -45%) scale(1.1);
+  }
+}
+
+.corrupted-strong {
+  animation: corruptText 1.5s ease-in-out infinite;
+  color: var(--accent);
+  text-shadow: 
+    0 0 4px var(--accent),
+    0 0 8px var(--accent-light),
+    0 0 12px var(--accent);
+  font-weight: 700;
+}
+
+/* ========== MULTI-LANGUAGE CORRUPTED TEXT ========== */
+/* Text that cycles through Japanese/English/romaji */
+
+.corrupted-multilang {
+  display: inline-block;
+  color: var(--accent);
+  font-weight: 600;
+  font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+  letter-spacing: 0.05em;
+  position: relative;
+  min-height: 1.2em;
+  animation: corruptText 2s ease-in-out infinite;
+  line-height: 1.4;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+/* Handle zalgo combining characters */
+.corrupted-multilang {
+  text-rendering: optimizeLegibility;
+  -webkit-font-feature-settings: "liga" off;
+  font-feature-settings: "liga" off;
+}
+
+.corrupted-multilang::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: rgba(217, 79, 144, 0.1);
+  border: 1px solid rgba(217, 79, 144, 0.3);
+  border-radius: var(--radius-sm);
+  z-index: -1;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.corrupted-multilang.corrupting {
+  animation: corruptText 0.5s ease-in-out infinite;
+}
+
+.corrupted-multilang.settled {
+  animation: none;
+  color: var(--text);
+}
+
+/* Variant for larger display text */
+.corrupted-multilang.display {
+  font-size: 2rem;
+  font-weight: 700;
+  text-shadow: 
+    0 0 4px var(--accent),
+    0 0 8px var(--accent-light),
+    0 0 12px var(--accent);
+  padding: var(--spacing-md) var(--spacing-lg);
 }
 
 /* ========== PULSE & BREATHING ANIMATIONS ========== */

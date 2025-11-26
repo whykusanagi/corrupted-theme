@@ -31,3 +31,4 @@ node_modules/
 *.tmp
 .env
 .env.local
+CLAUDE.md

@@ -21,6 +21,48 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.1] - 2025-11-26
+
+### Fixed
+
+#### Navbar Z-Index Issue
+- **Changed:** `--z-navbar` from `500` to `1000` in `variables.css`
+- **Why:** Navbar was appearing behind content when using video backgrounds with `.app-shell` structure
+- **Impact:** Navbar now always renders above all content layers
+
+#### Navbar Styles Not Available with Modular Imports
+- **Moved:** All navbar styles (`nav.navbar`, `.navbar-content`, `.navbar-logo`, `.navbar-links`) from `theme.css` to `components.css`
+- **Why:** When using modular imports (as documented), navbar styles were missing because they only existed in `theme.css`
+- **Impact:** Navbar now works correctly with both single-file and modular import methods
+
+### Changed
+
+#### Documentation Improvements
+- **Added:** "Video Backgrounds with Navigation" section to README
+  - Proper navbar placement outside `.app-shell` for z-index stacking
+  - Complete z-index hierarchy table with all tokens
+  - HTML structure example for video backgrounds with navigation
+
+- **Added:** "HTML Import Methods" section to README
+  - Method 1: Single file import (recommended)
+  - Method 2: Modular imports with correct dependency order
+  - CSS `@import` syntax examples
+  - HTML `<link>` tag syntax examples
+  - Explanation of why import order matters
+
+#### CSS Architecture
+- Navbar responsive styles consolidated in `components.css`
+- Removed duplicate navbar styles from `theme.css`
+- Z-index values now use CSS custom properties consistently (`var(--z-negative)`, `var(--z-background)`, etc.)
+
+### Files Modified
+- `src/css/variables.css` - Z-index value change
+- `src/css/components.css` - Added navbar base styles and responsive styles
+- `src/css/theme.css` - Removed navbar styles (now imported via components.css)
+- `README.md` - Enhanced documentation
+
+---
+
 ## [0.1.0] - 2025-11-23
 
 ### Added

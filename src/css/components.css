@@ -781,9 +781,91 @@ pre .code-inline {
   transform: translateY(-50%) translateX(0);
 }
 
-/* ========== NAVIGATION MENUS ========== */
+/* ========== NAVIGATION ========== */
 
-/* Navbar - Already defined in theme.css, but adding explicit menu variants */
+nav.navbar {
+  position: sticky;
+  top: 0;
+  z-index: var(--z-navbar);
+  background: rgba(10, 10, 10, 0.95);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(15px);
+  padding: 0;
+}
+
+.navbar-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+.navbar-logo {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--accent);
+  text-decoration: none;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: fit-content;
+}
+
+.navbar-logo:hover {
+  color: var(--accent-light);
+  transform: translateY(-2px);
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.navbar-links a {
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: var(--accent);
+  transition: width var(--transition-normal);
+}
+
+.navbar-links a:hover {
+  color: var(--accent);
+}
+
+.navbar-links a:hover::after {
+  width: 100%;
+}
+
+.navbar-links a.active {
+  color: var(--accent);
+}
+
+.navbar-links a.active::after {
+  width: 100%;
+}
 
 /* Mobile Menu Toggle */
 .navbar-toggle {
@@ -1387,6 +1469,23 @@ pre .code-inline {
   .dropdown-menu {
     left: auto;
     right: 0;
+  }
+
+  /* Navbar responsive */
+  .navbar-content {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+  }
+
+  .navbar-links {
+    gap: 1rem;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .navbar-links a {
+    font-size: 0.9rem;
   }
 
   .navbar-toggle {

@@ -76,6 +76,16 @@ Copy `src/css` into your project (or use `dist/theme.min.css`) and import it loc
 - `npm run dev:proxy` – Celeste proxy (port 5000)
 
 ## Base Layout & Background
+
+### Static Background
+```html
+<body>
+  <div class="glass-backdrop"></div>
+  <main class="app-shell"><!-- your glass UI --></main>
+</body>
+```
+
+### Video Background
 ```html
 <body>
   <video class="background-media" autoplay muted loop playsinline>
@@ -85,27 +95,128 @@ Copy `src/css` into your project (or use `dist/theme.min.css`) and import it loc
   <main class="app-shell"><!-- your glass UI --></main>
 </body>
 ```
+
+### Required CSS
 ```css
 html, body { min-height: 100vh; background: var(--bg); margin: 0; }
-.background-media { position: fixed; inset: 0; object-fit: cover; z-index: -2; }
-.glass-backdrop { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(5,0,16,.85), rgba(10,10,10,.9)); z-index: -1; }
-.app-shell { position: relative; z-index: 1; padding: clamp(1.5rem, 3vw, 3rem); backdrop-filter: blur(0); }
+.background-media { position: fixed; inset: 0; object-fit: cover; z-index: var(--z-negative); }
+.glass-backdrop { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(5,0,16,.85), rgba(10,10,10,.9)); z-index: var(--z-background); }
+.app-shell { position: relative; z-index: var(--z-elevated); padding: clamp(1.5rem, 3vw, 3rem); backdrop-filter: blur(0); }
 ```
-Use `.app-shell` as the only stacking context above the backdrop so containers never block the video/image layer.
+
+### Video Backgrounds with Navigation
+
+When using video backgrounds, place the navbar **outside** `.app-shell` for proper z-index stacking:
+
+```html
+<body>
+  <!-- Background layer -->
+  <video class="background-media" autoplay muted loop playsinline>
+    <source src="/media/corruption-loop.mp4" type="video/mp4" />
+  </video>
+  <div class="glass-backdrop"></div>
+  
+  <!-- Navigation MUST be outside app-shell for proper stacking -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a class="navbar-logo" href="/">Brand</a>
+      <ul class="navbar-links">
+        <li><a href="#home" class="active">Home</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+  
+  <!-- Main content -->
+  <main class="app-shell">
+    <!-- your glass UI components -->
+  </main>
+</body>
+```
+
+### Z-Index Hierarchy
+
+The theme uses a systematic z-index scale defined in `variables.css`:
+
+| Token | Value | Purpose |
+|-------|-------|---------|
+| `--z-negative` | `-2` | Background media (video/image) |
+| `--z-background` | `-1` | Glass backdrop overlay |
+| `--z-base` | `0` | Default stacking |
+| `--z-elevated` | `1` | App shell and content |
+| `--z-navbar` | `1000` | Navigation (always above content) |
+| `--z-modal` | `1000` | Modals and overlays |
+
+> **Important:** The navbar uses `z-index: 1000` to ensure it always appears above all content, including video backgrounds and elevated containers.
 
 ## CSS & JS Imports
+
+### Method 1: Single File Import (Recommended)
+
+The simplest approach — import everything in one line:
+
 ```html
-<link rel="stylesheet" href="@whykusanagi/corrupted-theme/dist/theme.min.css">
+<!-- HTML -->
+<link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/dist/theme.min.css">
+```
+
+```css
+/* CSS */
+@import '@whykusanagi/corrupted-theme';
+```
+
+✅ **Recommended for most projects.** Includes all styles in the correct order automatically.
+
+### Method 2: Modular Imports (Advanced)
+
+Import only the modules you need for smaller bundle sizes. 
+
+> ⚠️ **CRITICAL: Import order matters!** Modules have dependencies that require specific ordering.
+
+#### CSS @import Syntax
+```css
+/* Correct order (matches theme.css structure) */
+@import '@whykusanagi/corrupted-theme/variables';     /* 1. Foundation tokens */
+@import '@whykusanagi/corrupted-theme/typography';    /* 2. Font styles */
+@import '@whykusanagi/corrupted-theme/glassmorphism'; /* 3. Glass effects */
+@import '@whykusanagi/corrupted-theme/animations';    /* 4. Keyframes - MUST come before components */
+@import '@whykusanagi/corrupted-theme/components';    /* 5. UI components - MUST come after animations */
+@import '@whykusanagi/corrupted-theme/utilities';     /* 6. Utility classes */
+```
+
+#### HTML Link Tags
+```html
+<!-- Correct order (matches theme.css structure) -->
+<link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/src/css/variables.css">
+<link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/src/css/typography.css">
+<link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/src/css/glassmorphism.css">
+<link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/src/css/animations.css">    <!-- MUST come before components -->
+<link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/src/css/components.css">    <!-- MUST come after animations -->
+<link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/src/css/utilities.css">
+```
+
+#### Why Order Matters
+- `components.css` uses animation keyframes defined in `animations.css`
+- If `components.css` loads before `animations.css`, spinner and loading animations won't work
+- Always verify order by checking `src/css/theme.css` (shows canonical import structure)
+
+### JavaScript Imports
+
+```html
+<!-- HTML -->
 <script type="module" src="@whykusanagi/corrupted-theme/src/lib/corrupted-text.js"></script>
 <script type="module" src="@whykusanagi/corrupted-theme/src/lib/corruption-loading.js"></script>
 ```
+
 ```js
+// ES Modules
 import { initCorruptedText } from '@whykusanagi/corrupted-theme/src/lib/corrupted-text.js';
 import { showCorruptionLoading } from '@whykusanagi/corrupted-theme/src/lib/corruption-loading.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  initCorruptedText();                      // re-init if you stream new DOM
-  // showCorruptionLoading({ force: true }); // force-run outside 72h cadence
+  initCorruptedText();                       // Initialize glitch text effects
+  // showCorruptionLoading({ force: true }); // Force loader outside 72h cadence
 });
 ```
 

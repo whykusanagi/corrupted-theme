@@ -1,0 +1,933 @@
+/* extensions.css — Extended Components for Corrupted Theme */
+/*
+ * Additional components built for production use on whykusanagi.xyz
+ * These extend the core theme with gallery, lightbox, social links, and countdown widgets
+ *
+ * Components:
+ * - Gallery System (grid layout, filtering, items)
+ * - Lightbox (fullscreen image viewer)
+ * - Social Links (link-in-bio style layout)
+ * - Countdown Widget (event countdown with shapes)
+ * - NSFW Content Blur (content warning overlay)
+ */
+
+/* ========== GALLERY SYSTEM ========== */
+/*
+ * Responsive gallery grid with filtering support.
+ * Works with gallery.js for interactive filtering and lightbox.
+ *
+ * Usage:
+ * <div class="gallery-container">
+ *   <div class="gallery-item" data-tags="category1">
+ *     <img src="..." alt="...">
+ *     <div class="gallery-caption">Caption</div>
+ *   </div>
+ * </div>
+ */
+
+.gallery-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: var(--spacing-lg);
+}
+
+.gallery-container.compact {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.gallery-container.large {
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: var(--spacing-xl);
+}
+
+.gallery-item {
+  background: var(--glass);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-normal);
+  overflow: hidden;
+  position: relative;
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+  border-color: var(--border-light);
+  box-shadow: 0 12px 40px rgba(217, 79, 144, 0.2);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform var(--transition-normal);
+  display: block;
+}
+
+.gallery-item:hover img {
+  transform: scale(1.02);
+}
+
+.gallery-caption {
+  margin-top: var(--spacing-sm);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.gallery-caption .title {
+  color: var(--text);
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+}
+
+.gallery-caption .meta {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+/* Gallery item with aspect ratio */
+.gallery-item.square img {
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.gallery-item.portrait img {
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+}
+
+.gallery-item.landscape img {
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+/* ========== FILTER BAR ========== */
+/*
+ * Category filter buttons for gallery filtering.
+ * Works with gallery.js for interactive filtering.
+ *
+ * Usage:
+ * <div class="filter-bar">
+ *   <button class="btn filter-btn active" data-filter="all">All</button>
+ *   <button class="btn filter-btn" data-filter="photos">Photos</button>
+ * </div>
+ */
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xl);
+}
+
+.filter-bar.left {
+  justify-content: flex-start;
+}
+
+.filter-bar.right {
+  justify-content: flex-end;
+}
+
+.filter-btn {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.filter-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(217, 79, 144, 0.1);
+}
+
+.filter-btn.active {
+  background: var(--gradient-accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ========== LIGHTBOX ========== */
+/*
+ * Fullscreen image viewer with keyboard navigation.
+ * Works with gallery.js for integration.
+ *
+ * Usage:
+ * <div class="lightbox" id="lightbox">
+ *   <button class="lightbox-close">&times;</button>
+ *   <button class="lightbox-prev"><i class="fas fa-chevron-left"></i></button>
+ *   <img class="lightbox-image" src="" alt="">
+ *   <button class="lightbox-next"><i class="fas fa-chevron-right"></i></button>
+ *   <div class="lightbox-caption"></div>
+ * </div>
+ */
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: var(--z-modal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+}
+
+.lightbox.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.lightbox-image {
+  max-width: 90vw;
+  max-height: 85vh;
+  object-fit: contain;
+  border-radius: var(--radius-lg);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  transform: scale(0.9);
+  transition: transform var(--transition-normal);
+}
+
+.lightbox.active .lightbox-image {
+  transform: scale(1);
+}
+
+.lightbox-close {
+  position: absolute;
+  top: var(--spacing-lg);
+  right: var(--spacing-lg);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  z-index: 10;
+}
+
+.lightbox-close:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+.lightbox-prev,
+.lightbox-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  color: var(--text);
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  z-index: 10;
+}
+
+.lightbox-prev {
+  left: var(--spacing-lg);
+}
+
+.lightbox-next {
+  right: var(--spacing-lg);
+}
+
+.lightbox-prev:hover,
+.lightbox-next:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.lightbox-prev:disabled,
+.lightbox-next:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.lightbox-caption {
+  position: absolute;
+  bottom: var(--spacing-xl);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-md) var(--spacing-lg);
+  color: var(--text);
+  font-size: 0.95rem;
+  text-align: center;
+  max-width: 80vw;
+  backdrop-filter: blur(10px);
+}
+
+.lightbox-counter {
+  position: absolute;
+  top: var(--spacing-lg);
+  left: var(--spacing-lg);
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-sm) var(--spacing-md);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  backdrop-filter: blur(10px);
+}
+
+/* ========== NSFW CONTENT BLUR ========== */
+/*
+ * Content warning overlay with blur effect.
+ * Click to reveal, integrates with lightbox.
+ *
+ * Usage:
+ * <div class="gallery-item nsfw-content">
+ *   <img src="..." alt="...">
+ * </div>
+ */
+
+.nsfw-content {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.nsfw-content img {
+  filter: blur(20px);
+  transition: filter var(--transition-normal);
+  pointer-events: none;
+}
+
+.nsfw-content::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10;
+  transition: all var(--transition-normal);
+}
+
+.nsfw-content::after {
+  content: attr(data-warning);
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  background: var(--accent);
+  color: #fff;
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  pointer-events: none;
+  transition: all var(--transition-normal);
+  text-align: center;
+  letter-spacing: 0.5px;
+  box-shadow: 0 8px 24px rgba(217, 79, 144, 0.4);
+}
+
+.nsfw-content[data-warning=""]::after,
+.nsfw-content:not([data-warning])::after {
+  content: '18+ Click to View';
+}
+
+.nsfw-content:hover::before {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.nsfw-content:hover::after {
+  transform: translate(-50%, -50%) scale(1.05);
+  box-shadow: 0 12px 32px rgba(217, 79, 144, 0.5);
+}
+
+/* Revealed state */
+.nsfw-content.revealed img {
+  filter: blur(0);
+  pointer-events: auto;
+}
+
+.nsfw-content.revealed::before,
+.nsfw-content.revealed::after {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* NSFW in lightbox - auto reveal */
+.lightbox .nsfw-content img,
+.lightbox.active .lightbox-image.nsfw-revealed {
+  filter: blur(0) !important;
+}
+
+/* ========== SOCIAL LINKS LIST ========== */
+/*
+ * Link-in-bio style social links layout.
+ * Perfect for profile pages and link aggregation.
+ *
+ * Usage:
+ * <div class="social-links-container">
+ *   <img src="..." class="profile-avatar">
+ *   <h1 class="profile-name">@username</h1>
+ *   <p class="profile-bio">Bio text</p>
+ *   <div class="link-list">
+ *     <a href="..." class="link-item">Twitter</a>
+ *   </div>
+ * </div>
+ */
+
+.social-links-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: var(--spacing-xl);
+}
+
+.profile-avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 4px solid var(--accent);
+  box-shadow: 0 0 20px rgba(217, 79, 144, 0.5),
+              0 0 40px rgba(217, 79, 144, 0.3);
+  object-fit: cover;
+  margin-bottom: var(--spacing-lg);
+  transition: all var(--transition-normal);
+}
+
+.profile-avatar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(217, 79, 144, 0.6),
+              0 0 60px rgba(217, 79, 144, 0.4);
+}
+
+.profile-avatar.sm {
+  width: 100px;
+  height: 100px;
+  border-width: 3px;
+}
+
+.profile-avatar.lg {
+  width: 180px;
+  height: 180px;
+  border-width: 5px;
+}
+
+.profile-name {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: var(--spacing-sm);
+  text-align: center;
+}
+
+.profile-bio {
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: var(--spacing-lg);
+  max-width: 400px;
+}
+
+.link-list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.link-item {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  text-align: center;
+  text-decoration: none;
+  font-size: 1.05rem;
+  font-weight: 600;
+  transition: all var(--transition-normal);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-sm);
+  backdrop-filter: blur(8px);
+}
+
+.link-item:hover {
+  background: var(--gradient-accent);
+  border-color: var(--accent);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(217, 79, 144, 0.35);
+}
+
+.link-item i,
+.link-item svg {
+  font-size: 1.2rem;
+}
+
+/* Link item variants */
+.link-item.twitter:hover {
+  background: linear-gradient(135deg, #1da1f2, #0d8bd9);
+  border-color: #1da1f2;
+}
+
+.link-item.instagram:hover {
+  background: linear-gradient(135deg, #833ab4, #fd1d1d, #fcb045);
+  border-color: #833ab4;
+}
+
+.link-item.youtube:hover {
+  background: linear-gradient(135deg, #ff0000, #cc0000);
+  border-color: #ff0000;
+}
+
+.link-item.github:hover {
+  background: linear-gradient(135deg, #333, #24292e);
+  border-color: #333;
+}
+
+.link-item.discord:hover {
+  background: linear-gradient(135deg, #5865f2, #4752c4);
+  border-color: #5865f2;
+}
+
+.link-item.twitch:hover {
+  background: linear-gradient(135deg, #9146ff, #6441a5);
+  border-color: #9146ff;
+}
+
+/* ========== COUNTDOWN WIDGET ========== */
+/*
+ * Event countdown with configurable shapes and animations.
+ * Supports diamond, circle, heart, star, hexagon, octagon shapes.
+ *
+ * Usage:
+ * <div id="countdown-widget"></div>
+ * <script>initCountdown({ event: 'kirara' })</script>
+ */
+
+#countdown-widget {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: inherit;
+  color: var(--text);
+}
+
+.countdown-container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  margin: auto;
+}
+
+/* Shape Container - Base */
+.shape-container {
+  position: absolute;
+  width: 375px;
+  height: 375px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 12px solid var(--accent-dark);
+  box-shadow: 0 0 30px rgba(217, 79, 144, 0.4),
+              inset 0 0 30px rgba(217, 79, 144, 0.1);
+  overflow: hidden;
+  z-index: 2;
+  background: radial-gradient(circle, rgba(54, 83, 161, 0.6) 10%, rgba(217, 79, 144, 0.6) 60%);
+  animation: countdown-pulse 2.5s ease-in-out infinite alternate;
+  transition: all var(--transition-normal);
+}
+
+.shape-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Shape Variants */
+.shape-container.diamond {
+  transform: translate(-50%, -50%) rotate(45deg);
+  border-radius: var(--radius-xl);
+}
+
+.shape-container.diamond .shape-content {
+  transform: rotate(-45deg);
+}
+
+.shape-container.circle {
+  border-radius: 50%;
+}
+
+.shape-container.star {
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+  );
+  border: none;
+  background: var(--glass);
+}
+
+.shape-container.star::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  clip-path: polygon(
+    50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+  );
+  background: radial-gradient(circle, rgba(54, 83, 161, 0.6) 10%, rgba(217, 79, 144, 0.6) 60%);
+}
+
+.shape-container.hexagon {
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  border: none;
+  border-radius: 0;
+}
+
+.shape-container.octagon {
+  clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
+  border: none;
+  border-radius: 0;
+}
+
+.shape-container.heart {
+  clip-path: path('M187.5,56.25 C150,18.75 93.75,18.75 56.25,56.25 C18.75,93.75 18.75,168.75 56.25,225 L187.5,356.25 L318.75,225 C356.25,168.75 356.25,93.75 318.75,56.25 C281.25,18.75 225,18.75 187.5,56.25 Z');
+  border: none;
+  border-radius: 0;
+}
+
+/* Character Image */
+.countdown-character {
+  position: absolute;
+  width: 150%;
+  height: 150%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  object-fit: cover;
+  object-position: center;
+  z-index: 2;
+  transition: transform var(--transition-normal);
+}
+
+/* Overlay Image (e.g., tentacles, effects) */
+.countdown-overlay-wrapper {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  transform: translate(-50%, -50%) scale(0.9);
+  z-index: 1;
+  overflow: hidden;
+}
+
+.countdown-overlay-wrapper.front {
+  z-index: 3;
+}
+
+.countdown-overlay-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.countdown-overlay-img.animate-float {
+  animation: countdown-float 4s ease-in-out infinite alternate;
+}
+
+/* Countdown Timer Box */
+.countdown-box {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  background: var(--accent);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-2xl);
+  border: 8px solid var(--accent-dark);
+  z-index: 4;
+  bottom: 20px;
+  box-shadow: 0 8px 32px rgba(217, 79, 144, 0.4);
+}
+
+.countdown-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: var(--spacing-xs);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.countdown-timer {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #fff;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  font-variant-numeric: tabular-nums;
+}
+
+.countdown-timer .unit {
+  display: inline-block;
+  min-width: 3.5rem;
+}
+
+.countdown-timer .separator {
+  opacity: 0.7;
+  margin: 0 0.25rem;
+}
+
+/* Countdown Popup */
+.countdown-popup {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: calc(100% - 40px);
+  max-width: 500px;
+  text-align: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--glass);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-2xl);
+  border: 4px solid var(--accent);
+  backdrop-filter: blur(15px);
+  z-index: 5;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--transition-normal);
+  box-shadow: 0 20px 60px rgba(217, 79, 144, 0.4);
+}
+
+.countdown-popup.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.countdown-popup a {
+  color: var(--accent-light);
+  text-decoration: underline;
+}
+
+.countdown-popup a:hover {
+  color: var(--accent);
+}
+
+/* Countdown Animations */
+@keyframes countdown-pulse {
+  0% {
+    box-shadow: 0 0 30px rgba(217, 79, 144, 0.4),
+                inset 0 0 30px rgba(217, 79, 144, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 50px rgba(217, 79, 144, 0.6),
+                inset 0 0 40px rgba(217, 79, 144, 0.2);
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+}
+
+.shape-container.diamond {
+  animation: countdown-pulse-diamond 2.5s ease-in-out infinite alternate;
+}
+
+@keyframes countdown-pulse-diamond {
+  0% {
+    box-shadow: 0 0 30px rgba(217, 79, 144, 0.4),
+                inset 0 0 30px rgba(217, 79, 144, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 50px rgba(217, 79, 144, 0.6),
+                inset 0 0 40px rgba(217, 79, 144, 0.2);
+    transform: translate(-50%, -50%) rotate(45deg) scale(1.02);
+  }
+}
+
+@keyframes countdown-float {
+  0% { transform: translateY(-3%); }
+  100% { transform: translateY(3%); }
+}
+
+/* Countdown Completed State */
+.countdown-box.completed .countdown-timer {
+  font-size: 1.5rem;
+  animation: countdown-glow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes countdown-glow {
+  0% { text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+  100% { text-shadow: 0 0 20px rgba(255, 255, 255, 0.8), 0 0 40px rgba(217, 79, 144, 0.6); }
+}
+
+/* ========== RESPONSIVE EXTENSIONS ========== */
+
+@media screen and (max-width: 768px) {
+  /* Gallery */
+  .gallery-container {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: var(--spacing-md);
+  }
+  
+  .gallery-item {
+    padding: var(--spacing-sm);
+  }
+  
+  .gallery-caption {
+    font-size: 0.85rem;
+  }
+  
+  /* Filter Bar */
+  .filter-bar {
+    gap: var(--spacing-xs);
+  }
+  
+  .filter-btn {
+    padding: var(--spacing-xs) var(--spacing-sm);
+    font-size: 0.85rem;
+  }
+  
+  /* Lightbox */
+  .lightbox-image {
+    max-width: 95vw;
+    max-height: 80vh;
+    border-radius: var(--radius-md);
+  }
+  
+  .lightbox-close {
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    width: 40px;
+    height: 40px;
+    font-size: 1.25rem;
+  }
+  
+  .lightbox-prev,
+  .lightbox-next {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+  
+  .lightbox-prev {
+    left: var(--spacing-sm);
+  }
+  
+  .lightbox-next {
+    right: var(--spacing-sm);
+  }
+  
+  .lightbox-caption {
+    bottom: var(--spacing-lg);
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: 0.85rem;
+  }
+  
+  /* Social Links */
+  .social-links-container {
+    padding: var(--spacing-lg);
+  }
+  
+  .profile-avatar {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .profile-name {
+    font-size: 1.5rem;
+  }
+  
+  .link-item {
+    padding: var(--spacing-md);
+    font-size: 1rem;
+  }
+  
+  /* Countdown */
+  .countdown-container {
+    width: 100%;
+    max-width: 400px;
+    height: 400px;
+  }
+  
+  .shape-container {
+    width: 250px;
+    height: 250px;
+    border-width: 8px;
+  }
+  
+  .countdown-box {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-width: 6px;
+    bottom: 10px;
+  }
+  
+  .countdown-title {
+    font-size: 0.85rem;
+  }
+  
+  .countdown-timer {
+    font-size: 1.5rem;
+  }
+  
+  .countdown-popup {
+    font-size: 1rem;
+    padding: var(--spacing-md);
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .gallery-container {
+    grid-template-columns: 1fr;
+  }
+  
+  .countdown-container {
+    max-width: 320px;
+    height: 350px;
+  }
+  
+  .shape-container {
+    width: 200px;
+    height: 200px;
+    border-width: 6px;
+  }
+  
+  .countdown-timer {
+    font-size: 1.25rem;
+  }
+}
+

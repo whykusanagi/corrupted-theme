@@ -25,6 +25,9 @@
 /* ========== UTILITY CLASSES ========== */
 @import './utilities.css';
 
+/* ========== EXTENSION COMPONENTS ========== */
+@import './extensions.css';
+
 /* ========== RESPONSIVE GRID SYSTEM ========== */
 
 .container {
@@ -291,62 +294,9 @@ footer a:hover {
   }
 }
 
-/* ========== CONTENT OVERLAYS & SPECIAL EFFECTS ========== */
-
-.gallery-item.nsfw-content {
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-}
-
-.gallery-item.nsfw-content img {
-  filter: blur(15px) !important;
-  transition: filter var(--transition-normal);
-  cursor: pointer;
-  pointer-events: none;
-}
-
-.gallery-item.nsfw-content::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 10;
-  transition: all var(--transition-normal);
-  cursor: pointer;
-}
-
-.gallery-item.nsfw-content::after {
-  content: '18+ - Click to view';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 11;
-  background: rgba(217, 79, 144, 0.95);
-  color: #fff;
-  padding: 1rem 1.5rem;
-  border-radius: var(--radius-lg);
-  font-size: 0.95rem;
-  font-weight: 700;
-  white-space: nowrap;
-  pointer-events: none;
-  transition: all var(--transition-normal);
-  text-align: center;
-  letter-spacing: 0.5px;
-}
-
-.gallery-item.nsfw-content:hover::before {
-  background: rgba(0, 0, 0, 0.7);
-}
-
-.gallery-item.nsfw-content:hover::after {
-  transform: translate(-50%, -50%) scale(1.1);
-  box-shadow: 0 4px 16px rgba(217, 79, 144, 0.4);
-}
+/* ========== LEGACY CONTENT OVERLAY SUPPORT ========== */
+/* Note: Gallery, Lightbox, and NSFW styles are now in extensions.css */
+/* These selectors provide backward compatibility for existing implementations */
 
 .gallery-item.nsfw-content.revealed img {
   filter: blur(0) !important;
@@ -355,22 +305,4 @@ footer a:hover {
 .gallery-item.nsfw-content.revealed::before,
 .gallery-item.nsfw-content.revealed::after {
   display: none !important;
-}
-
-/* ========== LIGHTBOX ========== */
-
-.lightbox:fullscreen .gallery-item.nsfw-content img,
-.lightbox:-webkit-full-screen .gallery-item.nsfw-content img {
-  filter: blur(0) !important;
-}
-
-.lightbox:fullscreen .gallery-item.nsfw-content::before,
-.lightbox:-webkit-full-screen .gallery-item.nsfw-content::before,
-.lightbox:fullscreen .gallery-item.nsfw-content::after,
-.lightbox:-webkit-full-screen .gallery-item.nsfw-content::after {
-  display: none !important;
-}
-
-.lightbox.fullscreen-active img {
-  filter: blur(0) !important;
 }

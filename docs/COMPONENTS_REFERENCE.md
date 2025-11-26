@@ -17,6 +17,12 @@ This document provides a comprehensive reference for all components available in
 6. [API Documentation](#api-documentation)
 7. [Nikke Components](#nikke-components)
 8. [Background & Images](#background--images)
+9. [Extension Components](#extension-components)
+   - [Gallery System](#gallery-system)
+   - [Lightbox](#lightbox)
+   - [NSFW Content Blur](#nsfw-content-blur)
+   - [Social Links List](#social-links-list)
+   - [Countdown Widget](#countdown-widget)
 
 ---
 
@@ -445,7 +451,7 @@ Complete API documentation components for building readable API docs.
 
 ## Nikke Components
 
-Game-specific components for Nikke applications. See [NIKKE_COMPONENTS.md](./NIKKE_COMPONENTS.md) for complete documentation.
+Game-specific components for Nikke applications.
 
 ### Element Badges
 
@@ -632,7 +638,7 @@ All components follow accessibility best practices:
 
 ## Customization
 
-All components use CSS variables for easy customization. See [VARIABLES_REFERENCE.md](./VARIABLES_REFERENCE.md) for complete variable list.
+All components use CSS variables for easy customization. See `src/css/variables.css` for the complete variable list.
 
 ```css
 :root {
@@ -644,16 +650,297 @@ All components use CSS variables for easy customization. See [VARIABLES_REFERENC
 
 ---
 
-## Related Documentation
+## Extension Components
 
-- [VARIABLES_REFERENCE.md](./VARIABLES_REFERENCE.md) - Complete CSS variables reference
-- [NIKKE_COMPONENTS.md](./NIKKE_COMPONENTS.md) - Nikke-specific components
-- [CUSTOMIZATION.md](./CUSTOMIZATION.md) - Customization guide
-- [ACCESSIBILITY.md](./ACCESSIBILITY.md) - Accessibility standards
+Production-tested components from whykusanagi.xyz for galleries, social links, countdowns, and more. Import via `extensions.css` (included in `theme.css`) or individually.
+
+### Gallery System
+
+Responsive gallery grid with filtering and lightbox integration.
+
+**Filter Bar:**
+```html
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="photos">Photos</button>
+  <button class="filter-btn" data-filter="art">Art</button>
+</div>
+```
+
+**Gallery Container:**
+```html
+<div class="gallery-container" id="my-gallery">
+  <div class="gallery-item" data-tags="photos">
+    <img src="image.jpg" alt="Description">
+    <div class="gallery-caption">
+      <div class="title">Image Title</div>
+      <div class="meta">Category • Date</div>
+    </div>
+  </div>
+</div>
+```
+
+**Variants:**
+- `.gallery-container.compact` - Smaller grid items (200px min)
+- `.gallery-container.large` - Larger grid items (350px min)
+- `.gallery-item.square` - 1:1 aspect ratio
+- `.gallery-item.portrait` - 3:4 aspect ratio
+- `.gallery-item.landscape` - 16:9 aspect ratio
+- `.filter-bar.left` - Left-aligned filters
+- `.filter-bar.right` - Right-aligned filters
+
+**JavaScript Integration:**
+```javascript
+import { initGallery } from '@whykusanagi/corrupted-theme/gallery';
+
+const gallery = initGallery('#my-gallery', {
+  filterBarSelector: '.filter-bar .filter-btn',
+  enableLightbox: true,
+  enableNsfw: true,
+  filterAnimation: true,
+  onFilter: (filter) => console.log('Filtered:', filter)
+});
+
+// Manual filter
+gallery.filter('photos');
+```
 
 ---
 
-**Last Updated:** 2025-11-24  
-**Version:** 1.0  
+### Lightbox
+
+Fullscreen image viewer with keyboard navigation and touch gestures.
+
+```html
+<!-- Lightbox is auto-created by gallery.js -->
+<!-- Manual creation (if needed): -->
+<div class="lightbox" id="my-lightbox">
+  <button class="lightbox-close">&times;</button>
+  <button class="lightbox-prev"><i class="fas fa-chevron-left"></i></button>
+  <img class="lightbox-image" src="" alt="">
+  <button class="lightbox-next"><i class="fas fa-chevron-right"></i></button>
+  <div class="lightbox-caption"></div>
+  <div class="lightbox-counter"></div>
+</div>
+```
+
+**Features:**
+- Keyboard navigation (Arrow keys, Escape)
+- Touch swipe gestures on mobile
+- Click outside to close
+- Image counter display
+- Automatic caption display
+
+**JavaScript API:**
+```javascript
+const gallery = initGallery('#gallery');
+
+// Open specific image
+gallery.openLightbox(0);
+
+// Close lightbox
+gallery.closeLightbox();
+```
+
+---
+
+### NSFW Content Blur
+
+Content warning overlay with click-to-reveal functionality.
+
+```html
+<!-- Default warning text -->
+<div class="gallery-item nsfw-content">
+  <img src="sensitive-image.jpg" alt="Description">
+</div>
+
+<!-- Custom warning text -->
+<div class="gallery-item nsfw-content" data-warning="Sensitive Content">
+  <img src="image.jpg" alt="Description">
+</div>
+```
+
+**States:**
+- Default: Blurred with "18+ Click to View" overlay
+- `.revealed`: Blur removed, overlay hidden
+
+**JavaScript API:**
+```javascript
+const gallery = initGallery('#gallery', {
+  enableNsfw: true,
+  nsfwWarning: 'Click to View',
+  onNsfwReveal: (element) => console.log('Revealed:', element)
+});
+
+// Manual reveal
+gallery.revealNsfw(element);
+```
+
+---
+
+### Social Links List
+
+Link-in-bio style layout for social profiles.
+
+```html
+<div class="social-links-container">
+  <img src="avatar.jpg" alt="Profile" class="profile-avatar">
+  <h1 class="profile-name">@username</h1>
+  <p class="profile-bio">Your bio text here.</p>
+  
+  <div class="link-list">
+    <!-- Platform-specific hover colors -->
+    <a href="#" class="link-item twitter">
+      <i class="fab fa-twitter"></i> Twitter
+    </a>
+    <a href="#" class="link-item instagram">
+      <i class="fab fa-instagram"></i> Instagram
+    </a>
+    <a href="#" class="link-item youtube">
+      <i class="fab fa-youtube"></i> YouTube
+    </a>
+    <a href="#" class="link-item github">
+      <i class="fab fa-github"></i> GitHub
+    </a>
+    <a href="#" class="link-item discord">
+      <i class="fab fa-discord"></i> Discord
+    </a>
+    <a href="#" class="link-item twitch">
+      <i class="fab fa-twitch"></i> Twitch
+    </a>
+    <!-- Default accent color -->
+    <a href="#" class="link-item">
+      <i class="fas fa-globe"></i> Website
+    </a>
+  </div>
+</div>
+```
+
+**Avatar Sizes:**
+- `.profile-avatar.sm` - 100px diameter
+- `.profile-avatar` - 140px diameter (default)
+- `.profile-avatar.lg` - 180px diameter
+
+**Platform Classes:**
+Each platform class applies branded hover colors:
+- `.twitter` - Twitter blue
+- `.instagram` - Instagram gradient
+- `.youtube` - YouTube red
+- `.github` - GitHub dark
+- `.discord` - Discord purple
+- `.twitch` - Twitch purple
+
+---
+
+### Countdown Widget
+
+Event countdown with configurable shapes and animations.
+
+**HTML Container:**
+```html
+<div id="countdown-widget"></div>
+```
+
+**JavaScript Initialization:**
+```javascript
+import { initCountdown } from '@whykusanagi/corrupted-theme/countdown';
+
+// Inline configuration
+initCountdown({
+  config: {
+    title: 'Product Launch',
+    eventDate: '2025-04-01T00:00:00-07:00',
+    completedMessage: 'Now Available!',
+    character: {
+      image: 'character.png',
+      rotation: 0,
+      background: {
+        type: 'diamond',
+        color: 'radial-gradient(circle, rgba(54, 83, 161, 0.6), rgba(217, 79, 144, 0.6))',
+        borderColor: '#4c2967'
+      },
+      overlay: {
+        image: 'overlay.png',
+        position: 'behind',
+        animation: 'float'
+      }
+    },
+    popup: {
+      message: '<strong>Pre-order now!</strong>',
+      frequency: 15000,
+      duration: 5000
+    }
+  }
+});
+
+// Or load from JSON via URL parameter
+// Access: page.html?event=kirara loads /data/countdown/kirara.json
+initCountdown();
+```
+
+**Shape Types:**
+- `diamond` - Rotated square (default)
+- `circle` - Round container
+- `heart` - Heart shape
+- `star` - 5-point star
+- `hexagon` - 6-sided polygon
+- `octagon` - 8-sided polygon
+
+**Configuration Schema:**
+```javascript
+{
+  title: string,              // Display title
+  eventDate: string,          // ISO 8601 date
+  completedMessage: string,   // Message when countdown ends
+  character: {
+    image: string,            // Image URL
+    rotation: number,         // Degrees (0-360)
+    objectPosition: string,   // CSS object-position
+    background: {
+      type: string,           // Shape type
+      color: string,          // CSS background
+      borderColor: string     // Hex color
+    },
+    overlay: {
+      image: string,          // Overlay image URL
+      position: 'behind'|'front',
+      animation: 'float'|null,
+      rotation: number
+    }
+  },
+  popup: {
+    message: string,          // HTML content
+    frequency: number,        // Ms between popups
+    duration: number,         // Ms popup visible
+    colors: {
+      bg: string,
+      border: string,
+      text: string
+    }
+  }
+}
+```
+
+**CSS Classes:**
+- `.countdown-container` - Main wrapper (600×600px)
+- `.shape-container` - Shape wrapper (375×375px)
+- `.shape-container.diamond|circle|heart|star|hexagon|octagon`
+- `.countdown-box` - Timer display
+- `.countdown-popup` - Popup message
+- `.countdown-character` - Character image
+- `.countdown-overlay-wrapper` - Overlay container
+
+---
+
+## Related Documentation
+
+- [README.md](../README.md) - Main documentation and quick start guide
+- [Variables Reference](#customization) - CSS variables for customization (see Customization section above)
+- [Nikke Components](#nikke-components) - Game-specific components (see section above)
+
+---
+
+**Last Updated:** 2025-11-26  
+**Version:** 1.1  
 **Status:** Complete and Production Ready
 

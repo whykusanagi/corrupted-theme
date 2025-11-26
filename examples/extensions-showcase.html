@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en" data-no-corruption-loading>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corrupted Theme - Extensions Showcase</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
+  <style>
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+    }
+
+    .showcase {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: var(--spacing-xl);
+    }
+
+    .showcase-section {
+      margin-bottom: var(--spacing-2xl);
+      padding-bottom: var(--spacing-2xl);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .showcase-section:last-child {
+      border-bottom: none;
+    }
+
+    .showcase-section h2 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-md);
+      padding-bottom: var(--spacing-md);
+      border-bottom: 2px solid var(--border);
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .showcase-section h2 i {
+      font-size: 1.5rem;
+    }
+
+    .showcase-section h3 {
+      color: var(--text);
+      margin-top: var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      font-size: 1.25rem;
+    }
+
+    .showcase-description {
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-lg);
+      max-width: 800px;
+      line-height: 1.7;
+    }
+
+    .code-example {
+      background: var(--glass-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+      font-size: 0.85rem;
+      overflow-x: auto;
+      color: var(--text-secondary);
+      white-space: pre-wrap;
+    }
+
+    .demo-container {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .hero {
+      background: linear-gradient(135deg, rgba(217, 79, 144, 0.3), rgba(139, 92, 246, 0.3));
+      border: 1px solid var(--border);
+      color: white;
+      padding: var(--spacing-2xl) var(--spacing-lg);
+      border-radius: var(--radius-xl);
+      text-align: center;
+      margin-bottom: var(--spacing-2xl);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero h1 {
+      font-size: 2.5rem;
+      margin-bottom: var(--spacing-md);
+      color: white;
+    }
+
+    .hero p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Demo-specific styles */
+    .gallery-demo-images img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .countdown-demo-container {
+      min-height: 500px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .social-demo-bg {
+      background: linear-gradient(180deg, rgba(5, 0, 16, 0.9), rgba(10, 10, 10, 0.95));
+      padding: var(--spacing-2xl);
+      border-radius: var(--radius-xl);
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation -->
+  <!-- Global Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="index.html" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
+        <li class="has-submenu">
+          <a href="#" class="active">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="#">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+          </div>
+        </li>
+        <li><a href="../docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="showcase">
+    <!-- Hero Section -->
+    <section class="hero">
+      <h1><i class="fas fa-puzzle-piece"></i> Extension Components</h1>
+      <p>
+        Production-tested components from whykusanagi.xyz for galleries, 
+        social links, countdowns, and more.
+      </p>
+    </section>
+
+    <!-- ======================= GALLERY SYSTEM ======================= -->
+    <section class="showcase-section" id="gallery">
+      <h2><i class="fas fa-images"></i> Gallery System</h2>
+      <p class="showcase-description">
+        A complete gallery system with responsive grid layout, category filtering, 
+        and lightbox integration. Perfect for portfolios, image galleries, and showcases.
+      </p>
+
+      <h3>Filter Bar</h3>
+      <div class="filter-bar" id="demo-filter-bar">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="landscape">Landscapes</button>
+        <button class="filter-btn" data-filter="abstract">Abstract</button>
+        <button class="filter-btn" data-filter="portrait">Portraits</button>
+      </div>
+
+      <h3>Gallery Grid</h3>
+      <div class="gallery-container gallery-demo-images" id="demo-gallery">
+        <div class="gallery-item" data-tags="landscape">
+          <img src="https://placehold.co/400x300/1a1a2e/d94f90?text=Landscape+1" alt="Mountain landscape">
+          <div class="gallery-caption">
+            <div class="title">Mountain Vista</div>
+            <div class="meta">Landscape • Nature</div>
+          </div>
+        </div>
+        <div class="gallery-item" data-tags="abstract">
+          <img src="https://placehold.co/400x300/2d1f3d/d94f90?text=Abstract+1" alt="Abstract colors">
+          <div class="gallery-caption">
+            <div class="title">Color Flow</div>
+            <div class="meta">Abstract • Digital</div>
+          </div>
+        </div>
+        <div class="gallery-item" data-tags="portrait">
+          <img src="https://placehold.co/400x300/3d1f2d/d94f90?text=Portrait+1" alt="Portrait">
+          <div class="gallery-caption">
+            <div class="title">Portrait Study</div>
+            <div class="meta">Portrait • Photography</div>
+          </div>
+        </div>
+        <div class="gallery-item" data-tags="landscape">
+          <img src="https://placehold.co/400x300/1f2d3d/d94f90?text=Landscape+2" alt="Forest">
+          <div class="gallery-caption">
+            <div class="title">Forest Path</div>
+            <div class="meta">Landscape • Nature</div>
+          </div>
+        </div>
+        <div class="gallery-item" data-tags="abstract">
+          <img src="https://placehold.co/400x300/2d1f3d/d94f90?text=Abstract+2" alt="Abstract art">
+          <div class="gallery-caption">
+            <div class="title">Fluid Motion</div>
+            <div class="meta">Abstract • Art</div>
+          </div>
+        </div>
+        <div class="gallery-item" data-tags="portrait">
+          <img src="https://placehold.co/400x300/3d1f2d/d94f90?text=Portrait+2" alt="Portrait 2">
+          <div class="gallery-caption">
+            <div class="title">Expression</div>
+            <div class="meta">Portrait • Studio</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Gallery Variants</h3>
+      <div class="demo-container">
+        <p style="margin-bottom: var(--spacing-md); color: var(--text-secondary);">
+          <code>.gallery-container.compact</code> - Smaller grid items<br>
+          <code>.gallery-container.large</code> - Larger grid items<br>
+          <code>.gallery-item.square</code> - 1:1 aspect ratio<br>
+          <code>.gallery-item.portrait</code> - 3:4 aspect ratio<br>
+          <code>.gallery-item.landscape</code> - 16:9 aspect ratio
+        </p>
+      </div>
+
+      <div class="code-example">&lt;!-- HTML Structure --&gt;
+&lt;div class="filter-bar"&gt;
+  &lt;button class="filter-btn active" data-filter="all"&gt;All&lt;/button&gt;
+  &lt;button class="filter-btn" data-filter="photos"&gt;Photos&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;div class="gallery-container"&gt;
+  &lt;div class="gallery-item" data-tags="photos"&gt;
+    &lt;img src="image.jpg" alt="Description"&gt;
+    &lt;div class="gallery-caption"&gt;
+      &lt;div class="title"&gt;Image Title&lt;/div&gt;
+      &lt;div class="meta"&gt;Category • Date&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- JavaScript --&gt;
+&lt;script type="module"&gt;
+  import { initGallery } from '@whykusanagi/corrupted-theme/gallery';
+  const gallery = initGallery('#demo-gallery');
+&lt;/script&gt;</div>
+    </section>
+
+    <!-- ======================= LIGHTBOX ======================= -->
+    <section class="showcase-section" id="lightbox">
+      <h2><i class="fas fa-expand"></i> Lightbox</h2>
+      <p class="showcase-description">
+        Fullscreen image viewer with keyboard navigation (Arrow keys, Escape), 
+        touch gestures for mobile, and image counter. Automatically integrates 
+        with the gallery system.
+      </p>
+
+      <h3>Features</h3>
+      <div class="demo-container">
+        <ul style="color: var(--text-secondary); list-style: none; padding: 0;">
+          <li style="margin-bottom: var(--spacing-sm);"><i class="fas fa-check" style="color: var(--accent); margin-right: var(--spacing-sm);"></i> Click any gallery image to open lightbox</li>
+          <li style="margin-bottom: var(--spacing-sm);"><i class="fas fa-check" style="color: var(--accent); margin-right: var(--spacing-sm);"></i> Arrow keys for navigation</li>
+          <li style="margin-bottom: var(--spacing-sm);"><i class="fas fa-check" style="color: var(--accent); margin-right: var(--spacing-sm);"></i> Escape key to close</li>
+          <li style="margin-bottom: var(--spacing-sm);"><i class="fas fa-check" style="color: var(--accent); margin-right: var(--spacing-sm);"></i> Swipe gestures on mobile</li>
+          <li style="margin-bottom: var(--spacing-sm);"><i class="fas fa-check" style="color: var(--accent); margin-right: var(--spacing-sm);"></i> Click outside image to close</li>
+          <li><i class="fas fa-check" style="color: var(--accent); margin-right: var(--spacing-sm);"></i> Image counter and captions</li>
+        </ul>
+      </div>
+
+      <p style="color: var(--text-secondary); margin-top: var(--spacing-lg);">
+        <i class="fas fa-info-circle" style="color: var(--accent);"></i> 
+        Try clicking any image in the gallery above to see the lightbox in action.
+      </p>
+
+      <div class="code-example">&lt;!-- Lightbox is auto-created by gallery.js --&gt;
+&lt;!-- Manual API access: --&gt;
+&lt;script type="module"&gt;
+  import { initGallery } from '@whykusanagi/corrupted-theme/gallery';
+  
+  const gallery = initGallery('#my-gallery', {
+    enableLightbox: true,
+    enableKeyboard: true,
+    onLightboxOpen: (image, index) => console.log('Opened:', image),
+    onLightboxClose: () => console.log('Closed')
+  });
+  
+  // Manual control
+  gallery.openLightbox(0);  // Open first image
+  gallery.closeLightbox(); // Close lightbox
+&lt;/script&gt;</div>
+    </section>
+
+    <!-- ======================= NSFW CONTENT ======================= -->
+    <section class="showcase-section" id="nsfw">
+      <h2><i class="fas fa-eye-slash"></i> NSFW Content Blur</h2>
+      <p class="showcase-description">
+        Content warning system with blur overlay that reveals on click. 
+        Perfect for galleries with age-restricted content. Automatically 
+        removes blur when opened in lightbox.
+      </p>
+
+      <h3>Demo (Click to Reveal)</h3>
+      <div class="gallery-container gallery-demo-images" style="grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));">
+        <div class="gallery-item nsfw-content" data-warning="18+ Click to Reveal">
+          <img src="https://placehold.co/400x300/1a1a2e/d94f90?text=Safe+Content" alt="Ocean waves">
+          <div class="gallery-caption">
+            <div class="title">Hidden Content</div>
+            <div class="meta">Click the overlay to reveal</div>
+          </div>
+        </div>
+        <div class="gallery-item nsfw-content" data-warning="Sensitive Content">
+          <img src="https://placehold.co/400x300/3d1f2d/d94f90?text=NSFW+Demo" alt="Sunset">
+          <div class="gallery-caption">
+            <div class="title">Custom Warning Text</div>
+            <div class="meta">Uses data-warning attribute</div>
+          </div>
+        </div>
+        <div class="gallery-item">
+          <img src="https://placehold.co/400x300/1f2d3d/d94f90?text=Landscape+3" alt="Mountains">
+          <div class="gallery-caption">
+            <div class="title">Normal Image</div>
+            <div class="meta">No NSFW class applied</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-example">&lt;!-- Add nsfw-content class to blur --&gt;
+&lt;div class="gallery-item nsfw-content" data-warning="18+ Click to View"&gt;
+  &lt;img src="sensitive-image.jpg" alt="Description"&gt;
+&lt;/div&gt;
+
+&lt;!-- Custom warning text --&gt;
+&lt;div class="gallery-item nsfw-content" data-warning="Sensitive Content"&gt;
+  &lt;img src="image.jpg" alt="Description"&gt;
+&lt;/div&gt;
+
+&lt;!-- JavaScript API --&gt;
+&lt;script type="module"&gt;
+  import { initGallery } from '@whykusanagi/corrupted-theme/gallery';
+  
+  const gallery = initGallery('#gallery', {
+    enableNsfw: true,
+    nsfwWarning: '18+ Click to View',
+    onNsfwReveal: (element) => console.log('Revealed:', element)
+  });
+&lt;/script&gt;</div>
+    </section>
+
+    <!-- ======================= SOCIAL LINKS ======================= -->
+    <section class="showcase-section" id="social">
+      <h2><i class="fas fa-link"></i> Social Links List</h2>
+      <p class="showcase-description">
+        Link-in-bio style social links layout with profile avatar, name, bio, 
+        and styled link buttons. Perfect for profile pages, link aggregation, 
+        and social showcases.
+      </p>
+
+      <h3>Demo</h3>
+      <div class="social-demo-bg">
+        <div class="social-links-container">
+          <img src="assets/celeste-avatar.png" 
+               alt="Profile" class="profile-avatar">
+          <h1 class="profile-name">@whykusanagi</h1>
+          <p class="profile-bio">
+            Digital artist & developer creating corrupted aesthetics. 
+            Building tools for the creative community.
+          </p>
+          <div class="link-list">
+            <a href="#" class="link-item twitter">
+              <i class="fab fa-twitter"></i> Twitter / X
+            </a>
+            <a href="#" class="link-item instagram">
+              <i class="fab fa-instagram"></i> Instagram
+            </a>
+            <a href="#" class="link-item youtube">
+              <i class="fab fa-youtube"></i> YouTube
+            </a>
+            <a href="#" class="link-item github">
+              <i class="fab fa-github"></i> GitHub
+            </a>
+            <a href="#" class="link-item discord">
+              <i class="fab fa-discord"></i> Discord
+            </a>
+            <a href="#" class="link-item">
+              <i class="fas fa-globe"></i> Website
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <h3>Avatar Sizes</h3>
+      <div class="demo-container" style="display: flex; align-items: center; justify-content: center; gap: var(--spacing-xl);">
+        <div style="text-align: center;">
+          <img src="assets/celeste-avatar.png" 
+               class="profile-avatar sm" style="margin-bottom: var(--spacing-sm);">
+          <p style="color: var(--text-secondary); font-size: 0.85rem;">.profile-avatar.sm</p>
+        </div>
+        <div style="text-align: center;">
+          <img src="assets/celeste-avatar.png" 
+               class="profile-avatar" style="margin-bottom: var(--spacing-sm);">
+          <p style="color: var(--text-secondary); font-size: 0.85rem;">.profile-avatar</p>
+        </div>
+        <div style="text-align: center;">
+          <img src="assets/celeste-avatar.png" 
+               class="profile-avatar lg" style="margin-bottom: var(--spacing-sm);">
+          <p style="color: var(--text-secondary); font-size: 0.85rem;">.profile-avatar.lg</p>
+        </div>
+      </div>
+
+      <div class="code-example">&lt;div class="social-links-container"&gt;
+  &lt;img src="profile.jpg" alt="Profile" class="profile-avatar"&gt;
+  &lt;h1 class="profile-name"&gt;@username&lt;/h1&gt;
+  &lt;p class="profile-bio"&gt;Your bio text here.&lt;/p&gt;
+  
+  &lt;div class="link-list"&gt;
+    &lt;!-- Platform-specific hover colors --&gt;
+    &lt;a href="#" class="link-item twitter"&gt;
+      &lt;i class="fab fa-twitter"&gt;&lt;/i&gt; Twitter
+    &lt;/a&gt;
+    &lt;a href="#" class="link-item instagram"&gt;
+      &lt;i class="fab fa-instagram"&gt;&lt;/i&gt; Instagram
+    &lt;/a&gt;
+    &lt;a href="#" class="link-item youtube"&gt;
+      &lt;i class="fab fa-youtube"&gt;&lt;/i&gt; YouTube
+    &lt;/a&gt;
+    &lt;a href="#" class="link-item github"&gt;
+      &lt;i class="fab fa-github"&gt;&lt;/i&gt; GitHub
+    &lt;/a&gt;
+    &lt;a href="#" class="link-item discord"&gt;
+      &lt;i class="fab fa-discord"&gt;&lt;/i&gt; Discord
+    &lt;/a&gt;
+    &lt;a href="#" class="link-item twitch"&gt;
+      &lt;i class="fab fa-twitch"&gt;&lt;/i&gt; Twitch
+    &lt;/a&gt;
+    &lt;!-- Default accent color --&gt;
+    &lt;a href="#" class="link-item"&gt;
+      &lt;i class="fas fa-globe"&gt;&lt;/i&gt; Website
+    &lt;/a&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</div>
+    </section>
+
+    <!-- ======================= COUNTDOWN WIDGET ======================= -->
+    <section class="showcase-section" id="countdown">
+      <h2><i class="fas fa-clock"></i> Countdown Widget</h2>
+      <p class="showcase-description">
+        Sophisticated event countdown widget with configurable shapes, 
+        character images, overlay effects, and animated popup messages. 
+        Supports JSON configuration for multiple events.
+      </p>
+
+      <h3>Live Demo</h3>
+      <div class="demo-container countdown-demo-container">
+        <div id="countdown-widget"></div>
+      </div>
+
+      <h3>Shape Variants</h3>
+      <div class="demo-container">
+        <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
+          Available shape containers (all maintain 375px base size):
+        </p>
+        <div style="display: flex; flex-wrap: wrap; gap: var(--spacing-md); justify-content: center;">
+          <span class="badge">diamond</span>
+          <span class="badge">circle</span>
+          <span class="badge">heart</span>
+          <span class="badge">star</span>
+          <span class="badge">hexagon</span>
+          <span class="badge">octagon</span>
+        </div>
+      </div>
+
+      <h3>Configuration Options</h3>
+      <div class="demo-container">
+        <table class="table" style="margin-bottom: 0;">
+          <thead>
+            <tr>
+              <th>Property</th>
+              <th>Type</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>title</code></td>
+              <td>string</td>
+              <td>Title displayed above countdown</td>
+            </tr>
+            <tr>
+              <td><code>eventDate</code></td>
+              <td>ISO 8601</td>
+              <td>Target date/time for countdown</td>
+            </tr>
+            <tr>
+              <td><code>character.image</code></td>
+              <td>string</td>
+              <td>Character image URL</td>
+            </tr>
+            <tr>
+              <td><code>character.background.type</code></td>
+              <td>string</td>
+              <td>Shape type (diamond, circle, etc.)</td>
+            </tr>
+            <tr>
+              <td><code>character.overlay</code></td>
+              <td>object</td>
+              <td>Overlay image with animation</td>
+            </tr>
+            <tr>
+              <td><code>popup</code></td>
+              <td>object</td>
+              <td>Popup message configuration</td>
+            </tr>
+            <tr>
+              <td><code>completedMessage</code></td>
+              <td>string</td>
+              <td>Message shown when countdown ends</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="code-example">&lt;!-- HTML --&gt;
+&lt;div id="countdown-widget"&gt;&lt;/div&gt;
+
+&lt;!-- JavaScript with inline config --&gt;
+&lt;script type="module"&gt;
+  import { initCountdown } from '@whykusanagi/corrupted-theme/countdown';
+  
+  initCountdown({
+    config: {
+      title: 'Product Launch',
+      eventDate: '2025-04-01T00:00:00-07:00',
+      completedMessage: 'Now Available!',
+      character: {
+        image: 'character.png',
+        rotation: 0,
+        background: {
+          type: 'diamond',
+          color: 'radial-gradient(circle, rgba(54, 83, 161, 0.6), rgba(217, 79, 144, 0.6))',
+          borderColor: '#4c2967'
+        },
+        overlay: {
+          image: 'overlay.png',
+          position: 'behind',
+          animation: 'float'
+        }
+      },
+      popup: {
+        message: '&lt;strong&gt;Don\'t miss it!&lt;/strong&gt;&lt;br&gt;Pre-order now!',
+        frequency: 15000,
+        duration: 5000
+      }
+    }
+  });
+&lt;/script&gt;
+
+&lt;!-- Or load from JSON via URL parameter --&gt;
+&lt;!-- Access: page.html?event=kirara loads /data/countdown/kirara.json --&gt;
+&lt;script type="module"&gt;
+  import { initCountdown } from '@whykusanagi/corrupted-theme/countdown';
+  initCountdown(); // Reads ?event= from URL
+&lt;/script&gt;</div>
+
+      <h3>JSON Configuration File</h3>
+      <div class="code-example">{
+  "title": "Manga Launch Countdown",
+  "eventDate": "2025-04-01T04:00:00-07:00",
+  "basicMessage": "Fall of Kirara manga launch",
+  "completedMessage": "Now Available! Get your copy today!",
+  "style": "compact",
+  "character": {
+    "image": "Fall_of_Kirara.png",
+    "rotation": 0,
+    "background": {
+      "type": "diamond",
+      "color": null,
+      "borderColor": "#4c2967",
+      "pattern": false
+    },
+    "overlay": {
+      "image": "Tentacle_Foil.png",
+      "position": "behind",
+      "animation": "float",
+      "rotation": null
+    }
+  },
+  "popup": {
+    "message": "📚 Pre-order now! &lt;a href='#'&gt;Shop&lt;/a&gt;",
+    "frequency": 10000,
+    "duration": 5000,
+    "colors": {
+      "bg": "#3653a1",
+      "border": "#d94f90",
+      "text": "#ffffff"
+    }
+  },
+  "colors": {
+    "primary": null,
+    "accent": null,
+    "text": null
+  }
+}</div>
+    </section>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
+      <p><strong>Corrupted Theme Extensions</strong> • Production-tested components from whykusanagi.xyz</p>
+      <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
+        <a href="../README.md" class="link">Documentation</a> •
+        <a href="showcase-complete.html" class="link">Full Component Library</a> •
+        <a href="https://github.com/whykusanagi/corrupted-theme" class="link">GitHub</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Gallery & Lightbox Script -->
+  <script type="module">
+    import { initGallery } from '../src/lib/gallery.js';
+    
+    // Initialize main gallery with all features
+    const gallery = initGallery('#demo-gallery', {
+      filterBarSelector: '#demo-filter-bar .filter-btn',
+      enableLightbox: true,
+      enableNsfw: true,
+      enableKeyboard: true,
+      filterAnimation: true,
+      onFilter: (filter) => console.log('Filtered to:', filter),
+      onLightboxOpen: (image, index) => console.log('Lightbox opened:', index),
+      onNsfwReveal: (element) => console.log('NSFW revealed')
+    });
+
+    // Also init NSFW demo gallery (no filtering)
+    initGallery('.showcase-section:nth-of-type(4) .gallery-container', {
+      enableLightbox: true,
+      enableNsfw: true
+    });
+  </script>
+
+  <!-- Countdown Widget Script -->
+  <script type="module">
+    import { initCountdown } from '../src/lib/countdown-widget.js';
+    
+    // Demo countdown config (next year's date)
+    const nextYear = new Date();
+    nextYear.setFullYear(nextYear.getFullYear() + 1);
+    nextYear.setMonth(0, 1); // January 1st
+    nextYear.setHours(0, 0, 0, 0);
+
+    initCountdown({
+      config: {
+        title: 'Next Year Countdown',
+        eventDate: nextYear.toISOString(),
+        completedMessage: 'Happy New Year!',
+        character: {
+          image: 'assets/celeste-avatar.png',
+          rotation: 0,
+          background: {
+            type: 'diamond',
+            color: 'radial-gradient(circle, rgba(54, 83, 161, 0.7) 10%, rgba(217, 79, 144, 0.7) 60%)',
+            borderColor: '#4c2967'
+          }
+        },
+        popup: {
+          message: '🎉 <strong>Demo Countdown Widget</strong><br>Production-ready for your events!',
+          frequency: 12000,
+          duration: 4000
+        }
+      }
+    });
+  </script>
+
+  <!-- Smooth scroll -->
+  <script>
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Update active nav
+          document.querySelectorAll('.navbar-links a').forEach(link => link.classList.remove('active'));
+          this.classList.add('active');
+        }
+      });
+    });
+  </script>
+</body>
+</html>
+

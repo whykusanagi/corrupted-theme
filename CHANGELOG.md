@@ -21,6 +21,126 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.2] - 2025-11-26
+
+### Added
+
+#### Extension Components (`src/css/extensions.css`)
+Production-tested components from whykusanagi.xyz, now part of the core package:
+
+- **Gallery System**
+  - `.gallery-container` - Responsive grid layout with variants (compact, large)
+  - `.gallery-item` - Image cards with aspect ratio options (square, portrait, landscape)
+  - `.filter-bar` and `.filter-btn` - Category filtering with animated transitions
+  - `gallery.js` - JavaScript module for filtering, lightbox, and NSFW handling
+
+- **Lightbox Component**
+  - `.lightbox` - Fullscreen image viewer overlay
+  - `.lightbox-image`, `.lightbox-close`, `.lightbox-prev`, `.lightbox-next`
+  - `.lightbox-caption`, `.lightbox-counter`
+  - Keyboard navigation (Arrow keys, Escape)
+  - Touch gesture support for mobile
+
+- **NSFW Content Blur**
+  - `.nsfw-content` - Click-to-reveal blur overlay
+  - Custom warning text via `data-warning` attribute
+  - `.revealed` state for toggling visibility
+  - Auto-reveal in lightbox mode
+
+- **Social Links List**
+  - `.social-links-container` - Link-in-bio layout
+  - `.profile-avatar` - Circular avatar with glow (sm, default, lg sizes)
+  - `.profile-name`, `.profile-bio` - Profile text components
+  - `.link-list`, `.link-item` - Styled link buttons
+  - Platform-specific hover colors (twitter, instagram, youtube, github, discord, twitch)
+
+- **Countdown Widget**
+  - `.countdown-container`, `.shape-container` - Event countdown layout
+  - Shape variants: diamond, circle, heart, star, hexagon, octagon
+  - `.countdown-box`, `.countdown-timer` - Timer display
+  - `.countdown-popup` - Animated popup messages
+  - `.countdown-character`, `.countdown-overlay-wrapper` - Image support
+  - `countdown-widget.js` - JavaScript module with JSON config support
+
+#### New JavaScript Modules (`src/lib/`)
+- `gallery.js` - Gallery system with filtering, lightbox, and NSFW handling
+- `countdown-widget.js` - Countdown widget with JSON configuration
+
+#### New Package Exports
+```javascript
+'@whykusanagi/corrupted-theme/extensions' // extensions.css
+'@whykusanagi/corrupted-theme/gallery'    // gallery.js
+'@whykusanagi/corrupted-theme/countdown'  // countdown-widget.js
+```
+
+#### Example Pages
+- `examples/extensions-showcase.html` - Interactive demo for all extension components
+- `examples/index.html` - Central landing hub for the design system with categorized navigation
+- `examples/assets/celeste-avatar.png` - Local avatar image for demos
+
+#### Design System Architecture
+- **Central Landing Hub** (`examples/index.html`)
+  - Hero section with quick install instructions
+  - Categorized cards linking to Core Components, Extensions, Glass Components, API Docs, Nikke, Animations
+  - Quick links for common component pages
+  - Professional Netflix/Meta-level information architecture
+
+- **Global Navigation System**
+  - Consistent navigation bar across all 9 example pages
+  - Home, Components (dropdown), Extensions (dropdown), Examples (dropdown), Docs links
+  - Section anchors in dropdowns for quick navigation
+  - Proper active state highlighting
+
+### Fixed
+
+#### Chrome White Background Flash
+- **Added:** `background-color: var(--bg)` to both `html` and `body` in `typography.css`
+- **Why:** Chrome browsers showed white flash before CSS variables loaded
+- **Impact:** Consistent dark background across all browsers immediately on load
+
+#### Navigation Consistency
+- **Updated:** All 9 example pages now have identical global navigation
+- **Why:** Some pages (button.html, card.html, form.html, layout.html) had minimal "Back" links only
+- **Impact:** Users can navigate the entire design system from any page
+
+#### Dead Links Fixed
+- **Fixed:** "Customization" links pointed to non-existent `CUSTOMIZATION.md`
+- **Changed to:** `COMPONENTS_REFERENCE.md#customization`
+- **Fixed:** Backgrounds section link added to Components dropdown
+
+#### Image Hotlinking
+- **Removed:** All Unsplash hotlinks (9 instances)
+- **Replaced with:** Local `assets/celeste-avatar.png` and `placehold.co` placeholders
+- **Why:** External hotlinks may break, cause CORS issues, or violate terms
+- **Impact:** All demo images load reliably in any environment
+
+### Changed
+
+#### Documentation Updates
+- **README.md** - Added "Extension Components" section with usage examples
+- **COMPONENTS_REFERENCE.md** - Added full documentation for all extension components
+- Updated table of contents in both files
+
+#### CSS Architecture
+- `theme.css` now imports `extensions.css` automatically
+- Cleaned up duplicate NSFW styles (now in extensions.css only)
+- Added explicit background color to `html` element for faster paint
+
+#### Example Page Updates
+- All example pages updated with consistent global navigation
+- `showcase-complete.html` - Added `id="backgrounds"` anchor and dropdown link
+- `index.html` - Transformed into design system landing hub
+- Layouts page added to Examples dropdown across all pages
+
+### Files Added
+- `src/css/extensions.css`
+- `src/lib/gallery.js`
+- `src/lib/countdown-widget.js`
+- `examples/extensions-showcase.html`
+- `examples/assets/celeste-avatar.png`
+
+---
+
 ## [0.1.1] - 2025-11-26
 
 ### Fixed

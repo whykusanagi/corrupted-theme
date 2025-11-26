@@ -11,13 +11,14 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 6. [Component Quick Reference](#component-quick-reference)
 7. [Animations & Experience Layer](#animations--experience-layer)
 8. [Nikke Utilities](#nikke-utilities)
-9. [Customization & Tokens](#customization--tokens)
-10. [Coding Standards](#coding-standards)
-11. [Development Workflow](#development-workflow)
-12. [Testing & QA Expectations](#testing--qa-expectations)
-13. [Support](#support)
-14. [Celeste Widget Integration](#celeste-widget-integration-optional)
-15. [License](#license)
+9. [Extension Components](#extension-components)
+10. [Customization & Tokens](#customization--tokens)
+11. [Coding Standards](#coding-standards)
+12. [Development Workflow](#development-workflow)
+13. [Testing & QA Expectations](#testing--qa-expectations)
+14. [Support](#support)
+15. [Celeste Widget Integration](#celeste-widget-integration-optional)
+16. [License](#license)
 
 ## Overview
 - **Glassmorphism-first** visual language with layered depth, gradients, and scanlines.
@@ -402,6 +403,89 @@ Class | Behavior
 </div>
 ```
 All Nikke-specific helpers live alongside the main utilities (`src/css/nikke-utilities.css`) and observe the same token set, so there are no visual disconnects between game-specific and general UI.
+
+## Extension Components
+
+Production-tested components from whykusanagi.xyz for galleries, social links, countdowns, and more. All extension styles are included in `theme.css` or can be imported separately via `extensions.css`.
+
+### Gallery System
+
+Responsive gallery grid with filtering, lightbox, and NSFW content support.
+
+```html
+<div class="filter-bar">
+  <button class="filter-btn active" data-filter="all">All</button>
+  <button class="filter-btn" data-filter="photos">Photos</button>
+</div>
+
+<div class="gallery-container" id="my-gallery">
+  <div class="gallery-item" data-tags="photos">
+    <img src="image.jpg" alt="Description">
+    <div class="gallery-caption">Caption text</div>
+  </div>
+</div>
+```
+
+```javascript
+import { initGallery } from '@whykusanagi/corrupted-theme/gallery';
+
+const gallery = initGallery('#my-gallery', {
+  enableLightbox: true,
+  enableNsfw: true,
+  filterAnimation: true
+});
+
+gallery.filter('photos');     // Filter by category
+gallery.openLightbox(0);      // Open first image
+```
+
+### Social Links List
+
+Link-in-bio style layout with branded platform colors.
+
+```html
+<div class="social-links-container">
+  <img src="avatar.jpg" class="profile-avatar">
+  <h1 class="profile-name">@username</h1>
+  <p class="profile-bio">Your bio here</p>
+  <div class="link-list">
+    <a href="#" class="link-item twitter"><i class="fab fa-twitter"></i> Twitter</a>
+    <a href="#" class="link-item github"><i class="fab fa-github"></i> GitHub</a>
+  </div>
+</div>
+```
+
+### Countdown Widget
+
+Event countdown with configurable shapes (diamond, circle, heart, star, hexagon, octagon).
+
+```javascript
+import { initCountdown } from '@whykusanagi/corrupted-theme/countdown';
+
+initCountdown({
+  config: {
+    title: 'Launch Countdown',
+    eventDate: '2025-04-01T00:00:00-07:00',
+    completedMessage: 'Now Live!',
+    character: {
+      image: 'character.png',
+      background: { type: 'diamond' }
+    }
+  }
+});
+```
+
+### NSFW Content Blur
+
+Click-to-reveal overlay for sensitive content.
+
+```html
+<div class="gallery-item nsfw-content" data-warning="18+ Click to View">
+  <img src="sensitive-image.jpg" alt="Description">
+</div>
+```
+
+See `examples/extensions-showcase.html` for interactive demos and `docs/COMPONENTS_REFERENCE.md` for complete API documentation.
 
 ## Customization & Tokens
 Override only the tokens you need. The defaults intentionally mirror the showcase.

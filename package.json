@@ -1,6 +1,6 @@
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "A dark, glassmorphic design system with pink/purple accents. Perfect for creating modern, visually striking web applications.",
   "main": "src/css/theme.css",
@@ -16,7 +16,12 @@
     "./animations": "./src/css/animations.css",
     "./components": "./src/css/components.css",
     "./utilities": "./src/css/utilities.css",
-    "./nikke-utilities": "./src/css/nikke-utilities.css"
+    "./nikke-utilities": "./src/css/nikke-utilities.css",
+    "./extensions": "./src/css/extensions.css",
+    "./gallery": "./src/lib/gallery.js",
+    "./countdown": "./src/lib/countdown-widget.js",
+    "./corrupted-text": "./src/lib/corrupted-text.js",
+    "./corruption-loading": "./src/lib/corruption-loading.js"
   },
   "files": [
     "src",
@@ -42,9 +47,11 @@
     "ui-framework",
     "styling",
     "css-variables",
-    "celeste-widget",
-    "chat-widget",
-    "ai-chat"
+    "gallery",
+    "lightbox",
+    "countdown",
+    "social-links",
+    "link-in-bio"
   ],
   "author": "whykusanagi <contact@whykusanagi.xyz>",
   "license": "MIT",

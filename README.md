@@ -20,6 +20,10 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 15. [Celeste Widget Integration](#celeste-widget-integration-optional)
 16. [License](#license)
 
+<div align="center" style="margin: 2rem 0;">
+  <img src="https://s3.whykusanagi.xyz/art/cyber_sailor_moon_trans.png" alt="Corrupted Theme - Glassmorphic Design System" width="400" />
+</div>
+
 ## Overview
 - **Glassmorphism-first** visual language with layered depth, gradients, and scanlines.
 - **Systemized tokens** (`src/css/variables.css`) for colors, typography, spacing, motion, and elevation.

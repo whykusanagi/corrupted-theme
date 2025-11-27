@@ -21,7 +21,9 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 16. [License](#license)
 
 <div align="center" style="margin: 2rem 0;">
-  <img src="https://s3.whykusanagi.xyz/art/cyber_sailor_moon_trans.png" alt="Corrupted Theme - Glassmorphic Design System" width="400" />
+
+![Corrupted Theme - Glassmorphic Design System](https://s3.whykusanagi.xyz/art/cyber_sailor_moon_trans.png)
+
 </div>
 
 ## Overview

@@ -32,3 +32,12 @@ node_modules/
 .env
 .env.local
 CLAUDE.md
+
+# Internal documentation (not for npm users)
+docs/IMPLEMENTATION_VALIDATION.md
+docs/FUTURE_WORK.md
+docs/CAPABILITIES.md
+docs/PERSONALITY.md
+docs/ROUTING.md
+docs/LLM_PROVIDERS.md
+docs/platforms/CLI_IMPLEMENTATION.md

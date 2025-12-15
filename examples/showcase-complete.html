@@ -752,6 +752,202 @@ const theme = {
       </div>
     </section>
 
+    <!-- Animation Utilities Section -->
+    <section class="showcase-section" id="animations">
+      <h2><i class="fas fa-magic"></i> Animation Utilities</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-xl);">
+        Pre-built animation classes for common UI patterns. All animations respect <code>prefers-reduced-motion</code> for accessibility.
+      </p>
+
+      <h3>Fade Animations</h3>
+      <div class="showcase-grid" style="margin-bottom: var(--spacing-xl);">
+        <div class="glass-card fade-in">
+          <h4><code>.fade-in</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Standard fade (0.5s)<br>
+            <small>Refresh page to see animation</small>
+          </p>
+        </div>
+        <div class="glass-card fade-in-fast" style="animation-delay: 0.2s;">
+          <h4><code>.fade-in-fast</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Quick fade (0.3s)<br>
+            <small>For snappy UI transitions</small>
+          </p>
+        </div>
+        <div class="glass-card fade-in-slow" style="animation-delay: 0.4s;">
+          <h4><code>.fade-in-slow</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Slow fade (1s)<br>
+            <small>For dramatic reveals</small>
+          </p>
+        </div>
+      </div>
+
+      <h3>Slide Animations</h3>
+      <div class="showcase-grid" style="margin-bottom: var(--spacing-xl);">
+        <div class="glass-card slide-in">
+          <h4><code>.slide-in</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Slide from bottom with bounce<br>
+            <small>Perfect for modals</small>
+          </p>
+        </div>
+        <div class="glass-card slide-in-left" style="animation-delay: 0.2s;">
+          <h4><code>.slide-in-left</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Slide from left with bounce<br>
+            <small>For sidebars</small>
+          </p>
+        </div>
+        <div class="glass-card slide-in-right" style="animation-delay: 0.4s;">
+          <h4><code>.slide-in-right</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Slide from right with bounce<br>
+            <small>For notifications</small>
+          </p>
+        </div>
+        <div class="glass-card slide-in-slow" style="animation-delay: 0.6s;">
+          <h4><code>.slide-in-slow</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Slow slide (1.2s)<br>
+            <small>Dramatic entrance</small>
+          </p>
+        </div>
+      </div>
+
+      <h3>Scale Animations</h3>
+      <div class="showcase-grid" style="margin-bottom: var(--spacing-xl);">
+        <div class="glass-card scale-in">
+          <h4><code>.scale-in</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Pop in from 95% to 100%<br>
+            <small>Subtle attention grabber</small>
+          </p>
+        </div>
+        <div class="glass-card scale-up" style="animation-delay: 0.2s;">
+          <h4><code>.scale-up</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Hover to scale to 105%<br>
+            <small>Try hovering this card!</small>
+          </p>
+        </div>
+      </div>
+
+      <h3>Pulse, Breathe & Float</h3>
+      <div class="showcase-grid" style="margin-bottom: var(--spacing-xl);">
+        <div class="glass-card">
+          <div class="pulse" style="display: inline-block; padding: var(--spacing-md); background: var(--glass-darker); border-radius: var(--radius-md);">
+            <i class="fas fa-bell" style="font-size: 2rem; color: var(--accent);"></i>
+          </div>
+          <h4><code>.pulse</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Pulses opacity 1 ↔ 0.7 (2s loop)<br>
+            <small>For attention indicators</small>
+          </p>
+        </div>
+        <div class="glass-card">
+          <div class="breathe" style="display: inline-block; padding: var(--spacing-md); background: var(--glass-darker); border-radius: var(--radius-md);">
+            <i class="fas fa-heart" style="font-size: 2rem; color: #ef4444;"></i>
+          </div>
+          <h4><code>.breathe</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Slower pulse 0.8 ↔ 1 (3s loop)<br>
+            <small>Subtle ambient effect</small>
+          </p>
+        </div>
+        <div class="glass-card">
+          <div class="float" style="display: inline-block; padding: var(--spacing-md); background: var(--glass-darker); border-radius: var(--radius-md);">
+            <i class="fas fa-rocket" style="font-size: 2rem; color: var(--accent);"></i>
+          </div>
+          <h4><code>.float</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Floats up/down 10px (3s loop)<br>
+            <small>Smooth vertical motion</small>
+          </p>
+        </div>
+      </div>
+
+      <h3>Shimmer (Loading State)</h3>
+      <div class="demo-container" style="margin-bottom: var(--spacing-xl);">
+        <div class="shimmer" style="height: 200px; width: 100%; border-radius: var(--radius-lg); position: relative; overflow: hidden;">
+          <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: var(--text-secondary);">
+            <code>.shimmer</code> - Animated loading state
+          </div>
+        </div>
+      </div>
+
+      <h3>Lift Effects (Hover)</h3>
+      <div class="showcase-grid" style="margin-bottom: var(--spacing-xl);">
+        <div class="glass-card lift transition-normal" style="cursor: pointer;">
+          <h4><code>.lift</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Hover to lift 4px with shadow<br>
+            <small>Standard lift effect</small>
+          </p>
+        </div>
+        <div class="glass-card lift-sm transition-normal" style="cursor: pointer;">
+          <h4><code>.lift-sm</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Hover to lift 2px (subtle)<br>
+            <small>Subtle hover feedback</small>
+          </p>
+        </div>
+        <div class="glass-card lift-lg transition-normal" style="cursor: pointer;">
+          <h4><code>.lift-lg</code></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem;">
+            Hover to lift 8px (dramatic)<br>
+            <small>Strong hover effect</small>
+          </p>
+        </div>
+      </div>
+
+      <h3>Transition Utilities</h3>
+      <div class="demo-container" style="flex-direction: column; gap: var(--spacing-md); margin-bottom: var(--spacing-xl);">
+        <button class="btn secondary transition-fast" style="width: fit-content;">
+          <code>.transition-fast</code> (150ms) - Snappy UI
+        </button>
+        <button class="btn secondary transition-normal" style="width: fit-content;">
+          <code>.transition-normal</code> (300ms) - Default speed
+        </button>
+        <button class="btn secondary transition-slow" style="width: fit-content;">
+          <code>.transition-slow</code> (500ms) - Smooth & dramatic
+        </button>
+      </div>
+
+      <div class="code-example">
+&lt;!-- Fade animations --&gt;
+&lt;div class="fade-in"&gt;Fades in on load&lt;/div&gt;
+&lt;div class="fade-in-fast"&gt;Quick fade&lt;/div&gt;
+&lt;div class="fade-in-slow"&gt;Slow fade&lt;/div&gt;
+
+&lt;!-- Slide animations --&gt;
+&lt;div class="slide-in"&gt;Slides from bottom&lt;/div&gt;
+&lt;div class="slide-in-left"&gt;Slides from left&lt;/div&gt;
+&lt;div class="slide-in-right"&gt;Slides from right&lt;/div&gt;
+
+&lt;!-- Scale animations --&gt;
+&lt;div class="scale-in"&gt;Pops in&lt;/div&gt;
+&lt;div class="scale-up"&gt;Scales on hover&lt;/div&gt;
+
+&lt;!-- Continuous animations --&gt;
+&lt;div class="pulse"&gt;Pulses opacity&lt;/div&gt;
+&lt;div class="breathe"&gt;Breathes slowly&lt;/div&gt;
+&lt;div class="float"&gt;Floats up/down&lt;/div&gt;
+&lt;div class="shimmer"&gt;Loading shimmer&lt;/div&gt;
+
+&lt;!-- Hover effects (combine with transitions) --&gt;
+&lt;div class="lift transition-normal"&gt;Lifts on hover&lt;/div&gt;
+&lt;div class="lift-sm transition-fast"&gt;Subtle lift&lt;/div&gt;
+&lt;div class="lift-lg transition-slow"&gt;Dramatic lift&lt;/div&gt;
+
+&lt;!-- Transition utilities --&gt;
+&lt;button class="btn transition-fast"&gt;Fast transitions&lt;/button&gt;
+&lt;button class="btn transition-normal"&gt;Normal speed&lt;/button&gt;
+&lt;button class="btn transition-slow"&gt;Slow & smooth&lt;/button&gt;
+      </div>
+    </section>
+
     <!-- Corrupted Animations & Text Highlighting Section -->
     <section class="showcase-section" id="corrupted">
       <h2><i class="fas fa-bug"></i> Corrupted Animations & Text Highlighting</h2>
@@ -934,6 +1130,543 @@ const theme = {
       </div>
     </section>
 
+    <!-- Character-Level Corruption (NEW in v0.1.3) -->
+    <section class="showcase-section" id="character-corruption">
+      <h2><i class="fas fa-language"></i> Character-Level Corruption <span class="badge success" style="margin-left: var(--spacing-sm);">NEW v0.1.3</span></h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        <strong>CLI Brand Parity:</strong> Matches Celeste CLI's translation-failure aesthetic. Japanese characters are mixed <strong>INTO</strong> English words at the character level (not word replacement).
+      </p>
+
+      <h3>Dual Corruption Systems</h3>
+      <div class="showcase-grid" style="margin-bottom: var(--spacing-xl);">
+        <div class="glass-card" style="padding: var(--spacing-lg);">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-md);">
+            <i class="fas fa-spinner"></i> Multilingual Cycling
+          </h4>
+          <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md); font-size: 0.9rem;">
+            <code>corrupted-text.js</code> (existing)
+          </p>
+          <p style="margin-bottom: var(--spacing-md); font-size: 0.95rem;">
+            <strong>Use for:</strong> Loading screens, full-screen animations, dramatic effects
+          </p>
+          <p style="margin-bottom: var(--spacing-md); font-size: 0.95rem;">
+            <strong>Behavior:</strong> Cycles through language variants (English → Romaji → Kanji)
+          </p>
+          <div style="text-align: center; padding: var(--spacing-lg); background: rgba(217, 79, 144, 0.05); border-radius: var(--radius-md);">
+            <span class="corrupted-multilang"
+                  data-english="Loading"
+                  data-romaji="rōdo"
+                  data-katakana="ローディング">
+              Loading
+            </span>
+          </div>
+        </div>
+
+        <div class="glass-card" style="padding: var(--spacing-lg); border: 2px solid var(--accent);">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-md);">
+            <i class="fas fa-text-height"></i> Character-Level Mixing <span class="badge success" style="font-size: 0.7rem;">NEW</span>
+          </h4>
+          <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md); font-size: 0.9rem;">
+            <code>character-corruption.js</code> (new)
+          </p>
+          <p style="margin-bottom: var(--spacing-md); font-size: 0.95rem;">
+            <strong>Use for:</strong> Dashboard titles, section headers, UI labels (matches CLI)
+          </p>
+          <p style="margin-bottom: var(--spacing-md); font-size: 0.95rem;">
+            <strong>Behavior:</strong> Mixes Japanese INTO English
+          </p>
+          <div style="text-align: center; padding: var(--spacing-lg); background: rgba(217, 79, 144, 0.05); border-radius: var(--radius-md);">
+            <span class="auto-corrupt"
+                  data-text="Loading"
+                  data-intensity="0.35"
+                  data-interval="3000"
+                  style="font-size: 1.5rem; font-weight: 600;">
+              Loading
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <h3>Corruption Intensity Levels</h3>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-md);">
+        Watch the text below change every 3 seconds to see the randomization effect:
+      </p>
+
+      <div style="display: flex; flex-direction: column; gap: var(--spacing-md); margin-bottom: var(--spacing-xl);">
+        <div class="glass-card" style="padding: var(--spacing-md);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md);">
+            <h3 class="auto-corrupt" data-text="USAGE ANALYTICS" data-intensity="0.15" data-interval="3000" style="margin: 0; flex: 1; min-width: 200px;">USAGE ANALYTICS</h3>
+            <span class="badge">15% Minimal</span>
+          </div>
+          <p style="color: var(--text-secondary); margin-top: var(--spacing-sm); margin-bottom: 0; font-size: 0.9rem;">
+            Decorative only, critical labels
+          </p>
+        </div>
+
+        <div class="glass-card" style="padding: var(--spacing-md);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md);">
+            <h3 class="auto-corrupt" data-text="USAGE ANALYTICS" data-intensity="0.25" data-interval="3000" style="margin: 0; flex: 1; min-width: 200px;">USAGE ANALYTICS</h3>
+            <span class="badge primary">25% Low</span>
+          </div>
+          <p style="color: var(--text-secondary); margin-top: var(--spacing-sm); margin-bottom: 0; font-size: 0.9rem;">
+            Section headers, readable UI
+          </p>
+        </div>
+
+        <div class="glass-card" style="padding: var(--spacing-md); border: 2px solid var(--accent);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md);">
+            <h3 class="auto-corrupt" data-text="USAGE ANALYTICS" data-intensity="0.35" data-interval="3000" style="margin: 0; flex: 1; min-width: 200px;">USAGE ANALYTICS</h3>
+            <span class="badge primary">35% Medium ★ Recommended</span>
+          </div>
+          <p style="color: var(--text-secondary); margin-top: var(--spacing-sm); margin-bottom: 0; font-size: 0.9rem;">
+            Dashboard titles, brand elements
+          </p>
+        </div>
+
+        <div class="glass-card" style="padding: var(--spacing-md);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--spacing-md);">
+            <h3 class="auto-corrupt" data-text="USAGE ANALYTICS" data-intensity="0.45" data-interval="3000" style="margin: 0; flex: 1; min-width: 200px;">USAGE ANALYTICS</h3>
+            <span class="badge warning">45% High (Max)</span>
+          </div>
+          <p style="color: var(--text-secondary); margin-top: var(--spacing-sm); margin-bottom: 0; font-size: 0.9rem;">
+            Loading screens, dramatic effects (maximum readable)
+          </p>
+        </div>
+      </div>
+
+      <h3>Interactive Demo</h3>
+      <div class="glass-card" style="padding: var(--spacing-xl); text-align: center;">
+        <h2 id="live-corruption-demo" style="font-size: clamp(1.5rem, 5vw, 3rem); margin-bottom: var(--spacing-md);">
+          CELESTE AI DASHBOARD
+        </h2>
+        <p id="demo-output" style="color: var(--text-secondary); margin-bottom: var(--spacing-lg); font-size: 0.9rem;">
+          Click a button to see corruption at different intensities
+        </p>
+
+        <div style="display: flex; gap: var(--spacing-sm); justify-content: center; flex-wrap: wrap;">
+          <button class="btn sm secondary" onclick="setDemoIntensity(0.15)">15%</button>
+          <button class="btn sm secondary" onclick="setDemoIntensity(0.25)">25%</button>
+          <button class="btn sm" onclick="setDemoIntensity(0.35)">35% ★</button>
+          <button class="btn sm secondary" onclick="setDemoIntensity(0.45)">45%</button>
+          <button class="btn sm ghost" onclick="setDemoIntensity(0)">Reset</button>
+        </div>
+      </div>
+
+      <h3 style="margin-top: var(--spacing-xl);">❌ Anti-Patterns (What NOT to Do)</h3>
+      <div class="showcase-grid" style="margin-bottom: var(--spacing-lg);">
+        <div class="glass-card" style="padding: var(--spacing-md); border: 2px solid #ef4444;">
+          <h5 style="color: #ef4444; margin-bottom: var(--spacing-sm);">
+            <i class="fas fa-ban"></i> Leet Speak (BANNED)
+          </h5>
+          <code style="font-size: 1.1rem; display: block; margin-bottom: var(--spacing-sm);">US4G3 4N4LYT1CS</code>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">
+            Number substitution (0,1,3,4,5,7) violates brand identity
+          </p>
+        </div>
+
+        <div class="glass-card" style="padding: var(--spacing-md); border: 2px solid #ef4444;">
+          <h5 style="color: #ef4444; margin-bottom: var(--spacing-sm);">
+            <i class="fas fa-ban"></i> Full Word Replacement
+          </h5>
+          <code style="font-size: 1.1rem; display: block; margin-bottom: var(--spacing-sm);">使用 統計</code>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">
+            Complete translation is NOT corruption
+          </p>
+        </div>
+
+        <div class="glass-card" style="padding: var(--spacing-md); border: 2px solid #ef4444;">
+          <h5 style="color: #ef4444; margin-bottom: var(--spacing-sm);">
+            <i class="fas fa-ban"></i> Over-Corruption (&gt;45%)
+          </h5>
+          <code style="font-size: 1.1rem; display: block; margin-bottom: var(--spacing-sm);">壊統使計深分析監</code>
+          <p style="color: var(--text-secondary); margin: 0; font-size: 0.9rem;">
+            Unreadable - violates accessibility (WCAG)
+          </p>
+        </div>
+      </div>
+
+      <h3>Implementation Example</h3>
+      <div class="code-example">
+&lt;!-- Method 1: Auto-corruption with data attributes --&gt;
+&lt;h1 class="auto-corrupt"
+    data-text="CELESTE DASHBOARD"
+    data-intensity="0.35"
+    data-interval="3000"&gt;
+  CELESTE DASHBOARD
+&lt;/h1&gt;
+
+&lt;script type="module"&gt;
+  import { initAutoCorruption } from './character-corruption.js';
+  initAutoCorruption();
+&lt;/script&gt;
+
+&lt;!-- Method 2: Manual JavaScript --&gt;
+&lt;script type="module"&gt;
+  import { corruptTextJapanese, INTENSITY } from './character-corruption.js';
+
+  const title = document.getElementById('title');
+  setInterval(() => {
+    title.textContent = corruptTextJapanese('USAGE ANALYTICS', INTENSITY.MEDIUM);
+  }, 3000);
+&lt;/script&gt;
+      </div>
+    </section>
+
+    <!-- New Bootstrap Components (v0.1.3) -->
+    <section class="showcase-section" id="new-components">
+      <h2><i class="fas fa-plus-circle"></i> New Bootstrap Components <span class="badge success" style="margin-left: var(--spacing-sm);">NEW v0.1.3</span></h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        <strong>1:1 Bootstrap Parity:</strong> 25+ new components added for complete coverage. Build sites without writing custom CSS!
+      </p>
+
+      <!-- Accordion -->
+      <h3><i class="fas fa-chevron-down"></i> Accordion / Collapse</h3>
+      <div style="max-width: 800px; margin-bottom: var(--spacing-xl);">
+        <div class="accordion">
+          <div class="accordion-item active">
+            <div class="accordion-header">What is the Corrupted Theme?</div>
+            <div class="accordion-body">
+              <p>Corrupted Theme is a production-ready glassmorphic design system with 65+ Bootstrap-equivalent components. It features a translation-failure aesthetic with Japanese character corruption, perfect for modern web applications.</p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">How do I install it?</div>
+            <div class="accordion-body">
+              <p>Install via npm: <code>npm install @whykusanagi/corrupted-theme</code></p>
+              <p>Then import the CSS: <code>import '@whykusanagi/corrupted-theme';</code></p>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <div class="accordion-header">Is it accessible?</div>
+            <div class="accordion-body">
+              <p>Yes! All components meet WCAG AA standards with proper color contrast, keyboard navigation, and screen reader support. Corruption intensity is capped at 45% to maintain readability.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-example" style="margin-top: var(--spacing-md);">
+&lt;div class="accordion"&gt;
+  &lt;div class="accordion-item"&gt;
+    &lt;div class="accordion-header"&gt;Click to expand&lt;/div&gt;
+    &lt;div class="accordion-body"&gt;
+      &lt;p&gt;Content goes here&lt;/p&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script type="module"&gt;
+  import { initAccordions } from './components.js';
+  initAccordions(); // Auto-initializes on load
+&lt;/script&gt;
+        </div>
+      </div>
+
+      <!-- Toast Notifications -->
+      <h3><i class="fas fa-bell"></i> Toast Notifications</h3>
+      <div style="margin-bottom: var(--spacing-xl);">
+        <div class="demo-container">
+          <button class="btn" onclick="showToastDemo('success')">
+            <i class="fas fa-check"></i> Success Toast
+          </button>
+          <button class="btn secondary" onclick="showToastDemo('warning')">
+            <i class="fas fa-exclamation-triangle"></i> Warning Toast
+          </button>
+          <button class="btn secondary" onclick="showToastDemo('error')">
+            <i class="fas fa-times"></i> Error Toast
+          </button>
+          <button class="btn secondary" onclick="showToastDemo('info')">
+            <i class="fas fa-info-circle"></i> Info Toast
+          </button>
+        </div>
+
+        <div class="code-example" style="margin-top: var(--spacing-md);">
+&lt;script type="module"&gt;
+  import { toast } from './components.js';
+
+  // Success notification
+  toast.success('Data saved successfully!', 'Success', 5000);
+
+  // Warning notification
+  toast.warning('Please review your input', 'Warning', 5000);
+
+  // Error notification
+  toast.error('Failed to connect to server', 'Error', 7000);
+
+  // Info notification (no title)
+  toast.info('New features available', '', 5000);
+&lt;/script&gt;
+        </div>
+      </div>
+
+      <!-- Button Groups -->
+      <h3><i class="fas fa-object-group"></i> Button Groups</h3>
+      <div style="margin-bottom: var(--spacing-xl);">
+        <div style="margin-bottom: var(--spacing-md);">
+          <p style="color: var(--text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.9rem;">Horizontal button group:</p>
+          <div class="btn-group">
+            <button class="btn secondary active">Left</button>
+            <button class="btn secondary">Middle</button>
+            <button class="btn secondary">Right</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-md);">
+          <p style="color: var(--text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.9rem;">Vertical button group:</p>
+          <div class="btn-group-vertical">
+            <button class="btn secondary">Top</button>
+            <button class="btn secondary active">Middle</button>
+            <button class="btn secondary">Bottom</button>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-md);">
+          <p style="color: var(--text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.9rem;">Button toolbar:</p>
+          <div class="btn-toolbar">
+            <div class="btn-group">
+              <button class="btn secondary"><i class="fas fa-bold"></i></button>
+              <button class="btn secondary"><i class="fas fa-italic"></i></button>
+              <button class="btn secondary"><i class="fas fa-underline"></i></button>
+            </div>
+            <div class="btn-group">
+              <button class="btn secondary"><i class="fas fa-align-left"></i></button>
+              <button class="btn secondary"><i class="fas fa-align-center"></i></button>
+              <button class="btn secondary"><i class="fas fa-align-right"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-example">
+&lt;!-- Horizontal --&gt;
+&lt;div class="btn-group"&gt;
+  &lt;button class="btn secondary active"&gt;Left&lt;/button&gt;
+  &lt;button class="btn secondary"&gt;Middle&lt;/button&gt;
+  &lt;button class="btn secondary"&gt;Right&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- Vertical --&gt;
+&lt;div class="btn-group-vertical"&gt;
+  &lt;button class="btn secondary"&gt;Top&lt;/button&gt;
+  &lt;button class="btn secondary"&gt;Bottom&lt;/button&gt;
+&lt;/div&gt;
+        </div>
+      </div>
+
+      <!-- Input Groups -->
+      <h3><i class="fas fa-search"></i> Input Groups</h3>
+      <div style="max-width: 600px; margin-bottom: var(--spacing-xl);">
+        <div style="margin-bottom: var(--spacing-md);">
+          <p style="color: var(--text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.9rem;">Search with prepend text:</p>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text"><i class="fas fa-search"></i></span>
+            </div>
+            <input type="text" placeholder="Search...">
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-md);">
+          <p style="color: var(--text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.9rem;">Input with append button:</p>
+          <div class="input-group">
+            <input type="text" placeholder="Enter email">
+            <div class="input-group-append">
+              <button class="btn">Subscribe</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-md);">
+          <p style="color: var(--text-secondary); margin-bottom: var(--spacing-sm); font-size: 0.9rem;">Both prepend and append:</p>
+          <div class="input-group">
+            <div class="input-group-prepend">
+              <span class="input-group-text">$</span>
+            </div>
+            <input type="number" placeholder="0.00">
+            <div class="input-group-append">
+              <span class="input-group-text">.00</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="code-example">
+&lt;div class="input-group"&gt;
+  &lt;div class="input-group-prepend"&gt;
+    &lt;span class="input-group-text"&gt;@&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;input type="text" placeholder="Username"&gt;
+&lt;/div&gt;
+        </div>
+      </div>
+
+      <!-- Form Enhancements -->
+      <h3><i class="fas fa-check-square"></i> Form Enhancements</h3>
+      <div style="max-width: 600px; margin-bottom: var(--spacing-xl);">
+        <div style="margin-bottom: var(--spacing-lg);">
+          <h4 style="font-size: 1rem; margin-bottom: var(--spacing-md);">Custom Checkboxes & Radios</h4>
+
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="check1" checked>
+            <label class="form-check-label" for="check1">Enable notifications</label>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="check2">
+            <label class="form-check-label" for="check2">Auto-save drafts</label>
+          </div>
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="check3" disabled>
+            <label class="form-check-label" for="check3">Disabled option</label>
+          </div>
+
+          <div style="margin-top: var(--spacing-md); padding-top: var(--spacing-md); border-top: 1px solid var(--border);"></div>
+
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="radio1" name="radio-group" checked>
+            <label class="form-check-label" for="radio1">Option 1</label>
+          </div>
+          <div class="form-check">
+            <input type="radio" class="form-check-input" id="radio2" name="radio-group">
+            <label class="form-check-label" for="radio2">Option 2</label>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-lg);">
+          <h4 style="font-size: 1rem; margin-bottom: var(--spacing-md);">Toggle Switches</h4>
+
+          <div class="form-switch">
+            <input type="checkbox" class="form-switch-input" id="switch1" checked>
+            <label class="form-switch-label" for="switch1">Dark mode</label>
+          </div>
+          <div class="form-switch">
+            <input type="checkbox" class="form-switch-input" id="switch2">
+            <label class="form-switch-label" for="switch2">Auto-play videos</label>
+          </div>
+          <div class="form-switch">
+            <input type="checkbox" class="form-switch-input" id="switch3" disabled>
+            <label class="form-switch-label" for="switch3">Disabled switch</label>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-lg);">
+          <h4 style="font-size: 1rem; margin-bottom: var(--spacing-md);">Range Slider</h4>
+          <input type="range" class="form-range" min="0" max="100" value="50">
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: var(--spacing-sm);">
+            Drag the slider to adjust value
+          </p>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-lg);">
+          <h4 style="font-size: 1rem; margin-bottom: var(--spacing-md);">Custom Select</h4>
+          <select class="form-select">
+            <option>Select an option</option>
+            <option>Option 1</option>
+            <option>Option 2</option>
+            <option>Option 3</option>
+          </select>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-lg);">
+          <h4 style="font-size: 1rem; margin-bottom: var(--spacing-md);">Floating Labels</h4>
+          <div class="form-floating" style="margin-bottom: var(--spacing-md);">
+            <input type="text" id="float-input" placeholder=" ">
+            <label for="float-input">Email address</label>
+          </div>
+          <div class="form-floating">
+            <textarea id="float-textarea" placeholder=" " rows="3"></textarea>
+            <label for="float-textarea">Message</label>
+          </div>
+        </div>
+
+        <div style="margin-bottom: var(--spacing-lg);">
+          <h4 style="font-size: 1rem; margin-bottom: var(--spacing-md);">Custom File Upload</h4>
+          <div class="form-file">
+            <input type="file" id="file-input">
+            <label for="file-input" class="form-file-label">
+              <i class="fas fa-upload"></i> Choose file
+            </label>
+          </div>
+        </div>
+
+        <div class="code-example">
+&lt;!-- Checkbox --&gt;
+&lt;div class="form-check"&gt;
+  &lt;input type="checkbox" class="form-check-input" id="check1"&gt;
+  &lt;label class="form-check-label" for="check1"&gt;Label&lt;/label&gt;
+&lt;/div&gt;
+
+&lt;!-- Toggle Switch --&gt;
+&lt;div class="form-switch"&gt;
+  &lt;input type="checkbox" class="form-switch-input" id="switch1"&gt;
+  &lt;label class="form-switch-label" for="switch1"&gt;Dark mode&lt;/label&gt;
+&lt;/div&gt;
+
+&lt;!-- Range Slider --&gt;
+&lt;input type="range" class="form-range" min="0" max="100" value="50"&gt;
+
+&lt;!-- Floating Label --&gt;
+&lt;div class="form-floating"&gt;
+  &lt;input type="text" id="float-input" placeholder=" "&gt;
+  &lt;label for="float-input"&gt;Email&lt;/label&gt;
+&lt;/div&gt;
+        </div>
+      </div>
+
+      <!-- Utility Classes -->
+      <h3><i class="fas fa-tools"></i> Utility Classes</h3>
+      <div style="margin-bottom: var(--spacing-xl);">
+        <div class="showcase-grid">
+          <div class="glass-card" style="padding: var(--spacing-md);">
+            <h4 style="font-size: 1rem; margin-bottom: var(--spacing-sm);">Close Button</h4>
+            <button class="btn-close"></button>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: var(--spacing-sm);">
+              Standardized × close button
+            </p>
+          </div>
+
+          <div class="glass-card" style="padding: var(--spacing-md);">
+            <h4 style="font-size: 1rem; margin-bottom: var(--spacing-sm);">Text Truncate</h4>
+            <p class="text-truncate" style="max-width: 200px;">
+              This is a very long text that will be truncated with an ellipsis
+            </p>
+          </div>
+
+          <div class="glass-card" style="padding: var(--spacing-md);">
+            <h4 style="font-size: 1rem; margin-bottom: var(--spacing-sm);">Aspect Ratios</h4>
+            <div class="ratio ratio-16x9" style="background: rgba(217, 79, 144, 0.2); border-radius: var(--radius-md);">
+              <div style="display: flex; align-items: center; justify-content: center;">
+                16:9 Ratio
+              </div>
+            </div>
+          </div>
+
+          <div class="glass-card" style="padding: var(--spacing-md);">
+            <h4 style="font-size: 1rem; margin-bottom: var(--spacing-sm);">Screen Reader Only</h4>
+            <p>
+              <span class="visually-hidden">This text is only for screen readers</span>
+              Visible text
+            </p>
+            <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: var(--spacing-sm);">
+              WCAG AA compliant
+            </p>
+          </div>
+        </div>
+
+        <div class="code-example" style="margin-top: var(--spacing-md);">
+&lt;!-- Close button --&gt;
+&lt;button class="btn-close"&gt;&lt;/button&gt;
+
+&lt;!-- Text truncate --&gt;
+&lt;p class="text-truncate"&gt;Long text...&lt;/p&gt;
+
+&lt;!-- Aspect ratio containers --&gt;
+&lt;div class="ratio ratio-16x9"&gt;
+  &lt;img src="image.jpg" alt="..."&gt;
+&lt;/div&gt;
+
+&lt;!-- Screen reader only --&gt;
+&lt;span class="visually-hidden"&gt;For screen readers&lt;/span&gt;
+        </div>
+      </div>
+    </section>
+
     <!-- Background Images Section -->
     <section class="showcase-section" id="backgrounds">
       <h2><i class="fas fa-image"></i> Background Images</h2>
@@ -961,7 +1694,7 @@ const theme = {
 
     <!-- Footer -->
     <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
-      <p><strong>Corrupted Theme</strong> v0.1.0 • Built with <i class="fas fa-heart" style="color: var(--accent);"></i> by whykusanagi</p>
+      <p><strong>Corrupted Theme</strong> v0.1.3 • Built with <i class="fas fa-heart" style="color: var(--accent);"></i> by whykusanagi</p>
       <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
         <a href="../README.md" class="link">Documentation</a> •
         <a href="../docs/COMPONENTS_REFERENCE.md#customization" class="link">Customization</a> •
@@ -970,31 +1703,32 @@ const theme = {
     </footer>
   </div>
 
-  <script>
-    const lewdJapanesePhrases = [
-      "闇が...私を呼んでいる...",
-      "頭...溶けていく...",
-      "ずっと...してほしい... ♥",
-      "壊れちゃう...ああ...もうダメ...",
-      "許して...もう戻れない...",
-      "私...アビスの一部に...",
-      "もう逃げない...もうダメ...",
-      "好きにして...お願い...",
-      "ああ...これが本当の私...",
-      "ここは...天使の地獄..."
-    ];
+  <script type="module">
+    // Import official corruption phrases from character-corruption.js
+    import { PERSONALITY_PHRASES, getRandomPhrase } from '../src/lib/character-corruption.js';
 
     function initGlitchKanji() {
       const glitchElements = document.querySelectorAll('.glitch-kanji');
       glitchElements.forEach(el => {
         const setPhrase = () => {
-          const phrase = lewdJapanesePhrases[Math.floor(Math.random() * lewdJapanesePhrases.length)];
+          // Use official personality phrases (Japanese kanji)
+          const phrase = getRandomPhrase('personality', 'japanese');
           el.setAttribute('data-jp', phrase);
         };
         setPhrase();
         setInterval(setPhrase, 3000);
       });
     }
+
+    // Initialize on DOM ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initGlitchKanji);
+    } else {
+      initGlitchKanji();
+    }
+  </script>
+
+  <script>
 
     // Modal functions
     function openModal(id) {
@@ -1096,6 +1830,97 @@ const theme = {
     });
 
     document.addEventListener('DOMContentLoaded', initGlitchKanji);
+  </script>
+
+  <!-- NEW v0.1.3: Character Corruption & Components -->
+  <script type="module">
+    // Import character corruption module
+    import { corruptTextJapanese, INTENSITY, initAutoCorruption } from '../src/lib/character-corruption.js';
+    import { toast, initAccordions } from '../src/lib/components.js';
+
+    // Initialize auto-corruption for all .auto-corrupt elements
+    initAutoCorruption();
+
+    // Initialize accordions
+    initAccordions();
+
+    // Interactive corruption demo
+    let currentIntensity = 0;
+    let demoInterval = null;
+    const demoElement = document.getElementById('live-corruption-demo');
+    const demoOutput = document.getElementById('demo-output');
+    const originalText = 'CELESTE AI DASHBOARD';
+
+    window.setDemoIntensity = function(intensity) {
+      currentIntensity = intensity;
+
+      // Clear existing interval
+      if (demoInterval) {
+        clearInterval(demoInterval);
+        demoInterval = null;
+      }
+
+      if (intensity === 0) {
+        demoElement.textContent = originalText;
+        demoOutput.textContent = 'Original text (no corruption)';
+      } else {
+        const corrupted = corruptTextJapanese(originalText, intensity);
+        demoElement.textContent = corrupted;
+        demoOutput.textContent = `Intensity: ${Math.round(intensity * 100)}% - Output randomizes every 3 seconds`;
+
+        // Re-corrupt on interval to show randomization
+        demoInterval = setInterval(() => {
+          if (currentIntensity > 0) {
+            demoElement.textContent = corruptTextJapanese(originalText, currentIntensity);
+          }
+        }, 3000);
+      }
+    };
+
+    // Toast demo function
+    window.showToastDemo = function(type) {
+      const messages = {
+        success: {
+          title: 'Success',
+          message: 'Data saved successfully! All changes have been applied.',
+        },
+        warning: {
+          title: 'Warning',
+          message: 'Please review your input before submitting the form.',
+        },
+        error: {
+          title: 'Error',
+          message: 'Failed to connect to server. Please try again later.',
+        },
+        info: {
+          title: 'Info',
+          message: 'New features are now available. Check them out!',
+        }
+      };
+
+      const config = messages[type] || messages.info;
+
+      switch(type) {
+        case 'success':
+          toast.success(config.message, config.title, 5000);
+          break;
+        case 'warning':
+          toast.warning(config.message, config.title, 5000);
+          break;
+        case 'error':
+          toast.error(config.message, config.title, 7000);
+          break;
+        case 'info':
+        default:
+          toast.info(config.message, config.title, 5000);
+          break;
+      }
+    };
+
+    // Auto-show welcome message on page load
+    setTimeout(() => {
+      toast.success('Welcome to Corrupted Theme v0.1.3!', 'Welcome', 5000);
+    }, 1000);
   </script>
 </body>
 </html>

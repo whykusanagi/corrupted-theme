@@ -31,7 +31,7 @@
 ```json
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Premium corrupted AI aesthetic with glassmorphism and translation-failure linguistics",
   "author": "Kusanagi <you@example.com>",
   "license": "MIT",
@@ -80,7 +80,7 @@ pnpm add @whykusanagi/corrupted-theme
 
 ```html
 <!-- Full theme (8.2KB gzipped) -->
-<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.1.2/dist/theme.css">
+<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.1.4/dist/theme.css">
 ```
 
 ### Local Development
@@ -664,7 +664,7 @@ The package follows [Semantic Versioning 2.0.0](https://semver.org/):
 ```
 MAJOR.MINOR.PATCH
 
-Example: 0.1.2
+Example: 0.1.4
          │ │ └─ Patch: Bug fixes (backward compatible)
          │ └─── Minor: New features (backward compatible)
          └───── Major: Breaking changes
@@ -674,7 +674,7 @@ Example: 0.1.2
 
 | Version | Date | Changes | Migration |
 |---------|------|---------|-----------|
-| **0.1.2** | 2025-12-10 | Current stable release | N/A |
+| **0.1.4** | 2025-12-10 | Current stable release | N/A |
 | 0.1.1 | 2025-11-15 | Added interactive states | None required |
 | 0.1.0 | 2025-10-01 | Initial public release | N/A |
 
@@ -691,7 +691,7 @@ npm update @whykusanagi/corrupted-theme
 npm install @whykusanagi/corrupted-theme@^0.2.0
 
 # Update to specific version
-npm install @whykusanagi/corrupted-theme@0.1.2
+npm install @whykusanagi/corrupted-theme@0.1.4
 
 # Update to latest (including major - may have breaking changes)
 npm install @whykusanagi/corrupted-theme@latest
@@ -849,6 +849,6 @@ import '@whykusanagi/corrupted-theme/src/css/components.css';
 
 **Last Updated**: 2025-12-13
 **Version**: 1.0.0
-**Package Version**: 0.1.2
+**Package Version**: 0.1.4
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Production Ready

@@ -2,7 +2,7 @@
 
 **Purpose**: Complete list of all files containing version numbers that must be updated when releasing a new version.
 
-**Current Version**: 0.1.3
+**Current Version**: 0.1.4
 
 ---
 
@@ -12,7 +12,7 @@
 **Location**: `/package.json`
 **Line**: 3
 ```json
-"version": "0.1.3"
+"version": "0.1.4"
 ```
 
 ### 2. CHANGELOG.md
@@ -62,10 +62,10 @@
 ### 7. showcase-complete.html
 **Location**: `/examples/showcase-complete.html`
 **Lines to update**:
-- Line 1135: "NEW v0.1.3" badge (keep for current release, change to version number after)
-- Line 1317: "NEW v0.1.3" badge (keep for current release, change to version number after)
+- Line 1135: "NEW v0.1.4" badge (keep for current release, change to version number after)
+- Line 1317: "NEW v0.1.4" badge (keep for current release, change to version number after)
 - Line 1697: Footer version `v0.1.X`
-- Line 1835: Comment `<!-- NEW v0.1.3: ... -->`
+- Line 1835: Comment `<!-- NEW v0.1.4: ... -->`
 - Line 1922: Toast message `Welcome to Corrupted Theme v0.1.X!`
 
 ### 8. Other Example Pages
@@ -77,13 +77,13 @@ All have footer version references like:
 <p>... • Corrupted Theme v0.1.0</p>
 ```
 
-**Update these to current version** (currently showing v0.1.0, should be v0.1.3)
+**Update these to current version** (currently showing v0.1.0, should be v0.1.4)
 
 ---
 
 ## Version Bump Procedure
 
-When releasing a new version (e.g., 0.1.3 → 0.1.4):
+When releasing a new version (e.g., 0.1.4 → 0.1.4):
 
 ### Step 1: Core Files
 ```bash
@@ -115,7 +115,7 @@ npm version patch  # or minor, or major
 #    - Footer
 
 # 7. Update showcase-complete.html
-#    - Change "NEW v0.1.3" badges to just version number
+#    - Change "NEW v0.1.4" badges to just version number
 #    - Update footer
 #    - Update toast message
 
@@ -171,19 +171,19 @@ When updating, search for these patterns:
 
 ```bash
 # Version with v prefix
-"v0.1.3"
+"v0.1.4"
 "v0\.1\.3"
 
 # Version without v prefix
-"0.1.3"
+"0.1.4"
 "0\.1\.3"
 
 # NPM package version
-"@whykusanagi/corrupted-theme@0.1.3"
+"@whykusanagi/corrupted-theme@0.1.4"
 
 # NEW badge references
-"NEW v0.1.3"
-"NEW in v0.1.3"
+"NEW v0.1.4"
+"NEW in v0.1.4"
 ```
 
 ---
@@ -192,18 +192,18 @@ When updating, search for these patterns:
 
 **Files showing OLD versions that need updating:**
 
-1. `/examples/showcase.html` - Shows v0.1.0 (should be v0.1.3)
-2. `/examples/form.html` - Shows v0.1.0 (should be v0.1.3)
-3. `/examples/layout.html` - Shows v0.1.0 (should be v0.1.3)
-4. `/examples/card.html` - Shows v0.1.0 (should be v0.1.3)
-5. `/examples/button.html` - Shows v0.1.0 (should be v0.1.3)
-6. `/examples/nikke-team-builder.html` - Shows v0.1.0 (should be v0.1.3)
-7. `/examples/showcase-complete.html` footer - Shows v0.1.0 (should be v0.1.3)
-8. `/examples/index.html` - Shows v0.1.2 (should be v0.1.3)
-9. `/docs/platforms/NPM_PACKAGE.md` - Shows v0.1.2 (should be v0.1.3)
-10. `/docs/governance/VERSION_MANAGEMENT.md` - Shows v0.1.2 (should be v0.1.3)
+1. `/examples/showcase.html` - Shows v0.1.0 (should be v0.1.4)
+2. `/examples/form.html` - Shows v0.1.0 (should be v0.1.4)
+3. `/examples/layout.html` - Shows v0.1.0 (should be v0.1.4)
+4. `/examples/card.html` - Shows v0.1.0 (should be v0.1.4)
+5. `/examples/button.html` - Shows v0.1.0 (should be v0.1.4)
+6. `/examples/nikke-team-builder.html` - Shows v0.1.0 (should be v0.1.4)
+7. `/examples/showcase-complete.html` footer - Shows v0.1.0 (should be v0.1.4)
+8. `/examples/index.html` - Shows v0.1.2 (should be v0.1.4)
+9. `/docs/platforms/NPM_PACKAGE.md` - Shows v0.1.2 (should be v0.1.4)
+10. `/docs/governance/VERSION_MANAGEMENT.md` - Shows v0.1.2 (should be v0.1.4)
 
-**Action Required**: Update all example footers and documentation to v0.1.3
+**Action Required**: Update all example footers and documentation to v0.1.4
 
 ---
 

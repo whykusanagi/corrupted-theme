@@ -220,8 +220,8 @@ Reviewers verify:
 
 | Type | Frequency | Version Bump | Example |
 |------|-----------|--------------|---------|
-| **Patch** | As needed | 0.0.x | 0.1.2 → 0.1.3 |
-| **Minor** | Monthly | 0.x.0 | 0.1.3 → 0.2.0 |
+| **Patch** | As needed | 0.0.x | 0.1.2 → 0.1.4 |
+| **Minor** | Monthly | 0.x.0 | 0.1.4 → 0.2.0 |
 | **Major** | Quarterly | x.0.0 | 0.2.0 → 1.0.0 |
 
 ### Release Phases

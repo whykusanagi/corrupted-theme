@@ -21,6 +21,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.4] - 2025-12-15
+
+### Fixed
+- **Navigation Consistency** - Moved index.html to root, fixed all navigation paths
+- **Asset Loading** - Corrected CSS and documentation paths for root-level index
+
+### Added
+- **Complete Corruption Phrase Library** - Added 67 official phrases to character-corruption.js
+  - 30 technical phrases (6 categories: loading, processing, analyzing, corrupting, watching, void)
+  - 30 personality phrases (English, Japanese, Romaji)
+  - `getRandomPhrase()` helper function
+- **Animation Utilities Showcase** - Added comprehensive examples for all 21+ animation classes
+- **VERSION_REFERENCES.md** - Complete version tracking documentation for future releases
+
+### Changed
+- **npm Package** - Excluded 7 internal docs from npm release (IMPLEMENTATION_VALIDATION, FUTURE_WORK, CAPABILITIES, PERSONALITY, ROUTING, LLM_PROVIDERS, CLI_IMPLEMENTATION)
+- **Documentation** - Extended CORRUPTION_PHRASES.md with Celeste demon/succubus personality phrases
+
+### Documentation
+- Added 33 governance, brand, component, and platform documentation files
+- All version references updated consistently across project
+
+---
+
 ## [0.1.3] - 2025-12-15
 
 ### Added

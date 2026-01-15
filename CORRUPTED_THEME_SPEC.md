@@ -256,128 +256,163 @@ Final:   Neural corruption detected...
 
 ---
 
-## Lewd/Intimate Corruption Content
+## Content Classification: SFW vs NSFW
 
 **⚠️ DEFINITIVE REFERENCE:** See `CORRUPTION_BUFFER_IMPLEMENTATIONS.md` for complete implementation details across all projects.
 
-**Purpose:** Create unsettling, intimate, "too far gone" atmosphere for mature/dark themed projects.
+**Purpose:** Provide appropriate corruption aesthetics for different audience contexts.
 
-**System Architecture:** 2-type corruption system (Lewd + Flirty) with 3 languages per type (Japanese, English, Romaji).
+**System Architecture:** 2-class system (SFW default, NSFW opt-in) with 3 languages per class (Japanese, English, Romaji).
 
 ---
 
-### Type 1: Deep Lewd Phrases (Purple #8b5cf6)
+### SFW Mode (Default) - Safe For Work
 
-**Intensity:** High (full intimate/corrupted sentences)
-**Color:** Purple #8b5cf6
-**Length:** Long phrases (10-20 characters)
+**Content:** Playful, cute, teasing, atmospheric corruption themes
+**Tone:** Anime-style cute/flirty, cyberpunk atmospheric
+**Safe for:** General audiences, streaming, professional projects, public display
 
-| Japanese | Romaji | English (Context) |
-|----------|--------|-------------------|
+**Includes:**
+
+**Cute/Playful Expressions:**
+| Japanese | Romaji | English |
+|----------|--------|---------|
+| ニャー | nyaa | (cute cat sound) |
+| かわいい | kawaii | cute |
+| きゃー | kyaa | (excited squeal) |
+| あはは | ahaha | (laughing) |
+| うふふ | ufufu | (giggle) |
+| やだ | yada | no way! |
+| ばか | baka | idiot/dummy |
+| デレデレ | deredere | lovestruck |
+
+**Flirty/Teasing Phrases:**
+| Japanese | Romaji | English |
+|----------|--------|---------|
+| もう...見ないでよ... | Mou... minaide yo... | Don't... look at me... |
+| そんな目で見ないで... ♡ | Sonna me de minaide... | Don't look at me like that... ♡ |
+| ちょっと...恥ずかしい... | Chotto... hazukashii... | This is... embarrassing... |
+| あなたって...意地悪ね... | Anata tte... ijiwaru ne... | You're such... a tease... |
+| ドキドキしちゃう... | Dokidoki shichau... | My heart... racing... |
+
+**Atmospheric/Corruption Themes:**
+| Japanese | Romaji | English |
+|----------|--------|---------|
 | 闇が...私を呼んでいる... | Yami ga... watashi wo yonde iru... | The darkness... calls to me... |
-| 頭...溶けていく... | Atama... tokete iku... | My mind... melting... |
-| ずっと...してほしい... ♥ | Zutto... shite hoshii... | Please... keep doing it... ♥ |
-| 壊れちゃう...ああ...もうダメ... | Kowarechau... aa... mou dame... | I'm breaking... ah... can't anymore... |
-| 許して...もう戻れない... | Yurushite... mou modorenai... | Forgive me... I can't go back... |
+| 深淵に...落ちていく... | Shin'en ni... ochite iku... | Falling... into the abyss... |
+| もう逃げない... | Mou nigenai... | Won't run anymore... |
 | 私...アビスの一部に... | Watashi... abisu no ichibu ni... | I... become part of the abyss... |
-| もう逃げない...もうダメ... | Mou nigenai... mou dame... | I won't run anymore... it's over... |
+
+**Romaji/Internet Culture:**
+- nyaa~, ara ara~, fufufu~, kyaa~, baka~
+- <3, uwu, owo, >w<, ^w^
+
+**System Messages:**
+- "Neural corruption detected..."
+- "System breach imminent..."
+- "Loading data streams..."
+- "Reality.exe has stopped responding..."
+- "Decrypting protocols..."
+
+**Color Usage:** Mix of cyan (#00ffff), magenta (#d94f90), purple (#8b5cf6)
+
+---
+
+### NSFW Mode (Opt-in Only) - Not Safe For Work
+
+**⚠️ 18+ Content Warning**
+
+**Content:** Explicit intimate/sexual phrases, loss of control themes
+**Tone:** Explicit, mature, sexual degradation
+**Safe for:** 18+ projects ONLY, mature content streams, private use
+
+**NOT suitable for:**
+- ❌ Professional/corporate projects
+- ❌ Public streams without 18+ rating
+- ❌ Educational contexts
+- ❌ All-ages content
+
+**Includes:**
+
+**Explicit Intimate Phrases:**
+| Japanese | Romaji | English |
+|----------|--------|---------|
+| ずっと...してほしい... ♥ | Zutto... shite hoshii... | Please... keep doing it... ♥ |
+| 壊れちゃう...ああ...もうダメ... | Kowarechau... aa... mou dame... | I'm breaking... can't anymore... |
 | 好きにして...お願い... | Suki ni shite... onegai... | Do as you please... please... |
-| ここは...天使の地獄... | Koko wa... tenshi no jigoku... | This is... angel's hell... |
+| 感じちゃう...やめて... | Kanjichau... yamete... | Feeling it... stop... |
+| 頭...溶けていく... | Atama... tokete iku... | My mind... melting... |
 
-**Tone:** Surrender, corruption, loss of control, intimate degradation.
+**Explicit Words:**
+| Japanese | Romaji | Meaning |
+|----------|--------|---------|
+| 変態 | hentai | pervert |
+| えっち | ecchi | lewd/sexual |
 
-**Usage:** Primary buffer corruption for mature themes, countdown overlays, deep corruption states.
+**Explicit English:**
+- "Please... keep going... ♥"
+- "I'm breaking... can't anymore..."
+- "Do as you please... please..."
+- "My mind... melting away..."
+- "Pleasure protocols loading..."
+- "Moral subroutines: DISABLED"
+- "Descending into depravity..."
+- "Corruption level: CRITICAL"
 
----
+**Color Usage:** Primarily purple (#8b5cf6) for deep corruption
 
-### Type 2: Short Japanese Glitch (Magenta #d94f90)
-
-**Intensity:** Medium (playful/lewd single words)
-**Color:** Magenta #d94f90
-**Length:** Short words (2-5 characters)
-
-| Japanese | Romaji | Vibe |
-|----------|--------|------|
-| ニャー | nyaa | Playful/cute |
-| かわいい | kawaii | Cute |
-| 変態 | hentai | Pervert |
-| えっち | ecchi | Lewd |
-| デレデレ | deredere | Lovestruck |
-| きゃー | kyaa | Squeal |
-| あはは | ahaha | Laughing |
-| うふふ | ufufu | Giggle |
-| やだ | yada | No way! |
-| ばか | baka | Idiot |
-
-**Tone:** Surface-level playful/lewd, not as intense as full phrases.
-
-**Usage:** Quick glitch accents, lighter corruption moments, variety in buffer.
+**Usage:** Must be explicitly enabled via configuration option `{ nsfw: true }`
 
 ---
 
-### Type 3: Romaji Glitch Phrases (Cyan #00d4ff)
-
-**Intensity:** Low (cute/playful romanized)
-**Color:** Cyan #00d4ff
-**Length:** Short phrases/emoticons (3-8 characters)
-
-| Phrase | Vibe |
-|--------|------|
-| nyaa~ | Cute cat sound |
-| ara ara~ | Teasing/mature |
-| fufufu~ | Mischievous laugh |
-| kyaa~ | Excited squeal |
-| baka~ | Playful insult |
-| <3 | Heart emoticon |
-| uwu | Cute text face |
-| owo | Curious text face |
-| >w< | Happy text face |
-| ^w^ | Content text face |
-
-**Purpose:** Romanized cute phrases and text emoticons for playful, readable corruption.
-
-**Tone:** Western internet culture meets anime aesthetic, lighter than Japanese glitch.
-
-**Usage:** Readable corruption, Western audience accessibility, cute/playful themes.
-
----
-
-### Implementation: 3-Type System
+### Implementation: 2-Class System
 
 **How they work together:**
 
 ```javascript
-// Buffer generation using all 3 types
-function getRandomLewd() {
-    const rand = Math.random();
-
-    if (rand < 0.40) {
-        // Type 1: Deep lewd phrase (40% chance)
-        return lewdPhrases[random]; // "闇が...私を呼んでいる..."
-    } else if (rand < 0.70) {
-        // Type 2: Short Japanese glitch (30% chance)
-        return japaneseGlitch[random]; // "えっち"
-    } else {
-        // Type 3: Romaji glitch (30% chance)
-        return romajiGlitch[random]; // "nyaa~"
-    }
+// Buffer generation with SFW/NSFW switch
+function getRandomCorruptionPhrase(nsfw = false) {
+    const phrases = nsfw ? NSFW_PHRASES : SFW_PHRASES;
+    return phrases[Math.floor(Math.random() * phrases.length)];
 }
+
+// Example usage
+const element = document.querySelector('.corruption-text');
+
+// Default: SFW mode
+new TypingAnimation(element, {
+    // nsfw: false (default - no explicit content)
+});
+
+// Explicit opt-in: NSFW mode
+new TypingAnimation(element, {
+    nsfw: true  // Enables 18+ content
+});
 ```
 
-**Visual Progression Example:**
+**Visual Progression Example (SFW Mode):**
 ```
-Frame 1: 闇が...私を呼んでいる...     (Type 1: Deep corruption)
-Frame 2: N えっち かわいい            (Type 2: Short glitch)
-Frame 3: Ne nyaa~ uwu                 (Type 3: Romaji playful)
-Frame 4: Neu 壊れちゃう...             (Type 1: Back to deep)
-Frame 5: Neur きゃー                  (Type 2: Surface glitch)
+Frame 1: 闇が...私を呼んでいる...     (Atmospheric: The darkness calls...)
+Frame 2: N かわいい きゃー            (Cute words: kawaii, kyaa)
+Frame 3: Ne nyaa~ uwu                 (Romaji cute: nyaa~, uwu)
+Frame 4: Neu もう...見ないでよ...     (Flirty: Don't look at me...)
+Frame 5: Neur ドキドキしちゃう...     (Teasing: My heart racing...)
+Final:   Neural corruption detected... (Decoded clean text)
+```
+
+**Visual Progression Example (NSFW Mode):**
+```
+Frame 1: 壊れちゃう...ああ...もうダメ... (Explicit: I'm breaking...)
+Frame 2: N 変態 えっち                  (Explicit words: hentai, ecchi)
+Frame 3: Ne ずっと...してほしい... ♥   (Explicit: Please keep doing it...)
+Frame 4: Neu Pleasure protocols...     (Explicit system message)
+Frame 5: Neur 好きにして...お願い...   (Explicit: Do as you please...)
 Final:   Neural corruption detected... (Decoded clean text)
 ```
 
 **Design Intent:**
-- **Type 1** (Purple): Creates unsettling, "too far gone" atmosphere
-- **Type 2** (Magenta): Adds playful energy, breaks up intensity
-- **Type 3** (Cyan): Provides readable moments, Western accessibility
+- **SFW** (Default): Playful, cute, atmospheric - safe for all audiences
+- **NSFW** (Opt-in): Explicit, intimate, mature - 18+ only
 
 ---
 
@@ -400,24 +435,30 @@ Final:   Neural corruption detected... (Decoded clean text)
 
 ### Content Warning Guidelines
 
-**When to use lewd corruption:**
+**Default Behavior (SFW Mode):**
+- ✅ Professional/corporate projects
+- ✅ Educational/academic contexts
+- ✅ Public streaming (general audience)
+- ✅ All-ages content
+- ✅ Portfolio/demo projects
+- ✅ Safe by default (no opt-in required)
+
+**NSFW Mode (Requires Explicit Opt-in via `{ nsfw: true }`):**
 - ✅ Mature/18+ projects
-- ✅ Horror/psychological themes
-- ✅ Dark cyberpunk aesthetics
-- ✅ "Corrupted AI" character themes
+- ✅ Horror/psychological themes with age gate
+- ✅ Adult content platforms
+- ✅ Private/personal projects
+- ❌ **NEVER use as default**
+- ❌ **NEVER use without age verification**
 
-**When NOT to use:**
-- ❌ Professional/corporate projects
-- ❌ Educational/academic contexts
-- ❌ All-ages content
-- ❌ Default states (make it opt-in)
+**API Design Requirement:**
+```javascript
+// CORRECT: SFW is default
+new TypingAnimation(element);  // Safe content
 
-**Alternative for SFW projects:**
-Use only:
-- Katakana/Hiragana (no meaning)
-- Block characters
-- Symbols
-- Generic system messages
+// CORRECT: NSFW requires explicit flag
+new TypingAnimation(element, { nsfw: true });  // 18+ content
+```
 
 ---
 
@@ -633,11 +674,19 @@ corrupted.start();
 
 ## Version History
 
+- **1.1** (2026-01-15): Content classification normalization
+  - **BREAKING**: Changed from 3-type to 2-class system (SFW/NSFW)
+  - Normalized "lewd" terminology to "NSFW" for clarity
+  - Made SFW the explicit default (no opt-in required)
+  - NSFW requires explicit `{ nsfw: true }` opt-in
+  - Moved explicit words ("hentai", "ecchi") from playful to NSFW
+  - Updated all examples and quick reference tables
+
 - **1.0** (2025-12-24): Initial specification
   - Character sets defined
   - Three corruption patterns documented
   - Glass morphism integration
-  - Lewd content guidelines
+  - Initial content guidelines (3-type system)
 
 ---
 
@@ -669,43 +718,65 @@ https://github.com/whykusanagi/corrupted-theme
 
 ---
 
-## Quick Reference: All Corruption Modes
+## Quick Reference: Content Classification
 
-| Corruption Type | Color | Character Set | Use Case | Example |
-|----------------|-------|---------------|----------|---------|
-| **Japanese Katakana** | N/A | アイウエオ... | Primary visual corruption, Matrix aesthetic | アラエテカ |
-| **Japanese Hiragana** | N/A | あいうえお... | Softer corruption, intimate themes | あかすてな |
-| **Romaji Letters** | N/A | A-Z, a-z | Semi-readable Western glitch | HeLLo WoRlD |
-| **English Substitution** | Cyan #00ffff | A-Z → random | SFW corruption, professional contexts | Hrllo Wmrld |
-| **Type 1: Deep Lewd Phrases** | Purple #8b5cf6 | 闇が...私を... | High intensity, mature themes (40%) | 壊れちゃう... |
-| **Type 2: Short Japanese Glitch** | Magenta #d94f90 | ニャー, かわいい | Medium intensity, playful (30%) | えっち, きゃー |
-| **Type 3: Romaji Glitch Phrases** | Cyan #00d4ff | nyaa~, uwu | Low intensity, readable (30%) | ara ara~, ^w^ |
-| **Decorative Symbols** | Magenta #d94f90 | ★☆♥✧ | Visual punctuation, accents | ✦◇●⚡ |
-| **Block Characters** | Red #ff4757 | █▓▒░ | Heavy corruption, terminal state | ╔╗═║▲▼ |
+### SFW Mode (Default)
 
-### Corruption Mode Selection Guide
+| Content Type | Examples | Use Case |
+|--------------|----------|----------|
+| **Cute/Playful Words** | ニャー, かわいい, きゃー, ばか | General glitch effect |
+| **Flirty/Teasing** | "Don't look at me...", "ara ara~" | Anime-style playful |
+| **Atmospheric** | "The darkness calls...", "Neural corruption..." | Cyberpunk mood |
+| **Romaji Cute** | nyaa~, uwu, owo, ^w^ | Internet culture |
+| **System Messages** | "Loading data...", "Reality.exe error..." | Technical aesthetic |
 
-**For 18+ Dark Themes (3-Type Lewd System):**
-- **Type 1**: Deep Lewd Phrases (#8b5cf6) - 40% probability
-- **Type 2**: Short Japanese Glitch (#d94f90) - 30% probability
-- **Type 3**: Romaji Glitch Phrases (#00d4ff) - 30% probability
-- **Accents**: Decorative Symbols, Block Characters
-- **Pattern**: Mix all 3 types randomly in buffer for varied intensity
+**Config:** `{ nsfw: false }` or omit option (default)
+**Safe for:** All audiences, professional use, public display
 
-**For Playful/Cute Themes:**
-- Primary: Romaji Glitch Phrases (#00d4ff)
-- Secondary: Short Japanese Glitch (#d94f90)
-- Accents: Decorative Symbols (hearts, stars)
+---
 
-**For Professional/SFW:**
-- Primary: English Letter Substitution (#00ffff)
-- Secondary: Romaji Letters
-- Accents: Block Characters (minimal)
+### NSFW Mode (Opt-in Only)
 
-**For Maximum Chaos:**
-- Mix all modes randomly
-- High flicker speed (< 100ms)
-- Deep corruption (lewd phrases + blocks)
+| Content Type | Examples | Use Case |
+|--------------|----------|----------|
+| **Explicit Phrases** | "Please keep doing it... ♥", "I'm breaking..." | Mature themes only |
+| **Explicit Words** | 変態 (hentai), えっち (ecchi) | 18+ content |
+| **Sexual Systems** | "Pleasure protocols...", "Moral subroutines: DISABLED" | Adult projects |
+
+**Config:** `{ nsfw: true }` ⚠️ **EXPLICIT OPT-IN REQUIRED**
+**Safe for:** 18+ projects ONLY, never default
+
+---
+
+### Character Set Reference
+
+| Character Set | Example | Use Case |
+|---------------|---------|----------|
+| **Katakana** | アイウエオ | Matrix-style rain, high-tech glitch |
+| **Hiragana** | あいうえお | Softer visual corruption |
+| **Romaji** | A-Z, a-z | Semi-readable Western glitch |
+| **Symbols** | ★☆♥✧ | Visual accents, decorative |
+| **Blocks** | █▓▒░ | Heavy corruption, terminal state |
+
+**Note:** Character sets are content-neutral. Phrase classification determines SFW/NSFW.
+
+---
+
+### Quick Selection Guide
+
+**Choose SFW Mode When:**
+- ✅ Default/unsure what audience will see
+- ✅ Professional or corporate project
+- ✅ Public streaming (general audience)
+- ✅ Educational/portfolio content
+- ✅ Want cute/playful aesthetic
+
+**Choose NSFW Mode When:**
+- ✅ Explicit 18+ project with age gate
+- ✅ Adult content platform
+- ✅ Private/personal mature project
+- ❌ **NEVER** as default
+- ❌ **NEVER** without explicit user consent
 
 ---
 

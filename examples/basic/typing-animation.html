@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TypingAnimation Example - Buffer Corruption (SFW)</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #000000;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #ff00ff;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow:
+                0 0 10px #ff00ff,
+                0 0 20px #ff00ff,
+                0 0 30px #8b5cf6;
+        }
+
+        .description {
+            color: #d94f90;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+
+        .example {
+            background: rgba(255, 0, 255, 0.05);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow:
+                0 0 20px rgba(255, 0, 255, 0.3),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .example h2 {
+            color: #d94f90;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .example p {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .typing-output {
+            font-size: 20px;
+            min-height: 30px;
+            letter-spacing: 1px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+            border: 1px solid rgba(255, 0, 255, 0.2);
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid #ff00ff;
+            color: #ff00ff;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background: #ff00ff;
+            color: #000;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .info-box {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid #8b5cf6;
+            padding: 15px;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .info-box strong {
+            color: #8b5cf6;
+        }
+
+        .sfw-badge {
+            display: inline-block;
+            background: #00ff00;
+            color: #000;
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        input[type="range"] {
+            width: 200px;
+            margin: 0 10px;
+        }
+
+        .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            font-size: 13px;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TypingAnimation Component <span class="sfw-badge">SFW MODE</span></h1>
+        <p class="description">Pattern 2: Phrase Flickering (Buffer Corruption)</p>
+
+        <div class="example">
+            <h2>Example 1: System Message with Buffer Corruption</h2>
+            <p>Cute, playful, and atmospheric phrases flicker through before revealing final text</p>
+            <div class="typing-output" id="output1"></div>
+            <div class="controls">
+                <button onclick="startExample1()">Start</button>
+                <button onclick="stopExample1()">Stop</button>
+                <button onclick="settleExample1()">Settle</button>
+            </div>
+        </div>
+
+        <div class="example">
+            <h2>Example 2: Adjustable Corruption Settings</h2>
+            <p>Control typing speed and corruption frequency</p>
+            <div class="typing-output" id="output2"></div>
+            <div class="slider-container">
+                <label for="speed">Speed:</label>
+                <input type="range" id="speed" min="10" max="100" value="40">
+                <span id="speedValue">40 chars/sec</span>
+            </div>
+            <div class="slider-container">
+                <label for="glitch">Corruption:</label>
+                <input type="range" id="glitch" min="0" max="30" value="8">
+                <span id="glitchValue">8%</span>
+            </div>
+            <div class="controls">
+                <button onclick="startExample2()">Start with Settings</button>
+            </div>
+        </div>
+
+        <div class="example">
+            <h2>Example 3: Custom Messages</h2>
+            <p>Type your own message to see it corrupted</p>
+            <input type="text" id="customMessage" placeholder="Enter your message..."
+                   style="width: 100%; padding: 10px; background: #000; border: 1px solid #ff00ff; color: #fff; font-family: 'Courier New', monospace; margin-bottom: 15px;">
+            <div class="typing-output" id="output3"></div>
+            <div class="controls">
+                <button onclick="startExample3()">Type Custom Message</button>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <strong>Component Info:</strong><br>
+            • Type: Buffer Corruption / Phrase Flickering (Pattern 2)<br>
+            • Mode: SFW (Default) - Cute, playful, atmospheric, system phrases<br>
+            • Phrases: "かわいい", "nyaa~", "闇が...私を呼んでいる...", "Neural corruption detected..."<br>
+            • Color: Magenta (#d94f90) for SFW corruption, White (#ffffff) for final text<br>
+            • Mental Model: Neural network decoding corrupted data buffer<br><br>
+            <strong>NSFW Mode:</strong> See advanced/nsfw-corruption.html for explicit content example (18+ only)
+        </div>
+    </div>
+
+    <script type="module">
+        import { TypingAnimation } from '../../src/core/typing-animation.js';
+
+        // Example 1
+        const output1 = document.getElementById('output1');
+        let typing1 = new TypingAnimation(output1, {
+            typingSpeed: 40,
+            glitchChance: 0.08,
+            nsfw: false  // SFW mode (default)
+        });
+
+        window.startExample1 = () => {
+            typing1.start('Neural corruption detected... System stabilizing...');
+        };
+
+        window.stopExample1 = () => {
+            typing1.stop();
+        };
+
+        window.settleExample1 = () => {
+            typing1.settle('System Online');
+        };
+
+        // Example 2
+        const output2 = document.getElementById('output2');
+        const speedSlider = document.getElementById('speed');
+        const glitchSlider = document.getElementById('glitch');
+        const speedValue = document.getElementById('speedValue');
+        const glitchValue = document.getElementById('glitchValue');
+
+        speedSlider.addEventListener('input', (e) => {
+            speedValue.textContent = `${e.target.value} chars/sec`;
+        });
+
+        glitchSlider.addEventListener('input', (e) => {
+            glitchValue.textContent = `${e.target.value}%`;
+        });
+
+        window.startExample2 = () => {
+            const typing2 = new TypingAnimation(output2, {
+                typingSpeed: parseInt(speedSlider.value),
+                glitchChance: parseInt(glitchSlider.value) / 100,
+                nsfw: false
+            });
+            typing2.start('Loading data streams... Reality.exe has stopped responding...');
+        };
+
+        // Example 3
+        const output3 = document.getElementById('output3');
+        const customInput = document.getElementById('customMessage');
+
+        window.startExample3 = () => {
+            const message = customInput.value || 'Enter a message above!';
+            const typing3 = new TypingAnimation(output3, {
+                nsfw: false
+            });
+            typing3.start(message);
+        };
+
+        // Auto-start example 1 on load
+        setTimeout(() => startExample1(), 500);
+    </script>
+</body>
+</html>

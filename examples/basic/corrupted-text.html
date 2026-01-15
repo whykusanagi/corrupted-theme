@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CorruptedText Example - Character-Level Corruption</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 40px;
+            background: #000000;
+            color: #ffffff;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #ff00ff;
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow:
+                0 0 10px #ff00ff,
+                0 0 20px #ff00ff,
+                0 0 30px #8b5cf6;
+        }
+
+        .description {
+            color: #d94f90;
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+
+        .example {
+            background: rgba(255, 0, 255, 0.05);
+            border: 2px solid #ff00ff;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow:
+                0 0 20px rgba(255, 0, 255, 0.3),
+                inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .example h2 {
+            color: #d94f90;
+            font-size: 18px;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+
+        .example p {
+            color: #888;
+            font-size: 12px;
+            margin-bottom: 20px;
+        }
+
+        .corrupted-multilang {
+            font-size: 24px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            display: block;
+            margin: 10px 0;
+        }
+
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            background: transparent;
+            border: 2px solid #ff00ff;
+            color: #ff00ff;
+            padding: 10px 20px;
+            font-family: 'Courier New', monospace;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: #ff00ff;
+            color: #000;
+            box-shadow: 0 0 20px #ff00ff;
+        }
+
+        .info-box {
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid #8b5cf6;
+            padding: 15px;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #aaa;
+        }
+
+        .info-box strong {
+            color: #8b5cf6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>CorruptedText Component</h1>
+        <p class="description">Pattern 1: Character-Level Corruption (Visual Glitch)</p>
+
+        <div class="example">
+            <h2>Example 1: Multi-Language Cycling</h2>
+            <p>Cycles through English, Romaji, Hiragana, Katakana, and Kanji variants</p>
+            <span class="corrupted-multilang"
+                  data-english="Hello World"
+                  data-romaji="konnichiwa"
+                  data-hiragana="こんにちは"
+                  data-katakana="コンニチハ"
+                  data-kanji="今日は">
+            </span>
+        </div>
+
+        <div class="example">
+            <h2>Example 2: English-Only Decoding</h2>
+            <p>Decodes from random character chaos to clean English text</p>
+            <span class="corrupted-multilang"
+                  data-english="Neural corruption detected"
+                  id="example2">
+            </span>
+            <div class="controls">
+                <button onclick="restartExample2()">Restart</button>
+                <button onclick="settleExample2()">Settle</button>
+            </div>
+        </div>
+
+        <div class="example">
+            <h2>Example 3: One-Shot Decoding (No Loop)</h2>
+            <p>Decodes once and settles on final text</p>
+            <span class="corrupted-multilang"
+                  data-english="System Online"
+                  id="example3">
+            </span>
+        </div>
+
+        <div class="info-box">
+            <strong>Component Info:</strong><br>
+            • Type: Character-Level Corruption (Pattern 1)<br>
+            • Content: Always SFW (no phrases, just random characters)<br>
+            • Uses: Katakana, Hiragana, Romaji, Symbols for visual glitch effect<br>
+            • Color: Magenta/Purple corruption, White for decoded text<br>
+            • Auto-initializes on elements with class "corrupted-multilang"
+        </div>
+    </div>
+
+    <script src="../../src/core/corrupted-text.js"></script>
+    <script>
+        // Example 2: Manual control
+        const example2 = document.getElementById('example2');
+        let example2Instance = null;
+
+        // Wait for auto-init, then store reference
+        setTimeout(() => {
+            example2Instance = example2.corruptedTextInstance;
+        }, 100);
+
+        function restartExample2() {
+            if (example2Instance) {
+                example2Instance.restart();
+            }
+        }
+
+        function settleExample2() {
+            if (example2Instance) {
+                example2Instance.settle('Neural corruption detected');
+            }
+        }
+
+        // Example 3: One-shot configuration
+        const example3 = document.getElementById('example3');
+        setTimeout(() => {
+            if (example3.corruptedTextInstance) {
+                example3.corruptedTextInstance.stop();
+                example3.corruptedTextInstance.options.loop = false;
+                example3.corruptedTextInstance.options.finalText = 'System Online';
+                example3.corruptedTextInstance.start();
+            }
+        }, 100);
+    </script>
+</body>
+</html>

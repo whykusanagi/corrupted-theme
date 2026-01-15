@@ -1,6 +1,6 @@
 # Corrupted Theme Specification
 
-**Version:** 1.0
+**Version:** 1.1
 **Author:** whykusanagi
 **Status:** Production
 **License:** MIT (for contribution to corrupted-theme package)
@@ -21,34 +21,39 @@ The **Corrupted Theme** is a visual aesthetic for digital interfaces that simula
 
 **Primary Colors:**
 ```css
---corrupted-cyan:     #00ffff;  /* Primary text, decoded/stable state */
---corrupted-magenta:  #ff00ff;  /* Accent, secondary corruption */
---corrupted-purple:   #8b5cf6;  /* Lewd/intimate corruption */
---corrupted-magenta2: #d94f90;  /* High-energy glitches */
---corrupted-red:      #ff0000;  /* Critical state, danger */
---corrupted-green:    #00ff00;  /* System/matrix references */
+--corrupted-white:    #ffffff;  /* Primary text, decoded/stable state */
+--corrupted-black:    #000000;  /* Background, void, deep darkness */
+--corrupted-magenta:  #ff00ff;  /* Primary corruption color */
+--corrupted-purple:   #8b5cf6;  /* Deep/intimate corruption */
+--corrupted-magenta2: #d94f90;  /* High-energy glitches, playful corruption */
+--corrupted-red:      #ff0000;  /* Critical state, danger, terminal errors */
+--corrupted-cyan:     #00ffff;  /* Accent only (rare, for highlights) */
+--corrupted-green:    #00ff00;  /* System/matrix references (rare) */
 ```
 
 **Usage Guidelines:**
-- **Cyan (#00ffff)**: Stable, decoded, readable text
-- **Purple (#8b5cf6)**: Deep corruption (lewd phrases, intimate content)
-- **Magenta (#d94f90)**: Surface corruption (short glitches, energy bursts)
-- **Red (#ff0000)**: Critical/terminal states (0%, errors, failures)
-- **Green (#00ff00)**: Matrix callbacks, system states
+- **White (#ffffff)**: Primary stable/decoded text, final readable state
+- **Black (#000000)**: Background, void areas, corrupted "holes" in data
+- **Magenta (#ff00ff)**: Primary corruption color, main glitch aesthetic
+- **Purple (#8b5cf6)**: Deep corruption (intimate/NSFW phrases, intense degradation)
+- **Magenta2 (#d94f90)**: Playful corruption (SFW phrases, high-energy glitches)
+- **Red (#ff0000)**: Critical/terminal states (0%, errors, failures, system collapse)
+- **Cyan (#00ffff)**: Accent ONLY (occasional highlight, rare matrix callback)
+- **Green (#00ff00)**: System/matrix references (rare, nostalgic nod to Matrix aesthetic)
 
 ### 2. Text Shadow Effects
 
 **Cyberpunk Glow:**
 ```css
 text-shadow:
-    0 0 10px #00ffff,    /* Inner glow */
-    0 0 20px #00ffff,    /* Mid glow */
-    0 0 30px #ff00ff,    /* Outer magenta */
+    0 0 10px #ff00ff,    /* Inner magenta glow */
+    0 0 20px #ff00ff,    /* Mid magenta glow */
+    0 0 30px #8b5cf6,    /* Outer purple haze */
     2px 2px 0 #ff0000,   /* Red chromatic aberration */
-    -2px -2px 0 #00ff00; /* Green chromatic aberration */
+    -2px -2px 0 #d94f90; /* Magenta chromatic aberration */
 ```
 
-**Purpose:** Creates RGB separation effect, simulates CRT display corruption, adds depth.
+**Purpose:** Creates RGB separation effect with magenta/purple dominant theme, simulates CRT display corruption, adds depth.
 
 ### 3. Glitch Animations
 
@@ -66,14 +71,14 @@ text-shadow:
 **Color Shift:**
 ```css
 @keyframes colorShift {
-    0%   { color: #00ffff; }
-    33%  { color: #ff00ff; }
-    66%  { color: #00ff00; }
-    100% { color: #00ffff; }
+    0%   { color: #ff00ff; }  /* Magenta */
+    33%  { color: #8b5cf6; }  /* Purple */
+    66%  { color: #d94f90; }  /* Magenta2 */
+    100% { color: #ff00ff; }  /* Back to Magenta */
 }
 ```
 
-**Usage:** Apply to corrupted/unstable elements, cycle at 0.1s-0.5s intervals.
+**Usage:** Apply to corrupted/unstable elements, cycle at 0.1s-0.5s intervals. Uses magenta/purple theme instead of cyan.
 
 ---
 
@@ -145,114 +150,248 @@ function corruptEnglishLetters(text, corruptionLevel = 0.5) {
 
 ## Corruption Patterns
 
-### Pattern 1: Character-by-Character Decoding
+### Pattern 1: Character Corruption (Visual Glitch Only)
 
-**Concept:** Final text emerges character-by-character from chaotic buffer.
+**Concept:** Final text emerges character-by-character from random character noise.
+
+**What it is:** Pure visual glitch effect using random characters (Katakana, Hiragana, symbols)
+**Content:** Always SFW - no phrases, just random characters
+**Component:** `CorruptedText` class
 
 **Implementation:**
 ```javascript
-// Revealed portion (cyan) + chaos buffer (purple/magenta)
+// Revealed portion (stable white) + random character noise (corruption)
 const revealed = finalText.substring(0, revealedChars);
 const remaining = finalText.length - revealedChars;
 
-// Generate chaos for unrevealed portion
+// Generate random character noise (NO PHRASES)
+const KATAKANA = 'アイウエオカキクケコサシスセソ...';
+const SYMBOLS = '!@#$%^&*()_+-=';
 let chaos = '';
 for (let i = 0; i < remaining; i++) {
-    chaos += randomCorruptionChar();
+    // Random character from set - no semantic meaning
+    chaos += KATAKANA[Math.floor(Math.random() * KATAKANA.length)];
 }
 
-// Display: revealed (stable) + chaos (unstable)
+// Display: revealed (stable white) + character noise (magenta/purple corruption)
 element.innerHTML =
-    `<span style="color: #00ffff;">${revealed}</span>` +
-    `<span style="color: #8b5cf6;">${chaos}</span>`;
+    `<span style="color: #ffffff;">${revealed}</span>` +
+    `<span style="color: #ff00ff;">${chaos}</span>`;
 ```
 
 **Visual Effect:**
 ```
-Initial:  闇が...私を呼んでいる... 壊れちゃう...
+Initial:  アエ#カ*テ@ナ闇▓サシ%ク...
          ↓
-Step 1:   N 好きにして...お願い... えっち
+Step 1:   N エ#ラ*ル@レ闇▓ロワヲ
          ↓
-Step 2:   Ne 許して...もう戻れない...
+Step 2:   Ne ウエオ*カ@キク闇▓ケ
          ↓
 Final:    Neural corruption detected...
 ```
 
+**Key Point:** This pattern uses ONLY random characters, NOT phrases. It's always SFW.
+
 **Use Cases:**
-- Loading states
+- Matrix-style visual glitch
 - Decryption/decoding sequences
-- System boot messages
-- Progressive reveal of information
+- Pure aesthetic effect without semantic content
+- Multi-language text cycling (English → Romaji → Katakana)
 
 ### Pattern 2: Phrase Flickering (Buffer Corruption)
 
-**Concept:** Rapid cycling through complete phrases before settling on final text.
+**Concept:** Simulates neural network "decoding" corrupted data buffer. Complete phrases flicker through rapidly as the system attempts to interpret corrupted memory before successfully decoding the final text.
 
-**Implementation:**
+**What it is:** Full phrases cycling through the text buffer (NOT random characters)
+**Content:** SFW (default) or NSFW (opt-in with `{ nsfw: true }`)
+**Component:** `TypingAnimation` class with phrase buffer
+
+**Mental Model:** Imagine a corrupted data stream being parsed by a neural decoder. The decoder samples random phrases from its corrupted buffer memory before successfully reconstructing the intended message.
+
+**Implementation (SFW Mode - Default):**
 ```javascript
-const lewdPhrases = [
-    '闇が...私を呼んでいる...',
-    '壊れちゃう...ああ...もうダメ...',
-    '好きにして...お願い...'
+// SFW phrase buffer (cute, playful, atmospheric)
+const SFW_PHRASES = [
+    'かわいい',                    // Cute words
+    'きゃー',
+    'nyaa~ uwu',                   // Romaji cute
+    'ara ara~',
+    'もう...見ないでよ...',        // Flirty/teasing
+    'ドキドキしちゃう...',
+    '闇が...私を呼んでいる...',    // Atmospheric corruption
+    '深淵に...落ちていく...',
+    'Neural corruption detected...',  // System messages
+    'Loading data streams...',
+    'Reality.exe error...'
 ];
 
-// Flicker through phrases
+// Flicker through SFW phrase buffer
 setInterval(() => {
     if (elapsed < bufferDuration) {
-        const phrase = lewdPhrases[Math.floor(Math.random() * lewdPhrases.length)];
-        element.innerHTML = `<span style="color: #8b5cf6;">${phrase}</span>`;
+        const phrase = SFW_PHRASES[Math.floor(Math.random() * SFW_PHRASES.length)];
+        element.innerHTML = `<span style="color: #d94f90;">${phrase}</span>`;
     } else {
-        element.innerHTML = `<span style="color: #00ffff;">${finalText}</span>`;
+        // Successfully decoded final text
+        element.innerHTML = `<span style="color: #ffffff;">${finalText}</span>`;
     }
-}, flickerSpeed);
+}, flickerSpeed);  // 100-200ms per phrase
 ```
 
-**Visual Effect:**
+**Visual Effect (SFW Mode):**
 ```
-Frame 1:  闇が...私を呼んでいる...      (150ms)
-Frame 2:  壊れちゃう...ああ...もうダメ... (150ms)
-Frame 3:  許して...もう戻れない...      (150ms)
-... rapid flickering ...
-Final:    System Online                  (stable)
+Frame 1:  かわいい                        (150ms) - Cute word from buffer (magenta)
+Frame 2:  nyaa~ uwu                      (150ms) - Romaji cute glitch (magenta)
+Frame 3:  もう...見ないでよ...           (150ms) - Flirty phrase (magenta)
+Frame 4:  闇が...私を呼んでいる...       (150ms) - Atmospheric corruption (magenta)
+Frame 5:  Neural corruption detected...  (150ms) - System message (magenta)
+... rapid buffer flickering (10-15 phrases) ...
+Final:    System Online                  (stable white)
 ```
+
+**Implementation (NSFW Mode - Opt-in Only):**
+```javascript
+// NSFW phrase buffer (explicit intimate/sexual phrases)
+const NSFW_PHRASES = [
+    '壊れちゃう...ああ...もうダメ...',  // Explicit loss of control
+    'ずっと...してほしい... ♥',
+    '変態',                              // Explicit words
+    'えっち',
+    '好きにして...お願い...',
+    'Pleasure protocols loading...',     // Explicit system messages
+    'Moral subroutines: DISABLED',
+    "I'm breaking... can't anymore..."
+];
+
+// NSFW mode ONLY enabled with explicit opt-in
+if (options.nsfw === true) {
+    setInterval(() => {
+        if (elapsed < bufferDuration) {
+            const phrase = NSFW_PHRASES[Math.floor(Math.random() * NSFW_PHRASES.length)];
+            element.innerHTML = `<span style="color: #8b5cf6;">${phrase}</span>`;
+        } else {
+            element.innerHTML = `<span style="color: #ffffff;">${finalText}</span>`;
+        }
+    }, flickerSpeed);
+}
+```
+
+**Visual Effect (NSFW Mode):**
+```
+⚠️ 18+ Content Warning
+
+Frame 1:  壊れちゃう...ああ...もうダメ...  (150ms) - Explicit phrase (purple)
+Frame 2:  変態 えっち                      (150ms) - Explicit words (purple)
+Frame 3:  ずっと...してほしい... ♥        (150ms) - Intimate phrase (purple)
+Frame 4:  Pleasure protocols loading...    (150ms) - Explicit system (purple)
+... rapid buffer flickering (10-15 phrases) ...
+Final:    System Online                    (stable white)
+```
+
+**Color Usage:**
+- SFW phrases: Magenta (#d94f90) - playful corruption energy
+- NSFW phrases: Deep Purple (#8b5cf6) - intimate/deep corruption
+- Final text: White (#ffffff) - successfully decoded stable text
 
 **Use Cases:**
-- Loading/buffering states
-- System instability
-- Dramatic reveals
-- Error states transitioning to recovery
+- Loading/buffering states (neural network "thinking")
+- System attempting to decode corrupted memory
+- Dramatic reveals (fighting through noise to find signal)
+- Error recovery sequences (buffer clearing before success)
+- "Hacking" or "decryption" animations
 
 ### Pattern 3: Hybrid Decoding (Combined)
 
-**Concept:** Character-by-character decoding WITH phrase flickering in unrevealed portion.
+**Concept:** Character-by-character decoding (Pattern 1) WITH phrase flickering in unrevealed portion (Pattern 2). Simulates neural network progressively decoding text while the buffer ahead still contains corrupted phrase fragments.
 
-**Implementation:**
+**What it is:** Revealed text is stable (cyan), unrevealed portion shows phrase snippets from buffer
+**Content:** SFW (default) or NSFW (opt-in with `{ nsfw: true }`)
+**Component:** Custom implementation combining `CorruptedText` + phrase buffer
+
+**Mental Model:** As each character successfully decodes from left to right, the corrupted buffer to the right continues flickering with phrase fragments until those positions are also decoded.
+
+**Implementation (SFW Mode - Default):**
 ```javascript
 const revealed = finalText.substring(0, revealedChars);
 const remaining = finalText.length - revealedChars;
 
-// Flicker complete phrase snippets in chaos buffer
-const randomPhrase = lewdPhrases[Math.floor(Math.random() * lewdPhrases.length)];
-const chaos = randomPhrase.substring(0, remaining);
+// SFW phrase buffer
+const SFW_PHRASES = [
+    'かわいい きゃー',
+    'nyaa~ uwu',
+    'もう...見ないでよ...',
+    '闇が...私を呼んでいる...',
+    'Neural corruption...'
+];
+
+// Sample phrase snippet for unrevealed buffer
+const randomPhrase = SFW_PHRASES[Math.floor(Math.random() * SFW_PHRASES.length)];
+const bufferChaos = randomPhrase.substring(0, remaining);
 
 element.innerHTML =
-    `<span style="color: #00ffff;">${revealed}</span>` +
-    `<span style="color: #8b5cf6;">${chaos}</span>`;
+    `<span style="color: #ffffff;">${revealed}</span>` +      // Decoded (stable white)
+    `<span style="color: #d94f90;">${bufferChaos}</span>`;    // Buffer (playful magenta)
 ```
 
-**Visual Effect:**
+**Visual Effect (SFW Mode):**
 ```
-Step 1:  N 闇が...私を呼んでいる...
-Step 2:  Ne 壊れちゃう...ああ...もう
-Step 3:  Neu 許して...もう戻れない
-Step 4:  Neur 好きにして...お願い
-Final:   Neural corruption detected...
+Step 1:  N かわいい きゃー                    - "N" decoded (white), buffer cute (magenta)
+Step 2:  Ne nyaa~ uwu owo                      - "Ne" decoded (white), buffer romaji (magenta)
+Step 3:  Neu もう...見ないでよ...             - "Neu" decoded (white), buffer flirty (magenta)
+Step 4:  Neur 闇が...私を呼んでいる...         - "Neur" decoded (white), buffer atmospheric (magenta)
+Step 5:  Neura Neural corruption...            - Almost done (white), buffer system (magenta)
+Final:   Neural corruption detected...         - Fully decoded (stable white)
 ```
+
+**Implementation (NSFW Mode - Opt-in Only):**
+```javascript
+// NSFW phrase buffer (explicit only)
+const NSFW_PHRASES = [
+    '壊れちゃう...ああ...もうダメ...',
+    'ずっと...してほしい... ♥',
+    '変態 えっち',
+    '好きにして...お願い...',
+    'Pleasure protocols...'
+];
+
+if (options.nsfw === true) {
+    const randomPhrase = NSFW_PHRASES[Math.floor(Math.random() * NSFW_PHRASES.length)];
+    const bufferChaos = randomPhrase.substring(0, remaining);
+
+    element.innerHTML =
+        `<span style="color: #ffffff;">${revealed}</span>` +      // Decoded (stable white)
+        `<span style="color: #8b5cf6;">${bufferChaos}</span>`;    // Buffer (deep purple)
+}
+```
+
+**Visual Effect (NSFW Mode):**
+```
+⚠️ 18+ Content Warning
+
+Step 1:  N 壊れちゃう...ああ...もうダメ...    - "N" decoded (white), explicit buffer (purple)
+Step 2:  Ne ずっと...してほしい... ♥        - "Ne" decoded (white), intimate buffer (purple)
+Step 3:  Neu 変態 えっち                      - "Neu" decoded (white), explicit words (purple)
+Step 4:  Neur 好きにして...お願い...         - "Neur" decoded (white), intimate phrase (purple)
+Step 5:  Neura Pleasure protocols...          - Almost done (white), explicit system (purple)
+Final:   Neural corruption detected...        - Fully decoded (stable white)
+```
+
+**Color Usage:**
+- Revealed text: White (#ffffff) - successfully decoded characters
+- SFW buffer: Magenta (#d94f90) - playful corruption ahead
+- NSFW buffer: Deep Purple (#8b5cf6) - intimate corruption ahead
+
+**Technical Details:**
+- Update interval: 80-150ms per character reveal
+- Buffer updates every frame with new random phrase
+- Creates highly dynamic "fighting through corruption" effect
+- Combines stability (left) with chaos (right) in single element
 
 **Use Cases:**
-- High-intensity corruption effects
-- Combining multiple corruption sources
-- Maximum visual chaos before stability
+- High-intensity corruption effects (maximum visual chaos)
+- Terminal/hacking sequences (progressively "cracking" encrypted text)
+- Dramatic narrative moments (truth fighting to emerge from lies)
+- Loading screens with character-by-character progress indication
+- "Downloading consciousness" / neural upload sequences
 
 ---
 
@@ -674,13 +813,22 @@ corrupted.start();
 
 ## Version History
 
-- **1.1** (2026-01-15): Content classification normalization
+- **1.1** (2026-01-15): Content classification normalization & terminology clarification
   - **BREAKING**: Changed from 3-type to 2-class system (SFW/NSFW)
+  - **BREAKING**: Color palette update - white/magenta/purple primary, cyan demoted to accent only
+    - Stable/decoded text: Cyan (#00ffff) → White (#ffffff)
+    - Primary corruption: Now Magenta (#ff00ff) and Purple (#8b5cf6)
+    - Cyan relegated to rare accent/highlight use only
   - Normalized "lewd" terminology to "NSFW" for clarity
   - Made SFW the explicit default (no opt-in required)
   - NSFW requires explicit `{ nsfw: true }` opt-in
   - Moved explicit words ("hentai", "ecchi") from playful to NSFW
-  - Updated all examples and quick reference tables
+  - **Pattern 1 clarification**: Renamed to "Character Corruption (Visual Glitch Only)" - uses ONLY random characters, NO phrases
+  - **Pattern 2 clarification**: Renamed to "Phrase Flickering (Buffer Corruption)" - explicitly coded as "buffer decoding from neural corruption"
+  - **Pattern 3 clarification**: Updated to show clear SFW vs NSFW examples with "neural network progressively decoding" mental model
+  - Updated all patterns with separate SFW (default) and NSFW (opt-in) implementation examples
+  - Added "Mental Model" sections to explain corruption as data buffer decoding
+  - Updated all code examples to use white for stable text, magenta/purple for corruption
 
 - **1.0** (2025-12-24): Initial specification
   - Character sets defined

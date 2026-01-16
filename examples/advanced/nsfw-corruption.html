@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NSFW Corruption (18+) - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
+
+    .warning-box {
+      background: rgba(255, 0, 0, 0.1);
+      border: 3px solid var(--corrupted-red);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-2xl);
+      box-shadow: 0 0 30px rgba(255, 0, 0, 0.3);
+    }
+
+    .warning-box h2 {
+      color: var(--corrupted-red);
+      margin-top: 0;
+      font-size: 1.75rem;
+      text-align: center;
+    }
+
+    .warning-box p {
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .warning-box ul {
+      color: var(--text-secondary);
+      line-height: 1.8;
+    }
+
+    .demo-area {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .typing-output {
+      font-size: 1.25rem;
+      min-height: 40px;
+      letter-spacing: 1px;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      width: 100%;
+    }
+
+    .controls {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .nsfw-badge {
+      background: rgba(255, 0, 0, 0.2);
+      border-color: var(--corrupted-red);
+      color: var(--corrupted-red);
+    }
+
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .comparison-box {
+      background: var(--bg-secondary);
+      border: 2px solid;
+      border-radius: var(--radius-md);
+      padding: var(--spacing-lg);
+    }
+
+    .comparison-box.sfw {
+      border-color: var(--corrupted-magenta2);
+    }
+
+    .comparison-box.nsfw {
+      border-color: var(--corrupted-purple);
+    }
+
+    .comparison-box h4 {
+      margin-top: 0;
+      font-size: 1rem;
+    }
+
+    .comparison-box.sfw h4 {
+      color: var(--corrupted-magenta2);
+    }
+
+    .comparison-box.nsfw h4 {
+      color: var(--corrupted-purple);
+    }
+
+    @media (max-width: 768px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Global Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
+        <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
+        <li class="has-submenu">
+          <a href="#" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="../nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="../button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="../card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="../form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="../layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="../basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="../basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="nsfw-corruption.html" class="active"><i class="fas fa-exclamation-triangle"></i> NSFW (18+)</a>
+          </div>
+        </li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <!-- Content Warning -->
+    <div class="warning-box">
+      <h2><i class="fas fa-exclamation-triangle"></i> 18+ Content Warning</h2>
+      <p style="text-align: center;"><strong>This page contains explicit mature content (NSFW mode).</strong></p>
+      <p>This example demonstrates the NSFW mode of TypingAnimation, which includes:</p>
+      <ul>
+        <li>Explicit intimate/sexual phrases</li>
+        <li>Loss of control themes</li>
+        <li>Adult-oriented corruption aesthetics</li>
+      </ul>
+      <p><strong>NOT suitable for:</strong></p>
+      <ul>
+        <li>Professional/corporate projects</li>
+        <li>Public streams without 18+ rating</li>
+        <li>Educational contexts</li>
+        <li>All-ages content</li>
+      </ul>
+      <p style="text-align: center; margin-top: var(--spacing-lg); font-weight: bold;">
+        By continuing, you confirm you are 18+ and accept viewing explicit content.
+      </p>
+    </div>
+
+    <h1><i class="fas fa-exclamation-triangle"></i> NSFW Buffer Corruption</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+      Pattern 2: Phrase flickering with explicit adult content (18+ only).
+    </p>
+
+    <div class="info-badge nsfw-badge">
+      <i class="fas fa-exclamation-triangle"></i>
+      <span>18+ ONLY - Explicit Content</span>
+    </div>
+
+    <!-- SFW vs NSFW Comparison -->
+    <section id="comparison" class="example-group">
+      <h3>SFW vs NSFW Comparison</h3>
+      <p>See the difference between default SFW mode and explicit NSFW mode side-by-side.</p>
+
+      <div class="comparison-grid">
+        <div class="comparison-box sfw">
+          <h4><i class="fas fa-check-circle"></i> SFW Mode (Default)</h4>
+          <div class="demo-area">
+            <div class="typing-output" id="outputSFW"></div>
+          </div>
+        </div>
+        <div class="comparison-box nsfw">
+          <h4><i class="fas fa-exclamation-triangle"></i> NSFW Mode (Explicit)</h4>
+          <div class="demo-area">
+            <div class="typing-output" id="outputNSFW"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="startComparison()">
+          <i class="fas fa-play"></i> Start Comparison
+        </button>
+      </div>
+
+      <div class="code-block">// SFW mode (default - safe for all audiences)
+const typingSFW = new TypingAnimation(element, {
+  nsfw: false  // Default behavior
+});
+
+// NSFW mode (explicit opt-in required)
+const typingNSFW = new TypingAnimation(element, {
+  nsfw: true   // ⚠️ Enables 18+ explicit content
+});</div>
+    </section>
+
+    <!-- NSFW-Only Example -->
+    <section id="nsfw-only" class="example-group">
+      <h3>NSFW-Only Example</h3>
+      <p>Pure NSFW buffer corruption with explicit phrases in purple (#8b5cf6).</p>
+
+      <div class="demo-area">
+        <div class="typing-output" id="outputNSFWOnly"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="startNSFWOnly()">
+          <i class="fas fa-play"></i> Start NSFW Animation
+        </button>
+        <button class="btn btn-secondary" onclick="stopNSFWOnly()">
+          <i class="fas fa-stop"></i> Stop
+        </button>
+      </div>
+
+      <div class="code-block">const typing = new TypingAnimation(element, {
+  nsfw: true,           // ⚠️ NSFW mode enabled
+  typingSpeed: 35,
+  glitchChance: 0.12
+});
+
+typing.start('Neural corruption detected...');</div>
+    </section>
+
+    <!-- Component Info -->
+    <section class="example-group">
+      <h3><i class="fas fa-info-circle"></i> NSFW Mode Configuration</h3>
+      <ul style="color: var(--text-secondary); line-height: 1.8;">
+        <li><strong>Requires Explicit Opt-in:</strong> <code>{ nsfw: true }</code></li>
+        <li><strong>Phrase Examples:</strong> "壊れちゃう...", "Pleasure protocols loading...", "変態", "えっち"</li>
+        <li><strong>Color:</strong> Deep Purple (#8b5cf6) for NSFW corruption</li>
+        <li><strong>Default Behavior:</strong> SFW mode (safe for all audiences)</li>
+        <li><strong>Content Rating:</strong> 18+ only, explicit intimate content</li>
+      </ul>
+
+      <div class="alert alert-warning" style="margin-top: var(--spacing-md);">
+        <i class="fas fa-shield-alt"></i>
+        <strong>Important:</strong> NSFW phrases are ONLY shown when <code>nsfw: true</code> is explicitly set.
+        The default behavior is always SFW for safety.
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    import { TypingAnimation } from '../../src/core/typing-animation.js';
+
+    // SFW vs NSFW Comparison
+    const outputSFW = document.getElementById('outputSFW');
+    const outputNSFW = document.getElementById('outputNSFW');
+
+    window.startComparison = () => {
+      // SFW instance
+      const typingSFW = new TypingAnimation(outputSFW, {
+        nsfw: false,
+        glitchChance: 0.10
+      });
+
+      // NSFW instance
+      const typingNSFW = new TypingAnimation(outputNSFW, {
+        nsfw: true,
+        glitchChance: 0.10
+      });
+
+      // Start both simultaneously
+      typingSFW.start('System Online');
+      typingNSFW.start('System Online');
+    };
+
+    // NSFW-only example
+    const outputNSFWOnly = document.getElementById('outputNSFWOnly');
+    let typingNSFWOnly = new TypingAnimation(outputNSFWOnly, {
+      nsfw: true,
+      typingSpeed: 35,
+      glitchChance: 0.12
+    });
+
+    window.startNSFWOnly = () => {
+      typingNSFWOnly.start('Neural corruption detected... Decoding data buffer...');
+    };
+
+    window.stopNSFWOnly = () => {
+      typingNSFWOnly.stop();
+    };
+
+    // Auto-start comparison on load
+    setTimeout(() => startComparison(), 1000);
+  </script>
+</body>
+</html>

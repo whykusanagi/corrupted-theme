@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buffer Corruption - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
+
+    .demo-area {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .typing-output {
+      font-size: 1.25rem;
+      min-height: 40px;
+      letter-spacing: 1px;
+      font-family: 'Courier New', monospace;
+      text-align: center;
+      width: 100%;
+    }
+
+    .controls {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
+
+    .sfw-badge {
+      background: rgba(217, 79, 144, 0.2);
+      border-color: var(--corrupted-magenta2);
+      color: var(--corrupted-magenta2);
+    }
+
+    .slider-container {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+    }
+
+    .slider-container label {
+      min-width: 100px;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+    }
+
+    .slider-container input[type="range"] {
+      flex: 1;
+      max-width: 300px;
+    }
+
+    .slider-container span {
+      min-width: 120px;
+      color: var(--accent);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: var(--spacing-md);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text);
+      font-family: 'Courier New', monospace;
+      margin-bottom: var(--spacing-md);
+      font-size: 1rem;
+    }
+
+    input[type="text"]:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255, 0, 255, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <!-- Global Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
+        <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
+        <li class="has-submenu">
+          <a href="#" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="../nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="../button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="../card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="../form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="../layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="typing-animation.html" class="active"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="../advanced/nsfw-corruption.html"><i class="fas fa-exclamation-triangle"></i> NSFW (18+)</a>
+          </div>
+        </li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-keyboard"></i> Buffer Corruption</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+      Pattern 2: Phrase flickering with buffer corruption (SFW mode).
+    </p>
+
+    <div class="info-badge sfw-badge">
+      <i class="fas fa-check-circle"></i>
+      <span>SFW Mode - Cute & Playful</span>
+    </div>
+
+    <!-- Basic Buffer Corruption -->
+    <section id="basic" class="example-group">
+      <h3>System Message with Buffer Corruption</h3>
+      <p>Cute, playful, and atmospheric phrases flicker through before revealing the final text.</p>
+
+      <div class="demo-area">
+        <div class="typing-output" id="output1"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="startExample1()">
+          <i class="fas fa-play"></i> Start
+        </button>
+        <button class="btn btn-secondary" onclick="stopExample1()">
+          <i class="fas fa-stop"></i> Stop
+        </button>
+        <button class="btn btn-ghost" onclick="settleExample1()">
+          <i class="fas fa-check"></i> Settle
+        </button>
+      </div>
+
+      <div class="code-block">import { TypingAnimation } from '@whykusanagi/corrupted-theme/typing-animation';
+
+const element = document.getElementById('output');
+const typing = new TypingAnimation(element, {
+  typingSpeed: 40,      // Characters per second
+  glitchChance: 0.08,   // 8% corruption chance
+  nsfw: false           // SFW mode (default)
+});
+
+typing.start('Neural corruption detected...');</div>
+    </section>
+
+    <!-- Adjustable Settings -->
+    <section id="adjustable" class="example-group">
+      <h3>Adjustable Corruption Settings</h3>
+      <p>Control typing speed and corruption frequency in real-time.</p>
+
+      <div class="demo-area">
+        <div class="typing-output" id="output2"></div>
+      </div>
+
+      <div class="slider-container">
+        <label for="speed"><i class="fas fa-tachometer-alt"></i> Speed:</label>
+        <input type="range" id="speed" min="10" max="100" value="40" class="form-range">
+        <span id="speedValue">40 chars/sec</span>
+      </div>
+
+      <div class="slider-container">
+        <label for="glitch"><i class="fas fa-bolt"></i> Corruption:</label>
+        <input type="range" id="glitch" min="0" max="30" value="8" class="form-range">
+        <span id="glitchValue">8%</span>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="startExample2()">
+          <i class="fas fa-play"></i> Start with Settings
+        </button>
+      </div>
+
+      <div class="code-block">const typing = new TypingAnimation(element, {
+  typingSpeed: 80,     // Faster typing
+  glitchChance: 0.20   // More corruption
+});</div>
+    </section>
+
+    <!-- Custom Messages -->
+    <section id="custom" class="example-group">
+      <h3>Custom Messages</h3>
+      <p>Type your own message to see it corrupted and revealed.</p>
+
+      <input type="text" id="customMessage" placeholder="Enter your message here...">
+
+      <div class="demo-area">
+        <div class="typing-output" id="output3"></div>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="startExample3()">
+          <i class="fas fa-keyboard"></i> Type Custom Message
+        </button>
+      </div>
+
+      <div class="code-block">const message = document.getElementById('input').value;
+typing.start(message);</div>
+    </section>
+
+    <!-- Component Info -->
+    <section class="example-group">
+      <h3><i class="fas fa-info-circle"></i> Component Information</h3>
+      <ul style="color: var(--text-secondary); line-height: 1.8;">
+        <li><strong>Type:</strong> Buffer Corruption / Phrase Flickering (Pattern 2)</li>
+        <li><strong>Mode:</strong> SFW (Default) - Cute, playful, atmospheric phrases</li>
+        <li><strong>Example Phrases:</strong> "かわいい", "nyaa~", "闇が...私を呼んでいる...", "Neural corruption detected..."</li>
+        <li><strong>Color:</strong> Magenta (#d94f90) for SFW corruption, White for final text</li>
+        <li><strong>Mental Model:</strong> Neural network decoding corrupted data buffer</li>
+        <li><strong>Script:</strong> <code>src/core/typing-animation.js</code></li>
+      </ul>
+
+      <div class="alert alert-info" style="margin-top: var(--spacing-md);">
+        <i class="fas fa-exclamation-circle"></i>
+        <strong>NSFW Mode:</strong> For explicit content examples, see
+        <a href="../advanced/nsfw-corruption.html" style="color: var(--accent);">advanced/nsfw-corruption.html</a> (18+ only)
+      </div>
+    </section>
+  </div>
+
+  <script type="module">
+    import { TypingAnimation } from '../../src/core/typing-animation.js';
+
+    // Example 1: Basic
+    const output1 = document.getElementById('output1');
+    let typing1 = new TypingAnimation(output1, {
+      typingSpeed: 40,
+      glitchChance: 0.08,
+      nsfw: false
+    });
+
+    window.startExample1 = () => {
+      typing1.start('Neural corruption detected... System stabilizing...');
+    };
+
+    window.stopExample1 = () => {
+      typing1.stop();
+    };
+
+    window.settleExample1 = () => {
+      typing1.settle('System Online');
+    };
+
+    // Example 2: Adjustable
+    const output2 = document.getElementById('output2');
+    const speedSlider = document.getElementById('speed');
+    const glitchSlider = document.getElementById('glitch');
+    const speedValue = document.getElementById('speedValue');
+    const glitchValue = document.getElementById('glitchValue');
+
+    speedSlider.addEventListener('input', (e) => {
+      speedValue.textContent = `${e.target.value} chars/sec`;
+    });
+
+    glitchSlider.addEventListener('input', (e) => {
+      glitchValue.textContent = `${e.target.value}%`;
+    });
+
+    window.startExample2 = () => {
+      const typing2 = new TypingAnimation(output2, {
+        typingSpeed: parseInt(speedSlider.value),
+        glitchChance: parseInt(glitchSlider.value) / 100,
+        nsfw: false
+      });
+      typing2.start('Loading data streams... Reality.exe has stopped responding...');
+    };
+
+    // Example 3: Custom
+    const output3 = document.getElementById('output3');
+    const customInput = document.getElementById('customMessage');
+
+    window.startExample3 = () => {
+      const message = customInput.value || 'Enter a message above!';
+      const typing3 = new TypingAnimation(output3, {
+        nsfw: false
+      });
+      typing3.start(message);
+    };
+
+    // Auto-start example 1 on load
+    setTimeout(() => startExample1(), 500);
+  </script>
+</body>
+</html>

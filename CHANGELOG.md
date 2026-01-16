@@ -11,13 +11,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [ ] CDN distribution via jsDelivr
 - [ ] Figma design system (components library)
 - [ ] Storybook integration for component showcase
-- [ ] SCSS/SASS version for advanced customization
-- [ ] CSS-in-JS library bindings (Styled Components, Emotion)
-- [ ] Dark mode + light mode theme switcher example
-- [ ] Animation performance improvements
-- [ ] Web font optimization
-- [ ] Additional color palette presets
-- [ ] Tailwind CSS integration guide
+
+---
+
+## [0.1.5] - 2026-01-15
+
+### Fixed
+- **Corruption Example Styling** - Aligned all three corruption examples with theme.css design system
+  - examples/basic/corrupted-text.html - Now uses CSS variables and glassmorphism
+  - examples/basic/typing-animation.html - Consistent button and component styling
+  - examples/advanced/nsfw-corruption.html - Proper navbar and design system integration
+- **Documentation Links** - Fixed broken markdown links across all 12 HTML example files
+  - Updated "Docs" navigation to point to showcase-complete.html instead of .md files
+  - Ensures all documentation is accessible in browser
+
+### Changed
+- **Corruption Examples** - Replaced custom inline styles with theme.css design system
+  - Now uses CSS variables (--accent, --bg, --glass, --spacing-*, etc.)
+  - Added proper navbar component matching other examples
+  - Applied consistent .example-group sections with glassmorphism
+  - Added Font Awesome icons throughout
+  - All corruption functionality and interactivity preserved
 
 ---
 

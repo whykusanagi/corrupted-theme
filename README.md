@@ -30,9 +30,31 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 - **Glassmorphism-first** visual language with layered depth, gradients, and scanlines.
 - **Systemized tokens** (`src/css/variables.css`) for colors, typography, spacing, motion, and elevation.
 - **Bootstrap-scale coverage** of components (navigation, forms, data display, API docs, Nikke-specific UI).
-- **First-visit cinematic experiences** via `corrupted-text.js` and `corruption-loading.js`.
+- **Buffer corruption effects** with SFW/NSFW phrase modes (Pattern 1 & 2 from spec).
 - **WCAG AA** compliance, motion safety, and keyboard support baked in.
 - **Dockerized showcase** at `examples/showcase-complete.html` for instant QA.
+
+### Content Warnings
+
+This package includes two corruption animation modes:
+
+**SFW Mode (Default)**
+- Playful anime-style expressions
+- Cute/teasing phrases
+- Atmospheric corruption themes
+- Safe for professional and public projects
+
+**NSFW Mode (Opt-in Required)**
+- ⚠️ **18+ Content Warning**
+- Explicit intimate/sexual phrases
+- Loss of control themes
+- **NOT suitable for:**
+  - Professional/corporate projects
+  - Public streams without 18+ rating
+  - Educational contexts
+  - All-ages content
+
+**All examples and default behavior use SFW mode.** NSFW requires explicit `{ nsfw: true }` configuration.
 
 ## Installation
 ### npm (public registry)
@@ -354,26 +376,49 @@ document.addEventListener('click', e => {
 </div>
 ```
 
-### Corrupted Text & Loader
+### Corrupted Text & Buffer Corruption
+
+**Pattern 1: Character-Level Corruption (Visual Glitch)**
 ```html
-<span class="corrupted-text" data-text="CORRUPTED">CORRUPTED</span>
-<span class="glitch-kanji">
-  <span class="glitch-word" data-text="CORRUPTED TEXT">CORRUPTED TEXT</span>
+<!-- Multi-language cycling with character-level glitch -->
+<span class="corrupted-multilang"
+      data-english="Hello World"
+      data-romaji="konnichiwa"
+      data-hiragana="こんにちは"
+      data-katakana="コンニチハ"
+      data-kanji="今日は">
 </span>
+
+<script type="module" src="@whykusanagi/corrupted-theme/src/core/corrupted-text.js"></script>
 ```
+
+**Pattern 2: Phrase Flickering (Buffer Corruption)**
 ```html
-<video class="background-media" autoplay muted loop playsinline>
-  <source src="/media/corruption-loop.mp4" type="video/mp4" />
-</video>
-<script type="module" src="@whykusanagi/corrupted-theme/src/lib/corruption-loading.js"></script>
-<script>
-showCorruptionLoading();                // auto once every 72h
-// showCorruptionLoading({ force: true });
+<!-- Typing animation with SFW phrase buffer corruption -->
+<div class="typing-output" id="typing1"></div>
+
+<script type="module">
+import { TypingAnimation } from '@whykusanagi/corrupted-theme/src/core/typing-animation.js';
+
+const typing = new TypingAnimation(document.getElementById('typing1'), {
+    typingSpeed: 40,      // chars/sec
+    glitchChance: 0.08,   // 8% buffer corruption
+    nsfw: false           // SFW mode (default)
+});
+
+typing.start('Neural corruption detected... System Online');
 </script>
 ```
-Japanese overlay text is sourced from the lewd phrase array inside `examples/showcase-complete.html`; supply your own by updating the data attribute or reusing the script snippet.
+
+**⚠️ Content Classification:**
+- **SFW Mode (Default)**: Cute, playful, atmospheric phrases - safe for all audiences
+- **NSFW Mode (Opt-in)**: Explicit 18+ content - requires `{ nsfw: true }` flag
+
+See `examples/basic/` for SFW examples and `examples/advanced/nsfw-corruption.html` for NSFW demo.
 
 ## Animations & Experience Layer
+
+### Standard CSS Animations
 Class | Behavior
 --- | ---
 `.fade-in`, `.fade-up`, `.slide-in-left/right`, `.scale-in` | Standard entrance motions synchronized to `var(--transition)`
@@ -381,8 +426,27 @@ Class | Behavior
 `.corrupted-text`, `.corrupted-strong` | Brute-force corruption effect for headings and pills
 `.scanlines`, `.tear`, `.data-corrupt` | Utility effects inspired by whykusanagi.xyz hero
 `.spinner`, `.loading-bar`, `.progress-bar` | Loading indicators with shimmer + accent variants
-`.corruption-loading` (JS) | Full-screen loader with 72h replay timer
-`.corrupted-multilang` (JS) | First-visit Japanese/English/Romaji cycling text
+
+### JavaScript Corruption Components
+
+**CorruptedText** - Pattern 1: Character-Level Corruption
+- Visual glitch effect using random characters (Katakana, Hiragana, symbols)
+- Always SFW (no phrases, just character-level noise)
+- Cycles through multi-language variants
+- Class: `.corrupted-multilang`
+
+**TypingAnimation** - Pattern 2: Phrase Flickering (Buffer Corruption)
+- Simulates neural network decoding corrupted data buffer
+- Phrases flicker through before revealing final text
+- SFW mode (default): Cute, playful, atmospheric phrases
+- NSFW mode (opt-in): Explicit 18+ content with `{ nsfw: true }`
+- Color: Magenta (#d94f90) for SFW, Purple (#8b5cf6) for NSFW
+
+**Corruption Phrases Library**
+- Normalized SFW/NSFW phrase sets
+- Separate exports for each mode
+- Helper functions for random phrase selection
+- Module: `src/core/corruption-phrases.js`
 
 ## Nikke Utilities
 ```html

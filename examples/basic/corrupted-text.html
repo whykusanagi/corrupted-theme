@@ -1,238 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CorruptedText Example - Character-Level Corruption</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 40px;
-            background: #000000;
-            color: #ffffff;
-            font-family: 'Courier New', monospace;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Character Corruption - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
 
-        .container {
-            max-width: 800px;
-            width: 100%;
-        }
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
 
-        h1 {
-            color: #ff00ff;
-            text-align: center;
-            margin-bottom: 20px;
-            text-shadow:
-                0 0 10px #ff00ff,
-                0 0 20px #ff00ff,
-                0 0 30px #8b5cf6;
-        }
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
 
-        .description {
-            color: #d94f90;
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 14px;
-        }
+    .demo-area {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-        .example {
-            background: rgba(255, 0, 255, 0.05);
-            border: 2px solid #ff00ff;
-            border-radius: 10px;
-            padding: 30px;
-            margin: 20px 0;
-            box-shadow:
-                0 0 20px rgba(255, 0, 255, 0.3),
-                inset 0 0 20px rgba(0, 0, 0, 0.5);
-        }
+    .corrupted-text {
+      font-size: 2rem;
+      font-weight: bold;
+      letter-spacing: 2px;
+      text-align: center;
+    }
 
-        .example h2 {
-            color: #d94f90;
-            font-size: 18px;
-            margin-top: 0;
-            margin-bottom: 10px;
-        }
+    .controls {
+      display: flex;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      flex-wrap: wrap;
+    }
 
-        .example p {
-            color: #888;
-            font-size: 12px;
-            margin-bottom: 20px;
-        }
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
 
-        .corrupted-multilang {
-            font-size: 24px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            display: block;
-            margin: 10px 0;
-        }
+    .info-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-full);
+      padding: var(--spacing-sm) var(--spacing-md);
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: var(--spacing-md);
+    }
 
-        .controls {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            background: transparent;
-            border: 2px solid #ff00ff;
-            color: #ff00ff;
-            padding: 10px 20px;
-            font-family: 'Courier New', monospace;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
-        button:hover {
-            background: #ff00ff;
-            color: #000;
-            box-shadow: 0 0 20px #ff00ff;
-        }
-
-        .info-box {
-            background: rgba(139, 92, 246, 0.1);
-            border-left: 4px solid #8b5cf6;
-            padding: 15px;
-            margin-top: 30px;
-            font-size: 13px;
-            color: #aaa;
-        }
-
-        .info-box strong {
-            color: #8b5cf6;
-        }
-
-        .nav-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid #ff00ff;
-            padding: 15px 30px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-        }
-
-        .nav-header a {
-            color: #ff00ff;
-            text-decoration: none;
-            transition: color 0.3s;
-        }
-
-        .nav-header a:hover {
-            color: #fff;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
-        }
-
-        body {
-            padding-top: 80px;
-        }
-    </style>
+    .sfw-badge {
+      background: rgba(217, 79, 144, 0.2);
+      border-color: var(--corrupted-magenta2);
+      color: var(--corrupted-magenta2);
+    }
+  </style>
 </head>
 <body>
-    <nav class="nav-header">
-        <a href="../index.html">← Back to Examples</a>
-        <div class="nav-links">
-            <a href="corrupted-text.html">Character Corruption</a>
-            <a href="typing-animation.html">Buffer Corruption</a>
-            <a href="../advanced/nsfw-corruption.html">NSFW (18+)</a>
-        </div>
-    </nav>
+  <!-- Global Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
+        <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
+        <li class="has-submenu">
+          <a href="#" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="../nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="../button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="../card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="../form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="../layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="corrupted-text.html" class="active"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="../advanced/nsfw-corruption.html"><i class="fas fa-exclamation-triangle"></i> NSFW (18+)</a>
+          </div>
+        </li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
 
-    <div class="container">
-        <h1>CorruptedText Component</h1>
-        <p class="description">Pattern 1: Character-Level Corruption (Visual Glitch)</p>
+  <div class="container">
+    <h1><i class="fas fa-terminal"></i> Character Corruption</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+      Pattern 1: Character-level visual corruption with multi-language cycling.
+    </p>
 
-        <div class="example">
-            <h2>Example 1: Multi-Language Cycling</h2>
-            <p>Cycles through English, Romaji, Hiragana, Katakana, and Kanji variants</p>
-            <span class="corrupted-multilang"
-                  data-english="Hello World"
-                  data-romaji="konnichiwa"
-                  data-hiragana="こんにちは"
-                  data-katakana="コンニチハ"
-                  data-kanji="今日は">
-            </span>
-        </div>
-
-        <div class="example">
-            <h2>Example 2: English-Only Decoding</h2>
-            <p>Decodes from random character chaos to clean English text</p>
-            <span class="corrupted-multilang"
-                  data-english="Neural corruption detected"
-                  id="example2">
-            </span>
-            <div class="controls">
-                <button onclick="restartExample2()">Restart</button>
-                <button onclick="settleExample2()">Settle</button>
-            </div>
-        </div>
-
-        <div class="example">
-            <h2>Example 3: One-Shot Decoding (No Loop)</h2>
-            <p>Decodes once and settles on final text</p>
-            <span class="corrupted-multilang"
-                  data-english="System Online"
-                  id="example3">
-            </span>
-        </div>
-
-        <div class="info-box">
-            <strong>Component Info:</strong><br>
-            • Type: Character-Level Corruption (Pattern 1)<br>
-            • Content: Always SFW (no phrases, just random characters)<br>
-            • Uses: Katakana, Hiragana, Romaji, Symbols for visual glitch effect<br>
-            • Color: Magenta/Purple corruption, White for decoded text<br>
-            • Auto-initializes on elements with class "corrupted-multilang"
-        </div>
+    <div class="info-badge sfw-badge">
+      <i class="fas fa-check-circle"></i>
+      <span>SFW - Always Safe</span>
     </div>
 
-    <script src="../../src/core/corrupted-text.js"></script>
-    <script>
-        // Example 2: Manual control
-        const example2 = document.getElementById('example2');
-        let example2Instance = null;
+    <!-- Multi-Language Cycling -->
+    <section id="multilang" class="example-group">
+      <h3>Multi-Language Cycling</h3>
+      <p>Cycles through English, Romaji, Hiragana, Katakana, and Kanji variants continuously.</p>
 
-        // Wait for auto-init, then store reference
-        setTimeout(() => {
-            example2Instance = example2.corruptedTextInstance;
-        }, 100);
+      <div class="demo-area">
+        <span class="corrupted-text corrupted-multilang"
+              data-english="Hello World"
+              data-romaji="konnichiwa"
+              data-hiragana="こんにちは"
+              data-katakana="コンニチハ"
+              data-kanji="今日は">
+        </span>
+      </div>
 
-        function restartExample2() {
-            if (example2Instance) {
-                example2Instance.restart();
-            }
-        }
+      <div class="code-block">&lt;span class="corrupted-multilang"
+      data-english="Hello World"
+      data-romaji="konnichiwa"
+      data-hiragana="こんにちは"
+      data-katakana="コンニチハ"
+      data-kanji="今日は"&gt;
+&lt;/span&gt;</div>
+    </section>
 
-        function settleExample2() {
-            if (example2Instance) {
-                example2Instance.settle('Neural corruption detected');
-            }
-        }
+    <!-- English-Only Decoding -->
+    <section id="english" class="example-group">
+      <h3>English-Only Decoding</h3>
+      <p>Decodes from random character chaos to clean English text with manual controls.</p>
 
-        // Example 3: One-shot configuration
-        const example3 = document.getElementById('example3');
-        setTimeout(() => {
-            if (example3.corruptedTextInstance) {
-                example3.corruptedTextInstance.stop();
-                example3.corruptedTextInstance.options.loop = false;
-                example3.corruptedTextInstance.options.finalText = 'System Online';
-                example3.corruptedTextInstance.start();
-            }
-        }, 100);
-    </script>
+      <div class="demo-area">
+        <span class="corrupted-text corrupted-multilang"
+              data-english="Neural corruption detected"
+              id="example2">
+        </span>
+      </div>
+
+      <div class="controls">
+        <button class="btn" onclick="restartExample2()">
+          <i class="fas fa-redo"></i> Restart
+        </button>
+        <button class="btn btn-secondary" onclick="settleExample2()">
+          <i class="fas fa-stop"></i> Settle
+        </button>
+      </div>
+
+      <div class="code-block">// Manual control
+const element = document.getElementById('example2');
+const instance = element.corruptedTextInstance;
+
+// Restart corruption
+instance.restart();
+
+// Settle on final text
+instance.settle('Neural corruption detected');</div>
+    </section>
+
+    <!-- One-Shot Decoding -->
+    <section id="oneshot" class="example-group">
+      <h3>One-Shot Decoding (No Loop)</h3>
+      <p>Decodes once and settles on the final text without looping.</p>
+
+      <div class="demo-area">
+        <span class="corrupted-text corrupted-multilang"
+              data-english="System Online"
+              id="example3">
+        </span>
+      </div>
+
+      <div class="code-block">// One-shot configuration
+const instance = element.corruptedTextInstance;
+instance.stop();
+instance.options.loop = false;
+instance.options.finalText = 'System Online';
+instance.start();</div>
+    </section>
+
+    <!-- Component Info -->
+    <section class="example-group">
+      <h3><i class="fas fa-info-circle"></i> Component Information</h3>
+      <ul style="color: var(--text-secondary); line-height: 1.8;">
+        <li><strong>Type:</strong> Character-Level Corruption (Pattern 1)</li>
+        <li><strong>Content:</strong> Always SFW (no phrases, just random characters)</li>
+        <li><strong>Character Sets:</strong> Katakana, Hiragana, Romaji, Symbols for visual glitch</li>
+        <li><strong>Colors:</strong> Magenta/Purple corruption, White for decoded text</li>
+        <li><strong>Auto-initialization:</strong> Elements with class <code>corrupted-multilang</code></li>
+        <li><strong>Script:</strong> <code>src/core/corrupted-text.js</code></li>
+      </ul>
+    </section>
+  </div>
+
+  <script src="../../src/core/corrupted-text.js"></script>
+  <script>
+    // Example 2: Manual control
+    const example2 = document.getElementById('example2');
+    let example2Instance = null;
+
+    // Wait for auto-init, then store reference
+    setTimeout(() => {
+      example2Instance = example2.corruptedTextInstance;
+    }, 100);
+
+    function restartExample2() {
+      if (example2Instance) {
+        example2Instance.restart();
+      }
+    }
+
+    function settleExample2() {
+      if (example2Instance) {
+        example2Instance.settle('Neural corruption detected');
+      }
+    }
+
+    // Example 3: One-shot configuration
+    const example3 = document.getElementById('example3');
+    setTimeout(() => {
+      if (example3.corruptedTextInstance) {
+        example3.corruptedTextInstance.stop();
+        example3.corruptedTextInstance.options.loop = false;
+        example3.corruptedTextInstance.options.finalText = 'System Online';
+        example3.corruptedTextInstance.start();
+      }
+    }, 100);
+  </script>
 </body>
 </html>

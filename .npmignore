@@ -41,3 +41,8 @@ docs/PERSONALITY.md
 docs/ROUTING.md
 docs/LLM_PROVIDERS.md
 docs/platforms/CLI_IMPLEMENTATION.md
+docs/planning/
+
+# Internal spec files (AI development only)
+CORRUPTED_THEME_SPEC.md
+CORRUPTION_BUFFER_IMPLEMENTATIONS.md

@@ -14,6 +14,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.6] - 2026-01-16
+
+### Changed
+- **Package Cleanup** - Removed internal documentation from NPM package
+  - Created `docs/planning/` directory for internal planning documents
+  - Moved `COMPONENT_INTEGRATION_PLAN.md` to `docs/planning/`
+  - Moved `CONTENT_CLASSIFICATION_NORMALIZATION.md` to `docs/planning/`
+  - Moved `TERMINOLOGY_CLARIFICATION.md` to `docs/planning/`
+  - Updated `.npmignore` to exclude `docs/planning/` directory
+  - Added `CORRUPTED_THEME_SPEC.md` and `CORRUPTION_BUFFER_IMPLEMENTATIONS.md` to `.npmignore`
+  - No functional changes - purely package cleanup
+  - **Note:** v0.1.5 contained internal planning docs and should not be used. Please upgrade to 0.1.6.
+
+---
+
 ## [0.1.5] - 2026-01-15
 
 ### Fixed

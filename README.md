@@ -9,16 +9,18 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 4. [Base Layout & Background](#base-layout--background)
 5. [CSS & JS Imports](#css--js-imports)
 6. [Component Quick Reference](#component-quick-reference)
-7. [Animations & Experience Layer](#animations--experience-layer)
-8. [Nikke Utilities](#nikke-utilities)
-9. [Extension Components](#extension-components)
-10. [Customization & Tokens](#customization--tokens)
-11. [Coding Standards](#coding-standards)
-12. [Development Workflow](#development-workflow)
-13. [Testing & QA Expectations](#testing--qa-expectations)
-14. [Support](#support)
-15. [Celeste Widget Integration](#celeste-widget-integration-optional)
-16. [License](#license)
+7. [Interactive Components](#interactive-components)
+8. [Animations & Experience Layer](#animations--experience-layer)
+9. [Lifecycle Management](#lifecycle-management)
+10. [Nikke Utilities](#nikke-utilities)
+11. [Extension Components](#extension-components)
+12. [Customization & Tokens](#customization--tokens)
+13. [Coding Standards](#coding-standards)
+14. [Development Workflow](#development-workflow)
+15. [Testing & QA Expectations](#testing--qa-expectations)
+16. [Support](#support)
+17. [Celeste Widget Integration](#celeste-widget-integration-optional)
+18. [License](#license)
 
 <div align="center" style="margin: 2rem 0;">
 
@@ -82,20 +84,30 @@ Copy `src/css` into your project (or use `dist/theme.min.css`) and import it loc
 .
 ├── src/
 │   ├── css/
-│   │   ├── variables.css        # design tokens
-│   │   ├── typography.css       # font stack + hierarchy
-│   │   ├── glassmorphism.css    # shared glass utilities
-│   │   ├── animations.css       # motion + corruption keyframes
-│   │   ├── components.css       # UI primitives + layouts
-│   │   ├── utilities.css        # spacing, flex, layout utilities
-│   │   └── theme.css            # entry point (imports all modules)
+│   │   ├── variables.css          # design tokens
+│   │   ├── typography.css         # font stack + hierarchy
+│   │   ├── glassmorphism.css      # shared glass utilities
+│   │   ├── animations.css         # motion + corruption keyframes
+│   │   ├── components.css         # UI primitives + layouts (incl. carousel)
+│   │   ├── utilities.css          # spacing, flex, layout utilities
+│   │   └── theme.css              # entry point (imports all modules)
+│   ├── core/
+│   │   ├── timer-registry.js      # lifecycle: tracked setTimeout/setInterval/rAF
+│   │   └── event-tracker.js       # lifecycle: tracked addEventListener
 │   └── lib/
-│       ├── corrupted-text.js    # multi-language glitch animation
-│       └── corruption-loading.js# cinematic loading curtain
-├── dist/theme.min.css            # postcss + cssnano build output
-├── examples/showcase-complete.html
-├── scripts/static-server.js      # ESM static server (Docker)
-└── docs/COMPONENTS_REFERENCE.md  # exhaustive snippets
+│       ├── carousel.js            # carousel/slideshow with autoplay + swipe
+│       ├── character-corruption.js# auto-corruption for individual characters
+│       ├── components.js          # modal, dropdown, tabs, collapse, accordion, toast
+│       ├── corrupted-text.js      # multi-language glitch animation
+│       ├── corruption-loading.js  # cinematic loading curtain
+│       ├── countdown-widget.js    # event countdown with shapes
+│       └── gallery.js             # gallery grid with filtering + lightbox
+├── dist/theme.min.css              # postcss + cssnano build output
+├── examples/
+│   ├── showcase-complete.html      # full design system demo
+│   └── interactive-components.html # modal, dropdown, tabs, carousel demo
+├── scripts/static-server.js        # ESM static server (Docker)
+└── docs/COMPONENTS_REFERENCE.md    # exhaustive snippets
 ```
 
 **npm scripts**
@@ -232,21 +244,25 @@ Import only the modules you need for smaller bundle sizes.
 
 ### JavaScript Imports
 
-```html
-<!-- HTML -->
-<script type="module" src="@whykusanagi/corrupted-theme/src/lib/corrupted-text.js"></script>
-<script type="module" src="@whykusanagi/corrupted-theme/src/lib/corruption-loading.js"></script>
+```js
+// Interactive components (modal, dropdown, tabs, collapse, accordion, toast)
+import { initComponents, destroyComponents, showToast, toast }
+  from '@whykusanagi/corrupted-theme/components-js';
+
+// Carousel (separate module)
+import { initCarousel } from '@whykusanagi/corrupted-theme/carousel';
+
+// Corruption effects
+import { initCorruptedText } from '@whykusanagi/corrupted-theme/corrupted-text';
+import { initGallery, destroyGallery } from '@whykusanagi/corrupted-theme/gallery';
+import { initCountdown } from '@whykusanagi/corrupted-theme/countdown';
 ```
 
-```js
-// ES Modules
-import { initCorruptedText } from '@whykusanagi/corrupted-theme/src/lib/corrupted-text.js';
-import { showCorruptionLoading } from '@whykusanagi/corrupted-theme/src/lib/corruption-loading.js';
+Components auto-initialize on `DOMContentLoaded` when imported. For manual control:
 
-document.addEventListener('DOMContentLoaded', () => {
-  initCorruptedText();                       // Initialize glitch text effects
-  // showCorruptionLoading({ force: true }); // Force loader outside 72h cadence
-});
+```js
+initComponents();    // scan DOM for data-ct-* attributes
+destroyComponents(); // tear down all managers and tracked listeners
 ```
 
 ## Component Quick Reference
@@ -317,14 +333,26 @@ function toggleNavbar(button) {
 ```
 
 ### Dropdown
+
+**Zero-JS (data attributes):**
 ```html
 <div class="dropdown">
-  <button class="dropdown-toggle" onclick="toggleDropdown(this)">Menu <i class="fas fa-chevron-down"></i></button>
+  <button class="dropdown-toggle" data-ct-toggle="dropdown">Menu</button>
   <div class="dropdown-menu">
     <a class="dropdown-item">Action</a>
     <a class="dropdown-item">Settings</a>
     <div class="dropdown-divider"></div>
     <a class="dropdown-item">Logout</a>
+  </div>
+</div>
+```
+
+**Manual JS (legacy):**
+```html
+<div class="dropdown">
+  <button class="dropdown-toggle" onclick="toggleDropdown(this)">Menu</button>
+  <div class="dropdown-menu">
+    <a class="dropdown-item">Action</a>
   </div>
 </div>
 ```
@@ -334,10 +362,7 @@ function toggleDropdown(button) {
   const open = menu.classList.contains('active');
   document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
   document.querySelectorAll('.dropdown-toggle').forEach(b => b.classList.remove('active'));
-  if (!open) {
-    menu.classList.add('active');
-    button.classList.add('active');
-  }
+  if (!open) { menu.classList.add('active'); button.classList.add('active'); }
 }
 document.addEventListener('click', e => {
   if (!e.target.closest('.dropdown')) {
@@ -416,6 +441,105 @@ typing.start('Neural corruption detected... System Online');
 
 See `examples/basic/` for SFW examples and `examples/advanced/nsfw-corruption.html` for NSFW demo.
 
+## Interactive Components
+
+v0.1.7 adds JS-driven interactive components that self-initialize via `data-ct-*` attributes. Import the components module and everything wires up automatically on `DOMContentLoaded`.
+
+```html
+<script type="module">
+  import '@whykusanagi/corrupted-theme/components-js';
+  import { initCarousel } from '@whykusanagi/corrupted-theme/carousel';
+</script>
+```
+
+### Modal
+
+```html
+<button class="btn" data-ct-toggle="modal" data-ct-target="#my-modal">Open</button>
+
+<div class="modal-overlay" id="my-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Title</h3>
+      <button class="modal-close">&times;</button>
+    </div>
+    <div class="modal-body"><p>Content here.</p></div>
+    <div class="modal-footer">
+      <button class="btn secondary" data-ct-toggle="modal" data-ct-target="#my-modal">Cancel</button>
+      <button class="btn" data-ct-toggle="modal" data-ct-target="#my-modal">Confirm</button>
+    </div>
+  </div>
+</div>
+```
+
+Closes via X button, overlay click, or Escape key. Dispatches `modal:open` / `modal:close` custom events.
+
+### Tabs
+
+```html
+<div class="tabs">
+  <button class="tab active" data-ct-target="#panel-1">Tab 1</button>
+  <button class="tab" data-ct-target="#panel-2">Tab 2</button>
+</div>
+<div class="tab-content active" id="panel-1">Panel 1 content</div>
+<div class="tab-content" id="panel-2">Panel 2 content</div>
+```
+
+### Collapse
+
+```html
+<button class="btn" data-ct-toggle="collapse" data-ct-target="#details">Toggle</button>
+<div class="collapse" id="details">
+  <p>Collapsible content.</p>
+</div>
+```
+
+### Carousel
+
+```html
+<div class="carousel" data-ct-autoplay data-ct-interval="4000">
+  <div class="carousel-inner">
+    <div class="carousel-slide active">Slide 1</div>
+    <div class="carousel-slide">Slide 2</div>
+    <div class="carousel-slide">Slide 3</div>
+  </div>
+</div>
+```
+
+Features: autoplay, prev/next controls, dot indicators, touch/swipe, keyboard navigation (ArrowLeft/Right). Import separately:
+
+```js
+import { initCarousel } from '@whykusanagi/corrupted-theme/carousel';
+```
+
+### Accordion
+
+```html
+<div class="accordion">
+  <div class="accordion-item active">
+    <div class="accordion-header">Question 1</div>
+    <div class="accordion-body"><p>Answer 1</p></div>
+  </div>
+  <div class="accordion-item">
+    <div class="accordion-header">Question 2</div>
+    <div class="accordion-body"><p>Answer 2</p></div>
+  </div>
+</div>
+```
+
+### Toast Notifications
+
+```js
+import { toast } from '@whykusanagi/corrupted-theme/components-js';
+
+toast.success('Operation completed.');
+toast.warning('Check your input.');
+toast.error('Something went wrong.');
+toast.info('FYI: update available.');
+```
+
+See `examples/interactive-components.html` for a live demo of all interactive components.
+
 ## Animations & Experience Layer
 
 ### Standard CSS Animations
@@ -447,6 +571,46 @@ Class | Behavior
 - Separate exports for each mode
 - Helper functions for random phrase selection
 - Module: `src/core/corruption-phrases.js`
+
+## Lifecycle Management
+
+All JS components follow a consistent init/destroy pattern to prevent memory leaks in SPAs and dynamic UIs.
+
+### Destroying Components
+
+```js
+import { destroyComponents } from '@whykusanagi/corrupted-theme/components-js';
+import { destroyGallery } from '@whykusanagi/corrupted-theme/gallery';
+
+// Tear down all interactive components (modal, dropdown, tabs, accordion, toast)
+destroyComponents();
+
+// Destroy default gallery instance
+destroyGallery();
+```
+
+### Multi-Instance Gallery
+
+```js
+import { initGallery } from '@whykusanagi/corrupted-theme/gallery';
+
+const g1 = initGallery('#gallery-1', { enableLightbox: true });
+const g2 = initGallery('#gallery-2', { enableLightbox: true });
+
+// Each instance has independent filters, lightbox, and state
+g1.destroy();  // only tears down gallery-1
+```
+
+See `examples/basic/multi-gallery.html` for a working multi-instance demo.
+
+### Core Utilities
+
+The `src/core/` directory provides lifecycle primitives used by all components:
+
+- **TimerRegistry** (`timer-registry.js`) — wraps `setTimeout`, `setInterval`, and `requestAnimationFrame` with bulk `clearAll()`
+- **EventTracker** (`event-tracker.js`) — wraps `addEventListener` with bulk `removeAll()`
+
+These ensure no orphaned timers or listeners remain after `destroy()`.
 
 ## Nikke Utilities
 ```html
@@ -480,7 +644,7 @@ Production-tested components from whykusanagi.xyz for galleries, social links, c
 
 ### Gallery System
 
-Responsive gallery grid with filtering, lightbox, and NSFW content support.
+Responsive gallery grid with filtering, lightbox, and NSFW content support. Supports multiple independent instances on the same page.
 
 ```html
 <div class="filter-bar">
@@ -497,7 +661,7 @@ Responsive gallery grid with filtering, lightbox, and NSFW content support.
 ```
 
 ```javascript
-import { initGallery } from '@whykusanagi/corrupted-theme/gallery';
+import { initGallery, destroyGallery } from '@whykusanagi/corrupted-theme/gallery';
 
 const gallery = initGallery('#my-gallery', {
   enableLightbox: true,
@@ -507,6 +671,7 @@ const gallery = initGallery('#my-gallery', {
 
 gallery.filter('photos');     // Filter by category
 gallery.openLightbox(0);      // Open first image
+gallery.destroy();            // Clean up (removes lightbox, listeners, timers)
 ```
 
 ### Social Links List

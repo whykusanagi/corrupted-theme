@@ -2214,3 +2214,111 @@ nav.navbar {
 .ratio-21x9 {
   --aspect-ratio: calc(9 / 21 * 100%);
 }
+
+/* ========== CAROUSEL / SLIDESHOW ========== */
+
+.carousel {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-lg);
+  background: var(--glass);
+  border: 1px solid var(--border);
+}
+
+.carousel:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.carousel-inner {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.carousel-slide {
+  display: none;
+  width: 100%;
+  opacity: 0;
+  transition: opacity var(--transition-normal) var(--transition-easing);
+}
+
+.carousel-slide.active {
+  display: block;
+  opacity: 1;
+}
+
+.carousel-slide img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Controls (prev/next) */
+.carousel-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  background: var(--glass);
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--transition-fast) var(--transition-easing);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.carousel-control:hover {
+  background: var(--accent);
+  color: var(--bg);
+  border-color: var(--accent);
+}
+
+.carousel-prev {
+  left: 0.75rem;
+}
+
+.carousel-next {
+  right: 0.75rem;
+}
+
+/* Dot indicators */
+.carousel-indicators {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1px solid var(--border-light);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-fast) var(--transition-easing);
+}
+
+.carousel-dot:hover {
+  border-color: var(--accent);
+}
+
+.carousel-dot.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}

@@ -23,7 +23,8 @@
     "./corrupted-text": "./src/lib/corrupted-text.js",
     "./corruption-loading": "./src/lib/corruption-loading.js",
     "./character-corruption": "./src/lib/character-corruption.js",
-    "./components-js": "./src/lib/components.js"
+    "./components-js": "./src/lib/components.js",
+    "./carousel": "./src/lib/carousel.js"
   },
   "files": [
     "src",

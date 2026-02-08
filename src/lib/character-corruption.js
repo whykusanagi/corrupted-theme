@@ -47,6 +47,14 @@ export const INTENSITY = {
 };
 
 /**
+ * WeakMap for tracking corruption interval IDs per element.
+ * Using WeakMap instead of dataset avoids string coercion issues
+ * and allows GC when elements are removed from DOM.
+ * @private
+ */
+const _intervalMap = new WeakMap();
+
+/**
  * Character sets for corruption
  * Organized by usage frequency to match CLI behavior
  * @private
@@ -265,13 +273,14 @@ export function initAutoCorruption() {
         // Check if element still exists in DOM
         if (!document.contains(element)) {
           clearInterval(intervalId);
+          _intervalMap.delete(element);
           return;
         }
         element.textContent = corruptTextJapanese(originalText, intensity);
       }, interval);
 
-      // Store interval ID for cleanup
-      element.dataset.corruptionIntervalId = intervalId;
+      // Store interval ID for cleanup via WeakMap
+      _intervalMap.set(element, intervalId);
     }
 
     // Mark as initialized
@@ -285,11 +294,12 @@ export function initAutoCorruption() {
  * @param {HTMLElement} element - Element to stop corrupting
  */
 export function stopAutoCorruption(element) {
-  if (element.dataset.corruptionIntervalId) {
-    clearInterval(parseInt(element.dataset.corruptionIntervalId));
-    delete element.dataset.corruptionIntervalId;
-    delete element.dataset.corruptionInitialized;
+  const intervalId = _intervalMap.get(element);
+  if (intervalId != null) {
+    clearInterval(intervalId);
+    _intervalMap.delete(element);
   }
+  delete element.dataset.corruptionInitialized;
 }
 
 /**
@@ -309,14 +319,27 @@ export function restartAutoCorruption(element) {
     const intervalId = setInterval(() => {
       if (!document.contains(element)) {
         clearInterval(intervalId);
+        _intervalMap.delete(element);
         return;
       }
       element.textContent = corruptTextJapanese(originalText, intensity);
     }, interval);
 
-    element.dataset.corruptionIntervalId = intervalId;
+    _intervalMap.set(element, intervalId);
     element.dataset.corruptionInitialized = 'true';
   }
+}
+
+/**
+ * Stop all active auto-corruption intervals
+ *
+ * Finds all initialized auto-corrupt elements and stops their intervals.
+ * Useful for cleanup on page transitions or component teardown.
+ */
+export function destroyAllAutoCorruption() {
+  document.querySelectorAll('.auto-corrupt[data-corruption-initialized="true"]').forEach(element => {
+    stopAutoCorruption(element);
+  });
 }
 
 /**
@@ -361,11 +384,12 @@ export function createCorruptedElement(text, options = {}) {
     const intervalId = setInterval(() => {
       if (!document.contains(element)) {
         clearInterval(intervalId);
+        _intervalMap.delete(element);
         return;
       }
       element.textContent = corruptTextJapanese(text, intensity);
     }, interval);
-    element.dataset.corruptionIntervalId = intervalId;
+    _intervalMap.set(element, intervalId);
   }
 
   element.dataset.corruptionInitialized = 'true';
@@ -555,6 +579,7 @@ export default {
   initAutoCorruption,
   stopAutoCorruption,
   restartAutoCorruption,
+  destroyAllAutoCorruption,
   createCorruptedElement,
   getRandomPhrase,
   INTENSITY,

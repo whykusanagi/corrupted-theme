@@ -165,9 +165,10 @@ class ToastManager {
     container.appendChild(toast);
     this.toasts.push(toast);
 
-    // Auto-dismiss
+    // Auto-dismiss (tracked for cleanup on manual dismiss)
     if (duration > 0) {
-      setTimeout(() => {
+      toast._autoDismissId = setTimeout(() => {
+        toast._autoDismissId = null;
         this.dismiss(toast, onClose);
       }, duration);
     }
@@ -182,6 +183,12 @@ class ToastManager {
    */
   dismiss(toast, onClose = null) {
     if (!toast || !document.contains(toast)) return;
+
+    // Clear auto-dismiss timer if dismissing early
+    if (toast._autoDismissId) {
+      clearTimeout(toast._autoDismissId);
+      toast._autoDismissId = null;
+    }
 
     toast.classList.add('hiding');
 
@@ -206,7 +213,19 @@ class ToastManager {
    * Dismiss all toasts
    */
   dismissAll() {
-    this.toasts.forEach(toast => this.dismiss(toast));
+    [...this.toasts].forEach(toast => this.dismiss(toast));
+  }
+
+  /**
+   * Tear down the toast system: dismiss all toasts and remove container.
+   */
+  destroy() {
+    this.dismissAll();
+    if (this.container && this.container.parentNode) {
+      this.container.parentNode.removeChild(this.container);
+    }
+    this.container = null;
+    this.toasts = [];
   }
 
   // Convenience methods for different toast types

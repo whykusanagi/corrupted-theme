@@ -314,7 +314,7 @@ function renderWidget(config) {
   if (config.popup?.message) {
     popup = document.createElement('div');
     popup.className = 'countdown-popup';
-    popup.innerHTML = config.popup.message;
+    popup.textContent = config.popup.message;
     
     if (config.popup.colors) {
       if (config.popup.colors.bg) popup.style.background = config.popup.colors.bg;

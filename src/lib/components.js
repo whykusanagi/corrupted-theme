@@ -137,24 +137,29 @@ class ToastManager {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
 
-    // Create toast content
-    const content = `
-      ${title ? `
-        <div class="toast-header">
-          <span>${title}</span>
-        </div>
-      ` : ''}
-      <div class="toast-body">${message}</div>
-      <button class="toast-close" aria-label="Close">×</button>
-    `;
+    // Create toast content using safe DOM methods
+    if (title) {
+      const header = document.createElement('div');
+      header.className = 'toast-header';
+      const titleSpan = document.createElement('span');
+      titleSpan.textContent = title;
+      header.appendChild(titleSpan);
+      toast.appendChild(header);
+    }
 
-    toast.innerHTML = content;
+    const body = document.createElement('div');
+    body.className = 'toast-body';
+    body.textContent = message;
+    toast.appendChild(body);
 
-    // Add close handler
-    const closeBtn = toast.querySelector('.toast-close');
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'toast-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '\u00d7';
     closeBtn.addEventListener('click', () => {
       this.dismiss(toast, onClose);
     });
+    toast.appendChild(closeBtn);
 
     // Add to container
     container.appendChild(toast);

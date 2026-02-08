@@ -1,6 +1,6 @@
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "type": "module",
   "description": "A dark, glassmorphic design system with pink/purple accents. Perfect for creating modern, visually striking web applications.",
   "main": "src/css/theme.css",
@@ -69,12 +69,12 @@
   "author": "whykusanagi <contact@whykusanagi.xyz>",
   "license": "MIT",
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=18.0.0"
   },
   "devDependencies": {
-    "cssnano": "^6.0.0",
+    "cssnano": "^7.1.2",
     "postcss": "^8.4.0",
-    "postcss-cli": "^10.0.0"
+    "postcss-cli": "^11.0.1"
   },
   "scripts": {
     "build": "postcss src/css/theme.css -o dist/theme.min.css",

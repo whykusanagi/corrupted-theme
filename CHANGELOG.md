@@ -14,6 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.7] - 2026-02-07
+
+### Security
+- **XSS hardening in celeste-widget.js** - `addMessage()` now uses `textContent` via safe DOM construction instead of `innerHTML` interpolation. Prevents potential script injection from user input or API responses.
+- **HTML injection fix in countdown-widget.js** - `config.popup.message` now rendered with `textContent` instead of `innerHTML`, consistent with `escapeHtml()` usage elsewhere in the file.
+- **XSS hardening in components.js** - `showToast()` rebuilt with safe DOM methods (`createElement`/`textContent`) instead of `innerHTML` template interpolation.
+
+### Changed
+- **Dev dependency updates** - Updated `cssnano` from ^6.0.0 to ^7.0.0 and `postcss-cli` from ^10.0.0 to ^11.0.0. No functional changes; both are Node.js version requirement bumps only.
+- **Node.js engine requirement** - Bumped minimum from >=14.0.0 to >=18.0.0 to match updated dev dependency requirements.
+
+---
+
 ## [0.1.6] - 2026-01-16
 
 ### Changed

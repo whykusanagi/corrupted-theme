@@ -85,6 +85,9 @@ class CorruptedText {
     this.currentVariantIndex = 0;
     this.isAnimating = false;
     this.animationFrame = null;
+    this._startDelayId = null;
+    this._animateTimeoutId = null;
+    this._corruptTimeoutId = null;
 
     this.init();
   }
@@ -104,7 +107,7 @@ class CorruptedText {
 
     // Start animation after configured delay
     if (this.options.startDelay > 0) {
-      setTimeout(() => this.start(), this.options.startDelay);
+      this._startDelayId = setTimeout(() => this.start(), this.options.startDelay);
     } else {
       this.start();
     }
@@ -126,9 +129,26 @@ class CorruptedText {
    */
   stop() {
     this.isAnimating = false;
-    if (this.animationFrame) {
-      cancelAnimationFrame(this.animationFrame);
+    if (this.animationFrame) cancelAnimationFrame(this.animationFrame);
+    if (this._startDelayId) clearTimeout(this._startDelayId);
+    if (this._animateTimeoutId) clearTimeout(this._animateTimeoutId);
+    if (this._corruptTimeoutId) clearTimeout(this._corruptTimeoutId);
+    this.animationFrame = null;
+    this._startDelayId = null;
+    this._animateTimeoutId = null;
+    this._corruptTimeoutId = null;
+  }
+
+  /**
+   * Fully tear down this instance: stop animation and release element reference.
+   * @public
+   */
+  destroy() {
+    this.stop();
+    if (this.element && this.element.corruptedTextInstance === this) {
+      delete this.element.corruptedTextInstance;
     }
+    this.element = null;
   }
 
   /**
@@ -154,7 +174,7 @@ class CorruptedText {
       }
 
       // Continue animation to next variant
-      setTimeout(() => {
+      this._animateTimeoutId = setTimeout(() => {
         if (this.isAnimating) {
           this.animate();
         }
@@ -214,7 +234,7 @@ class CorruptedText {
 
       // Schedule next corruption step
       this.animationFrame = requestAnimationFrame(() => {
-        setTimeout(corrupt, this.options.cycleDelay);
+        this._corruptTimeoutId = setTimeout(corrupt, this.options.cycleDelay);
       });
     };
 

@@ -42,6 +42,69 @@ class CelesteAgent {
         this.messageContainer = null;
         this.inputField = null;
         this.sendButton = null;
+
+        // Lifecycle tracking (inline — this file uses IIFE-style globals, not ES imports)
+        this._trackedListeners = [];
+        this._styleElement = null;
+    }
+
+    /**
+     * Track an event listener for cleanup in destroy()
+     * @private
+     */
+    _trackListener(target, event, handler, options) {
+        target.addEventListener(event, handler, options);
+        this._trackedListeners.push({ target, event, handler, options });
+    }
+
+    /**
+     * Remove all tracked event listeners
+     * @private
+     */
+    _removeAllListeners() {
+        for (const { target, event, handler, options } of this._trackedListeners) {
+            target.removeEventListener(event, handler, options);
+        }
+        this._trackedListeners = [];
+    }
+
+    /**
+     * Tear down the widget: remove DOM, listeners, and global references.
+     * Safe to call multiple times.
+     */
+    destroy() {
+        this._removeAllListeners();
+
+        if (this.chatButton && this.chatButton.parentNode) {
+            this.chatButton.parentNode.removeChild(this.chatButton);
+        }
+        if (this.chatWindow && this.chatWindow.parentNode) {
+            this.chatWindow.parentNode.removeChild(this.chatWindow);
+        }
+        if (this._styleElement && this._styleElement.parentNode) {
+            this._styleElement.parentNode.removeChild(this._styleElement);
+        }
+
+        this.chatButton = null;
+        this.chatWindow = null;
+        this._styleElement = null;
+        this.isInitialized = false;
+        this.isOpen = false;
+        this.conversationHistory = [];
+
+        if (window.CelesteAgent === this) {
+            delete window.CelesteAgent;
+        }
+    }
+
+    /**
+     * Update page context without re-creating UI.
+     * Used on SPA navigation (popstate).
+     */
+    async updateContext() {
+        if (!this.isInitialized) return;
+        this.currentContext = await this.getPageContext();
+        this.loadContextualPrompt();
     }
 
     /**
@@ -454,7 +517,7 @@ class CelesteAgent {
                 <span class="celeste-button-text">Chat with Celeste</span>
             </div>
         `;
-        this.chatButton.addEventListener('click', () => this.toggleChat());
+        this._trackListener(this.chatButton, 'click', () => this.toggleChat());
 
         // Create chat window
         this.chatWindow = document.createElement('div');
@@ -478,10 +541,10 @@ class CelesteAgent {
             </div>
         `;
 
-        // Add event listeners
-        this.chatWindow.querySelector('.celeste-close-btn').addEventListener('click', () => this.closeChat());
-        this.chatWindow.querySelector('.celeste-send-btn').addEventListener('click', () => this.sendMessage());
-        this.chatWindow.querySelector('.celeste-input-field').addEventListener('keypress', (e) => {
+        // Add event listeners (tracked for cleanup)
+        this._trackListener(this.chatWindow.querySelector('.celeste-close-btn'), 'click', () => this.closeChat());
+        this._trackListener(this.chatWindow.querySelector('.celeste-send-btn'), 'click', () => this.sendMessage());
+        this._trackListener(this.chatWindow.querySelector('.celeste-input-field'), 'keypress', (e) => {
             if (e.key === 'Enter') this.sendMessage();
         });
 
@@ -497,7 +560,10 @@ class CelesteAgent {
      * Add CSS styles
      */
     addStyles() {
+        // Reuse existing style element if re-initializing
+        if (this._styleElement) return;
         const style = document.createElement('style');
+        this._styleElement = style;
         style.textContent = `
             .celeste-chat-button {
                 position: fixed;
@@ -1075,6 +1141,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Destroy previous instance if it exists (SPA re-init safety)
+    if (window.CelesteAgent && typeof window.CelesteAgent.destroy === 'function') {
+        window.CelesteAgent.destroy();
+    }
+
     const celesteAgent = new CelesteAgent();
     celesteAgent.initialize();
 
@@ -1082,9 +1153,9 @@ document.addEventListener('DOMContentLoaded', () => {
     window.CelesteAgent = celesteAgent;
 });
 
-// Update context on page navigation
+// Update context on page navigation (don't re-create UI, just refresh context)
 window.addEventListener('popstate', () => {
     if (window.CelesteAgent) {
-        window.CelesteAgent.initialize();
+        window.CelesteAgent.updateContext();
     }
 });

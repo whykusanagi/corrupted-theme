@@ -192,10 +192,7 @@ class Carousel {
   /** @private */
   _pauseAutoplay() {
     if (this._autoplayIntervalId != null) {
-      // TimerRegistry doesn't expose clearInterval directly for tracked IDs,
-      // so we clear all and restart if needed. For simplicity, just use native
-      // clearInterval on the tracked ID.
-      clearInterval(this._autoplayIntervalId);
+      this._timers.clearInterval(this._autoplayIntervalId);
       this._autoplayIntervalId = null;
     }
   }

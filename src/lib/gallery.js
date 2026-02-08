@@ -97,6 +97,16 @@ class Gallery {
 
     if (typeof selector === 'string') {
       this.config.gallerySelector = selector;
+    } else if (selector instanceof HTMLElement) {
+      // When passed an element directly, derive a selector from its ID
+      // or fall back to a unique attribute for querySelectorAll compatibility
+      if (selector.id) {
+        this.config.gallerySelector = `#${selector.id}`;
+      } else {
+        const attrKey = `data-gallery-${this._id}`;
+        selector.setAttribute(attrKey, '');
+        this.config.gallerySelector = `[${attrKey}]`;
+      }
     }
 
     // Per-instance lightbox ID

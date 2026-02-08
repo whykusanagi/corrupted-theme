@@ -16,6 +16,13 @@
 
 import { EventTracker } from '../core/event-tracker.js';
 
+/**
+ * Shared tracker for listeners created during auto-initialization.
+ * Cleaned up by destroyComponents().
+ * @private
+ */
+const _initTracker = new EventTracker();
+
 // ========== ACCORDION / COLLAPSE ==========
 
 /**
@@ -33,7 +40,7 @@ export function initAccordions() {
       const header = item.querySelector('.accordion-header');
       if (!header) return;
 
-      header.addEventListener('click', () => {
+      _initTracker.add(header, 'click', () => {
         const wasActive = item.classList.contains('active');
 
         // Close all items in this accordion (unless it's already active)
@@ -512,12 +519,10 @@ const tabManager = new TabManager();
 
 // ========== AUTO-INITIALIZATION ==========
 
-/** @private Global Escape key handler for modals */
-let _escapeHandlerBound = false;
-
 /**
  * Initialize all components on page load.
  * Scans for data-ct-* attributes and wires up behavior.
+ * All listeners are tracked via _initTracker or manager EventTrackers.
  */
 function initComponents() {
   // Accordions
@@ -533,19 +538,18 @@ function initComponents() {
   document.querySelectorAll('[data-ct-toggle="modal"]').forEach(trigger => {
     const targetSel = trigger.dataset.ctTarget;
     if (!targetSel) return;
-    trigger.addEventListener('click', () => modalManager.open(targetSel));
+    _initTracker.add(trigger, 'click', () => modalManager.open(targetSel));
   });
 
   // Escape key closes active modals
-  if (!_escapeHandlerBound && document.querySelector('.modal-overlay')) {
-    document.addEventListener('keydown', (e) => {
+  if (document.querySelector('.modal-overlay')) {
+    _initTracker.add(document, 'keydown', (e) => {
       if (e.key === 'Escape') {
         document.querySelectorAll('.modal-overlay.active').forEach(overlay => {
           modalManager.close(overlay);
         });
       }
     });
-    _escapeHandlerBound = true;
   }
 
   // Dropdowns
@@ -564,14 +568,16 @@ function initComponents() {
   document.querySelectorAll('[data-ct-toggle="collapse"]').forEach(trigger => {
     const targetSel = trigger.dataset.ctTarget;
     if (!targetSel) return;
-    trigger.addEventListener('click', () => toggleCollapse(targetSel));
+    _initTracker.add(trigger, 'click', () => toggleCollapse(targetSel));
   });
 }
 
 /**
- * Destroy all component managers and clean up listeners
+ * Destroy all component managers and clean up listeners.
+ * Removes all tracked listeners from auto-initialization and managers.
  */
 export function destroyComponents() {
+  _initTracker.removeAll();
   modalManager.destroy();
   dropdownManager.destroy();
   tabManager.destroy();

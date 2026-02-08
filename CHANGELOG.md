@@ -17,13 +17,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.7] - 2026-02-07
 
 ### Security
-- **XSS hardening in celeste-widget.js** - `addMessage()` now uses `textContent` via safe DOM construction instead of `innerHTML` interpolation. Prevents potential script injection from user input or API responses.
-- **HTML injection fix in countdown-widget.js** - `config.popup.message` now rendered with `textContent` instead of `innerHTML`, consistent with `escapeHtml()` usage elsewhere in the file.
-- **XSS hardening in components.js** - `showToast()` rebuilt with safe DOM methods (`createElement`/`textContent`) instead of `innerHTML` template interpolation.
+- **XSS hardening in celeste-widget.js** - `addMessage()` now uses `textContent` via safe DOM construction instead of `innerHTML` interpolation
+- **HTML injection fix in countdown-widget.js** - `config.popup.message` now rendered with `textContent` instead of `innerHTML`
+- **XSS hardening in components.js** - `showToast()` rebuilt with safe DOM methods (`createElement`/`textContent`) instead of `innerHTML` template
+
+### Added
+- **Lifecycle utilities** - New `TimerRegistry` and `EventTracker` classes (`src/core/`) for consistent timer/listener cleanup across all components
+- **Modal JS** - `ModalManager` with open/close, overlay click-to-close, Escape key, body scroll lock, and `modal:open`/`modal:close` custom events
+- **Dropdown JS** - `DropdownManager` with toggle behavior and click-outside-to-close
+- **Tab JS** - `TabManager` with panel switching via `data-ct-target` attributes
+- **Collapse auto-init** - Existing `toggleCollapse()` wired to `data-ct-toggle="collapse"` data attributes
+- **Carousel component** - New `src/lib/carousel.js` with autoplay, prev/next controls, dot indicators, touch/swipe, keyboard navigation, and pause on hover. CSS added to `components.css`
+- **Unified auto-init** - All interactive components auto-initialize via `data-ct-*` attributes on DOMContentLoaded
+- **`destroyComponents()`** - Tears down all component managers (modal, dropdown, tab, toast) at once
+- **`destroyAllAutoCorruption()`** - Stops all active character corruption intervals
+- **Multi-gallery example** - `examples/basic/multi-gallery.html` demonstrates two independent galleries
+- **Interactive components example** - `examples/interactive-components.html` demonstrates Modal, Dropdown, Tabs, Collapse, Accordion, Carousel, and Toast
+- **`"./carousel"` package export** - Carousel available via `@whykusanagi/corrupted-theme/carousel`
+
+### Fixed
+- **Memory leak: celeste-widget.js** - Added `destroy()` method, tracked all event listeners, popstate handler now calls `updateContext()` instead of re-initializing
+- **Memory leak: gallery.js** - Refactored from singleton to `Gallery` class with per-instance `EventTracker` and `TimerRegistry`. Each instance gets a unique lightbox. `destroy()` removes all listeners and DOM
+- **Memory leak: corruption-loading.js** - All `setTimeout`/`setInterval` calls tracked; added `cancelLoading()` to stop mid-animation
+- **Memory leak: corrupted-text.js** - Tracked `_startDelayId`, `_animateTimeoutId`, `_corruptTimeoutId`; added `destroy()` method
+- **Memory leak: components.js** - Toast auto-dismiss timeout stored on element, cleared on early dismiss; added `destroy()` to `ToastManager`
+- **Memory leak: character-corruption.js** - Replaced unreliable `dataset` string storage with `WeakMap` for interval ID tracking
+- **Memory leak: countdown-widget.js** - Popup `setTimeout` calls tracked in state, cleared in `destroyCountdown()`
 
 ### Changed
-- **Dev dependency updates** - Updated `cssnano` from ^6.0.0 to ^7.0.0 and `postcss-cli` from ^10.0.0 to ^11.0.0. No functional changes; both are Node.js version requirement bumps only.
-- **Node.js engine requirement** - Bumped minimum from >=14.0.0 to >=18.0.0 to match updated dev dependency requirements.
+- **Dev dependency updates** - Updated `cssnano` ^6 to ^7, `postcss-cli` ^10 to ^11
+- **Node.js engine requirement** - Bumped minimum from >=14.0.0 to >=18.0.0
+- **Gallery multi-instance** - `initGallery()` now returns a `Gallery` instance; backward-compatible `destroyGallery()` still works for default instance
+- **COMPONENTS_REFERENCE.md** - Updated Interactive Components section with `data-ct-*` usage, added Carousel and Lifecycle Management sections
 
 ---
 

@@ -211,7 +211,7 @@
 <!-- Scripts -->
 <script type="module">
   import { showToast, toast } from '../src/lib/components.js';
-  import { initCarousel } from '../src/lib/carousel.js';
+  import '../src/lib/carousel.js'; // Auto-initializes carousels with data-ct-autoplay
 
   // Toast demo helper
   window._showToast = (type) => {

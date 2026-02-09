@@ -77,7 +77,7 @@ All have footer version references like:
 <p>... • Corrupted Theme v0.1.0</p>
 ```
 
-**Update these to current version** (currently showing v0.1.0, should be v0.1.7)
+**Update these to current version** (updated to v0.1.7 as of 2026-02-09)
 
 ---
 
@@ -188,42 +188,32 @@ When updating, search for these patterns:
 
 ---
 
-## Current Version Discrepancies (As of 2025-12-15)
+## Current Version Discrepancies (As of 2026-02-09)
 
-**Files showing OLD versions that need updating:**
+**All version references have been synchronized to v0.1.7.**
 
-1. `/examples/showcase.html` - Shows v0.1.0 (should be v0.1.7)
-2. `/examples/form.html` - Shows v0.1.0 (should be v0.1.7)
-3. `/examples/layout.html` - Shows v0.1.0 (should be v0.1.7)
-4. `/examples/card.html` - Shows v0.1.0 (should be v0.1.7)
-5. `/examples/button.html` - Shows v0.1.0 (should be v0.1.7)
-6. `/examples/nikke-team-builder.html` - Shows v0.1.0 (should be v0.1.7)
-7. `/examples/showcase-complete.html` footer - Shows v0.1.0 (should be v0.1.7)
-8. `/examples/index.html` - Shows v0.1.2 (should be v0.1.7)
-9. `/docs/platforms/NPM_PACKAGE.md` - Shows v0.1.2 (should be v0.1.7)
-10. `/docs/governance/VERSION_MANAGEMENT.md` - Shows v0.1.2 (should be v0.1.7)
-
-**Action Required**: Update all example footers and documentation to v0.1.7
+No outstanding discrepancies. All example footers, documentation files, and package files
+are consistent.
 
 ---
 
 ## Next Version Release Checklist
 
-When preparing v0.1.7 (or next version):
+When preparing the next version:
 
 - [ ] Update `package.json` version
 - [ ] Add CHANGELOG.md entry with release date
 - [ ] Update NPM_PACKAGE.md (6 locations)
 - [ ] Update VERSION_MANAGEMENT.md (3 locations)
 - [ ] Update index.html hero and footer
-- [ ] Update showcase-complete.html (5 locations)
-- [ ] Update all example page footers (6 files)
+- [ ] Update showcase-complete.html (footer, toast, badges)
+- [ ] Update all example page footers (8 files)
 - [ ] Run version search to verify no old references remain
 - [ ] Build and test Docker container
-- [ ] Git tag release: `git tag v0.1.7`
+- [ ] Git tag release
 - [ ] Publish to npm: `npm publish`
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2026-02-09
 **Maintained By**: whykusanagi team

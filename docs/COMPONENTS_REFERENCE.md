@@ -12,17 +12,19 @@ This document provides a comprehensive reference for all components available in
 1. [Glass Components](#glass-components)
 2. [Standard Components](#standard-components)
 3. [Interactive Components](#interactive-components)
-4. [Data Display](#data-display)
-5. [Navigation](#navigation)
-6. [API Documentation](#api-documentation)
-7. [Nikke Components](#nikke-components)
-8. [Background & Images](#background--images)
-9. [Extension Components](#extension-components)
-   - [Gallery System](#gallery-system)
-   - [Lightbox](#lightbox)
-   - [NSFW Content Blur](#nsfw-content-blur)
-   - [Social Links List](#social-links-list)
-   - [Countdown Widget](#countdown-widget)
+   - [Modals](#modals) | [Tooltips](#tooltips) | [Dropdowns](#dropdowns) | [Tabs](#tabs) | [Collapse](#collapse) | [Carousel](#carousel)
+4. [Lifecycle Management](#lifecycle-management)
+5. [Data Display](#data-display)
+6. [Navigation](#navigation)
+7. [API Documentation](#api-documentation)
+8. [Nikke Components](#nikke-components)
+9. [Background & Images](#background--images)
+10. [Extension Components](#extension-components)
+    - [Gallery System](#gallery-system)
+    - [Lightbox](#lightbox)
+    - [NSFW Content Blur](#nsfw-content-blur)
+    - [Social Links List](#social-links-list)
+    - [Countdown Widget](#countdown-widget)
 
 ---
 
@@ -155,41 +157,47 @@ Code block display component.
 
 ## Interactive Components
 
+All interactive components support **data-attribute initialization** via `data-ct-*` attributes and **programmatic control** via JS imports. Import the components module:
+
+```javascript
+import { openModal, closeModal, destroyComponents } from '@whykusanagi/corrupted-theme/components-js';
+```
+
 ### Modals
 
 ```html
-<!-- Trigger Button -->
-<button class="btn" onclick="openModal('my-modal')">Open Modal</button>
+<!-- Trigger via data attribute -->
+<button class="btn" data-ct-toggle="modal" data-ct-target="#my-modal">Open Modal</button>
 
-<!-- Modal -->
+<!-- Modal overlay -->
 <div class="modal-overlay" id="my-modal">
   <div class="modal">
     <div class="modal-header">
       <h3 class="modal-title">Modal Title</h3>
-      <button class="modal-close" onclick="closeModal('my-modal')">&times;</button>
+      <button class="modal-close">&times;</button>
     </div>
     <div class="modal-body">
       <p>Modal content goes here</p>
     </div>
     <div class="modal-footer">
-      <button class="btn secondary" onclick="closeModal('my-modal')">Cancel</button>
-      <button class="btn" onclick="closeModal('my-modal')">Confirm</button>
+      <button class="btn secondary" data-ct-toggle="modal" data-ct-target="#my-modal">Cancel</button>
+      <button class="btn">Confirm</button>
     </div>
   </div>
 </div>
 ```
 
-**JavaScript:**
-```javascript
-function openModal(id) {
-  document.getElementById(id).classList.add('active');
-  document.body.style.overflow = 'hidden';
-}
+**Features:**
+- Close button (`.modal-close`) auto-wired
+- Click overlay background to close
+- Escape key closes active modals
+- Body scroll lock while open
+- Custom events: `modal:open`, `modal:close`
 
-function closeModal(id) {
-  document.getElementById(id).classList.remove('active');
-  document.body.style.overflow = '';
-}
+**Programmatic API:**
+```javascript
+openModal('#my-modal');
+closeModal('#my-modal');
 ```
 
 ### Tooltips
@@ -210,8 +218,8 @@ function closeModal(id) {
 
 ```html
 <div class="dropdown">
-  <button class="dropdown-toggle" onclick="toggleDropdown(this)">
-    Dropdown <i class="fas fa-chevron-down"></i>
+  <button class="dropdown-toggle" data-ct-toggle="dropdown">
+    Dropdown
   </button>
   <div class="dropdown-menu">
     <a href="#" class="dropdown-item">Action 1</a>
@@ -222,16 +230,115 @@ function closeModal(id) {
 </div>
 ```
 
+**Features:**
+- Click toggle to open/close
+- Click outside to close
+- Multiple dropdowns don't conflict
+
 ### Tabs
 
 ```html
 <div class="tabs">
-  <button class="tab active" onclick="switchTab(this, 'tab-1')">Tab 1</button>
-  <button class="tab" onclick="switchTab(this, 'tab-2')">Tab 2</button>
+  <button class="tab active" data-ct-target="#panel-1">Tab 1</button>
+  <button class="tab" data-ct-target="#panel-2">Tab 2</button>
 </div>
 
-<div id="tab-1" class="tab-content active">Tab 1 content</div>
-<div id="tab-2" class="tab-content">Tab 2 content</div>
+<div id="panel-1" class="tab-content active">Tab 1 content</div>
+<div id="panel-2" class="tab-content">Tab 2 content</div>
+```
+
+### Collapse
+
+```html
+<button class="btn" data-ct-toggle="collapse" data-ct-target="#details">
+  Toggle Details
+</button>
+<div class="collapse" id="details">
+  <p>Collapsible content here.</p>
+</div>
+```
+
+### Carousel
+
+```html
+<div class="carousel" data-ct-autoplay data-ct-interval="5000">
+  <div class="carousel-inner">
+    <div class="carousel-slide active">
+      <img src="slide1.jpg" alt="Slide 1">
+    </div>
+    <div class="carousel-slide">
+      <img src="slide2.jpg" alt="Slide 2">
+    </div>
+    <div class="carousel-slide">
+      <img src="slide3.jpg" alt="Slide 3">
+    </div>
+  </div>
+</div>
+```
+
+**Programmatic API:**
+```javascript
+import { initCarousel } from '@whykusanagi/corrupted-theme/carousel';
+
+const carousel = initCarousel('.carousel', {
+  autoplay: true,
+  interval: 5000,
+  indicators: true,
+  controls: true,
+  keyboard: true,
+  touch: true,
+  pauseOnHover: true
+});
+
+carousel.next();
+carousel.prev();
+carousel.goTo(2);
+carousel.destroy();
+```
+
+**Features:**
+- Autoplay with pause on hover
+- Prev/next controls (glassmorphic)
+- Dot indicators
+- Touch/swipe support
+- Keyboard navigation (arrow keys)
+
+---
+
+## Lifecycle Management
+
+All JS-driven components support proper initialization and teardown.
+
+### Init / Destroy Pattern
+
+```javascript
+import { initGallery, destroyGallery } from '@whykusanagi/corrupted-theme/gallery';
+import { initCarousel, destroyCarousel } from '@whykusanagi/corrupted-theme/carousel';
+import { destroyComponents } from '@whykusanagi/corrupted-theme/components-js';
+
+// Components auto-initialize on DOMContentLoaded when data-ct-* attributes
+// are present. For manual control:
+const gallery = initGallery('#my-gallery');
+const carousel = initCarousel('.my-carousel', { autoplay: true });
+
+// Tear down individual components
+gallery.destroy();
+carousel.destroy();
+
+// Or tear down all component managers at once
+destroyComponents();
+```
+
+### Multi-Instance Support
+
+Gallery and Carousel support multiple independent instances on the same page:
+
+```javascript
+const gallery1 = initGallery('#gallery-1');
+const gallery2 = initGallery('#gallery-2');
+// Each has independent filters, lightbox, and state
+
+gallery1.destroy(); // Only destroys gallery1
 ```
 
 ---
@@ -940,7 +1047,7 @@ initCountdown();
 
 ---
 
-**Last Updated:** 2025-11-26  
-**Version:** 1.1  
+**Last Updated:** 2026-02-07
+**Version:** 2.0
 **Status:** Complete and Production Ready
 

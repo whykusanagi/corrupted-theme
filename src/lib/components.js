@@ -4,12 +4,24 @@
  *
  * Provides helper functions for:
  * - Accordion/Collapse
+ * - Modal
+ * - Dropdown
+ * - Tabs
  * - Toast Notifications
- * - Auto-initialization
+ * - Auto-initialization via data-ct-* attributes
  *
  * @module components
- * @version 1.0.0
+ * @version 2.0.0
  */
+
+import { EventTracker } from '../core/event-tracker.js';
+
+/**
+ * Shared tracker for listeners created during auto-initialization.
+ * Cleaned up by destroyComponents().
+ * @private
+ */
+const _initTracker = new EventTracker();
 
 // ========== ACCORDION / COLLAPSE ==========
 
@@ -28,7 +40,7 @@ export function initAccordions() {
       const header = item.querySelector('.accordion-header');
       if (!header) return;
 
-      header.addEventListener('click', () => {
+      _initTracker.add(header, 'click', () => {
         const wasActive = item.classList.contains('active');
 
         // Close all items in this accordion (unless it's already active)
@@ -137,32 +149,38 @@ class ToastManager {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
 
-    // Create toast content
-    const content = `
-      ${title ? `
-        <div class="toast-header">
-          <span>${title}</span>
-        </div>
-      ` : ''}
-      <div class="toast-body">${message}</div>
-      <button class="toast-close" aria-label="Close">×</button>
-    `;
+    // Create toast content using safe DOM methods
+    if (title) {
+      const header = document.createElement('div');
+      header.className = 'toast-header';
+      const titleSpan = document.createElement('span');
+      titleSpan.textContent = title;
+      header.appendChild(titleSpan);
+      toast.appendChild(header);
+    }
 
-    toast.innerHTML = content;
+    const body = document.createElement('div');
+    body.className = 'toast-body';
+    body.textContent = message;
+    toast.appendChild(body);
 
-    // Add close handler
-    const closeBtn = toast.querySelector('.toast-close');
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'toast-close';
+    closeBtn.setAttribute('aria-label', 'Close');
+    closeBtn.textContent = '\u00d7';
     closeBtn.addEventListener('click', () => {
       this.dismiss(toast, onClose);
     });
+    toast.appendChild(closeBtn);
 
     // Add to container
     container.appendChild(toast);
     this.toasts.push(toast);
 
-    // Auto-dismiss
+    // Auto-dismiss (tracked for cleanup on manual dismiss)
     if (duration > 0) {
-      setTimeout(() => {
+      toast._autoDismissId = setTimeout(() => {
+        toast._autoDismissId = null;
         this.dismiss(toast, onClose);
       }, duration);
     }
@@ -177,6 +195,12 @@ class ToastManager {
    */
   dismiss(toast, onClose = null) {
     if (!toast || !document.contains(toast)) return;
+
+    // Clear auto-dismiss timer if dismissing early
+    if (toast._autoDismissId) {
+      clearTimeout(toast._autoDismissId);
+      toast._autoDismissId = null;
+    }
 
     toast.classList.add('hiding');
 
@@ -201,7 +225,19 @@ class ToastManager {
    * Dismiss all toasts
    */
   dismissAll() {
-    this.toasts.forEach(toast => this.dismiss(toast));
+    [...this.toasts].forEach(toast => this.dismiss(toast));
+  }
+
+  /**
+   * Tear down the toast system: dismiss all toasts and remove container.
+   */
+  destroy() {
+    this.dismissAll();
+    if (this.container && this.container.parentNode) {
+      this.container.parentNode.removeChild(this.container);
+    }
+    this.container = null;
+    this.toasts = [];
   }
 
   // Convenience methods for different toast types
@@ -247,16 +283,305 @@ export const toast = {
   dismissAll: () => toastManager.dismissAll()
 };
 
+// ========== MODAL ==========
+
+/**
+ * Modal manager with lifecycle management
+ *
+ * Usage:
+ * ```html
+ * <button data-ct-toggle="modal" data-ct-target="#my-modal">Open</button>
+ * <div class="modal-overlay" id="my-modal">
+ *   <div class="modal">
+ *     <div class="modal-header">
+ *       <h3 class="modal-title">Title</h3>
+ *       <button class="modal-close">&times;</button>
+ *     </div>
+ *     <div class="modal-body">Content</div>
+ *   </div>
+ * </div>
+ * ```
+ */
+class ModalManager {
+  constructor() {
+    this._events = new EventTracker();
+    this._initialized = new Set();
+  }
+
+  /**
+   * Initialize a modal overlay
+   * @param {string|HTMLElement} selector - Modal overlay selector or element
+   */
+  init(selector) {
+    const overlay = typeof selector === 'string'
+      ? document.querySelector(selector) : selector;
+    if (!overlay || this._initialized.has(overlay)) return;
+
+    const closeBtn = overlay.querySelector('.modal-close');
+    if (closeBtn) {
+      this._events.add(closeBtn, 'click', () => this.close(overlay));
+    }
+
+    // Close on overlay click (outside modal content)
+    this._events.add(overlay, 'click', (e) => {
+      if (e.target === overlay) this.close(overlay);
+    });
+
+    this._initialized.add(overlay);
+  }
+
+  /**
+   * Open a modal
+   * @param {string|HTMLElement} selector - Modal overlay selector or element
+   */
+  open(selector) {
+    const overlay = typeof selector === 'string'
+      ? document.querySelector(selector) : selector;
+    if (!overlay) return;
+
+    overlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+
+    overlay.dispatchEvent(new CustomEvent('modal:open', { bubbles: true }));
+  }
+
+  /**
+   * Close a modal
+   * @param {string|HTMLElement} selector - Modal overlay selector or element
+   */
+  close(selector) {
+    const overlay = typeof selector === 'string'
+      ? document.querySelector(selector) : selector;
+    if (!overlay) return;
+
+    overlay.classList.remove('active');
+    document.body.style.overflow = '';
+
+    overlay.dispatchEvent(new CustomEvent('modal:close', { bubbles: true }));
+  }
+
+  /**
+   * Tear down all tracked listeners and state
+   */
+  destroy() {
+    this._events.removeAll();
+    this._initialized.clear();
+  }
+}
+
+const modalManager = new ModalManager();
+
+/**
+ * Open a modal by selector
+ * @param {string|HTMLElement} selector
+ */
+export function openModal(selector) {
+  modalManager.open(selector);
+}
+
+/**
+ * Close a modal by selector
+ * @param {string|HTMLElement} selector
+ */
+export function closeModal(selector) {
+  modalManager.close(selector);
+}
+
+// ========== DROPDOWN ==========
+
+/**
+ * Dropdown manager with click-outside-to-close
+ *
+ * Usage:
+ * ```html
+ * <div class="dropdown">
+ *   <button class="dropdown-toggle" data-ct-toggle="dropdown">Menu</button>
+ *   <div class="dropdown-menu">
+ *     <a class="dropdown-item" href="#">Item 1</a>
+ *   </div>
+ * </div>
+ * ```
+ */
+class DropdownManager {
+  constructor() {
+    this._events = new EventTracker();
+    this._initialized = false;
+    this._outsideClickBound = false;
+  }
+
+  /**
+   * Initialize dropdown toggle behavior
+   * @param {HTMLElement} toggle - The dropdown-toggle element
+   */
+  init(toggle) {
+    const menu = toggle.parentElement?.querySelector('.dropdown-menu');
+    if (!menu) return;
+
+    this._events.add(toggle, 'click', (e) => {
+      e.stopPropagation();
+      const isOpen = menu.classList.contains('active');
+
+      // Close all other dropdowns first
+      this.closeAll();
+
+      if (!isOpen) {
+        menu.classList.add('active');
+        toggle.classList.add('active');
+      }
+    });
+
+    // Setup global click-outside handler once
+    if (!this._outsideClickBound) {
+      this._events.add(document, 'click', () => this.closeAll());
+      this._outsideClickBound = true;
+    }
+  }
+
+  /**
+   * Close all open dropdowns
+   */
+  closeAll() {
+    document.querySelectorAll('.dropdown-menu.active').forEach(menu => {
+      menu.classList.remove('active');
+    });
+    document.querySelectorAll('.dropdown-toggle.active').forEach(toggle => {
+      toggle.classList.remove('active');
+    });
+  }
+
+  /**
+   * Tear down all tracked listeners
+   */
+  destroy() {
+    this.closeAll();
+    this._events.removeAll();
+    this._outsideClickBound = false;
+  }
+}
+
+const dropdownManager = new DropdownManager();
+
+// ========== TABS ==========
+
+/**
+ * Tab manager
+ *
+ * Usage:
+ * ```html
+ * <div class="tabs">
+ *   <button class="tab active" data-ct-target="#panel-1">Tab 1</button>
+ *   <button class="tab" data-ct-target="#panel-2">Tab 2</button>
+ * </div>
+ * <div class="tab-content active" id="panel-1">Panel 1</div>
+ * <div class="tab-content" id="panel-2">Panel 2</div>
+ * ```
+ */
+class TabManager {
+  constructor() {
+    this._events = new EventTracker();
+  }
+
+  /**
+   * Initialize a tab container
+   * @param {HTMLElement} tabsContainer - The .tabs element
+   */
+  init(tabsContainer) {
+    const tabs = tabsContainer.querySelectorAll('.tab[data-ct-target]');
+
+    tabs.forEach(tab => {
+      this._events.add(tab, 'click', () => {
+        // Deactivate all sibling tabs
+        tabsContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+
+        // Hide all associated panels
+        tabs.forEach(t => {
+          const panel = document.querySelector(t.dataset.ctTarget);
+          if (panel) panel.classList.remove('active');
+        });
+
+        // Activate clicked tab and its panel
+        tab.classList.add('active');
+        const panel = document.querySelector(tab.dataset.ctTarget);
+        if (panel) panel.classList.add('active');
+      });
+    });
+  }
+
+  /**
+   * Tear down all tracked listeners
+   */
+  destroy() {
+    this._events.removeAll();
+  }
+}
+
+const tabManager = new TabManager();
+
 // ========== AUTO-INITIALIZATION ==========
 
 /**
- * Initialize all components on page load
+ * Initialize all components on page load.
+ * Scans for data-ct-* attributes and wires up behavior.
+ * All listeners are tracked via _initTracker or manager EventTrackers.
  */
 function initComponents() {
-  // Initialize accordions
+  // Accordions
   if (document.querySelector('.accordion')) {
     initAccordions();
   }
+
+  // Modals — init overlays and wire triggers
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    modalManager.init(overlay);
+  });
+
+  document.querySelectorAll('[data-ct-toggle="modal"]').forEach(trigger => {
+    const targetSel = trigger.dataset.ctTarget;
+    if (!targetSel) return;
+    _initTracker.add(trigger, 'click', () => modalManager.open(targetSel));
+  });
+
+  // Escape key closes active modals
+  if (document.querySelector('.modal-overlay')) {
+    _initTracker.add(document, 'keydown', (e) => {
+      if (e.key === 'Escape') {
+        document.querySelectorAll('.modal-overlay.active').forEach(overlay => {
+          modalManager.close(overlay);
+        });
+      }
+    });
+  }
+
+  // Dropdowns
+  document.querySelectorAll('[data-ct-toggle="dropdown"]').forEach(toggle => {
+    dropdownManager.init(toggle);
+  });
+
+  // Tabs
+  document.querySelectorAll('.tabs').forEach(tabsContainer => {
+    if (tabsContainer.querySelector('.tab[data-ct-target]')) {
+      tabManager.init(tabsContainer);
+    }
+  });
+
+  // Collapse triggers
+  document.querySelectorAll('[data-ct-toggle="collapse"]').forEach(trigger => {
+    const targetSel = trigger.dataset.ctTarget;
+    if (!targetSel) return;
+    _initTracker.add(trigger, 'click', () => toggleCollapse(targetSel));
+  });
+}
+
+/**
+ * Destroy all component managers and clean up listeners.
+ * Removes all tracked listeners from auto-initialization and managers.
+ */
+export function destroyComponents() {
+  _initTracker.removeAll();
+  modalManager.destroy();
+  dropdownManager.destroy();
+  tabManager.destroy();
+  toastManager.destroy();
 }
 
 // Auto-initialize on DOM ready
@@ -271,13 +596,20 @@ if (typeof window !== 'undefined') {
 // ========== EXPORTS ==========
 
 export default {
-  // Accordion
+  // Accordion / Collapse
   initAccordions,
   toggleCollapse,
   showCollapse,
   hideCollapse,
 
+  // Modal
+  openModal,
+  closeModal,
+
   // Toast
   showToast,
-  toast
+  toast,
+
+  // Lifecycle
+  destroyComponents
 };

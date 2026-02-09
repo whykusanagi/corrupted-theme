@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corrupted Theme - Multi-Gallery Demo</title>
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      line-height: 1.6;
+      padding: 0;
+      margin: 0;
+    }
+
+    .demo {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-xl);
+    }
+
+    .demo h1 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .demo h2 {
+      color: var(--accent-light);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: var(--spacing-sm);
+      margin-top: var(--spacing-2xl);
+    }
+
+    .demo-note {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      margin-bottom: var(--spacing-lg);
+    }
+
+    /* Placeholder images */
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      background: var(--glass);
+    }
+
+    .placeholder-img {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--glass);
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      border-radius: var(--radius-md);
+    }
+  </style>
+</head>
+<body>
+
+<div class="demo">
+  <h1>Multi-Gallery Demo</h1>
+  <p class="demo-note">
+    Two independent gallery instances on the same page.
+    Each has its own filters, lightbox, and state.
+  </p>
+
+  <!-- ==================== GALLERY 1 ==================== -->
+  <h2>Gallery 1 — Landscapes</h2>
+
+  <div class="filter-bar" id="filter-bar-1">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="mountains">Mountains</button>
+    <button class="filter-btn" data-filter="ocean">Ocean</button>
+  </div>
+
+  <div class="gallery-container" id="gallery-1">
+    <div class="gallery-item" data-tags="mountains">
+      <div class="placeholder-img">Mountain 1</div>
+      <div class="gallery-caption">Alpine Peak</div>
+    </div>
+    <div class="gallery-item" data-tags="ocean">
+      <div class="placeholder-img">Ocean 1</div>
+      <div class="gallery-caption">Pacific Coast</div>
+    </div>
+    <div class="gallery-item" data-tags="mountains">
+      <div class="placeholder-img">Mountain 2</div>
+      <div class="gallery-caption">Rocky Ridge</div>
+    </div>
+    <div class="gallery-item" data-tags="ocean">
+      <div class="placeholder-img">Ocean 2</div>
+      <div class="gallery-caption">Coral Bay</div>
+    </div>
+  </div>
+
+  <!-- ==================== GALLERY 2 ==================== -->
+  <h2>Gallery 2 — Art</h2>
+
+  <div class="filter-bar" id="filter-bar-2">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="digital">Digital</button>
+    <button class="filter-btn" data-filter="traditional">Traditional</button>
+  </div>
+
+  <div class="gallery-container" id="gallery-2">
+    <div class="gallery-item" data-tags="digital">
+      <div class="placeholder-img">Digital Art 1</div>
+      <div class="gallery-caption">Neon Dreams</div>
+    </div>
+    <div class="gallery-item" data-tags="traditional">
+      <div class="placeholder-img">Traditional Art 1</div>
+      <div class="gallery-caption">Ink Wash</div>
+    </div>
+    <div class="gallery-item" data-tags="digital">
+      <div class="placeholder-img">Digital Art 2</div>
+      <div class="gallery-caption">Glitch Portrait</div>
+    </div>
+  </div>
+
+  <div class="glass-card" style="padding: 1.5rem; margin-top: var(--spacing-2xl);">
+    <h3 style="color: var(--accent);">How it works</h3>
+    <p>Each gallery is initialized as a separate instance with its own lightbox and filter state:</p>
+    <pre><code>const g1 = initGallery('#gallery-1');
+const g2 = initGallery('#gallery-2');
+
+// Destroy only one
+g1.destroy();
+// g2 continues working independently</code></pre>
+  </div>
+</div>
+
+<script type="module">
+  import { initGallery } from '../../src/lib/gallery.js';
+
+  // Initialize two independent galleries
+  const gallery1 = initGallery('#gallery-1', {
+    filterBarSelector: '#filter-bar-1 .filter-btn'
+  });
+
+  const gallery2 = initGallery('#gallery-2', {
+    filterBarSelector: '#filter-bar-2 .filter-btn'
+  });
+
+  // Expose for console debugging
+  window._gallery1 = gallery1;
+  window._gallery2 = gallery2;
+</script>
+
+</body>
+</html>

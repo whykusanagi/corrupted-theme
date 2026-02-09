@@ -134,6 +134,8 @@ let state = {
   config: null,
   countdownInterval: null,
   popupInterval: null,
+  popupInitTimeout: null,
+  popupDurationTimeout: null,
   isCompleted: false
 };
 
@@ -314,7 +316,7 @@ function renderWidget(config) {
   if (config.popup?.message) {
     popup = document.createElement('div');
     popup.className = 'countdown-popup';
-    popup.innerHTML = config.popup.message;
+    popup.textContent = config.popup.message;
     
     if (config.popup.colors) {
       if (config.popup.colors.bg) popup.style.background = config.popup.colors.bg;
@@ -460,7 +462,8 @@ function startPopup(popupConfig, popupElement) {
   const duration = popupConfig.duration || 5000;
   
   // Show popup initially after a delay
-  setTimeout(() => {
+  state.popupInitTimeout = setTimeout(() => {
+    state.popupInitTimeout = null;
     showPopup(popupElement, duration);
   }, 2000);
   
@@ -478,8 +481,14 @@ function startPopup(popupConfig, popupElement) {
  */
 function showPopup(popup, duration) {
   popup.classList.add('active');
-  
-  setTimeout(() => {
+
+  // Clear previous duration timeout if popup is re-shown before it hides
+  if (state.popupDurationTimeout) {
+    clearTimeout(state.popupDurationTimeout);
+  }
+
+  state.popupDurationTimeout = setTimeout(() => {
+    state.popupDurationTimeout = null;
     popup.classList.remove('active');
   }, duration);
 }
@@ -584,12 +593,22 @@ export function destroyCountdown() {
     clearInterval(state.countdownInterval);
     state.countdownInterval = null;
   }
-  
+
   if (state.popupInterval) {
     clearInterval(state.popupInterval);
     state.popupInterval = null;
   }
-  
+
+  if (state.popupInitTimeout) {
+    clearTimeout(state.popupInitTimeout);
+    state.popupInitTimeout = null;
+  }
+
+  if (state.popupDurationTimeout) {
+    clearTimeout(state.popupDurationTimeout);
+    state.popupDurationTimeout = null;
+  }
+
   state.config = null;
   state.isCompleted = false;
   

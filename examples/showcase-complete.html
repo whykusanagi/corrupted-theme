@@ -147,9 +147,12 @@
             <a href="card.html"><i class="fas fa-square"></i> Cards</a>
             <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
             <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="advanced/nsfw-corruption.html"><i class="fas fa-exclamation-triangle"></i> NSFW (18+)</a>
           </div>
         </li>
-        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+        <li><a href="showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
       </ul>
     </div>
   </nav>
@@ -1132,7 +1135,7 @@ const theme = {
 
     <!-- Character-Level Corruption (NEW in v0.1.4) -->
     <section class="showcase-section" id="character-corruption">
-      <h2><i class="fas fa-language"></i> Character-Level Corruption <span class="badge success" style="margin-left: var(--spacing-sm);">NEW v0.1.4</span></h2>
+      <h2><i class="fas fa-language"></i> Character-Level Corruption</h2>
       <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
         <strong>CLI Brand Parity:</strong> Matches Celeste CLI's translation-failure aesthetic. Japanese characters are mixed <strong>INTO</strong> English words at the character level (not word replacement).
       </p>
@@ -1296,13 +1299,13 @@ const theme = {
 &lt;/h1&gt;
 
 &lt;script type="module"&gt;
-  import { initAutoCorruption } from './character-corruption.js';
+  import { initAutoCorruption } from '@whykusanagi/corrupted-theme/character-corruption';
   initAutoCorruption();
 &lt;/script&gt;
 
 &lt;!-- Method 2: Manual JavaScript --&gt;
 &lt;script type="module"&gt;
-  import { corruptTextJapanese, INTENSITY } from './character-corruption.js';
+  import { corruptTextJapanese, INTENSITY } from '@whykusanagi/corrupted-theme/character-corruption';
 
   const title = document.getElementById('title');
   setInterval(() => {
@@ -1314,7 +1317,7 @@ const theme = {
 
     <!-- New Bootstrap Components (v0.1.4) -->
     <section class="showcase-section" id="new-components">
-      <h2><i class="fas fa-plus-circle"></i> New Bootstrap Components <span class="badge success" style="margin-left: var(--spacing-sm);">NEW v0.1.4</span></h2>
+      <h2><i class="fas fa-plus-circle"></i> Bootstrap Components</h2>
       <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
         <strong>1:1 Bootstrap Parity:</strong> 25+ new components added for complete coverage. Build sites without writing custom CSS!
       </p>
@@ -1355,7 +1358,7 @@ const theme = {
 &lt;/div&gt;
 
 &lt;script type="module"&gt;
-  import { initAccordions } from './components.js';
+  import { initAccordions } from '@whykusanagi/corrupted-theme/components-js';
   initAccordions(); // Auto-initializes on load
 &lt;/script&gt;
         </div>
@@ -1381,7 +1384,7 @@ const theme = {
 
         <div class="code-example" style="margin-top: var(--spacing-md);">
 &lt;script type="module"&gt;
-  import { toast } from './components.js';
+  import { toast } from '@whykusanagi/corrupted-theme/components-js';
 
   // Success notification
   toast.success('Data saved successfully!', 'Success', 5000);
@@ -1694,9 +1697,9 @@ const theme = {
 
     <!-- Footer -->
     <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
-      <p><strong>Corrupted Theme</strong> v0.1.4 • Built with <i class="fas fa-heart" style="color: var(--accent);"></i> by whykusanagi</p>
+      <p><strong>Corrupted Theme</strong> v0.1.7 • Built with <i class="fas fa-heart" style="color: var(--accent);"></i> by whykusanagi</p>
       <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
-        <a href="../README.md" class="link">Documentation</a> •
+        <a href="https://github.com/whykusanagi/corrupted-theme#readme" class="link">Documentation</a> •
         <a href="#customization" class="link">Customization</a> •
         <a href="https://github.com/whykusanagi/corrupted-theme" class="link">GitHub</a>
       </p>
@@ -1828,11 +1831,9 @@ const theme = {
         }
       });
     });
-
-    document.addEventListener('DOMContentLoaded', initGlitchKanji);
   </script>
 
-  <!-- NEW v0.1.4: Character Corruption & Components -->
+  <!-- Character Corruption & Components -->
   <script type="module">
     // Import character corruption module
     import { corruptTextJapanese, INTENSITY, initAutoCorruption } from '../src/lib/character-corruption.js';
@@ -1919,7 +1920,7 @@ const theme = {
 
     // Auto-show welcome message on page load
     setTimeout(() => {
-      toast.success('Welcome to Corrupted Theme v0.1.4!', 'Welcome', 5000);
+      toast.success('Welcome to Corrupted Theme v0.1.7!', 'Welcome', 5000);
     }, 1000);
   </script>
 </body>

@@ -284,31 +284,40 @@ class TypingAnimation {
     // Color for phrase corruption (SFW vs NSFW)
     const phraseColor = this.options.nsfw ? '#8b5cf6' : '#d94f90';
 
+    let text;
+    let color;
+
     if (r < 0.30) {
       // Japanese phrase buffer corruption
-      const phrase = japaneseSet[Math.floor(Math.random() * japaneseSet.length)];
-      return `<span style="color: ${phraseColor};">${phrase}</span>`;
+      text = japaneseSet[Math.floor(Math.random() * japaneseSet.length)];
+      color = phraseColor;
     } else if (r < 0.50) {
       // English phrase buffer corruption
-      const phrase = englishSet[Math.floor(Math.random() * englishSet.length)];
-      return `<span style="color: ${phraseColor};">${phrase}</span>`;
+      text = englishSet[Math.floor(Math.random() * englishSet.length)];
+      color = phraseColor;
     } else if (r < 0.65) {
       // Romaji buffer corruption
-      const phrase = romajiSet[Math.floor(Math.random() * romajiSet.length)];
-      return `<span style="color: ${phraseColor};">${phrase}</span>`;
+      text = romajiSet[Math.floor(Math.random() * romajiSet.length)];
+      color = phraseColor;
     } else if (r < 0.80) {
       // Symbols - decorative corruption (always SFW)
-      const symbol = TypingAnimation.SYMBOLS[
+      text = TypingAnimation.SYMBOLS[
         Math.floor(Math.random() * TypingAnimation.SYMBOLS.length)
       ];
-      return `<span style="color: #d94f90;">${symbol}</span>`;
+      color = '#d94f90';
     } else {
       // Block chars - terminal/critical state (always SFW)
-      const char = TypingAnimation.BLOCKS[
+      text = TypingAnimation.BLOCKS[
         Math.floor(Math.random() * TypingAnimation.BLOCKS.length)
       ];
-      return `<span style="color: #ff0000;">${char}</span>`;
+      color = '#ff0000';
     }
+
+    // Return DOM element instead of HTML string (XSS-safe)
+    const span = document.createElement('span');
+    span.style.color = color;
+    span.textContent = text;
+    return span;
   }
 
   /**
@@ -320,15 +329,21 @@ class TypingAnimation {
    * @private
    */
   render() {
-    let displayed = this.getDisplayed();
+    const displayed = this.getDisplayed();
 
-    // Add buffer corruption at the "cursor" position
+    // Clear and rebuild using safe DOM methods (no innerHTML)
+    this.element.textContent = '';
+
+    // Stable revealed text (white)
+    const textSpan = document.createElement('span');
+    textSpan.style.color = '#ffffff';
+    textSpan.textContent = displayed;
+    this.element.appendChild(textSpan);
+
+    // Add buffer corruption element at the "cursor" position
     if (!this.isDone() && Math.random() < this.options.glitchChance) {
-      displayed += this.getRandomCorruption();
+      this.element.appendChild(this.getRandomCorruption());
     }
-
-    // Rendered text: white for stable, corruption colors for buffer glitches
-    this.element.innerHTML = `<span style="color: #ffffff;">${displayed}</span>`;
   }
 
   /**
@@ -339,7 +354,11 @@ class TypingAnimation {
    */
   settle(finalText) {
     this.stop();
-    this.element.innerHTML = `<span style="color: #ffffff;">${finalText || this.content}</span>`;
+    const span = document.createElement('span');
+    span.style.color = '#ffffff';
+    span.textContent = finalText || this.content;
+    this.element.textContent = '';
+    this.element.appendChild(span);
   }
 
   /**

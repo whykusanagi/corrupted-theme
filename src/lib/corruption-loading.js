@@ -31,6 +31,34 @@
     localStorage.setItem("corruptionLoadingLastPlayed", Date.now().toString());
   }
 
+  // Inline timer tracking (IIFE can't import ES modules)
+  const _timers = { _t: new Set(), _i: new Set() };
+  function _setTimeout(fn, delay) {
+    const id = setTimeout(() => { _timers._t.delete(id); fn(); }, delay);
+    _timers._t.add(id);
+    return id;
+  }
+  function _setInterval(fn, delay) {
+    const id = setInterval(fn, delay);
+    _timers._i.add(id);
+    return id;
+  }
+  function _clearAllTimers() {
+    _timers._t.forEach(id => clearTimeout(id));
+    _timers._i.forEach(id => clearInterval(id));
+    _timers._t.clear();
+    _timers._i.clear();
+  }
+
+  // Cancel loading screen early
+  function cancelLoading() {
+    _clearAllTimers();
+    const screen = document.getElementById('corruption-loading');
+    if (screen) screen.remove();
+    const styles = document.getElementById('corruption-loading-styles');
+    if (styles) styles.remove();
+  }
+
   // Main function to show loading screen
   function showCorruptionLoading(options = {}) {
     const config = {
@@ -51,7 +79,7 @@
     // Inject styles
     const style = document.createElement("style");
     style.id = "corruption-loading-styles";
-    style.innerHTML = `
+    style.textContent = `
       @keyframes flicker {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.4; }
@@ -235,6 +263,7 @@
     const loadingScreen = document.createElement("div");
     loadingScreen.id = "corruption-loading-screen";
 
+    // Static HTML only — no interpolated variables, safe from XSS
     loadingScreen.innerHTML = `
       <div class="corrupt-stream"></div>
       <div class="crt-overlay"></div>
@@ -306,8 +335,8 @@
       
       target.innerHTML = '';
       let i = 0;
-      const interval = setInterval(() => {
-        if (i >= text.length) return clearInterval(interval);
+      const interval = _setInterval(() => {
+        if (i >= text.length) { clearInterval(interval); _timers._i.delete(interval); return; }
         const span = document.createElement('span');
         span.className = 'glyph';
         span.textContent = text[i];
@@ -349,16 +378,16 @@
     });
 
     // Animate progress text
-    setTimeout(() => {
+    _setTimeout(() => {
       [...progressText.children].forEach((span, idx) => {
-        setTimeout(() => {
+        _setTimeout(() => {
           span.textContent = phrase.replace(/\s/g, '').charAt(idx);
         }, 500 * (idx + 1));
       });
     }, 3600);
 
     // Type grow text
-    setTimeout(() => {
+    _setTimeout(() => {
       const growText = document.getElementById("grow-text");
       if (growText) {
         typeGlyphText("grow-text", "Initializing corruption protocols...", 80);
@@ -366,9 +395,10 @@
     }, 2000);
 
     // Remove loading screen
-    setTimeout(() => {
+    _setTimeout(() => {
       loadingScreen.style.opacity = "0";
-      setTimeout(() => {
+      _setTimeout(() => {
+        _clearAllTimers();
         loadingScreen.remove();
         const styles = document.getElementById("corruption-loading-styles");
         if (styles) styles.remove();
@@ -394,12 +424,12 @@
 
     // Export for manual use
     window.showCorruptionLoading = showCorruptionLoading;
-    window.CorruptionLoading = { show: showCorruptionLoading };
+    window.CorruptionLoading = { show: showCorruptionLoading, cancel: cancelLoading };
   }
 
   // Export for modules
   if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { showCorruptionLoading };
+    module.exports = { showCorruptionLoading, cancelLoading };
   }
 })();
 

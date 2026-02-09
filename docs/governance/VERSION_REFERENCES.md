@@ -195,6 +195,14 @@ When updating, search for these patterns:
 No outstanding discrepancies. All example footers, documentation files, and package files
 are consistent.
 
+### Note: package-lock.json
+
+`package-lock.json` is listed in `.gitignore` and is not tracked by git. This is
+intentional — npm recommends not committing lockfiles for library packages (only for
+applications). CLAUDE.md section 5 references syncing `package-lock.json`, but since
+it's local-only, version sync is handled automatically by `npm version` and does not
+require manual updates.
+
 ---
 
 ## Next Version Release Checklist

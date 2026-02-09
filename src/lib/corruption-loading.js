@@ -79,7 +79,7 @@
     // Inject styles
     const style = document.createElement("style");
     style.id = "corruption-loading-styles";
-    style.innerHTML = `
+    style.textContent = `
       @keyframes flicker {
         0%, 100% { opacity: 1; }
         50% { opacity: 0.4; }
@@ -263,6 +263,7 @@
     const loadingScreen = document.createElement("div");
     loadingScreen.id = "corruption-loading-screen";
 
+    // Static HTML only — no interpolated variables, safe from XSS
     loadingScreen.innerHTML = `
       <div class="corrupt-stream"></div>
       <div class="crt-overlay"></div>

@@ -507,39 +507,93 @@ class CelesteAgent {
      * Create UI elements
      */
     createUI() {
-        // Create chat button
+        // Create chat button (safe DOM construction — no innerHTML with interpolation)
         this.chatButton = document.createElement('div');
         this.chatButton.className = 'celeste-chat-button';
         const avatarUrl = this.getAssetUrl('https://s3.whykusanagi.xyz/Celeste_Vel_Icon.png');
-        this.chatButton.innerHTML = `
-            <div class="celeste-button-content">
-                <img src="${avatarUrl}" alt="Celeste AI" class="celeste-avatar" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg, #d94f90 0%, #b61b70 100%)';">
-                <span class="celeste-button-text">Chat with Celeste</span>
-            </div>
-        `;
+
+        const buttonContent = document.createElement('div');
+        buttonContent.className = 'celeste-button-content';
+
+        const avatarImg = document.createElement('img');
+        avatarImg.src = avatarUrl;
+        avatarImg.alt = 'Celeste AI';
+        avatarImg.className = 'celeste-avatar';
+        avatarImg.addEventListener('error', function() {
+            this.style.display = 'none';
+            this.parentElement.style.background = 'linear-gradient(135deg, #d94f90 0%, #b61b70 100%)';
+        });
+
+        const buttonText = document.createElement('span');
+        buttonText.className = 'celeste-button-text';
+        buttonText.textContent = 'Chat with Celeste';
+
+        buttonContent.appendChild(avatarImg);
+        buttonContent.appendChild(buttonText);
+        this.chatButton.appendChild(buttonContent);
         this._trackListener(this.chatButton, 'click', () => this.toggleChat());
 
-        // Create chat window
+        // Create chat window (safe DOM construction — no innerHTML with interpolation)
         this.chatWindow = document.createElement('div');
         this.chatWindow.className = 'celeste-chat-window';
         const headerAvatarUrl = this.getAssetUrl('https://s3.whykusanagi.xyz/Celeste_Vel_Icon.png');
-        this.chatWindow.innerHTML = `
-            <div class="celeste-chat-header">
-                <div class="celeste-header-content">
-                    <img src="${headerAvatarUrl}" alt="Celeste AI" class="celeste-header-avatar" onerror="this.style.display='none';">
-                    <div class="celeste-header-info">
-                        <h3><strong>CelesteAI</strong></h3>
-                        <p><strong>Your helpful Onee-san assistant</strong></p>
-                    </div>
-                </div>
-                <button class="celeste-close-btn">&times;</button>
-            </div>
-            <div class="celeste-chat-messages"></div>
-            <div class="celeste-chat-input">
-                <input type="text" placeholder="Ask Celeste anything..." class="celeste-input-field">
-                <button class="celeste-send-btn">Send</button>
-            </div>
-        `;
+
+        // Header
+        const chatHeader = document.createElement('div');
+        chatHeader.className = 'celeste-chat-header';
+
+        const headerContent = document.createElement('div');
+        headerContent.className = 'celeste-header-content';
+
+        const headerAvatar = document.createElement('img');
+        headerAvatar.src = headerAvatarUrl;
+        headerAvatar.alt = 'Celeste AI';
+        headerAvatar.className = 'celeste-header-avatar';
+        headerAvatar.addEventListener('error', function() { this.style.display = 'none'; });
+
+        const headerInfo = document.createElement('div');
+        headerInfo.className = 'celeste-header-info';
+        const h3 = document.createElement('h3');
+        const h3Strong = document.createElement('strong');
+        h3Strong.textContent = 'CelesteAI';
+        h3.appendChild(h3Strong);
+        const p = document.createElement('p');
+        const pStrong = document.createElement('strong');
+        pStrong.textContent = 'Your helpful Onee-san assistant';
+        p.appendChild(pStrong);
+        headerInfo.appendChild(h3);
+        headerInfo.appendChild(p);
+
+        headerContent.appendChild(headerAvatar);
+        headerContent.appendChild(headerInfo);
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'celeste-close-btn';
+        closeBtn.textContent = '\u00D7';
+
+        chatHeader.appendChild(headerContent);
+        chatHeader.appendChild(closeBtn);
+
+        // Messages container
+        const messagesDiv = document.createElement('div');
+        messagesDiv.className = 'celeste-chat-messages';
+
+        // Input area
+        const inputDiv = document.createElement('div');
+        inputDiv.className = 'celeste-chat-input';
+        const inputField = document.createElement('input');
+        inputField.type = 'text';
+        inputField.placeholder = 'Ask Celeste anything...';
+        inputField.className = 'celeste-input-field';
+        const sendBtn = document.createElement('button');
+        sendBtn.className = 'celeste-send-btn';
+        sendBtn.textContent = 'Send';
+        inputDiv.appendChild(inputField);
+        inputDiv.appendChild(sendBtn);
+
+        this.chatWindow.appendChild(chatHeader);
+        this.chatWindow.appendChild(messagesDiv);
+        this.chatWindow.appendChild(inputDiv);
 
         // Add event listeners (tracked for cleanup)
         this._trackListener(this.chatWindow.querySelector('.celeste-close-btn'), 'click', () => this.closeChat());
@@ -876,18 +930,23 @@ class CelesteAgent {
         const messageContainer = this.chatWindow.querySelector('.celeste-chat-messages');
         const typingDiv = document.createElement('div');
         typingDiv.className = 'celeste-message celeste';
-        typingDiv.innerHTML = `
-            <div class="celeste-message-bubble">
-                <div class="celeste-typing">
-                    Celeste is typing
-                    <div class="celeste-typing-dots">
-                        <div class="celeste-typing-dot"></div>
-                        <div class="celeste-typing-dot"></div>
-                        <div class="celeste-typing-dot"></div>
-                    </div>
-                </div>
-            </div>
-        `;
+
+        // Safe DOM construction — no innerHTML
+        const bubble = document.createElement('div');
+        bubble.className = 'celeste-message-bubble';
+        const typing = document.createElement('div');
+        typing.className = 'celeste-typing';
+        typing.appendChild(document.createTextNode('Celeste is typing'));
+        const dots = document.createElement('div');
+        dots.className = 'celeste-typing-dots';
+        for (let i = 0; i < 3; i++) {
+            const dot = document.createElement('div');
+            dot.className = 'celeste-typing-dot';
+            dots.appendChild(dot);
+        }
+        typing.appendChild(dots);
+        bubble.appendChild(typing);
+        typingDiv.appendChild(bubble);
         messageContainer.appendChild(typingDiv);
         messageContainer.scrollTop = messageContainer.scrollHeight;
         return typingDiv;

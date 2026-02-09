@@ -155,6 +155,7 @@ class Gallery {
     const lightbox = document.createElement('div');
     lightbox.id = this.config.lightboxId;
     lightbox.className = 'lightbox';
+    // Static HTML only — no interpolated variables, safe from XSS
     lightbox.innerHTML = `
       <button class="lightbox-close" aria-label="Close lightbox">&times;</button>
       <button class="lightbox-prev" aria-label="Previous image">

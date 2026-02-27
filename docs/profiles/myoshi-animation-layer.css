@@ -14,9 +14,11 @@
    Troubleshooting:
    - Cards pulse in sync? Add style="animation-delay:-Xs"
      inline to each .ct-card div in your HTML instead.
-   - Scanlines visible but static? Replace
-     "background-position: 0 -60px" with
-     "background-position-y: -60px" in ct-scanline-drift.
+   - Scanlines visible but static? Use longhand in both
+     keyframe stops: replace "background-position: 0 0"
+     with "background-position-x:0; background-position-y:0"
+     and "background-position: 0 -60px" with
+     "background-position-x:0; background-position-y:-60px"
    - Bar shimmer clipped? Change width from 35% to 50%.
    ═══════════════════════════════════════════ */
 
@@ -92,6 +94,8 @@
 .ct-card:nth-child(3) { animation-delay: -2.6s;  }
 .ct-card:nth-child(4) { animation-delay: -0.7s;  }
 
+/* .ct-card-dim is a separate element type (CTA/collab bar),
+   staggered at -1.9s to avoid syncing with any of the four cards */
 .ct-card-dim {
   animation: ct-glow-breathe 4s ease-in-out infinite;
   animation-delay: -1.9s;
@@ -119,7 +123,7 @@
   background-size: 100% 60px;
   animation: ct-scanline-drift 8s linear infinite;
   pointer-events: none;
-  z-index: 2;
+  z-index: 2; /* above card content; below any myoshi-level overlays */
 }
 
 /* ────────────────────────────────────────────
@@ -178,7 +182,7 @@
   content: '';
   position: absolute;
   top: 0;
-  left: 0;
+  left: 0; /* static start position — movement is via transform: translateX only */
   width: 35%;
   height: 100%;
   background: linear-gradient(

@@ -36,7 +36,7 @@ void main() {
   vec3 d = vec3((gl_FragCoord.xy - 0.5 * uResolution) / uResolution.y, 0.7);
   q.z -= 1.0;
 
-  for (float i = 0.0; i < 99.0; i += 1.0) {
+  for (float i = 0.0; i < 33.0; i += 1.0) {
     float h = (uHue >= 0.0)
       ? uHue
       : mix(0.14, 0.87, fract(i / 33.0)) + p.y * 0.05;
@@ -161,7 +161,7 @@ class CorruptedVortex {
   _resize() {
     const gl = this.gl;
     if (!gl || !this.canvas) return;
-    const dpr  = Math.min(window.devicePixelRatio || 1, 2.0);
+    const dpr  = 0.5;  // half-res: GPU renders fewer pixels, CSS scales up
     const rect = this.canvas.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
     this.canvas.width  = Math.round(rect.width  * dpr);
@@ -171,6 +171,12 @@ class CorruptedVortex {
 
   _render(ts) {
     if (!this._isRunning) return;
+
+    // Throttle to ~30fps to keep GPU load manageable
+    if (this._lastTs !== null && ts - this._lastTs < 33) {
+      this._rafId = requestAnimationFrame(ts => this._render(ts));
+      return;
+    }
 
     if (this._lastTs !== null) {
       this._elapsed += (ts - this._lastTs) / 1000.0;

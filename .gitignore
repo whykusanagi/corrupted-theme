@@ -42,3 +42,6 @@ celeste_widget_pack/
 
 # NPM registry (contains tokens)
 .npmrc
+
+# Internal planning docs (store locally in ~/.claude/projects/.../memory/plans/ instead)
+docs/plans/

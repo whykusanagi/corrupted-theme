@@ -68,9 +68,12 @@ void main() {
     }
   }
 
-  // Reinhard tone-map: smoothly compresses accumulated sum — prevents channel
-  // over-accumulation (R,G,B all > 1) from hard-clipping to white
+  // Reinhard + contrast curve: compress sum then collapse dim areas to black.
+  // pow(x, 2.2) leaves 0→0 and 1→1 intact but pushes midtones down hard
+  // (e.g. 0.2→0.03, 0.5→0.22) so cloud artifacts fall off to black rather
+  // than accumulating to washed-out white.
   o.rgb = o.rgb / (1.0 + o.rgb);
+  o.rgb = pow(o.rgb, vec3(2.2));
 
   // Black-hole event horizon: pitch-black centre, magenta photon ring at boundary
   float dist   = length(d.xy);

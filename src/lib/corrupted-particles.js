@@ -24,10 +24,12 @@ const LAYERS = [
   { name: 'near', weight: 0.20, minSize: 16, maxSize: 20, minSpeed: 0.8, maxSpeed: 1.4, minOpacity: 0.60, maxOpacity: 0.80 },
 ];
 
-const CYAN   = '#00ffff';  // --corrupted-cyan  (kept for lineColor comparisons)
-const PURPLE = '#8b5cf6';  // --corrupted-purple (kept for lineColor comparisons)
-const CYAN_RGB   = { r: 0,   g: 255, b: 255 };
-const PURPLE_RGB = { r: 139, g: 92,  b: 246 };
+const CYAN    = '#00ffff';  // --corrupted-cyan
+const PURPLE  = '#8b5cf6';  // --corrupted-purple
+const MAGENTA = '#ff00ff';  // --corrupted-magenta
+const CYAN_RGB    = { r: 0,   g: 255, b: 255 };
+const PURPLE_RGB  = { r: 139, g: 92,  b: 246 };
+const MAGENTA_RGB = { r: 255, g: 0,   b: 255 };
 
 class CorruptedParticles {
   constructor(canvas, options = {}) {
@@ -53,15 +55,13 @@ class CorruptedParticles {
     this._intersectionObserver = null;
 
     this._onMouseMove = (e) => {
-      const r   = this.canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      this.mouse.x = (e.clientX - r.left) * dpr;
-      this.mouse.y = (e.clientY - r.top)  * dpr;
+      const r = this.canvas.getBoundingClientRect();
+      this.mouse.x = e.clientX - r.left;
+      this.mouse.y = e.clientY - r.top;
     };
     this._onClick = (e) => {
-      const r   = this.canvas.getBoundingClientRect();
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      this._spawnBurst((e.clientX - r.left) * dpr, (e.clientY - r.top) * dpr);
+      const r = this.canvas.getBoundingClientRect();
+      this._spawnBurst(e.clientX - r.left, e.clientY - r.top);
     };
     this._onMouseLeave = () => {
       this.mouse.x = -9999;
@@ -92,8 +92,11 @@ class CorruptedParticles {
     const L          = LAYERS[layerIndex];
     const angle      = Math.random() * Math.PI * 2;
     const speed      = (L.minSpeed + Math.random() * (L.maxSpeed - L.minSpeed)) * this.options.speed;
-    const phrase     = this._pickPhrase();
-    const lewd       = this.options.includeLewd && NSFW_PHRASES.includes(phrase);
+    const phrase    = this._pickPhrase();
+    const lewd      = this.options.includeLewd && NSFW_PHRASES.includes(phrase);
+    const colorRgb  = lewd
+      ? (Math.random() < 0.5 ? MAGENTA_RGB : PURPLE_RGB)
+      : CYAN_RGB;
     return {
       x, y,
       vx: Math.cos(angle) * speed,
@@ -104,6 +107,7 @@ class CorruptedParticles {
       opacity:   L.minOpacity + Math.random() * (L.maxOpacity - L.minOpacity),
       phrase,
       lewd,
+      colorRgb,
       flickerTimer:    2000 + Math.random() * 6000,
       flickering:      false,
       flickerDuration: 0,
@@ -135,8 +139,15 @@ class CorruptedParticles {
     const dpr  = Math.min(window.devicePixelRatio || 1, 2);
     const rect = this.canvas.getBoundingClientRect();
     if (rect.width === 0 || rect.height === 0) return;
+
+    // Backing buffer in physical px; all drawing in CSS px via transform
     this.canvas.width  = Math.round(rect.width  * dpr);
     this.canvas.height = Math.round(rect.height * dpr);
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    // Store CSS dimensions for physics and bounds
+    this._cssW = rect.width;
+    this._cssH = rect.height;
 
     const mobile = window.innerWidth < 768;
     const count  = mobile ? Math.floor(this.options.count / 2) : this.options.count;
@@ -144,8 +155,8 @@ class CorruptedParticles {
     this.particles = [];
     for (let i = 0; i < count; i++) {
       this.particles.push(this._makeParticle(
-        Math.random() * this.canvas.width,
-        Math.random() * this.canvas.height
+        Math.random() * this._cssW,
+        Math.random() * this._cssH
       ));
     }
   }
@@ -157,8 +168,8 @@ class CorruptedParticles {
     if (this._lastTs !== null) dt = ts - this._lastTs;
     this._lastTs = ts;
 
-    const W            = this.canvas.width;
-    const H            = this.canvas.height;
+    const W            = this._cssW || this.canvas.width;
+    const H            = this._cssH || this.canvas.height;
     const mx           = this.mouse.x;
     const my           = this.mouse.y;
     const REPEL_RADIUS = 120;
@@ -221,12 +232,14 @@ class CorruptedParticles {
         if (ldist2 >= LINE_DIST_SQ) continue;
         const ldist  = Math.sqrt(ldist2);
 
-        const lineAlpha = (1 - ldist / LINE_DIST) * 0.3;
-        const rgb       = (a.lewd && b.lewd) ? PURPLE_RGB : CYAN_RGB;
+        const lineAlpha = (1 - ldist / LINE_DIST) * 0.4;
+        const rgb       = (a.lewd || b.lewd)
+          ? (a.lewd ? a.colorRgb : b.colorRgb)
+          : CYAN_RGB;
 
         this.ctx.beginPath();
         this.ctx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${lineAlpha})`;
-        this.ctx.lineWidth   = 0.5;
+        this.ctx.lineWidth   = 1;
         this.ctx.moveTo(a.x, a.y);
         this.ctx.lineTo(b.x, b.y);
         this.ctx.stroke();
@@ -238,7 +251,7 @@ class CorruptedParticles {
       const displayOpacity = p.flickering ? 0.05 : (p.opacity * (1 - p.fadeIn));
       if (displayOpacity < 0.01) continue;
 
-      const rgb = p.lewd ? PURPLE_RGB : CYAN_RGB;
+      const rgb = p.colorRgb;
 
       this.ctx.font      = `${Math.round(p.fontSize)}px monospace`;
       this.ctx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${displayOpacity})`;

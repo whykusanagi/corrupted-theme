@@ -120,16 +120,27 @@ void main() {
   o.rgb = o.rgb / (1.0 + o.rgb);
   o.rgb = pow(o.rgb, vec3(1.8));
 
-  // Black-hole event horizon: shadow the vortex cloud first
-  float dist   = length(d.xy);
-  float shadow = smoothstep(0.12, 0.18, dist);  // flat black void 0→0.12, ramps 0.12→0.18
+  // Near/far depth split: project onto the 45° CW major axis direction (1,-1)/√2.
+  // majorProj > 0  →  lower-right arm  →  near  (passes in front of BH)
+  // majorProj < 0  →  upper-left arm   →  far   (passes behind BH)
+  float dist      = length(d.xy);
+  float majorProj = dot(d.xy, vec2(0.7071, -0.7071));
+  float nearMask  = smoothstep(-0.04, 0.04, majorProj);
+  vec3  diskVal   = diskSample(d.xy) * 2.0 * uIntensity;
+
+  // Far arm: add before shadow; extra depth-fade darkens it near the BH centre
+  float farDepth = smoothstep(0.12, 0.26, dist);
+  o.rgb += diskVal * (1.0 - nearMask) * farDepth;
+
+  // Black-hole event horizon: shadows the vortex cloud (and the far arm)
+  float shadow = smoothstep(0.12, 0.18, dist);
   float ring   = exp(-pow((dist - 0.18) * 30.0, 2.0)) * 0.9;
   o.rgb = o.rgb * shadow + vec3(ring, ring * 0.80, ring * 0.45);
 
-  // ── Accretion disk — drawn AFTER shadow so it crosses in front of the BH ──
-  o.rgb += diskSample(d.xy) * 2.0 * uIntensity;
+  // Near arm: add after shadow → visibly crosses in front of the event horizon
+  o.rgb += diskVal * nearMask;
 
-  // Lensed arc: narrowed to a thin stripe above the shadow boundary
+  // Lensed arc: thin bright stripe above the shadow boundary
   float lensThe  = atan(d.y, d.x);
   float bend     = exp(-(dist - 0.19) * 9.0);
   float thetaS   = lensThe + 3.14159 * bend;
@@ -138,8 +149,8 @@ void main() {
                  * smoothstep(0.03, 0.08, d.y);
   o.rgb += diskSample(uvLens) * lensFade * 0.5 * uIntensity;
 
-  // Magenta corona: hot-plasma halo in front of everything, around the horizon
-  float coronaAmt = exp(-pow((dist - 0.22) * 10.0, 2.0)) * 1.2;
+  // Magenta corona: tightened — width 16 gives a crisp ring just outside the horizon
+  float coronaAmt = exp(-pow((dist - 0.21) * 16.0, 2.0)) * 0.9;
   o.rgb += vec3(coronaAmt, 0.0, coronaAmt) * uIntensity;
 
   o.a = 1.0;

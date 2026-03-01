@@ -36,7 +36,7 @@ mat2 rotate2D(float a) {
 //   r0  = dot(uv, K) / dot(K,K)                    [nearest orbital radius]
 //   dr  = length(uv - r0·K)                        [perpendicular disk offset]
 vec3 diskSample(vec2 uv) {
-  float B   = 0.38;
+  float B   = 0.15;  // near edge-on (~9° from edge) → Saturn-like flat stripe
   float phi = atan((uv.x + uv.y) / B, uv.x - uv.y);
   vec2  K   = vec2(0.7071 * (cos(phi) + B * sin(phi)),
                    0.7071 * (-cos(phi) + B * sin(phi)));
@@ -46,9 +46,9 @@ vec3 diskSample(vec2 uv) {
   // Radial extent: inner edge near photon sphere, outer at 0.65
   float radial = smoothstep(0.185, 0.235, r0) * smoothstep(0.65, 0.50, r0);
 
-  // Disk height (flared outward; spaghettifies near horizon)
+  // Disk height (thin, crisp; spaghettifies near horizon)
   float fall   = smoothstep(0.30, 0.19, length(uv));
-  float sigma  = (0.020 + r0 * 0.042) * max(0.07, 1.0 - fall * 0.93);
+  float sigma  = (0.012 + r0 * 0.022) * max(0.07, 1.0 - fall * 0.93);
   float height = exp(-pow(dr / sigma, 2.0));
 
   // Gas-flow striations along orbital direction
@@ -114,12 +114,11 @@ void main() {
     }
   }
 
-  // Reinhard + contrast curve: compress sum then collapse dim areas to black.
-  // pow(x, 2.2) leaves 0→0 and 1→1 intact but pushes midtones down hard
-  // (e.g. 0.2→0.03, 0.5→0.22) so cloud artifacts fall off to black rather
-  // than accumulating to washed-out white.
+  // Reinhard + contrast curve: compress sum then push dim areas toward black.
+  // pow(1.8) is softer than 2.2 — keeps the magenta/purple corona visible
+  // while still collapsing near-zero cloud artifacts to black.
   o.rgb = o.rgb / (1.0 + o.rgb);
-  o.rgb = pow(o.rgb, vec3(2.2));
+  o.rgb = pow(o.rgb, vec3(1.8));
 
   // ── Continuous 3-D accretion disk (Interstellar-style) ────────────────────
   o.rgb += diskSample(d.xy) * 2.8 * uIntensity;

@@ -443,7 +443,7 @@ See `examples/basic/` for SFW examples and `examples/advanced/nsfw-corruption.ht
 
 ## Interactive Components
 
-v0.1.7 adds JS-driven interactive components that self-initialize via `data-ct-*` attributes. Import the components module and everything wires up automatically on `DOMContentLoaded`.
+v0.1.8 adds JS-driven interactive components that self-initialize via `data-ct-*` attributes. Import the components module and everything wires up automatically on `DOMContentLoaded`.
 
 ```html
 <script type="module">

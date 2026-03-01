@@ -148,7 +148,7 @@ class CorruptedVortex {
       } else {
         this.stop();
       }
-    });
+    }, { threshold: 0.1 });
     this._intersectionObserver.observe(this.canvas);
 
     this._resize();
@@ -157,9 +157,10 @@ class CorruptedVortex {
 
   _resize() {
     const gl = this.gl;
-    if (!gl) return;
+    if (!gl || !this.canvas) return;
     const dpr  = Math.min(window.devicePixelRatio || 1, 2.0);
     const rect = this.canvas.getBoundingClientRect();
+    if (rect.width === 0 || rect.height === 0) return;
     this.canvas.width  = Math.round(rect.width  * dpr);
     this.canvas.height = Math.round(rect.height * dpr);
     gl.viewport(0, 0, this.canvas.width, this.canvas.height);

@@ -24,8 +24,10 @@ const LAYERS = [
   { name: 'near', weight: 0.20, minSize: 16, maxSize: 20, minSpeed: 0.8, maxSpeed: 1.4, minOpacity: 0.60, maxOpacity: 0.80 },
 ];
 
-const CYAN   = '#00ffff';  // --corrupted-cyan
-const PURPLE = '#8b5cf6';  // --corrupted-purple
+const CYAN   = '#00ffff';  // --corrupted-cyan  (kept for lineColor comparisons)
+const PURPLE = '#8b5cf6';  // --corrupted-purple (kept for lineColor comparisons)
+const CYAN_RGB   = { r: 0,   g: 255, b: 255 };
+const PURPLE_RGB = { r: 139, g: 92,  b: 246 };
 
 class CorruptedParticles {
   constructor(canvas, options = {}) {
@@ -102,9 +104,10 @@ class CorruptedParticles {
       opacity:   L.minOpacity + Math.random() * (L.maxOpacity - L.minOpacity),
       phrase,
       lewd,
-      flickerTimer: 2000 + Math.random() * 6000,
-      flickering:   false,
-      fadeIn:       1.0,  // lerps to 0; actual alpha = opacity * (1 - fadeIn)
+      flickerTimer:    2000 + Math.random() * 6000,
+      flickering:      false,
+      flickerDuration: 0,
+      fadeIn:          1.0,  // lerps to 0; actual alpha = opacity * (1 - fadeIn)
     };
   }
 
@@ -160,6 +163,7 @@ class CorruptedParticles {
     const my           = this.mouse.y;
     const REPEL_RADIUS = 120;
     const LINE_DIST    = this.options.lineDistance;
+    const LINE_DIST_SQ = LINE_DIST * LINE_DIST;
 
     this.ctx.clearRect(0, 0, W, H);
 
@@ -167,11 +171,15 @@ class CorruptedParticles {
     for (const p of this.particles) {
       if (p.fadeIn > 0) p.fadeIn = Math.max(0, p.fadeIn - dt / 300);
 
+      if (p.flickerDuration > 0) {
+        p.flickerDuration -= dt;
+        if (p.flickerDuration <= 0) p.flickering = false;
+      }
       p.flickerTimer -= dt;
       if (p.flickerTimer <= 0) {
-        p.flickering = true;
-        setTimeout(() => { p.flickering = false; }, 100);
-        p.flickerTimer = 2000 + Math.random() * 6000;
+        p.flickering      = true;
+        p.flickerDuration = 100;
+        p.flickerTimer    = 2000 + Math.random() * 6000;
       }
 
       const dx   = p.x - mx;
@@ -207,19 +215,17 @@ class CorruptedParticles {
         const b = this.particles[j];
         if (Math.abs(a.layerIndex - b.layerIndex) > 1) continue;
 
-        const ldx   = a.x - b.x;
-        const ldy   = a.y - b.y;
-        const ldist = Math.sqrt(ldx * ldx + ldy * ldy);
-        if (ldist >= LINE_DIST) continue;
+        const ldx    = a.x - b.x;
+        const ldy    = a.y - b.y;
+        const ldist2 = ldx * ldx + ldy * ldy;
+        if (ldist2 >= LINE_DIST_SQ) continue;
+        const ldist  = Math.sqrt(ldist2);
 
         const lineAlpha = (1 - ldist / LINE_DIST) * 0.3;
-        const lineColor = (a.lewd && b.lewd) ? PURPLE : CYAN;
-        const r  = parseInt(lineColor.slice(1, 3), 16);
-        const g  = parseInt(lineColor.slice(3, 5), 16);
-        const bl = parseInt(lineColor.slice(5, 7), 16);
+        const rgb       = (a.lewd && b.lewd) ? PURPLE_RGB : CYAN_RGB;
 
         this.ctx.beginPath();
-        this.ctx.strokeStyle = `rgba(${r},${g},${bl},${lineAlpha})`;
+        this.ctx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${lineAlpha})`;
         this.ctx.lineWidth   = 0.5;
         this.ctx.moveTo(a.x, a.y);
         this.ctx.lineTo(b.x, b.y);
@@ -232,13 +238,10 @@ class CorruptedParticles {
       const displayOpacity = p.flickering ? 0.05 : (p.opacity * (1 - p.fadeIn));
       if (displayOpacity < 0.01) continue;
 
-      const color = p.lewd ? PURPLE : CYAN;
-      const r  = parseInt(color.slice(1, 3), 16);
-      const g  = parseInt(color.slice(3, 5), 16);
-      const bl = parseInt(color.slice(5, 7), 16);
+      const rgb = p.lewd ? PURPLE_RGB : CYAN_RGB;
 
       this.ctx.font      = `${Math.round(p.fontSize)}px monospace`;
-      this.ctx.fillStyle = `rgba(${r},${g},${bl},${displayOpacity})`;
+      this.ctx.fillStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${displayOpacity})`;
       this.ctx.fillText(p.phrase, p.x, p.y);
     }
 
@@ -260,7 +263,7 @@ class CorruptedParticles {
   }
 
   start() {
-    if (this._isRunning) return;
+    if (this._isRunning || !this.canvas) return;
     this._isRunning = true;
     this._lastTs    = null;
     this._rafId     = requestAnimationFrame(ts => this._render(ts));
@@ -281,7 +284,7 @@ class CorruptedParticles {
     }
     if (this._resizeObserver)       { this._resizeObserver.disconnect();       this._resizeObserver = null; }
     if (this._intersectionObserver) { this._intersectionObserver.disconnect(); this._intersectionObserver = null; }
-    this.particles = [];
+    this.particles = null;
     this.canvas    = null;
     this.ctx       = null;
   }

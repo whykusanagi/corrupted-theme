@@ -57,6 +57,7 @@ void main() {
     }
   }
 
+  o.a = 1.0;
   gl_FragColor = clamp(o, 0.0, 1.0);
 }
 `;
@@ -99,7 +100,7 @@ class CorruptedVortex {
   }
 
   init() {
-    const gl = this.canvas.getContext('webgl');
+    const gl = this.canvas.getContext('webgl', { alpha: false });
     if (!gl) {
       console.warn('CorruptedVortex: WebGL not supported in this browser.');
       return;

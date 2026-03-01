@@ -29,14 +29,23 @@ mat2 rotate2D(float a) {
   return mat2(c, -s, s, c);
 }
 
-// Orbital spark ring: N point sparks equally spaced on a circle of radius r0,
-// rotating at angular velocity omega. Returns brightness at screen point (r, theta).
-float sparkRing(float r, float theta, float r0, float N, float omega, float sigma) {
-  float radial  = exp(-pow((r - r0) / (sigma * 0.5), 2.0));
-  float phase   = fract((theta / 6.2832 - omega * uTime) * N);
-  float arcDist = (fract(phase + 0.5) - 0.5) * (6.2832 / N) * r0;
-  float angular = exp(-pow(arcDist / sigma, 2.0));
-  return radial * angular;
+// Accretion disk — edge-on (side) view.
+// Circular orbits at radius r0 project onto the horizontal axis as x = r0*cos(phi).
+// acos maps screen-x back to orbital phase; nearest of N equally-spaced particles
+// is found on the front arc (phi) and back arc (-phi) separately.
+// Spaghettification: blobs stretch horizontally and compress vertically as
+// length(uv) approaches the event horizon radius.
+float diskRing(vec2 uv, float r0, float N, float omega, float sigma) {
+  if (abs(uv.x) >= r0 * 0.999) return 0.0;
+  float phi  = acos(uv.x / r0);
+  float phF  = fract(( phi / 6.2832 - omega * uTime) * N + 0.5) - 0.5;
+  float phB  = fract((-phi / 6.2832 - omega * uTime) * N + 0.5) - 0.5;
+  float fall = smoothstep(0.26, 0.19, length(uv));   // 0 far out → 1 near horizon
+  float hSig = sigma * (1.0 + fall * 5.0);           // horizontal stretch
+  float vSig = sigma * max(0.15, 1.0 - fall * 0.85); // vertical compression
+  float gF   = exp(-pow(abs(phF) * 6.2832 / N * r0 / hSig, 2.0)) * 1.6; // front brighter
+  float gB   = exp(-pow(abs(phB) * 6.2832 / N * r0 / hSig, 2.0)) * 0.6; // back dimmer
+  return (gF + gB) * exp(-pow(uv.y / vSig, 2.0));
 }
 
 void main() {
@@ -88,20 +97,24 @@ void main() {
   o.rgb = o.rgb / (1.0 + o.rgb);
   o.rgb = pow(o.rgb, vec3(2.2));
 
-  // Accretion disk: small orbital sparks following gas flow, vaporised at horizon.
-  // 4 rings at Keplerian speeds (ω ∝ r^-1.5 → inner orbits faster).
-  float spR     = length(d.xy);
-  float spTheta = atan(d.y, d.x);
-  float sparks  = 0.0;
-  sparks += sparkRing(spR, spTheta, 0.45, 10.0, 0.20, 0.018);  // outer — slow
-  sparks += sparkRing(spR, spTheta, 0.33,  9.0, 0.33, 0.018);  // mid
-  sparks += sparkRing(spR, spTheta, 0.25,  8.0, 0.51, 0.018);  // inner — fast
-  sparks += sparkRing(spR, spTheta, 0.21,  6.0, 0.72, 0.018);  // near-horizon — very fast
-  // Vaporisation: sparks dim to nothing as they approach the event horizon
-  float vapFade  = smoothstep(0.18, 0.23, spR);
-  // Tidal heating: sparks briefly brighten just before destruction
-  float vapBoost = 1.0 + smoothstep(0.30, 0.20, spR) * 0.9;
-  o.rgb += vec3(1.0, 0.72, 0.0) * sparks * vapFade * vapBoost * 3.5 * uIntensity;
+  // Accretion disk: edge-on side view — flat horizontal disk with Keplerian orbits.
+  float spR2     = length(d.xy);
+  float vapFade  = smoothstep(0.18, 0.24, spR2);
+  float vapBoost = 1.0 + smoothstep(0.30, 0.20, spR2) * 1.0;  // tidal heating
+
+  // Diffuse disk glow — hot gas between particles; disk flares slightly outward
+  float dH    = 0.018 + abs(d.x) * 0.055;
+  float dGlow = exp(-pow(d.y / dH, 2.0))
+              * smoothstep(0.18, 0.26, spR2)    // fade at inner edge (horizon)
+              * smoothstep(0.58, 0.32, spR2);   // fade at outer edge
+
+  // Point-like objects on 3 Keplerian rings (ω ∝ r^-1.5, inner orbits faster)
+  float sparks = 0.0;
+  sparks += diskRing(d.xy, 0.50, 8.0, 0.18, 0.022);   // outer — slow
+  sparks += diskRing(d.xy, 0.35, 7.0, 0.31, 0.022);   // mid
+  sparks += diskRing(d.xy, 0.25, 6.0, 0.51, 0.022);   // inner — fast, near horizon
+
+  o.rgb += vec3(1.0, 0.68, 0.0) * (sparks + dGlow * 0.4) * vapFade * vapBoost * 3.0 * uIntensity;
 
   // Black-hole event horizon: pitch-black centre, magenta photon ring at boundary
   float dist   = length(d.xy);

@@ -29,6 +29,16 @@ mat2 rotate2D(float a) {
   return mat2(c, -s, s, c);
 }
 
+// Orbital spark ring: N point sparks equally spaced on a circle of radius r0,
+// rotating at angular velocity omega. Returns brightness at screen point (r, theta).
+float sparkRing(float r, float theta, float r0, float N, float omega, float sigma) {
+  float radial  = exp(-pow((r - r0) / (sigma * 0.5), 2.0));
+  float phase   = fract((theta / 6.2832 - omega * uTime) * N);
+  float arcDist = (fract(phase + 0.5) - 0.5) * (6.2832 / N) * r0;
+  float angular = exp(-pow(arcDist / sigma, 2.0));
+  return radial * angular;
+}
+
 void main() {
   vec4 o = vec4(0.0);
   float e = 0.0, R = 0.0;
@@ -78,19 +88,20 @@ void main() {
   o.rgb = o.rgb / (1.0 + o.rgb);
   o.rgb = pow(o.rgb, vec3(2.2));
 
-  // Spaghettification sparks: gold radial streaks that thin and are destroyed
-  // as they spiral into the event horizon.
-  //   - 6 rotating arms in polar screen-space
-  //   - angular width ∝ (r - r_horizon): each arm gets infinitely thin at the boundary
-  //   - radial band fades out before the photon ring so sparks appear torn apart
+  // Accretion disk: small orbital sparks following gas flow, vaporised at horizon.
+  // 4 rings at Keplerian speeds (ω ∝ r^-1.5 → inner orbits faster).
   float spR     = length(d.xy);
-  float spAngle = atan(d.y, d.x);
-  float spArm   = fract(spAngle / 6.2832 * 6.0 - uTime * 0.18);
-  float spWidth = clamp((spR - 0.18) * 6.0, 0.003, 1.0);  // shrinks → 0 at horizon
-  float spEdge  = pow(max(0.0, 1.0 - abs(spArm - 0.5) / spWidth), 3.0);
-  float spBand  = smoothstep(0.20, 0.28, spR) * smoothstep(0.55, 0.34, spR);
-  // Added after tone-map so sparks retain full brightness without being compressed
-  o.rgb += vec3(1.0, 0.68, 0.0) * spEdge * spBand * 1.8 * uIntensity;
+  float spTheta = atan(d.y, d.x);
+  float sparks  = 0.0;
+  sparks += sparkRing(spR, spTheta, 0.45, 10.0, 0.20, 0.018);  // outer — slow
+  sparks += sparkRing(spR, spTheta, 0.33,  9.0, 0.33, 0.018);  // mid
+  sparks += sparkRing(spR, spTheta, 0.25,  8.0, 0.51, 0.018);  // inner — fast
+  sparks += sparkRing(spR, spTheta, 0.21,  6.0, 0.72, 0.018);  // near-horizon — very fast
+  // Vaporisation: sparks dim to nothing as they approach the event horizon
+  float vapFade  = smoothstep(0.18, 0.23, spR);
+  // Tidal heating: sparks briefly brighten just before destruction
+  float vapBoost = 1.0 + smoothstep(0.30, 0.20, spR) * 0.9;
+  o.rgb += vec3(1.0, 0.72, 0.0) * sparks * vapFade * vapBoost * 3.5 * uIntensity;
 
   // Black-hole event horizon: pitch-black centre, magenta photon ring at boundary
   float dist   = length(d.xy);

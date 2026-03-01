@@ -289,3 +289,8 @@ class CorruptedParticles {
     this.ctx       = null;
   }
 }
+
+// Export for manual use / build pipelines
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { CorruptedParticles };
+}

@@ -24,7 +24,9 @@
     "./corruption-loading": "./src/lib/corruption-loading.js",
     "./character-corruption": "./src/lib/character-corruption.js",
     "./components-js": "./src/lib/components.js",
-    "./carousel": "./src/lib/carousel.js"
+    "./carousel": "./src/lib/carousel.js",
+    "./corrupted-vortex": "./src/lib/corrupted-vortex.js",
+    "./corrupted-particles": "./src/lib/corrupted-particles.js"
   },
   "files": [
     "src",

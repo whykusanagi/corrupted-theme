@@ -66,8 +66,8 @@ vec3 diskSample(vec2 uv) {
     col = mix(vec3(1.00, 0.72, 0.18), vec3(0.38, 0.12, 0.01), (t - 0.25) / 0.75);
   }
 
-  // Tidal brightening near inner edge
-  float innerBoost = 1.0 + 1.5 * exp(-pow((r0 - 0.21) / 0.10, 2.0));
+  // Tidal brightening near inner edge (kept subtle to avoid drowning the corona)
+  float innerBoost = 1.0 + 0.5 * exp(-pow((r0 - 0.21) / 0.10, 2.0));
 
   return col * (height * radial * fiber * dop * innerBoost);
 }
@@ -120,25 +120,27 @@ void main() {
   o.rgb = o.rgb / (1.0 + o.rgb);
   o.rgb = pow(o.rgb, vec3(1.8));
 
-  // ── Continuous 3-D accretion disk (Interstellar-style) ────────────────────
-  o.rgb += diskSample(d.xy) * 2.8 * uIntensity;
-
-  // Gravitational lensing: back-side of disk bent ~π over the photon sphere,
-  // producing a bright arc above the shadow (Interstellar top-arc effect).
-  float lensR   = length(d.xy);
-  float lensThe = atan(d.y, d.x);
-  float bend    = exp(-(lensR - 0.19) * 9.0);
-  float thetaS  = lensThe + 3.14159 * bend;
-  vec2  uvLens  = vec2(cos(thetaS), sin(thetaS)) * lensR;
-  float lensFade = exp(-pow((lensR - 0.23) * 8.0, 2.0))
-                 * smoothstep(0.0, 0.04, d.y);
-  o.rgb += diskSample(uvLens) * lensFade * 0.7 * uIntensity;
-
-  // Black-hole event horizon: pitch-black centre, warm white photon ring at boundary
+  // Black-hole event horizon: shadow the vortex cloud first
   float dist   = length(d.xy);
   float shadow = smoothstep(0.12, 0.18, dist);  // flat black void 0→0.12, ramps 0.12→0.18
   float ring   = exp(-pow((dist - 0.18) * 30.0, 2.0)) * 0.9;
-  o.rgb = o.rgb * shadow + vec3(ring, ring * 0.80, ring * 0.45);  // warm white/gold photon ring
+  o.rgb = o.rgb * shadow + vec3(ring, ring * 0.80, ring * 0.45);
+
+  // ── Accretion disk — drawn AFTER shadow so it crosses in front of the BH ──
+  o.rgb += diskSample(d.xy) * 2.0 * uIntensity;
+
+  // Lensed arc: narrowed to a thin stripe above the shadow boundary
+  float lensThe  = atan(d.y, d.x);
+  float bend     = exp(-(dist - 0.19) * 9.0);
+  float thetaS   = lensThe + 3.14159 * bend;
+  vec2  uvLens   = vec2(cos(thetaS), sin(thetaS)) * dist;
+  float lensFade = exp(-pow((dist - 0.22) * 16.0, 2.0))
+                 * smoothstep(0.03, 0.08, d.y);
+  o.rgb += diskSample(uvLens) * lensFade * 0.5 * uIntensity;
+
+  // Magenta corona: hot-plasma halo in front of everything, around the horizon
+  float coronaAmt = exp(-pow((dist - 0.22) * 10.0, 2.0)) * 1.2;
+  o.rgb += vec3(coronaAmt, 0.0, coronaAmt) * uIntensity;
 
   o.a = 1.0;
   gl_FragColor = clamp(o, 0.0, 1.0);

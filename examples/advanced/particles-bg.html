@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corrupted Particles - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    body { margin: 0; background: #000; overflow: hidden; }
+
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+
+    .ui-layer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--spacing-2xl);
+      gap: var(--spacing-xl);
+    }
+
+    .controls-panel {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      width: 100%;
+      max-width: 440px;
+      backdrop-filter: blur(12px);
+    }
+
+    .controls-panel h2 {
+      color: var(--accent);
+      margin: 0 0 var(--spacing-md);
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .control-row label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      width: 110px;
+      flex-shrink: 0;
+    }
+
+    .control-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--corrupted-magenta);
+    }
+
+    .val {
+      color: var(--corrupted-cyan);
+      font-size: 0.8rem;
+      width: 40px;
+      text-align: right;
+    }
+
+    .lewd-row {
+      border-top: 1px solid var(--border);
+      margin-top: var(--spacing-sm);
+      padding-top: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .lewd-row label {
+      color: var(--corrupted-purple);
+      font-size: 0.8rem;
+      flex: 1;
+    }
+
+    .lewd-row span.rating {
+      color: var(--corrupted-red);
+      font-size: 0.7rem;
+      border: 1px solid var(--corrupted-red);
+      padding: 1px 4px;
+      border-radius: 3px;
+    }
+
+    .code-block {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      width: 100%;
+      max-width: 540px;
+    }
+
+    .code-block h3 {
+      color: var(--accent);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .code-block pre {
+      margin: 0;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      color: var(--corrupted-cyan);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="particles-canvas"></canvas>
+
+  <div class="ui-layer">
+
+    <!-- Nav -->
+    <nav class="navbar" style="position:relative;width:100%;max-width:900px;">
+      <div class="nav-brand">
+        <a href="../index.html" class="brand-link">
+          <i class="fas fa-radiation"></i>
+          <span>corrupted-theme</span>
+        </a>
+      </div>
+      <ul class="nav-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </nav>
+
+    <!-- Controls -->
+    <div class="controls-panel">
+      <h2><i class="fas fa-sliders-h"></i> Particle Controls</h2>
+
+      <div class="control-row">
+        <label>Count</label>
+        <input type="range" id="ctrl-count" min="10" max="120" step="5" value="60">
+        <span class="val" id="val-count">60</span>
+      </div>
+
+      <div class="control-row">
+        <label>Speed</label>
+        <input type="range" id="ctrl-speed" min="0.1" max="3.0" step="0.05" value="1.0">
+        <span class="val" id="val-speed">1.00</span>
+      </div>
+
+      <div class="control-row">
+        <label>Line Distance</label>
+        <input type="range" id="ctrl-linedist" min="50" max="300" step="10" value="150">
+        <span class="val" id="val-linedist">150</span>
+      </div>
+
+      <div class="lewd-row">
+        <label><i class="fas fa-exclamation-triangle"></i> Lewd Mode</label>
+        <span class="rating">18+</span>
+        <input type="checkbox" id="ctrl-lewd">
+      </div>
+    </div>
+
+    <!-- Code snippet -->
+    <div class="code-block">
+      <h3>Usage</h3>
+      <pre><code>&lt;canvas id="bg" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;"&gt;&lt;/canvas&gt;
+&lt;script src="src/lib/corrupted-particles.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+new CorruptedParticles(document.getElementById('bg'), {
+  count:        60,    // desktop (mobile auto-halved)
+  speed:        1.0,
+  lineDistance: 150,
+  includeLewd:  false, // 18+ contexts only
+});
+&lt;/script&gt;</code></pre>
+    </div>
+
+  </div>
+
+  <script src="../../src/lib/corrupted-particles.js"></script>
+  <script>
+    const canvas = document.getElementById('particles-canvas');
+    let cp = new CorruptedParticles(canvas);
+
+    function rebuildWithOptions() {
+      cp.destroy();
+      cp = new CorruptedParticles(canvas, {
+        count:        parseInt(document.getElementById('ctrl-count').value),
+        speed:        parseFloat(document.getElementById('ctrl-speed').value),
+        lineDistance: parseInt(document.getElementById('ctrl-linedist').value),
+        includeLewd:  document.getElementById('ctrl-lewd').checked,
+      });
+    }
+
+    function wire(id, valId, fmt) {
+      const el = document.getElementById(id);
+      const v  = document.getElementById(valId);
+      el.addEventListener('input', () => {
+        v.textContent = fmt ? parseFloat(el.value).toFixed(2) : el.value;
+      });
+      el.addEventListener('change', rebuildWithOptions);
+    }
+
+    wire('ctrl-count',    'val-count',    false);
+    wire('ctrl-speed',    'val-speed',    true);
+    wire('ctrl-linedist', 'val-linedist', false);
+    document.getElementById('ctrl-lewd').addEventListener('change', rebuildWithOptions);
+  </script>
+</body>
+</html>

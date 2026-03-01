@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLSL Vortex - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    body { margin: 0; background: #000; overflow-x: hidden; }
+
+    .vortex-wrap {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+    }
+
+    #vortex-canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding: var(--spacing-2xl);
+      pointer-events: none;
+    }
+
+    .controls-panel {
+      pointer-events: all;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      width: 100%;
+      max-width: 480px;
+      backdrop-filter: blur(12px);
+    }
+
+    .controls-panel h2 {
+      color: var(--accent);
+      margin: 0 0 var(--spacing-md);
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .control-row label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      width: 120px;
+      flex-shrink: 0;
+    }
+
+    .control-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--corrupted-magenta);
+    }
+
+    .control-row .val {
+      color: var(--corrupted-cyan);
+      font-size: 0.8rem;
+      width: 40px;
+      text-align: right;
+    }
+
+    .hue-row {
+      border-top: 1px solid var(--border);
+      margin-top: var(--spacing-sm);
+      padding-top: var(--spacing-sm);
+    }
+
+    .hue-toggle {
+      display: flex;
+      gap: var(--spacing-sm);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .hue-toggle button {
+      flex: 1;
+      padding: 4px 8px;
+      font-size: 0.75rem;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.2s;
+    }
+
+    .hue-toggle button.active {
+      background: var(--corrupted-magenta);
+      border-color: var(--corrupted-magenta);
+      color: #000;
+    }
+
+    .code-block {
+      margin-top: var(--spacing-2xl);
+      max-width: 700px;
+      width: 100%;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .code-block h3 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .code-block pre {
+      margin: 0;
+      overflow-x: auto;
+      font-size: 0.78rem;
+      color: var(--corrupted-cyan);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <a href="../index.html" class="brand-link">
+        <i class="fas fa-radiation"></i>
+        <span>corrupted-theme</span>
+      </a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+    </ul>
+  </nav>
+
+  <!-- Full-screen vortex -->
+  <div class="vortex-wrap">
+    <canvas id="vortex-canvas"></canvas>
+    <div class="overlay">
+
+      <!-- Controls -->
+      <div class="controls-panel">
+        <h2><i class="fas fa-sliders-h"></i> Vortex Controls</h2>
+
+        <div class="control-row">
+          <label>Speed</label>
+          <input type="range" id="ctrl-speed" min="0.1" max="3.0" step="0.05" value="1.0">
+          <span class="val" id="val-speed">1.00</span>
+        </div>
+
+        <div class="control-row">
+          <label>Intensity</label>
+          <input type="range" id="ctrl-intensity" min="0.1" max="3.0" step="0.05" value="1.0">
+          <span class="val" id="val-intensity">1.00</span>
+        </div>
+
+        <div class="control-row">
+          <label>Rotation Rate</label>
+          <input type="range" id="ctrl-rotation" min="0.0" max="5.0" step="0.05" value="1.0">
+          <span class="val" id="val-rotation">1.00</span>
+        </div>
+
+        <div class="hue-row">
+          <div class="hue-toggle">
+            <button id="btn-quasar" class="active">Quasar (multi-color)</button>
+            <button id="btn-fixed">Fixed Hue</button>
+          </div>
+          <div class="control-row" id="hue-slider-row" style="display:none;">
+            <label>Hue</label>
+            <input type="range" id="ctrl-hue" min="0.0" max="1.0" step="0.01" value="0.6">
+            <span class="val" id="val-hue">0.60</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Code snippet -->
+      <div class="code-block">
+        <h3>Minimal Usage</h3>
+        <pre><code>&lt;canvas id="my-canvas" style="width:100%;height:400px;"&gt;&lt;/canvas&gt;
+&lt;script src="src/lib/corrupted-vortex.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  const vortex = new CorruptedVortex(
+    document.getElementById('my-canvas'),
+    {
+      speed:        1.0,   // 0.1&#x2013;3.0
+      intensity:    1.0,   // 0.1&#x2013;3.0
+      rotationRate: 1.0,   // 0.0&#x2013;5.0
+      hue:          null,  // null = quasar; 0.0&#x2013;1.0 = fixed hue
+    }
+  );
+  // vortex.stop();
+  // vortex.start();
+  // vortex.destroy();
+&lt;/script&gt;</code></pre>
+      </div>
+
+    </div><!-- /overlay -->
+  </div><!-- /vortex-wrap -->
+
+  <script src="../../src/lib/corrupted-vortex.js"></script>
+  <script>
+    const canvas = document.getElementById('vortex-canvas');
+    const vortex = new CorruptedVortex(canvas);
+
+    function bind(sliderId, valId, prop) {
+      const slider = document.getElementById(sliderId);
+      const display = document.getElementById(valId);
+      slider.addEventListener('input', () => {
+        const v = parseFloat(slider.value);
+        vortex.options[prop] = v;
+        display.textContent = v.toFixed(2);
+      });
+    }
+
+    bind('ctrl-speed',    'val-speed',    'speed');
+    bind('ctrl-intensity','val-intensity','intensity');
+    bind('ctrl-rotation', 'val-rotation', 'rotationRate');
+
+    document.getElementById('ctrl-hue').addEventListener('input', function() {
+      vortex.options.hue = parseFloat(this.value);
+      document.getElementById('val-hue').textContent = parseFloat(this.value).toFixed(2);
+    });
+
+    document.getElementById('btn-quasar').addEventListener('click', () => {
+      vortex.options.hue = null;
+      document.getElementById('btn-quasar').classList.add('active');
+      document.getElementById('btn-fixed').classList.remove('active');
+      document.getElementById('hue-slider-row').style.display = 'none';
+    });
+
+    document.getElementById('btn-fixed').addEventListener('click', () => {
+      const hue = parseFloat(document.getElementById('ctrl-hue').value);
+      vortex.options.hue = hue;
+      document.getElementById('btn-fixed').classList.add('active');
+      document.getElementById('btn-quasar').classList.remove('active');
+      document.getElementById('hue-slider-row').style.display = 'flex';
+    });
+  </script>
+</body>
+</html>

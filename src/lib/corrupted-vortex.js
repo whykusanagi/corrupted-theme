@@ -59,7 +59,7 @@ void main() {
     R = length(p);
     float newPy = -p.z / R - 0.8;
     e = newPy;
-    p = vec3(log2(R) - uTime, newPy, atan(p.x * 0.08, p.y) - uTime * 0.2);
+    p = vec3(log2(R) + uTime, newPy, atan(p.x * 0.08, p.y) - uTime * 0.2);
 
     float s = 1.0;
     for (int si = 0; si < 10; si++) {

@@ -38,17 +38,20 @@ void main() {
 
   for (float i = 0.0; i < 33.0; i += 1.0) {
     // Corrupted-theme quasar palette:
-    //   early iters (low e) → magenta outer glow [0.83–0.88]
-    //   mid   iters         → purple→magenta core [0.68–0.86]
-    //   late  iters (high e)→ gold/yellow sparks  [0.14–0.19]
+    //   0–25%  early iters (dim)   → magenta outer glow  [0.83–0.88]
+    //   25–70% mid   iters         → purple body          [0.65–0.74]
+    //   70–85% bright inner iters  → magenta burst        [0.82–0.88]
+    //   85–100% late iters (high e)→ gold/yellow sparks   [0.14–0.19]
     float t = fract(i / 33.0);
     float base;
-    if (t < 0.30) {
-      base = mix(0.83, 0.88, t / 0.30);
-    } else if (t < 0.75) {
-      base = mix(0.68, 0.86, (t - 0.30) / 0.45);
+    if (t < 0.25) {
+      base = mix(0.83, 0.88, t / 0.25);
+    } else if (t < 0.70) {
+      base = mix(0.65, 0.74, (t - 0.25) / 0.45);
+    } else if (t < 0.85) {
+      base = mix(0.82, 0.88, (t - 0.70) / 0.15);
     } else {
-      base = mix(0.14, 0.19, (t - 0.75) / 0.25);
+      base = mix(0.14, 0.19, (t - 0.85) / 0.15);
     }
     float h = (uHue >= 0.0) ? uHue : base + p.y * 0.04;
     o.rgb += hsv(h, clamp(e * 0.4, 0.0, 1.0), e / 30.0 * uIntensity);

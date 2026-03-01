@@ -51,7 +51,7 @@ void main() {
       base = mix(0.14, 0.19, (t - 0.75) / 0.25);
     }
     float h = (uHue >= 0.0) ? uHue : base + p.y * 0.04;
-    o.rgb += hsv(h, e * 0.4 + p.y, e / 30.0 * uIntensity);
+    o.rgb += hsv(h, clamp(e * 0.4 + p.y, 0.0, 1.0), e / 30.0 * uIntensity);
 
     p = q += d * max(e, 0.01) * R * 0.14;
     p.xy *= rotate2D(0.8 * uRotationRate);

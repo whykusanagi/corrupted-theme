@@ -149,8 +149,8 @@ void main() {
                  * smoothstep(0.03, 0.08, d.y);
   o.rgb += diskSample(uvLens) * lensFade * 0.5 * uIntensity;
 
-  // Magenta corona: tightened — width 16 gives a crisp ring just outside the horizon
-  float coronaAmt = exp(-pow((dist - 0.21) * 16.0, 2.0)) * 0.9;
+  // Magenta corona: tight photon-ring — width 50 gives ~0.033 FWHM, <4% bleed into shadow
+  float coronaAmt = exp(-pow((dist - 0.21) * 50.0, 2.0)) * 0.7;
   o.rgb += vec3(coronaAmt, 0.0, coronaAmt) * uIntensity;
 
   o.a = 1.0;

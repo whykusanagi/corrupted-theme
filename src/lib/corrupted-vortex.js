@@ -50,8 +50,11 @@ void main() {
     e = newPy;
     p = vec3(log2(R) - uTime, newPy, atan(p.x * 0.08, p.y) - uTime * 0.2);
 
-    for (float s = 1.0; s < 1000.0; s += s)
+    float s = 1.0;
+    for (int si = 0; si < 10; si++) {
       e += abs(dot(sin(p.yzx * s), cos(p.yyz * s))) / s;
+      s += s;
+    }
   }
 
   gl_FragColor = clamp(o, 0.0, 1.0);

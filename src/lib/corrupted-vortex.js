@@ -71,7 +71,7 @@ void main() {
   // Black-hole event horizon: pitch-black centre, magenta photon ring at boundary
   float dist   = length(d.xy);
   float shadow = smoothstep(0.0, 0.25, dist);
-  float ring   = exp(-pow((dist - 0.25) * 14.0, 2.0)) * 0.3;
+  float ring   = exp(-pow((dist - 0.25) * 30.0, 2.0)) * 0.9;
   o.rgb = o.rgb * shadow + vec3(ring, 0.0, ring);  // ring is magenta (R+B only)
 
   o.a = 1.0;

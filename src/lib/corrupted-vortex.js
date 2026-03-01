@@ -78,6 +78,20 @@ void main() {
   o.rgb = o.rgb / (1.0 + o.rgb);
   o.rgb = pow(o.rgb, vec3(2.2));
 
+  // Spaghettification sparks: gold radial streaks that thin and are destroyed
+  // as they spiral into the event horizon.
+  //   - 6 rotating arms in polar screen-space
+  //   - angular width ∝ (r - r_horizon): each arm gets infinitely thin at the boundary
+  //   - radial band fades out before the photon ring so sparks appear torn apart
+  float spR     = length(d.xy);
+  float spAngle = atan(d.y, d.x);
+  float spArm   = fract(spAngle / 6.2832 * 6.0 - uTime * 0.18);
+  float spWidth = clamp((spR - 0.18) * 6.0, 0.003, 1.0);  // shrinks → 0 at horizon
+  float spEdge  = pow(max(0.0, 1.0 - abs(spArm - 0.5) / spWidth), 3.0);
+  float spBand  = smoothstep(0.20, 0.28, spR) * smoothstep(0.55, 0.34, spR);
+  // Added after tone-map so sparks retain full brightness without being compressed
+  o.rgb += vec3(1.0, 0.68, 0.0) * spEdge * spBand * 1.8 * uIntensity;
+
   // Black-hole event horizon: pitch-black centre, magenta photon ring at boundary
   float dist   = length(d.xy);
   float shadow = smoothstep(0.12, 0.18, dist);  // flat black void 0→0.12, ramps 0.12→0.18

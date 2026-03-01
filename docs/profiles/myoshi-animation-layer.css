@@ -1,0 +1,224 @@
+/* ═══════════════════════════════════════════
+   CORRUPTED THEME — myoshi.co profile
+   Ambient Animation Layer — 2026-02-27
+
+   HOW TO USE:
+   Append this entire block at the END of your
+   myoshi.co custom CSS field (Profile Settings).
+   Do not replace your existing CSS — append only.
+
+   Requirements: myoshi.co PostCSS engine (2026+)
+   No JS required. No HTML changes required.
+   All animations: GPU-safe (transform/opacity/filter only)
+
+   Troubleshooting:
+   - Cards pulse in sync? Add style="animation-delay:-Xs"
+     inline to each .ct-card div in your HTML instead.
+   - Scanlines visible but static? Use longhand in both
+     keyframe stops: replace "background-position: 0 0"
+     with "background-position-x:0; background-position-y:0"
+     and "background-position: 0 -60px" with
+     "background-position-x:0; background-position-y:-60px"
+   - Bar shimmer clipped? Change width from 35% to 50%.
+   ═══════════════════════════════════════════ */
+
+/* ────────────────────────────────────────────
+   KEYFRAMES
+   ──────────────────────────────────────────── */
+
+/* Card border glow: filter used (not box-shadow) to avoid
+   !important conflict on .ct-card's existing box-shadow */
+@keyframes ct-glow-breathe {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(217,79,144,0.08)); }
+  50%       { filter: drop-shadow(0 0 18px rgba(217,79,144,0.35)); }
+}
+
+/* Scanline scroll: applied to ::before pseudo, not .ct-scan
+   directly, to avoid !important background-position conflict */
+@keyframes ct-scanline-drift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 -60px; }
+}
+
+/* Glitch chromatic aberration: opacity only (not transform)
+   so existing hover transform rules work without conflict */
+@keyframes ct-rgb-breathe {
+  0%, 100% { opacity: 0.8; }
+  50%       { opacity: 0.15; }
+}
+
+/* Section label noise: irregular dips simulate signal noise */
+@keyframes ct-label-flicker {
+  0%, 100% { opacity: 1; }
+  15%       { opacity: 0.45; }
+  17%       { opacity: 1; }
+  65%       { opacity: 0.65; }
+  68%       { opacity: 1; }
+}
+
+/* Japanese decorative text: slow buffering pulse */
+@keyframes ct-jp-fade {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+
+/* Active status badge: green glow heartbeat */
+@keyframes ct-status-pulse {
+  0%, 100% { box-shadow: 0 0 2px rgba(0,204,85,0.2); }
+  50%       { box-shadow: 0 0 10px rgba(0,204,85,0.7); }
+}
+
+/* Progress bar: highlight sweeps left to right */
+@keyframes ct-bar-shimmer {
+  0%   { transform: translateX(-300%); }
+  100% { transform: translateX(500%); }
+}
+
+/* Logo signature: drop-shadow breathes */
+@keyframes ct-logo-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(217,79,144,0.45)); }
+  50%       { filter: drop-shadow(0 0 22px rgba(217,79,144,0.9)); }
+}
+
+/* ────────────────────────────────────────────
+   CARD GLOW BREATHE
+   Staggered with negative delays so all cards
+   pulse mid-cycle immediately on page load.
+   ──────────────────────────────────────────── */
+
+.ct-card {
+  animation: ct-glow-breathe 4s ease-in-out infinite;
+}
+.ct-card:nth-child(1) { animation-delay:  0s;    }
+.ct-card:nth-child(2) { animation-delay: -1.3s;  }
+.ct-card:nth-child(3) { animation-delay: -2.6s;  }
+.ct-card:nth-child(4) { animation-delay: -0.7s;  }
+
+/* .ct-card-dim is a separate element type (CTA/collab bar),
+   staggered at -1.9s to avoid syncing with any of the four cards */
+.ct-card-dim {
+  animation: ct-glow-breathe 4s ease-in-out infinite;
+  animation-delay: -1.9s;
+}
+
+/* ────────────────────────────────────────────
+   SCANLINE DRIFT
+   Uses ::before pseudo to avoid !important
+   background-position conflict on .ct-card.
+   ──────────────────────────────────────────── */
+
+.ct-scan {
+  position: relative;
+  overflow: hidden;
+}
+.ct-scan::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 2px,
+    rgba(217,79,144,0.06) 2px, rgba(217,79,144,0.06) 3px
+  );
+  background-size: 100% 60px;
+  animation: ct-scanline-drift 8s linear infinite;
+  pointer-events: none;
+  z-index: 2; /* above card content; below any myoshi-level overlays */
+}
+
+/* ────────────────────────────────────────────
+   GLITCH RGB BREATHE
+   Channels breathe out of phase with each other.
+   Hover pauses animation — existing transforms take over.
+   ──────────────────────────────────────────── */
+
+.ct-glitch::before {
+  animation: ct-rgb-breathe 5s ease-in-out infinite;
+}
+.ct-glitch::after {
+  animation: ct-rgb-breathe 5s ease-in-out infinite;
+  animation-delay: -2.5s;
+}
+.ct-glitch:hover::before,
+.ct-glitch:hover::after {
+  animation-play-state: paused;
+}
+
+/* ────────────────────────────────────────────
+   LABEL FLICKER
+   ──────────────────────────────────────────── */
+
+.ct-label {
+  animation: ct-label-flicker 7s ease-in-out infinite;
+}
+
+/* ────────────────────────────────────────────
+   JP TEXT FADE
+   ──────────────────────────────────────────── */
+
+.ct-jp {
+  animation: ct-jp-fade 3s ease-in-out infinite;
+}
+
+/* ────────────────────────────────────────────
+   STATUS PULSE
+   ──────────────────────────────────────────── */
+
+.ct-status-active {
+  animation: ct-status-pulse 2s ease-in-out infinite;
+}
+
+/* ────────────────────────────────────────────
+   PROGRESS BAR SHIMMER
+   Adds ::after pseudo with sweeping highlight.
+   overflow: hidden clips shimmer to bar bounds.
+   ──────────────────────────────────────────── */
+
+.ct-bar-fill {
+  position: relative;
+  overflow: hidden;
+}
+.ct-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0; /* static start position — movement is via transform: translateX only */
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.4) 50%,
+    transparent 100%
+  );
+  animation: ct-bar-shimmer 3s linear infinite;
+}
+
+/* ────────────────────────────────────────────
+   LOGO GLOW
+   ──────────────────────────────────────────── */
+
+.ct-logo {
+  animation: ct-logo-glow 5s ease-in-out infinite;
+}
+
+/* ────────────────────────────────────────────
+   ACCESSIBILITY
+   Must be last rule — disables all animations
+   for users with reduced-motion preference.
+   ──────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .ct-card,
+  .ct-card-dim,
+  .ct-scan::before,
+  .ct-glitch::before,
+  .ct-glitch::after,
+  .ct-label,
+  .ct-jp,
+  .ct-status-active,
+  .ct-bar-fill::after,
+  .ct-logo {
+    animation: none;
+  }
+}

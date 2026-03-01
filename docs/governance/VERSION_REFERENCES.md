@@ -2,7 +2,7 @@
 
 **Purpose**: Complete list of all files containing version numbers that must be updated when releasing a new version.
 
-**Current Version**: 0.1.7
+**Current Version**: 0.1.8
 
 ---
 
@@ -12,7 +12,7 @@
 **Location**: `/package.json`
 **Line**: 3
 ```json
-"version": "0.1.7"
+"version": "0.1.8"
 ```
 
 ### 2. CHANGELOG.md
@@ -62,10 +62,10 @@
 ### 7. showcase-complete.html
 **Location**: `/examples/showcase-complete.html`
 **Lines to update**:
-- Line 1135: "NEW v0.1.7" badge (keep for current release, change to version number after)
-- Line 1317: "NEW v0.1.7" badge (keep for current release, change to version number after)
+- Line 1135: "NEW v0.1.8" badge (keep for current release, change to version number after)
+- Line 1317: "NEW v0.1.8" badge (keep for current release, change to version number after)
 - Line 1697: Footer version `v0.1.X`
-- Line 1835: Comment `<!-- NEW v0.1.7: ... -->`
+- Line 1835: Comment `<!-- NEW v0.1.8: ... -->`
 - Line 1922: Toast message `Welcome to Corrupted Theme v0.1.X!`
 
 ### 8. Other Example Pages
@@ -77,13 +77,13 @@ All have footer version references like:
 <p>... • Corrupted Theme v0.1.0</p>
 ```
 
-**Update these to current version** (updated to v0.1.7 as of 2026-02-09)
+**Update these to current version** (updated to v0.1.8 as of 2026-02-09)
 
 ---
 
 ## Version Bump Procedure
 
-When releasing a new version (e.g., 0.1.7 → 0.1.7):
+When releasing a new version (e.g., 0.1.8 → 0.1.8):
 
 ### Step 1: Core Files
 ```bash
@@ -115,7 +115,7 @@ npm version patch  # or minor, or major
 #    - Footer
 
 # 7. Update showcase-complete.html
-#    - Change "NEW v0.1.7" badges to just version number
+#    - Change "NEW v0.1.8" badges to just version number
 #    - Update footer
 #    - Update toast message
 
@@ -143,7 +143,7 @@ Create `/scripts/bump-version.sh`:
 
 ```bash
 #!/bin/bash
-# Usage: ./scripts/bump-version.sh 0.1.7
+# Usage: ./scripts/bump-version.sh 0.1.8
 
 NEW_VERSION=$1
 OLD_VERSION=$(node -p "require('./package.json').version")
@@ -171,26 +171,26 @@ When updating, search for these patterns:
 
 ```bash
 # Version with v prefix
-"v0.1.7"
+"v0.1.8"
 "v0\.1\.3"
 
 # Version without v prefix
-"0.1.7"
+"0.1.8"
 "0\.1\.3"
 
 # NPM package version
-"@whykusanagi/corrupted-theme@0.1.7"
+"@whykusanagi/corrupted-theme@0.1.8"
 
 # NEW badge references
-"NEW v0.1.7"
-"NEW in v0.1.7"
+"NEW v0.1.8"
+"NEW in v0.1.8"
 ```
 
 ---
 
 ## Current Version Discrepancies (As of 2026-02-09)
 
-**All version references have been synchronized to v0.1.7.**
+**All version references have been synchronized to v0.1.8.**
 
 No outstanding discrepancies. All example footers, documentation files, and package files
 are consistent.

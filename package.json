@@ -1,6 +1,6 @@
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "type": "module",
   "description": "A dark, glassmorphic design system with pink/purple accents. Perfect for creating modern, visually striking web applications.",
   "main": "src/css/theme.css",
@@ -24,7 +24,9 @@
     "./corruption-loading": "./src/lib/corruption-loading.js",
     "./character-corruption": "./src/lib/character-corruption.js",
     "./components-js": "./src/lib/components.js",
-    "./carousel": "./src/lib/carousel.js"
+    "./carousel": "./src/lib/carousel.js",
+    "./corrupted-vortex": "./src/lib/corrupted-vortex.js",
+    "./corrupted-particles": "./src/lib/corrupted-particles.js"
   },
   "files": [
     "src",

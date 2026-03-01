@@ -1,0 +1,412 @@
+/* ═══════════════════════════════════════════
+     CORRUPTED THEME — myoshi.co
+     Updated 2026-02-27 — @keyframes now supported
+     via myoshi PostCSS engine rewrite.
+  ═══════════════════════════════════════════ */
+
+  /* Override myoshi's CSS variables — themes entire page cascade */
+  .profile-page {
+    --vs-bg-white: rgba(15, 10, 30, 0.95);
+    --vs-bg-light: rgba(20, 12, 40, 0.85);
+    --vs-bg-alt:   rgba(10,  5, 20, 0.9);
+    --vs-text-dark:   #f5f1f8;
+    --vs-text-medium: #b8afc8;
+    --vs-text-light:  #7a7085;
+    --vs-border:   #3a2555;
+    --vs-primary:  #d94f90;
+  }
+
+  /* Card containers */
+  .card {
+    background: rgba(15, 10, 30, 0.93) !important;
+    border: 1px solid #3a2555 !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.5),
+                0 0 30px rgba(217,79,144,0.06) !important;
+    backdrop-filter: blur(10px) !important;
+    color: #f5f1f8 !important;
+  }
+
+  /* Card headers */
+  .card-header {
+    background: rgba(40, 20, 65, 0.95) !important;
+    border-bottom: 1px solid #3a2555 !important;
+    color: #d94f90 !important;
+    font-family: monospace !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.14em !important;
+    text-transform: uppercase !important;
+  }
+  .card-header.starred { border-left: 3px solid #d94f90 !important; }
+  .card-header.hearted { border-left: 3px solid #8b5cf6 !important; color: #9d7dff !important; }
+  .card-header a       { color: #7a7085 !important; font-size: 0.7rem !important; }
+  .card-header a:hover { color: #d94f90 !important; }
+
+  .card-body { color: #b8afc8 !important; }
+
+  /* Profile identity */
+  .profile-display-name {
+    color: #f5f1f8 !important;
+    text-shadow: 0 0 12px rgba(217,79,144,0.35) !important;
+  }
+  .profile-username {
+    color: #7a7085 !important;
+    font-family: monospace !important;
+    font-size: 0.82rem !important;
+  }
+  .profile-online-status {
+    color: #00cc55 !important;
+    font-family: monospace !important;
+    font-size: 0.72rem !important;
+  }
+  .profile-boop-stats {
+    color: #7a7085 !important;
+    font-family: monospace !important;
+    font-size: 0.75rem !important;
+  }
+  .profile-url-box {
+    background: rgba(10,5,20,0.8) !important;
+    border: 1px solid #3a2555 !important;
+    border-radius: 6px !important;
+    color: #7a7085 !important;
+    font-family: monospace !important;
+  }
+
+  /* Stats table */
+  .stats-table td             { color: #b8afc8 !important; border-color: rgba(58,37,85,0.4) !important; }
+  .stats-table td:first-child { color: #7a7085 !important; font-family: monospace !important; }
+  .stats-table a              { color: #d94f90 !important; text-decoration: none !important; }
+
+  /* Friends */
+  .friend-name       { color: #b8afc8 !important; font-family: monospace !important; font-size: 0.7rem !important; }
+  .friend-item:hover .friend-name { color: #d94f90 !important; }
+
+  /* Social links */
+  .social-link-item     { background: rgba(20,12,40,0.7) !important; border: 1px solid #3a2555 !important; border-radius: 6px !important; }
+  .social-link-platform { color: #d94f90 !important; font-family: monospace !important; text-transform: uppercase !important; font-size: 0.7rem !important; }
+  .social-link-name     { color: #b8afc8 !important; }
+
+  /* Blurbs */
+  .blurb-title {
+    color: #d94f90 !important;
+    font-family: monospace !important;
+    font-size: 0.72rem !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+  }
+
+  /* Section nav */
+  .section-links a       { color: #7a7085 !important; font-family: monospace !important; font-size: 0.78rem !important; border-bottom: 1px solid #3a2555 !important; }
+  .section-links a:hover { color: #d94f90 !important; }
+
+  /* Action buttons */
+  .action-btn       { background: rgba(20,12,40,0.8) !important; border-color: #3a2555 !important; color: #b8afc8 !important; }
+  .action-btn:hover { border-color: #d94f90 !important; color: #d94f90 !important; }
+
+  /* ── GLITCH (chromatic aberration — hover-reactive, animated) ── */
+  .ct-glitch {
+    position: relative;
+    display: inline-block;
+    color: #d94f90 !important;
+    font-weight: 700;
+    filter: drop-shadow(0 0 6px rgba(217,79,144,0.5));
+    transition: filter 0.2s ease;
+  }
+  .ct-glitch:hover { filter: drop-shadow(0 0 14px rgba(217,79,144,0.9)); }
+
+  .ct-glitch::before,
+  .ct-glitch::after {
+    content: attr(data-text);
+    position: absolute;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+  }
+  .ct-glitch::before {
+    color: #e86ca8 !important;
+    clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%);
+    transform: translate(-2px, 0);
+    transition: transform 0.1s ease;
+  }
+  .ct-glitch::after {
+    color: #b61b70 !important;
+    clip-path: polygon(0 55%, 100% 55%, 100% 100%, 0 100%);
+    transform: translate(2px, 0);
+    transition: transform 0.1s ease;
+  }
+  .ct-glitch:hover::before { transform: translate(-4px, 1px); }
+  .ct-glitch:hover::after  { transform: translate(4px, -1px); }
+
+  /* ── CUSTOM CARD COMPONENTS ── */
+  .ct-card {
+    background: rgba(20, 12, 40, 0.92);
+    border: 1px solid #3a2555;
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    backdrop-filter: blur(15px);
+    color: #f5f1f8;
+    margin-bottom: 0.75rem;
+    font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+    box-shadow: 0 0 20px rgba(217,79,144,0.1), inset 0 0 20px rgba(217,79,144,0.03);
+  }
+  .ct-card-dim {
+    background: rgba(20, 12, 40, 0.6);
+    border: 1px solid rgba(58,37,85,0.5);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    color: #b8afc8;
+    margin: 0.4rem 0;
+    font-family: monospace;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  .ct-scan {
+    background-image: repeating-linear-gradient(
+      0deg,
+      transparent 0px, transparent 2px,
+      rgba(217,79,144,0.06) 2px, rgba(217,79,144,0.06) 3px
+    );
+  }
+  .ct-label    { color: #7a7085; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; font-family: monospace; margin-bottom: 0.5rem; }
+  .ct-value    { color: #d94f90 !important; font-weight: 600; font-family: monospace; }
+  .ct-divider  { border: none; border-top: 1px solid #3a2555; margin: 0.75rem 0; background: none; }
+  .ct-jp       { color: rgba(217,79,144,0.5); font-size: 0.75em; letter-spacing: 0.3em; font-family: monospace; }
+  .ct-row      { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; }
+  .ct-bar-wrap { width: 100%; background: rgba(58,37,85,0.4); border-radius: 4px; height: 4px; margin-top: 4px; }
+  .ct-bar-fill { height: 4px; border-radius: 4px; background: linear-gradient(90deg, #b61b70, #d94f90, #e86ca8); box-shadow: 0 0 6px rgba(217,79,144,0.6); }
+
+  .blurb-section:has(.blurb-title) {
+    display: none !important;
+  }
+
+  .ct-hero { display:flex; gap:1.25rem; align-items:flex-start; }
+  .ct-hero-info { flex:1; min-width:0; }
+  .ct-hero-art { width:130px; flex-shrink:0; }
+  .ct-hero-art img {
+    width:100%; object-fit:cover; object-position:top; border-radius:8px;
+    mask-image:linear-gradient(to bottom,black 55%,transparent 100%);
+    -webkit-mask-image:linear-gradient(to bottom,black 55%,transparent 100%);
+  }
+  .ct-logo {
+    max-width:150px; width:100%; margin-bottom:0.6rem; display:block;
+    filter:drop-shadow(0 0 8px rgba(217,79,144,0.45));
+  }
+  .ct-stamp {
+    display:inline-block; border:1.5px solid rgba(217,79,144,0.55);
+    color:rgba(217,79,144,0.75); font-family:monospace; font-size:0.58rem;
+    letter-spacing:0.18em; text-transform:uppercase; padding:0.15rem 0.45rem;
+    border-radius:3px; transform:rotate(-2deg); margin-right:0.4rem;
+  }
+  .ct-tags { display:flex; flex-wrap:wrap; gap:0.35rem; margin:0.5rem 0; }
+  .ct-tag {
+    background:rgba(58,37,85,0.5); border:1px solid #3a2555; border-radius:4px;
+    color:#b8afc8; font-family:monospace; font-size:0.65rem;
+    letter-spacing:0.07em; padding:0.12rem 0.45rem; text-transform:uppercase;
+  }
+  .ct-tag-hot { border-color:#d94f90; color:#d94f90; }
+  .ct-platform {
+    display:inline-flex; align-items:center; gap:0.35rem;
+    background:rgba(20,12,40,0.8); border:1px solid #3a2555; border-radius:6px;
+    color:#b8afc8; font-family:monospace; font-size:0.72rem;
+    padding:0.25rem 0.65rem; text-decoration:none;
+    transition:border-color 0.2s,color 0.2s;
+  }
+  .ct-platform:hover { border-color:#d94f90; color:#d94f90; }
+  .ct-tool-entry {
+    display:flex; justify-content:space-between; align-items:flex-start;
+    padding:0.5rem 0; border-bottom:1px solid rgba(58,37,85,0.3);
+  }
+  .ct-tool-entry:last-child { border-bottom:none; }
+  .ct-tool-name { color:#f5f1f8; font-family:monospace; font-size:0.8rem; font-weight:600; }
+  .ct-tool-desc { color:#7a7085; font-family:monospace; font-size:0.7rem; margin-top:0.12rem; }
+  .ct-status {
+    font-family:monospace; font-size:0.62rem; letter-spacing:0.1em;
+    padding:0.12rem 0.4rem; border-radius:3px; text-transform:uppercase;
+    flex-shrink:0; margin-left:0.5rem; margin-top:0.1rem;
+  }
+  .ct-status-active { background:rgba(0,204,85,0.12); border:1px solid rgba(0,204,85,0.35); color:#00cc55; }
+  .ct-status-stable { background:rgba(0,255,255,0.08); border:1px solid rgba(0,255,255,0.25); color:#00ffff; }
+  .ct-cta-contact {
+    display:block; text-align:center; color:#d94f90; font-family:monospace;
+    font-size:0.8rem; text-decoration:none; letter-spacing:0.1em;
+    margin:0.6rem 0; padding:0.45rem;
+    border:1px solid rgba(217,79,144,0.35); border-radius:6px;
+    transition:border-color 0.2s,box-shadow 0.2s;
+  }
+  .ct-cta-contact:hover { border-color:#d94f90; box-shadow:0 0 10px rgba(217,79,144,0.3); }
+  .ct-social-row { display:flex; justify-content:center; gap:0.5rem; margin-top:0.5rem; flex-wrap:wrap; }
+
+/* ═══════════════════════════════════════════
+   AMBIENT ANIMATION LAYER — 2026-02-27
+   @keyframes supported via myoshi PostCSS
+   Pure CSS — no JS — GPU-safe only
+   ═══════════════════════════════════════════ */
+
+/* Card border glow: filter used (not box-shadow) to avoid
+   !important conflict on .ct-card's existing box-shadow */
+@keyframes ct-glow-breathe {
+  0%, 100% { filter: drop-shadow(0 0 4px rgba(217,79,144,0.08)); }
+  50%       { filter: drop-shadow(0 0 18px rgba(217,79,144,0.35)); }
+}
+
+/* Scanline scroll: applied to ::before pseudo, not .ct-scan
+   directly, to avoid !important background-position conflict */
+@keyframes ct-scanline-drift {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 -60px; }
+}
+
+/* Glitch chromatic aberration: opacity only (not transform)
+   so existing hover transform rules work without conflict */
+@keyframes ct-rgb-breathe {
+  0%, 100% { opacity: 0.8; }
+  50%       { opacity: 0.15; }
+}
+
+/* Section label noise: irregular dips simulate signal noise */
+@keyframes ct-label-flicker {
+  0%, 100% { opacity: 1; }
+  15%       { opacity: 0.45; }
+  17%       { opacity: 1; }
+  65%       { opacity: 0.65; }
+  68%       { opacity: 1; }
+}
+
+/* Japanese decorative text: slow buffering pulse */
+@keyframes ct-jp-fade {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+
+/* Active status badge: green glow heartbeat */
+@keyframes ct-status-pulse {
+  0%, 100% { box-shadow: 0 0 2px rgba(0,204,85,0.2); }
+  50%       { box-shadow: 0 0 10px rgba(0,204,85,0.7); }
+}
+
+/* Progress bar: highlight sweeps left to right */
+@keyframes ct-bar-shimmer {
+  0%   { transform: translateX(-300%); }
+  100% { transform: translateX(500%); }
+}
+
+/* Logo signature: drop-shadow breathes */
+@keyframes ct-logo-glow {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(217,79,144,0.45)); }
+  50%       { filter: drop-shadow(0 0 22px rgba(217,79,144,0.9)); }
+}
+
+/* ── CARD GLOW BREATHE (staggered) ── */
+/* Negative delays start mid-cycle immediately — no waiting on load */
+.ct-card {
+  animation: ct-glow-breathe 4s ease-in-out infinite;
+}
+.ct-card:nth-child(1) { animation-delay:  0s;   }
+.ct-card:nth-child(2) { animation-delay: -1.3s; }
+.ct-card:nth-child(3) { animation-delay: -2.6s; }
+.ct-card:nth-child(4) { animation-delay: -0.7s; }
+
+/* .ct-card-dim is a separate element type (CTA/collab bar),
+   staggered at -1.9s to avoid syncing with any of the four cards */
+.ct-card-dim {
+  animation: ct-glow-breathe 4s ease-in-out infinite;
+  animation-delay: -1.9s;
+}
+
+/* ── SCANLINE DRIFT ── */
+/* Uses ::before pseudo to avoid !important background-position
+   conflict on .ct-card. overflow:hidden clips to card boundary. */
+.ct-scan {
+  position: relative;
+  overflow: hidden;
+}
+.ct-scan::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: repeating-linear-gradient(
+    0deg,
+    transparent 0px, transparent 2px,
+    rgba(217,79,144,0.06) 2px, rgba(217,79,144,0.06) 3px
+  );
+  background-size: 100% 60px;
+  animation: ct-scanline-drift 8s linear infinite;
+  pointer-events: none;
+  z-index: 2; /* above card content; below any myoshi-level overlays */
+}
+
+/* ── GLITCH RGB BREATHE ── */
+/* Channels breathe out of phase. Hover pauses animation —
+   existing transition + transform rules take full control. */
+.ct-glitch::before {
+  animation: ct-rgb-breathe 5s ease-in-out infinite;
+}
+.ct-glitch::after {
+  animation: ct-rgb-breathe 5s ease-in-out infinite;
+  animation-delay: -2.5s;
+}
+.ct-glitch:hover::before,
+.ct-glitch:hover::after {
+  animation-play-state: paused;
+}
+
+/* ── LABEL FLICKER ── */
+.ct-label {
+  animation: ct-label-flicker 7s ease-in-out infinite;
+}
+
+/* ── JP TEXT FADE ── */
+.ct-jp {
+  animation: ct-jp-fade 3s ease-in-out infinite;
+}
+
+/* ── STATUS PULSE ── */
+.ct-status-active {
+  animation: ct-status-pulse 2s ease-in-out infinite;
+}
+
+/* ── PROGRESS BAR SHIMMER ── */
+/* overflow:hidden clips the sweep to bar bounds.
+   left:0 is static — movement is via transform: translateX only */
+.ct-bar-fill {
+  position: relative;
+  overflow: hidden;
+}
+.ct-bar-fill::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 35%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255,255,255,0.4) 50%,
+    transparent 100%
+  );
+  animation: ct-bar-shimmer 3s linear infinite;
+}
+
+/* ── LOGO GLOW ── */
+.ct-logo {
+  animation: ct-logo-glow 5s ease-in-out infinite;
+}
+
+/* ── ACCESSIBILITY ── */
+/* Must remain last — disables all animations for
+   users with prefers-reduced-motion enabled */
+@media (prefers-reduced-motion: reduce) {
+  .ct-card,
+  .ct-card-dim,
+  .ct-scan::before,
+  .ct-glitch::before,
+  .ct-glitch::after,
+  .ct-label,
+  .ct-jp,
+  .ct-status-active,
+  .ct-bar-fill::after,
+  .ct-logo {
+    animation: none;
+  }
+}

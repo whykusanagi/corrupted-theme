@@ -38,13 +38,13 @@ void main() {
 
   for (float i = 0.0; i < 33.0; i += 1.0) {
     // Corrupted-theme quasar palette:
-    //   early iters (low e) → cyan outer glow  [0.48–0.54]
+    //   early iters (low e) → magenta outer glow [0.83–0.88]
     //   mid   iters         → purple→magenta core [0.68–0.86]
     //   late  iters (high e)→ gold/yellow sparks  [0.14–0.19]
     float t = fract(i / 33.0);
     float base;
     if (t < 0.30) {
-      base = mix(0.48, 0.54, t / 0.30);
+      base = mix(0.83, 0.88, t / 0.30);
     } else if (t < 0.75) {
       base = mix(0.68, 0.86, (t - 0.30) / 0.45);
     } else {

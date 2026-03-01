@@ -29,23 +29,47 @@ mat2 rotate2D(float a) {
   return mat2(c, -s, s, c);
 }
 
-// Accretion disk — edge-on (side) view.
-// Circular orbits at radius r0 project onto the horizontal axis as x = r0*cos(phi).
-// acos maps screen-x back to orbital phase; nearest of N equally-spaced particles
-// is found on the front arc (phi) and back arc (-phi) separately.
-// Spaghettification: blobs stretch horizontally and compress vertically as
-// length(uv) approaches the event horizon radius.
-float diskRing(vec2 uv, float r0, float N, float omega, float sigma) {
-  if (abs(uv.x) >= r0 * 0.999) return 0.0;
-  float phi  = acos(uv.x / r0);
-  float phF  = fract(( phi / 6.2832 - omega * uTime) * N + 0.5) - 0.5;
-  float phB  = fract((-phi / 6.2832 - omega * uTime) * N + 0.5) - 0.5;
-  float fall = smoothstep(0.26, 0.19, length(uv));   // 0 far out → 1 near horizon
-  float hSig = sigma * (1.0 + fall * 5.0);           // horizontal stretch
-  float vSig = sigma * max(0.15, 1.0 - fall * 0.85); // vertical compression
-  float gF   = exp(-pow(abs(phF) * 6.2832 / N * r0 / hSig, 2.0)) * 1.6; // front brighter
-  float gB   = exp(-pow(abs(phB) * 6.2832 / N * r0 / hSig, 2.0)) * 0.6; // back dimmer
-  return (gF + gB) * exp(-pow(uv.y / vSig, 2.0));
+// Continuous 3-D accretion disk viewed at ~60° inclination, major axis 45° CW.
+// Perpendicular-distance-to-radial-ray trick gives analytic nearest orbit:
+//   phi = atan((sx+sy)/B, sx-sy)                   [orbital angle, r-invariant]
+//   K   = 0.7071*(cos φ+B·sin φ, -cos φ+B·sin φ)  [radial direction on ellipse]
+//   r0  = dot(uv, K) / dot(K,K)                    [nearest orbital radius]
+//   dr  = length(uv - r0·K)                        [perpendicular disk offset]
+vec3 diskSample(vec2 uv) {
+  float B   = 0.38;
+  float phi = atan((uv.x + uv.y) / B, uv.x - uv.y);
+  vec2  K   = vec2(0.7071 * (cos(phi) + B * sin(phi)),
+                   0.7071 * (-cos(phi) + B * sin(phi)));
+  float r0  = dot(uv, K) / dot(K, K);
+  float dr  = length(uv - r0 * K);
+
+  // Radial extent: inner edge near photon sphere, outer at 0.65
+  float radial = smoothstep(0.185, 0.235, r0) * smoothstep(0.65, 0.50, r0);
+
+  // Disk height (flared outward; spaghettifies near horizon)
+  float fall   = smoothstep(0.30, 0.19, length(uv));
+  float sigma  = (0.020 + r0 * 0.042) * max(0.07, 1.0 - fall * 0.93);
+  float height = exp(-pow(dr / sigma, 2.0));
+
+  // Gas-flow striations along orbital direction
+  float fiber  = 0.62 + 0.38 * abs(sin(phi * 18.0 + r0 * 22.0 - uTime * 0.25));
+
+  // Doppler: approaching half (sin φ > 0) → brighter
+  float dop    = 0.30 + 1.40 * max(0.0, sin(phi));
+
+  // Color: inner cream-white → gold → dark orange outer
+  float t = clamp((r0 - 0.18) / (0.62 - 0.18), 0.0, 1.0);
+  vec3  col;
+  if (t < 0.25) {
+    col = mix(vec3(1.00, 0.97, 0.85), vec3(1.00, 0.72, 0.18), t / 0.25);
+  } else {
+    col = mix(vec3(1.00, 0.72, 0.18), vec3(0.38, 0.12, 0.01), (t - 0.25) / 0.75);
+  }
+
+  // Tidal brightening near inner edge
+  float innerBoost = 1.0 + 1.5 * exp(-pow((r0 - 0.21) / 0.10, 2.0));
+
+  return col * (height * radial * fiber * dop * innerBoost);
 }
 
 void main() {
@@ -97,30 +121,25 @@ void main() {
   o.rgb = o.rgb / (1.0 + o.rgb);
   o.rgb = pow(o.rgb, vec3(2.2));
 
-  // Accretion disk: edge-on side view — flat horizontal disk with Keplerian orbits.
-  float spR2     = length(d.xy);
-  float vapFade  = smoothstep(0.18, 0.24, spR2);
-  float vapBoost = 1.0 + smoothstep(0.30, 0.20, spR2) * 1.0;  // tidal heating
+  // ── Continuous 3-D accretion disk (Interstellar-style) ────────────────────
+  o.rgb += diskSample(d.xy) * 2.8 * uIntensity;
 
-  // Diffuse disk glow — hot gas between particles; disk flares slightly outward
-  float dH    = 0.018 + abs(d.x) * 0.055;
-  float dGlow = exp(-pow(d.y / dH, 2.0))
-              * smoothstep(0.18, 0.26, spR2)    // fade at inner edge (horizon)
-              * smoothstep(0.58, 0.32, spR2);   // fade at outer edge
+  // Gravitational lensing: back-side of disk bent ~π over the photon sphere,
+  // producing a bright arc above the shadow (Interstellar top-arc effect).
+  float lensR   = length(d.xy);
+  float lensThe = atan(d.y, d.x);
+  float bend    = exp(-(lensR - 0.19) * 9.0);
+  float thetaS  = lensThe + 3.14159 * bend;
+  vec2  uvLens  = vec2(cos(thetaS), sin(thetaS)) * lensR;
+  float lensFade = exp(-pow((lensR - 0.23) * 8.0, 2.0))
+                 * smoothstep(0.0, 0.04, d.y);
+  o.rgb += diskSample(uvLens) * lensFade * 0.7 * uIntensity;
 
-  // Point-like objects on 3 Keplerian rings (ω ∝ r^-1.5, inner orbits faster)
-  float sparks = 0.0;
-  sparks += diskRing(d.xy, 0.50, 8.0, 0.18, 0.022);   // outer — slow
-  sparks += diskRing(d.xy, 0.35, 7.0, 0.31, 0.022);   // mid
-  sparks += diskRing(d.xy, 0.25, 6.0, 0.51, 0.022);   // inner — fast, near horizon
-
-  o.rgb += vec3(1.0, 0.68, 0.0) * (sparks + dGlow * 0.4) * vapFade * vapBoost * 3.0 * uIntensity;
-
-  // Black-hole event horizon: pitch-black centre, magenta photon ring at boundary
+  // Black-hole event horizon: pitch-black centre, warm white photon ring at boundary
   float dist   = length(d.xy);
   float shadow = smoothstep(0.12, 0.18, dist);  // flat black void 0→0.12, ramps 0.12→0.18
   float ring   = exp(-pow((dist - 0.18) * 30.0, 2.0)) * 0.9;
-  o.rgb = o.rgb * shadow + vec3(ring, 0.0, ring);  // ring is magenta (R+B only)
+  o.rgb = o.rgb * shadow + vec3(ring, ring * 0.80, ring * 0.45);  // warm white/gold photon ring
 
   o.a = 1.0;
   gl_FragColor = clamp(o, 0.0, 1.0);

@@ -29,6 +29,49 @@ mat2 rotate2D(float a) {
   return mat2(c, -s, s, c);
 }
 
+// Continuous 3-D accretion disk viewed at ~60° inclination, major axis 45° CW.
+// Perpendicular-distance-to-radial-ray trick gives analytic nearest orbit:
+//   phi = atan((sx+sy)/B, sx-sy)                   [orbital angle, r-invariant]
+//   K   = 0.7071*(cos φ+B·sin φ, -cos φ+B·sin φ)  [radial direction on ellipse]
+//   r0  = dot(uv, K) / dot(K,K)                    [nearest orbital radius]
+//   dr  = length(uv - r0·K)                        [perpendicular disk offset]
+vec3 diskSample(vec2 uv) {
+  float B   = 0.15;  // near edge-on (~9° from edge) → Saturn-like flat stripe
+  float phi = atan((uv.x + uv.y) / B, uv.x - uv.y);
+  vec2  K   = vec2(0.7071 * (cos(phi) + B * sin(phi)),
+                   0.7071 * (-cos(phi) + B * sin(phi)));
+  float r0  = dot(uv, K) / dot(K, K);
+  float dr  = length(uv - r0 * K);
+
+  // Radial extent: inner edge near photon sphere, outer at 0.65
+  float radial = smoothstep(0.185, 0.235, r0) * smoothstep(0.65, 0.50, r0);
+
+  // Disk height (thin, crisp; spaghettifies near horizon)
+  float fall   = smoothstep(0.30, 0.19, length(uv));
+  float sigma  = (0.012 + r0 * 0.022) * max(0.07, 1.0 - fall * 0.93);
+  float height = exp(-pow(dr / sigma, 2.0));
+
+  // Gas-flow striations along orbital direction
+  float fiber  = 0.62 + 0.38 * abs(sin(phi * 18.0 + r0 * 22.0 - uTime * 0.25));
+
+  // Doppler: approaching half (sin φ > 0) → brighter
+  float dop    = 0.30 + 1.40 * max(0.0, sin(phi));
+
+  // Color: inner cream-white → gold → dark orange outer
+  float t = clamp((r0 - 0.18) / (0.62 - 0.18), 0.0, 1.0);
+  vec3  col;
+  if (t < 0.25) {
+    col = mix(vec3(1.00, 0.97, 0.85), vec3(1.00, 0.72, 0.18), t / 0.25);
+  } else {
+    col = mix(vec3(1.00, 0.72, 0.18), vec3(0.38, 0.12, 0.01), (t - 0.25) / 0.75);
+  }
+
+  // Tidal brightening near inner edge (kept subtle to avoid drowning the corona)
+  float innerBoost = 1.0 + 0.5 * exp(-pow((r0 - 0.21) / 0.10, 2.0));
+
+  return col * (height * radial * fiber * dop * innerBoost);
+}
+
 void main() {
   vec4 o = vec4(0.0);
   float e = 0.0, R = 0.0;
@@ -37,10 +80,24 @@ void main() {
   q.z -= 1.0;
 
   for (float i = 0.0; i < 33.0; i += 1.0) {
-    float h = (uHue >= 0.0)
-      ? uHue
-      : mix(0.14, 0.87, fract(i / 33.0)) + p.y * 0.05;
-    o.rgb += hsv(h, e * 0.4 + p.y, e / 30.0 * uIntensity);
+    // Corrupted-theme quasar palette:
+    //   0–25%  early iters (dim)   → magenta outer glow  [0.83–0.88]
+    //   25–70% mid   iters         → purple body          [0.65–0.74]
+    //   70–85% bright inner iters  → magenta burst        [0.82–0.88]
+    //   85–100% late iters (high e)→ gold/yellow sparks   [0.14–0.19]
+    float t = fract(i / 33.0);
+    float base;
+    if (t < 0.25) {
+      base = mix(0.83, 0.88, t / 0.25);
+    } else if (t < 0.70) {
+      base = mix(0.65, 0.74, (t - 0.25) / 0.45);
+    } else if (t < 0.85) {
+      base = mix(0.82, 0.88, (t - 0.70) / 0.15);
+    } else {
+      base = mix(0.14, 0.19, (t - 0.85) / 0.15);
+    }
+    float h = (uHue >= 0.0) ? uHue : base + p.y * 0.04;
+    o.rgb += hsv(h, clamp(e * 0.4, 0.0, 1.0), e / 30.0 * uIntensity);
 
     p = q += d * max(e, 0.01) * R * 0.14;
     p.xy *= rotate2D(0.8 * uRotationRate);
@@ -48,7 +105,7 @@ void main() {
     R = length(p);
     float newPy = -p.z / R - 0.8;
     e = newPy;
-    p = vec3(log2(R) - uTime, newPy, atan(p.x * 0.08, p.y) - uTime * 0.2);
+    p = vec3(log2(R) + uTime, newPy, atan(p.x * 0.08, p.y) - uTime * 0.2);
 
     float s = 1.0;
     for (int si = 0; si < 10; si++) {
@@ -57,6 +114,46 @@ void main() {
     }
   }
 
+  // Reinhard + contrast curve: compress sum then push dim areas toward black.
+  // pow(1.8) is softer than 2.2 — keeps the magenta/purple corona visible
+  // while still collapsing near-zero cloud artifacts to black.
+  o.rgb = o.rgb / (1.0 + o.rgb);
+  o.rgb = pow(o.rgb, vec3(1.8));
+
+  // Near/far depth split: project onto the 45° CW major axis direction (1,-1)/√2.
+  // majorProj > 0  →  lower-right arm  →  near  (passes in front of BH)
+  // majorProj < 0  →  upper-left arm   →  far   (passes behind BH)
+  float dist      = length(d.xy);
+  float majorProj = dot(d.xy, vec2(0.7071, -0.7071));
+  float nearMask  = smoothstep(-0.04, 0.04, majorProj);
+  vec3  diskVal   = diskSample(d.xy) * 2.0 * uIntensity;
+
+  // Far arm: add before shadow; extra depth-fade darkens it near the BH centre
+  float farDepth = smoothstep(0.12, 0.26, dist);
+  o.rgb += diskVal * (1.0 - nearMask) * farDepth;
+
+  // Black-hole event horizon: shadows the vortex cloud (and the far arm)
+  float shadow = smoothstep(0.12, 0.18, dist);
+  float ring   = exp(-pow((dist - 0.18) * 30.0, 2.0)) * 0.9;
+  o.rgb = o.rgb * shadow + vec3(ring, ring * 0.80, ring * 0.45);
+
+  // Near arm: add after shadow → visibly crosses in front of the event horizon
+  o.rgb += diskVal * nearMask;
+
+  // Lensed arc: thin bright stripe above the shadow boundary
+  float lensThe  = atan(d.y, d.x);
+  float bend     = exp(-(dist - 0.19) * 9.0);
+  float thetaS   = lensThe + 3.14159 * bend;
+  vec2  uvLens   = vec2(cos(thetaS), sin(thetaS)) * dist;
+  float lensFade = exp(-pow((dist - 0.22) * 16.0, 2.0))
+                 * smoothstep(0.03, 0.08, d.y);
+  o.rgb += diskSample(uvLens) * lensFade * 0.5 * uIntensity;
+
+  // Magenta corona: tight photon-ring — width 50 gives ~0.033 FWHM, <4% bleed into shadow
+  float coronaAmt = exp(-pow((dist - 0.21) * 50.0, 2.0)) * 0.7;
+  o.rgb += vec3(coronaAmt, 0.0, coronaAmt) * uIntensity;
+
+  o.a = 1.0;
   gl_FragColor = clamp(o, 0.0, 1.0);
 }
 `;
@@ -99,7 +196,7 @@ class CorruptedVortex {
   }
 
   init() {
-    const gl = this.canvas.getContext('webgl');
+    const gl = this.canvas.getContext('webgl', { alpha: false });
     if (!gl) {
       console.warn('CorruptedVortex: WebGL not supported in this browser.');
       return;

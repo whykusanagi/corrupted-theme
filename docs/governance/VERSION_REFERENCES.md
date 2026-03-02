@@ -1,227 +1,86 @@
 # Version References - Update Checklist
 
-**Purpose**: Complete list of all files containing version numbers that must be updated when releasing a new version.
+**Purpose**: Canonical list of every file containing a version number. Update all of these when releasing a new version.
 
 **Current Version**: 0.1.8
 
 ---
 
-## Critical Files (MUST UPDATE)
+## Files That MUST Be Updated on Every Release
 
-### 1. package.json
-**Location**: `/package.json`
-**Line**: 3
-```json
-"version": "0.1.8"
-```
+| # | File | Location(s) | What to change |
+|---|------|-------------|----------------|
+| 1 | `package.json` | line 3 | `"version": "0.1.8"` |
+| 2 | `package-lock.json` | lines 3 and 9 | `"version": "0.1.8"` (both occurrences) |
+| 3 | `CHANGELOG.md` | top of file | Add new `## [0.1.X] - YYYY-MM-DD` section |
+| 4 | `README.md` | search for old ver | Any install/usage examples with pinned version |
+| 5 | `index.html` *(root)* | lines 476, 725 | Hero badge `v0.1.X` and footer `Corrupted Theme v0.1.X` |
+| 6 | `examples/index.html` | lines 496, 779 | Hero badge and footer |
+| 7 | `examples/showcase-complete.html` | lines 1700, 1923 | Footer + toast `Welcome to Corrupted Theme v0.1.X!` |
+| 8 | `examples/showcase.html` | line 468 | Footer |
+| 9 | `examples/button.html` | line 444 | Footer |
+| 10 | `examples/card.html` | line 687 | Footer |
+| 11 | `examples/form.html` | line 556 | Footer |
+| 12 | `examples/layout.html` | line 517 | Footer |
+| 13 | `examples/nikke-team-builder.html` | line 569 | Footer |
 
-### 2. CHANGELOG.md
-**Location**: `/CHANGELOG.md`
-**Lines**: 24 (header), 116-117 (references)
-- Add new version header: `## [0.1.X] - YYYY-MM-DD`
-- Update component counts if applicable
-- List all changes under new version
+## Files That SHOULD Be Updated (docs/governance)
 
----
-
-## Documentation Files (SHOULD UPDATE)
-
-### 3. NPM_PACKAGE.md
-**Location**: `/docs/platforms/NPM_PACKAGE.md`
-**Lines to update**:
-- Line 34: Example package.json version
-- Line 83: CDN link with version (`@whykusanagi/corrupted-theme@0.1.X`)
-- Line 667: Version example
-- Line 677: Version history table (current stable release)
-- Line 694: Install command example
-- Line 852: Package version footer
-
-### 4. VERSION_MANAGEMENT.md
-**Location**: `/docs/governance/VERSION_MANAGEMENT.md`
-**Lines to update**:
-- Line 107: Current Celeste version
-- Line 183: Example changelog header
-- Line 444: Current Celeste version footer
-
-### 5. DESIGN_SYSTEM_GOVERNANCE.md
-**Location**: `/docs/governance/DESIGN_SYSTEM_GOVERNANCE.md`
-**Lines**: 223-224, 305
-- Version increment examples in tables
-- Update "current" version reference
+| # | File | Location(s) | What to change |
+|---|------|-------------|----------------|
+| 14 | `docs/governance/VERSION_REFERENCES.md` *(this file)* | line 5 | `**Current Version**: X.Y.Z` |
+| 15 | `docs/governance/VERSION_MANAGEMENT.md` | lines 107, 444 | `Current Celeste version: X.Y.Z` |
+| 16 | `docs/platforms/NPM_PACKAGE.md` | lines 34, 83, 667, 675–676 (table), 695, 853 | CDN link, install example, semver example, version table (add new row at top), footer |
 
 ---
 
-## Example/Showcase Files (SHOULD UPDATE)
+## What to Leave Alone
 
-### 6. index.html (Main Landing)
-**Location**: `/examples/index.html`
-**Lines to update**:
-- Line 476: Hero version badge `v0.1.X — Production Ready`
-- Line 725: Footer version `Corrupted Theme v0.1.X`
-
-### 7. showcase-complete.html
-**Location**: `/examples/showcase-complete.html`
-**Lines to update**:
-- Line 1135: "NEW v0.1.8" badge (keep for current release, change to version number after)
-- Line 1317: "NEW v0.1.8" badge (keep for current release, change to version number after)
-- Line 1697: Footer version `v0.1.X`
-- Line 1835: Comment `<!-- NEW v0.1.8: ... -->`
-- Line 1922: Toast message `Welcome to Corrupted Theme v0.1.X!`
-
-### 8. Other Example Pages
-**Location**: `/examples/*.html`
-**Files**: showcase.html, form.html, layout.html, card.html, button.html, nikke-team-builder.html
-
-All have footer version references like:
-```html
-<p>... • Corrupted Theme v0.1.0</p>
-```
-
-**Update these to current version** (updated to v0.1.8 as of 2026-02-09)
+- **`CHANGELOG.md`** historical entries (0.1.7, 0.1.6, etc.) — these are release history, never change them
+- **`docs/governance/DESIGN_SYSTEM_GOVERNANCE.md`** — uses version numbers as abstract examples in tables/diagrams, not live references
+- **`docs/planning/*.md`** — archived planning docs with old version references, leave as historical record
+- **`docs/platforms/NPM_PACKAGE.md`** version history table rows other than the current one
+- **HTML comments** like `<!-- NEW v0.1.4 -->` in showcase pages — these record when a feature was added
 
 ---
 
-## Version Bump Procedure
-
-When releasing a new version (e.g., 0.1.8 → 0.1.8):
-
-### Step 1: Core Files
-```bash
-# 1. Update package.json
-npm version patch  # or minor, or major
-
-# 2. Update CHANGELOG.md
-# - Add new version header
-# - List all changes
-```
-
-### Step 2: Documentation
-```bash
-# 3. Update NPM_PACKAGE.md
-#    - Search and replace version numbers
-#    - Update version history table
-
-# 4. Update VERSION_MANAGEMENT.md
-#    - Update "Current Celeste version"
-
-# 5. Update DESIGN_SYSTEM_GOVERNANCE.md
-#    - Update version examples if needed
-```
-
-### Step 3: Examples
-```bash
-# 6. Update index.html
-#    - Hero badge
-#    - Footer
-
-# 7. Update showcase-complete.html
-#    - Change "NEW v0.1.8" badges to just version number
-#    - Update footer
-#    - Update toast message
-
-# 8. Update all other example pages
-#    - Bulk find/replace footer versions
-```
-
-### Step 4: Search & Verify
-```bash
-# Search for old version references
-grep -rn "v0\.1\.[0-9]" . --include="*.html" --include="*.md" --include="*.json"
-
-# Verify package.json
-cat package.json | grep version
-
-# Verify CHANGELOG.md has new entry
-head -30 CHANGELOG.md
-```
-
----
-
-## Automated Version Bump Script (Future)
-
-Create `/scripts/bump-version.sh`:
+## One-Command Version Bump
 
 ```bash
-#!/bin/bash
-# Usage: ./scripts/bump-version.sh 0.1.8
+NEW=0.1.9
+OLD=0.1.8
 
-NEW_VERSION=$1
-OLD_VERSION=$(node -p "require('./package.json').version")
+# 1. Core package files (auto-syncs both package.json and package-lock.json)
+npm version patch --no-git-tag-version   # or minor / major
 
-echo "Bumping version: $OLD_VERSION → $NEW_VERSION"
+# 2. All HTML example footers + badges
+find . -name "*.html" ! -path "*/node_modules/*" \
+  -exec sed -i '' "s/v${OLD}/v${NEW}/g" {} +
 
-# Update package.json
-npm version $NEW_VERSION --no-git-tag-version
+# 3. Docs
+sed -i '' "s/${OLD}/${NEW}/g" \
+  docs/governance/VERSION_REFERENCES.md \
+  docs/governance/VERSION_MANAGEMENT.md \
+  docs/platforms/NPM_PACKAGE.md
 
-# Update all HTML files
-find examples -name "*.html" -exec sed -i '' "s/v$OLD_VERSION/v$NEW_VERSION/g" {} +
+# 4. Add 0.1.9 row to NPM_PACKAGE.md version table manually
 
-# Update documentation
-find docs -name "*.md" -exec sed -i '' "s/$OLD_VERSION/$NEW_VERSION/g" {} +
-
-echo "✓ Version bumped to $NEW_VERSION"
-echo "⚠ Don't forget to update CHANGELOG.md manually!"
+# 5. Verify nothing left
+grep -rn "${OLD}" . --include="*.html" --include="*.md" --include="*.json" \
+  | grep -v node_modules | grep -v ".git" | grep -v CHANGELOG.md
 ```
 
 ---
 
-## Version Number Patterns to Search For
-
-When updating, search for these patterns:
+## Verify Current State
 
 ```bash
-# Version with v prefix
-"v0.1.8"
-"v0\.1\.3"
-
-# Version without v prefix
-"0.1.8"
-"0\.1\.3"
-
-# NPM package version
-"@whykusanagi/corrupted-theme@0.1.8"
-
-# NEW badge references
-"NEW v0.1.8"
-"NEW in v0.1.8"
+# Quick check — should only show 0.1.8 in live files, old versions only in CHANGELOG
+grep -rn "0\.1\.[0-9]" . --include="*.html" --include="*.json" \
+  | grep -v node_modules | grep -v ".git"
 ```
 
 ---
 
-## Current Version Discrepancies (As of 2026-02-09)
-
-**All version references have been synchronized to v0.1.8.**
-
-No outstanding discrepancies. All example footers, documentation files, and package files
-are consistent.
-
-### Note: package-lock.json
-
-`package-lock.json` is listed in `.gitignore` and is not tracked by git. This is
-intentional — npm recommends not committing lockfiles for library packages (only for
-applications). CLAUDE.md section 5 references syncing `package-lock.json`, but since
-it's local-only, version sync is handled automatically by `npm version` and does not
-require manual updates.
-
----
-
-## Next Version Release Checklist
-
-When preparing the next version:
-
-- [ ] Update `package.json` version
-- [ ] Add CHANGELOG.md entry with release date
-- [ ] Update NPM_PACKAGE.md (6 locations)
-- [ ] Update VERSION_MANAGEMENT.md (3 locations)
-- [ ] Update index.html hero and footer
-- [ ] Update showcase-complete.html (footer, toast, badges)
-- [ ] Update all example page footers (8 files)
-- [ ] Run version search to verify no old references remain
-- [ ] Build and test Docker container
-- [ ] Git tag release
-- [ ] Publish to npm: `npm publish`
-
----
-
-**Last Updated**: 2026-02-09
-**Maintained By**: whykusanagi team
+**Last Updated**: 2026-03-01
+**Maintained By**: whykusanagi

@@ -96,16 +96,28 @@ Copy `src/css` into your project (or use `dist/theme.min.css`) and import it loc
 │   │   └── event-tracker.js       # lifecycle: tracked addEventListener
 │   └── lib/
 │       ├── carousel.js            # carousel/slideshow with autoplay + swipe
+│       ├── celeste-proxy.js       # Celeste CLI proxy integration
+│       ├── celeste-widget.js      # Celeste chat widget
 │       ├── character-corruption.js# auto-corruption for individual characters
 │       ├── components.js          # modal, dropdown, tabs, collapse, accordion, toast
+│       ├── corrupted-particles.js # Canvas 2D floating phrase particle background
 │       ├── corrupted-text.js      # multi-language glitch animation
+│       ├── corrupted-vortex.js    # WebGL raymarched spiral vortex shader
 │       ├── corruption-loading.js  # cinematic loading curtain
 │       ├── countdown-widget.js    # event countdown with shapes
 │       └── gallery.js             # gallery grid with filtering + lightbox
 ├── dist/theme.min.css              # postcss + cssnano build output
 ├── examples/
 │   ├── showcase-complete.html      # full design system demo
-│   └── interactive-components.html # modal, dropdown, tabs, carousel demo
+│   ├── interactive-components.html # modal, dropdown, tabs, carousel demo
+│   ├── basic/
+│   │   ├── corrupted-text.html     # CorruptedText demo
+│   │   ├── multi-gallery.html      # multi-instance gallery demo
+│   │   └── typing-animation.html   # TypingAnimation demo
+│   └── advanced/
+│       ├── glsl-vortex.html        # CorruptedVortex WebGL demo
+│       ├── nsfw-corruption.html    # NSFW corruption modes demo
+│       └── particles-bg.html       # CorruptedParticles demo
 ├── scripts/static-server.js        # ESM static server (Docker)
 └── docs/COMPONENTS_REFERENCE.md    # exhaustive snippets
 ```
@@ -553,11 +565,35 @@ Class | Behavior
 
 ### JavaScript Corruption Components
 
+All JS corruption components follow the same lifecycle: `new Class(element, options)` with `start()`, `stop()`, `destroy()` methods. Full API details are in [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#javascript-corruption-components).
+
 **CorruptedText** - Pattern 1: Character-Level Corruption
 - Visual glitch effect using random characters (Katakana, Hiragana, symbols)
 - Always SFW (no phrases, just character-level noise)
 - Cycles through multi-language variants
 - Class: `.corrupted-multilang`
+- Demo: `examples/basic/corrupted-text.html`
+
+```js
+import { initCorruptedText } from '@whykusanagi/corrupted-theme/corrupted-text';
+
+// Auto-init all .corrupted-multilang elements
+initCorruptedText();
+
+// Or manual:
+const ct = new CorruptedText(element, {
+  duration: 3000,    // total animation duration (ms)
+  cycleDelay: 100,   // delay between corruption steps (ms)
+  startDelay: 0,     // initial delay before animation
+  loop: true,        // loop or settle on final text
+  finalText: null    // text to settle on (null = english variant)
+});
+ct.start();          // begin animation
+ct.stop();           // pause
+ct.restart();        // reset to first variant
+ct.settle('Hello');  // stop and settle to specific text
+ct.destroy();        // full teardown
+```
 
 **TypingAnimation** - Pattern 2: Phrase Flickering (Buffer Corruption)
 - Simulates neural network decoding corrupted data buffer
@@ -565,6 +601,107 @@ Class | Behavior
 - SFW mode (default): Cute, playful, atmospheric phrases
 - NSFW mode (opt-in): Explicit 18+ content with `{ nsfw: true }`
 - Color: Magenta (#d94f90) for SFW, Purple (#8b5cf6) for NSFW
+- Demo: `examples/basic/typing-animation.html`
+
+```js
+import { TypingAnimation } from '@whykusanagi/corrupted-theme/src/core/typing-animation.js';
+
+const typing = new TypingAnimation(element, {
+  typingSpeed: 50,     // ms per character
+  glitchChance: 0.3,   // probability of glitch per character
+  nsfw: false          // enable 18+ phrase mode
+});
+typing.start();
+typing.stop();
+typing.settle();       // resolve to final text
+```
+
+**CorruptedParticles** - Canvas 2D Floating Phrase Background
+- Floating Japanese phrase particles across three depth layers
+- Mouse hover repel, click burst (6 particles), connection lines between nearby particles
+- SFW/NSFW phrase modes with `includeLewd` toggle
+- Demo: `examples/advanced/particles-bg.html`
+
+```js
+import CorruptedParticles from '@whykusanagi/corrupted-theme/corrupted-particles';
+
+const particles = new CorruptedParticles(canvas, {
+  count: 60,           // number of particles
+  speed: 1.0,          // global speed multiplier
+  lineDistance: 150,    // max distance for connection lines (px)
+  includeLewd: false   // enable 18+ phrases (default: off)
+});
+// auto-starts on construction
+particles.stop();      // pause animation
+particles.start();     // resume
+particles.destroy();   // full teardown
+```
+
+**CorruptedVortex** - WebGL Raymarched Spiral Vortex
+- WebGL1 raymarched black hole accretion disk shader
+- Quasar mode (hue: null) cycles yellow-to-magenta by depth
+- Fixed hue mode locks to a single color
+- Throttled to ~30fps for GPU efficiency
+- Demo: `examples/advanced/glsl-vortex.html`
+
+```js
+import CorruptedVortex from '@whykusanagi/corrupted-theme/corrupted-vortex';
+
+const vortex = new CorruptedVortex(canvas, {
+  speed: 1.0,          // animation speed multiplier
+  intensity: 1.0,      // brightness/glow intensity
+  rotationRate: 1.0,   // rotation speed of spiral
+  hue: null            // null = quasar multi-color, 0-1 = fixed hue
+});
+// auto-starts on construction
+vortex.stop();
+vortex.start();
+vortex.destroy();
+```
+
+**Character Corruption** - Auto-Corruption for Individual Characters
+- Replaces English characters with Japanese (Katakana, Hiragana, Kanji)
+- Configurable intensity levels from `NONE` (0) to `MAX_READABLE` (0.45)
+- Auto-corruption via `.auto-corrupt` class with `data-text`, `data-intensity`, `data-interval` attributes
+- Includes phrase libraries (technical UI + personality/demon phrases)
+
+```js
+import {
+  corruptTextJapanese,
+  initAutoCorruption,
+  stopAutoCorruption,
+  destroyAllAutoCorruption,
+  createCorruptedElement,
+  getRandomPhrase,
+  INTENSITY
+} from '@whykusanagi/corrupted-theme/character-corruption';
+
+// Corrupt a string at medium intensity
+corruptTextJapanese('Hello World', INTENSITY.MEDIUM); // → "Heアロo ワoケld"
+
+// Auto-init all .auto-corrupt elements on page
+initAutoCorruption();
+
+// Create a new auto-corrupting element
+const el = createCorruptedElement('System Online', {
+  intensity: 0.35,
+  interval: 2000,
+  className: 'status-text',
+  tag: 'span'
+});
+
+// Get a random phrase from the library
+getRandomPhrase('loading');              // → "initializing neural link..."
+getRandomPhrase('personality', 'japanese'); // → "データ破損検出..."
+
+// Cleanup
+stopAutoCorruption(element);    // stop one element
+destroyAllAutoCorruption();     // stop all
+```
+
+**Corruption Loading Screen** - Cinematic Loading Curtain
+- Full-screen dramatic loading animation
+- Module: `src/lib/corruption-loading.js`
 
 **Corruption Phrases Library**
 - Normalized SFW/NSFW phrase sets

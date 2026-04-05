@@ -25,6 +25,8 @@ This document provides a comprehensive reference for all components available in
     - [NSFW Content Blur](#nsfw-content-blur)
     - [Social Links List](#social-links-list)
     - [Countdown Widget](#countdown-widget)
+11. [JavaScript Corruption Components](#javascript-corruption-components)
+    - [CorruptedText](#corruptedtext) | [CorruptedParticles](#corruptedparticles) | [CorruptedVortex](#corruptedvortex) | [Character Corruption](#character-corruption) | [Corruption Loading Screen](#corruption-loading-screen)
 
 ---
 
@@ -1039,6 +1041,207 @@ initCountdown();
 
 ---
 
+## JavaScript Corruption Components
+
+Full API reference for all JavaScript corruption modules. All canvas-based components (CorruptedParticles, CorruptedVortex) auto-start on construction and use `ResizeObserver` + `IntersectionObserver` for responsive sizing and visibility-based lifecycle.
+
+### CorruptedText
+
+Multi-language glitch animation that cycles through character variants with corruption effects.
+
+**Source:** `src/lib/corrupted-text.js`
+**Demo:** `examples/basic/corrupted-text.html`
+**Import:** `@whykusanagi/corrupted-theme/corrupted-text`
+
+```js
+const ct = new CorruptedText(element, options);
+```
+
+**Constructor Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `3000` | Total animation duration (ms) |
+| `cycleDelay` | number | `100` | Delay between character corruption steps (ms) |
+| `startDelay` | number | `0` | Initial delay before animation starts (ms) |
+| `loop` | boolean | `true` | Loop animation or settle on final text |
+| `finalText` | string\|null | `null` | Text to settle on when not looping (null = english variant) |
+
+**Data Attributes** (read from element):
+
+| Attribute | Description |
+|-----------|-------------|
+| `data-english` | English text (defaults to `element.textContent`) |
+| `data-romaji` | Romaji (romanized Japanese) |
+| `data-hiragana` | Hiragana text |
+| `data-katakana` | Katakana text |
+| `data-kanji` | Kanji text |
+
+**Methods:**
+
+| Method | Description |
+|--------|-------------|
+| `start()` | Begin animation (no-op if already running) |
+| `stop()` | Pause animation and clear all timers |
+| `animate()` | Cycle to next text variant with corruption effect |
+| `corruptToText(targetText, callback)` | Corrupt display to target text over 20 steps |
+| `restart()` | Reset to first variant and restart animation |
+| `settle(finalText)` | Stop and settle to final text with corruption transition |
+| `destroy()` | Cleanup and remove element reference |
+
+**Auto-Initialization:**
+
+```js
+import { initCorruptedText } from '@whykusanagi/corrupted-theme/corrupted-text';
+initCorruptedText(); // inits all .corrupted-multilang elements
+```
+
+Also auto-called on `DOMContentLoaded`.
+
+---
+
+### CorruptedParticles
+
+Canvas 2D floating Japanese phrase background with three depth layers, mouse interaction, and connection lines.
+
+**Source:** `src/lib/corrupted-particles.js`
+**Demo:** `examples/advanced/particles-bg.html`
+**Import:** `@whykusanagi/corrupted-theme/corrupted-particles`
+
+```js
+const particles = new CorruptedParticles(canvas, options);
+```
+
+**Constructor Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `count` | number | `60` | Number of particles to render |
+| `speed` | number | `1.0` | Global speed multiplier for particle movement |
+| `lineDistance` | number | `150` | Max distance between particles for connection lines (px) |
+| `includeLewd` | boolean | `false` | Enable 18+ phrase mode (logs console warning) |
+
+**Methods:**
+
+| Method | Description |
+|--------|-------------|
+| `init()` | Initialize animation system, event listeners, observers (called automatically) |
+| `start()` | Begin animation loop via `requestAnimationFrame` |
+| `stop()` | Pause animation (preserves state) |
+| `destroy()` | Full teardown: remove listeners, clear particles, disconnect observers |
+
+**Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `canvas` | HTMLCanvasElement | Reference to canvas element |
+| `ctx` | CanvasRenderingContext2D | Canvas rendering context |
+| `particles` | Array | Currently active particle objects |
+| `mouse` | Object | `{x, y}` cursor position (updated on mousemove) |
+
+**Behaviors:**
+- Hover: particles repel from cursor
+- Click: burst of 6 particles at click location
+- Three depth layers with different speeds and opacity
+- Auto-starts/stops based on viewport intersection
+- Adjusts particle count for mobile viewports
+
+---
+
+### CorruptedVortex
+
+WebGL1 raymarched black hole accretion disk shader with corona and depth-driven color cycling.
+
+**Source:** `src/lib/corrupted-vortex.js`
+**Demo:** `examples/advanced/glsl-vortex.html`
+**Import:** `@whykusanagi/corrupted-theme/corrupted-vortex`
+
+```js
+const vortex = new CorruptedVortex(canvas, options);
+```
+
+**Constructor Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `speed` | number | `1.0` | Animation speed multiplier |
+| `intensity` | number | `1.0` | Brightness/glow intensity multiplier |
+| `rotationRate` | number | `1.0` | Rotation speed of vortex spiral |
+| `hue` | number\|null | `null` | `null` = quasar mode (depth-driven yellow→magenta), `0-1` = fixed hue |
+
+**Methods:**
+
+| Method | Description |
+|--------|-------------|
+| `init()` | Initialize WebGL context, compile shaders, set up buffer (called automatically) |
+| `start()` | Begin render loop (throttled to ~30fps) |
+| `stop()` | Pause rendering |
+| `destroy()` | Delete GL program/buffer, disconnect observers |
+
+**Properties:**
+
+| Property | Type | Description |
+|----------|------|-------------|
+| `canvas` | HTMLCanvasElement | Reference to canvas element |
+| `gl` | WebGLRenderingContext\|null | WebGL context (null if unsupported) |
+| `program` | WebGLProgram | Compiled shader program |
+| `options` | Object | Configuration (can be modified at runtime) |
+
+**Notes:**
+- Renders at half-resolution for GPU efficiency
+- DPR capped at 2.0
+- Falls back gracefully if WebGL unavailable
+
+---
+
+### Character Corruption
+
+Auto-corruption module for replacing English characters with Japanese characters at configurable intensity levels.
+
+**Source:** `src/lib/character-corruption.js`
+**Import:** `@whykusanagi/corrupted-theme/character-corruption`
+
+**Intensity Constants:**
+
+| Constant | Value | Use Case |
+|----------|-------|----------|
+| `INTENSITY.NONE` | `0.0` | No corruption |
+| `INTENSITY.MINIMAL` | `0.15` | Subtle effect |
+| `INTENSITY.LOW` | `0.25` | Section headers |
+| `INTENSITY.MEDIUM` | `0.35` | Dashboards (recommended) |
+| `INTENSITY.HIGH` | `0.45` | Maximum readable |
+| `INTENSITY.MAX_READABLE` | `0.45` | Alias for HIGH |
+
+**Functions:**
+
+| Function | Description |
+|----------|-------------|
+| `corruptTextJapanese(text, intensity?)` | Replace English chars with Japanese (50% Katakana, 25% Kanji, 15% Keep+Insert, 10% Hiragana). Default intensity: `0.3` |
+| `corruptTextSemantic(text, context?, intensity?)` | Context-aware corruption (currently falls back to `corruptTextJapanese`) |
+| `initAutoCorruption()` | Init all `.auto-corrupt` elements. Reads `data-text`, `data-intensity`, `data-interval`. Auto-called on `DOMContentLoaded` |
+| `stopAutoCorruption(element)` | Stop re-corruption interval for a specific element |
+| `restartAutoCorruption(element)` | Stop and restart corruption cycle for element |
+| `destroyAllAutoCorruption()` | Stop all active corruption intervals |
+| `createCorruptedElement(text, options?)` | Create new element with auto-corruption. Options: `intensity`, `interval`, `className`, `tag` |
+| `getRandomPhrase(category, subcategory?)` | Random phrase from library. Categories: `loading`, `processing`, `analyzing`, `corrupting`, `watching`, `void`. Personality subcategories: `english`, `japanese`, `romaji` |
+
+**Exported Objects:**
+
+| Object | Description |
+|--------|-------------|
+| `CORRUPTION_PHRASES` | Technical UI phrases grouped by category |
+| `PERSONALITY_PHRASES` | Personality/demon phrases in English, Japanese, Romaji |
+
+---
+
+### Corruption Loading Screen
+
+Full-screen cinematic loading curtain with dramatic corruption animation.
+
+**Source:** `src/lib/corruption-loading.js`
+
+---
+
 ## Related Documentation
 
 - [README.md](../README.md) - Main documentation and quick start guide
@@ -1047,7 +1250,7 @@ initCountdown();
 
 ---
 
-**Last Updated:** 2026-02-07
-**Version:** 2.0
+**Last Updated:** 2026-04-05
+**Version:** 2.1
 **Status:** Complete and Production Ready
 

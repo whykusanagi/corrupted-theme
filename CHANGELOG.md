@@ -14,6 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.1.9] - 2026-04-19
+
+### Changed
+- **Deduplicate `CorruptedText`** - `src/core/corrupted-text.js` was an orphaned, better-documented copy of `src/lib/corrupted-text.js` (not exported by `package.json`, but still shipped). Promoted the documented version into `src/lib/corrupted-text.js` and removed the duplicate. Fixes #7.
+
+### Removed
+- `src/core/corrupted-text.js` (duplicate file; behavior preserved at `src/lib/corrupted-text.js`)
+
+### Documentation
+- `README.md`: updated script tag to point at `src/lib/corrupted-text.js`
+- `examples/basic/corrupted-text.html`: updated script tag and inline reference
+
+---
+
 ## [0.1.7] - 2026-02-07
 
 ### Security

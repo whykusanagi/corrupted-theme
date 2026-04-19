@@ -426,7 +426,7 @@ document.addEventListener('click', e => {
       data-kanji="今日は">
 </span>
 
-<script type="module" src="@whykusanagi/corrupted-theme/src/core/corrupted-text.js"></script>
+<script type="module" src="@whykusanagi/corrupted-theme/src/lib/corrupted-text.js"></script>
 ```
 
 **Pattern 2: Phrase Flickering (Buffer Corruption)**

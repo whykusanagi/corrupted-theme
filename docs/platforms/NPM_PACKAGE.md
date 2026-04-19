@@ -31,7 +31,7 @@
 ```json
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "Premium corrupted AI aesthetic with glassmorphism and translation-failure linguistics",
   "author": "Kusanagi <you@example.com>",
   "license": "MIT",
@@ -80,7 +80,7 @@ pnpm add @whykusanagi/corrupted-theme
 
 ```html
 <!-- Full theme (8.2KB gzipped) -->
-<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.1.8/dist/theme.css">
+<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.1.9/dist/theme.css">
 ```
 
 ### Local Development
@@ -664,7 +664,7 @@ The package follows [Semantic Versioning 2.0.0](https://semver.org/):
 ```
 MAJOR.MINOR.PATCH
 
-Example: 0.1.8
+Example: 0.1.9
          │ │ └─ Patch: Bug fixes (backward compatible)
          │ └─── Minor: New features (backward compatible)
          └───── Major: Breaking changes
@@ -674,7 +674,8 @@ Example: 0.1.8
 
 | Version | Date | Changes | Migration |
 |---------|------|---------|-----------|
-| **0.1.8** | 2026-03-01 | GLSL vortex, Canvas particles, new JS components | N/A |
+| **0.1.9** | 2026-04-19 | Deduplicate `CorruptedText` (orphaned `src/core/` copy removed) | N/A |
+| 0.1.8 | 2026-03-01 | GLSL vortex, Canvas particles, new JS components | N/A |
 | 0.1.7 | 2026-02-07 | Security, lifecycle, new components | N/A |
 | 0.1.6 | 2026-01-15 | Package cleanup | N/A |
 | 0.1.4 | 2025-12-10 | Character corruption, components | N/A |
@@ -693,7 +694,7 @@ npm update @whykusanagi/corrupted-theme
 npm install @whykusanagi/corrupted-theme@^0.2.0
 
 # Update to specific version
-npm install @whykusanagi/corrupted-theme@0.1.8
+npm install @whykusanagi/corrupted-theme@0.1.9
 
 # Update to latest (including major - may have breaking changes)
 npm install @whykusanagi/corrupted-theme@latest
@@ -851,6 +852,6 @@ import '@whykusanagi/corrupted-theme/src/css/components.css';
 
 **Last Updated**: 2025-12-13
 **Version**: 1.0.0
-**Package Version**: 0.1.8
+**Package Version**: 0.1.9
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Production Ready

@@ -47,8 +47,10 @@
 ## One-Command Version Bump
 
 ```bash
-NEW=0.1.9
-OLD=0.1.9
+# Set these BEFORE running — OLD must be the current version on main,
+# NEW must be the version you're bumping to. They must differ.
+NEW=0.1.10   # ← target version
+OLD=0.1.9    # ← currently shipped version (matches package.json today)
 
 # 1. Core package files (auto-syncs both package.json and package-lock.json)
 npm version patch --no-git-tag-version   # or minor / major
@@ -63,7 +65,9 @@ sed -i '' "s/${OLD}/${NEW}/g" \
   docs/governance/VERSION_MANAGEMENT.md \
   docs/platforms/NPM_PACKAGE.md
 
-# 4. Add 0.1.9 row to NPM_PACKAGE.md version table manually
+# 4. Add the new ${NEW} row to NPM_PACKAGE.md version table manually
+#    (sed mangles the most-recent table row description — restore the OLD
+#    row's description and add a fresh NEW row above it)
 
 # 5. Verify nothing left
 grep -rn "${OLD}" . --include="*.html" --include="*.md" --include="*.json" \

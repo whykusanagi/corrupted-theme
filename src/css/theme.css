@@ -28,21 +28,6 @@
 /* ========== EXTENSION COMPONENTS ========== */
 @import './extensions.css';
 
-/* ========== RESPONSIVE GRID SYSTEM ========== */
-
-.container {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-  min-height: 100vh;
-  padding: 3rem;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
 .content {
   padding: 2.5rem;
   background: var(--glass);

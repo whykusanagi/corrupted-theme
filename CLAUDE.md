@@ -31,7 +31,7 @@ A visual aesthetic NPM package simulating neural corruption, data degradation, a
 ### Package Details
 
 - **Package Name:** `@whykusanagi/corrupted-theme`
-- **Current Version:** 0.1.4
+- **Current Version:** 0.1.9
 - **License:** MIT
 - **Repository:** https://github.com/whykusanagi/corrupted-theme
 - **NPM:** https://www.npmjs.com/package/@whykusanagi/corrupted-theme
@@ -406,9 +406,9 @@ notes/CLAUDE-scratch.md
 
 ```bash
 # Version bump (choose one)
-npm version patch  # Bug fixes (0.1.4 → 0.1.5)
-npm version minor  # New features (0.1.4 → 0.2.0)
-npm version major  # Breaking changes (0.1.4 → 1.0.0)
+npm version patch  # Bug fixes (0.1.9 → 0.1.10)
+npm version minor  # New features (0.1.9 → 0.2.0)
+npm version major  # Breaking changes (0.1.9 → 1.0.0)
 
 # Publish to NPM
 npm publish --access public

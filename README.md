@@ -116,7 +116,6 @@ Copy `src/css` into your project (or use `dist/theme.min.css`) and import it loc
 │   │   └── typing-animation.html   # TypingAnimation demo
 │   └── advanced/
 │       ├── glsl-vortex.html        # CorruptedVortex WebGL demo
-│       ├── nsfw-corruption.html    # NSFW corruption modes demo
 │       └── particles-bg.html       # CorruptedParticles demo
 ├── scripts/static-server.js        # ESM static server (Docker)
 └── docs/COMPONENTS_REFERENCE.md    # exhaustive snippets
@@ -451,7 +450,7 @@ typing.start('Neural corruption detected... System Online');
 - **SFW Mode (Default)**: Cute, playful, atmospheric phrases - safe for all audiences
 - **NSFW Mode (Opt-in)**: Explicit 18+ content - requires `{ nsfw: true }` flag
 
-See `examples/basic/` for SFW examples and `examples/advanced/nsfw-corruption.html` for NSFW demo.
+See `examples/basic/typing-animation.html` — it has a toggle switch at the top to opt into NSFW phrases (checkbox resets each page load per the explicit-opt-in spec).
 
 ## Interactive Components
 

@@ -18,13 +18,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - **Deduplicate `CorruptedText`** - `src/core/corrupted-text.js` was an orphaned, better-documented copy of `src/lib/corrupted-text.js` (not exported by `package.json`, but still shipped). Promoted the documented version into `src/lib/corrupted-text.js` and removed the duplicate. Fixes #7.
+- **TypingAnimation buffer redesign** - `src/core/typing-animation.js` now shows a continuous, always-on buffer phrase to the right of the revealed text (flickering every 100ms on an independent timer) instead of the previous probabilistic 8%-per-tick flash. Added `duration`, `loop`, `loopDelay`, `bufferEnabled`, and `bufferFlickerSpeed` options. Default `typingSpeed` lowered from 40 → 12 chars/sec for readability in no-network demo contexts. `glitchChance` deprecated as a no-op (emits a one-time `console.warn` with migration note). All existing method signatures (`start`, `stop`, `restart`, `settle`) unchanged; new public `destroy()` added for full teardown. Refs #9.
+- **Consolidated NSFW examples** - `examples/advanced/nsfw-corruption.html` removed; its scope is now a checkbox toggle at the top of `examples/basic/typing-animation.html` (resets per page-load, no localStorage — explicit per-visit opt-in per the corrupted-theme content-rating policy).
+- **Updated example pages** - `examples/basic/typing-animation.html` migrated to the new TypingAnimation API (dropped `glitchChance`, added `loop: true, loopDelay: 2000` so demos auto-restart). Removed the now-nonfunctional "Corruption" slider.
+
+### Added
+- **CI workflow** (`.github/workflows/checks.yml`) - First automated checks for the repo: `npm run build`, `node --check` on every JS file, `dist/theme.min.css` validation, `package.json` `exports` resolution check.
 
 ### Removed
 - `src/core/corrupted-text.js` (duplicate file; behavior preserved at `src/lib/corrupted-text.js`)
+- `src/css/theme.css` `.container` rule - The unused hero-grid layout (display: grid, 1fr 1fr, min-height: 100vh) that collided with every example page's single-column layout. No page in the repo used the hero behavior; removing the rule fixes 8 previously-broken example pages with zero regression. Closes #9.
+- `examples/advanced/nsfw-corruption.html` - Consolidated into the toggle on `examples/basic/typing-animation.html` (see Changed above).
+- `docs/ROADMAP.md`, `docs/FUTURE_WORK.md` - Orphaned CelesteCLI documents that referenced Go packages, AWS Bedrock, Vertex AI, etc. — entirely irrelevant to this CSS+JS theme package. Also dropped `docs/ROADMAP.md` from `package.json` `files` so future publishes won't ship it.
+
+### Deprecated
+- **`TypingAnimation` option `glitchChance`** - Ignored with a one-time `console.warn`. Behavior is now governed by `bufferEnabled: true` (default). Pass `bufferEnabled: false` for a clean typewriter with no buffer.
 
 ### Documentation
-- `README.md`: updated script tag to point at `src/lib/corrupted-text.js`
-- `examples/basic/corrupted-text.html`: updated script tag and inline reference
+- `README.md`: updated script tag to point at `src/lib/corrupted-text.js`; removed `nsfw-corruption.html` from the file-tree listing; cross-reference now points at the typing-animation toggle.
+- `examples/basic/corrupted-text.html`: updated script tag and inline reference.
+- `CLAUDE.md` "Current Version" updated from stale 0.1.4 → 0.1.9.
+- `docs/governance/VERSION_REFERENCES.md` "One-Command Version Bump" template restructured as forward-looking (NEW=0.1.10 OLD=0.1.9) so future sed runs leave the template intact.
 
 ---
 

@@ -7,10 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **Live example site** — `examples/` deployed to Cloudflare Workers Static Assets at [corrupted.whykusanagi.xyz](https://corrupted.whykusanagi.xyz/). Auto-deploys on every merge to `main`. README + NPM_PACKAGE.md docs linked to the demos.
+- **Worker with security-response headers** (`worker/index.js` + `wrangler.jsonc`) — wraps static-asset responses with HSTS, CSP, X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
+- **`SECURITY.md`** at repo root — threat model, vulnerability reporting address, list of hardening controls, notes on secret handling. Shipped in the npm package for consumer visibility.
+
 ### Planned
 - [ ] CDN distribution via jsDelivr
 - [ ] Figma design system (components library)
 - [ ] Storybook integration for component showcase
+- [ ] 0.2.0: port celeste-tts-bot animation blocks (corruption-manager, animation-blocks, crt-effects)
 
 ---
 

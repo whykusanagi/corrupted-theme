@@ -2,6 +2,8 @@
 
 A production-ready glassmorphic design system for cinematic, cyberpunk-inspired applications. Built as a drop-in CSS framework with JS enhancements, Docker showcase, and npm distribution standards on par with Meta/Google/Netflix internal libraries.
 
+**🔗 Live Examples:** **[corrupted.whykusanagi.xyz](https://corrupted.whykusanagi.xyz/)** — every demo in `examples/` served on Cloudflare Workers. Start at the [Examples Index](https://corrupted.whykusanagi.xyz/examples/) or jump straight to [Buffer Corruption](https://corrupted.whykusanagi.xyz/examples/basic/typing-animation) (with 18+ toggle), [Character Corruption](https://corrupted.whykusanagi.xyz/examples/basic/corrupted-text), [GLSL Vortex](https://corrupted.whykusanagi.xyz/examples/advanced/glsl-vortex), or [Particle Background](https://corrupted.whykusanagi.xyz/examples/advanced/particles-bg).
+
 ## Table of Contents
 1. [Overview](#overview)
 2. [Installation](#installation)

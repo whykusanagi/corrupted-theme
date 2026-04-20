@@ -298,12 +298,13 @@ class TypingAnimation {
    * @public
    */
   settle(finalText) {
+    if (!this.element) return;
     this.stop();
     this.currentBufferPhrase = null;
     this.element.textContent = '';
     const span = document.createElement('span');
     span.style.color = '#ffffff';
-    span.textContent = finalText || this.content;
+    span.textContent = finalText ?? this.content;
     this.element.appendChild(span);
   }
 
@@ -317,13 +318,13 @@ class TypingAnimation {
    * @private
    */
   tick() {
-    if (this.isDone()) {
-      this._onComplete();
-      return;
-    }
-
+    // Advance exactly one character per tick
     this.displayedLen = Math.min(this.displayedLen + 1, this.content.length);
     this.render();
+
+    if (this.displayedLen >= this.content.length) {
+      this._onComplete();
+    }
   }
 
   /**
@@ -362,7 +363,13 @@ class TypingAnimation {
   }
 
   /**
-   * Clear all three timer IDs safely (null-check guards).
+   * Clear all active timers. Safe to call repeatedly.
+   *
+   * NOTE: _onComplete() intentionally does NOT call this method — it needs
+   * to clear char+flicker intervals while preserving loopTimeoutId so the
+   * loop restart can be scheduled. If you add a fourth timer here, update
+   * _onComplete() to clear or preserve it as appropriate.
+   *
    * @private
    */
   _clearTimers() {
@@ -433,6 +440,7 @@ class TypingAnimation {
    * @private
    */
   render() {
+    if (!this.element) return;
     const isDone = this.isDone();
     const displayed = this.getDisplayed();
 

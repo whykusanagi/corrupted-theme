@@ -274,8 +274,8 @@ const typingNSFW = new TypingAnimation(element, {
 
       <div class="code-block">const typing = new TypingAnimation(element, {
   nsfw: true,           // ⚠️ NSFW mode enabled
-  typingSpeed: 35,
-  glitchChance: 0.12
+  loop: true,           // Loop continuously
+  loopDelay: 2000       // 2s pause before looping
 });
 
 typing.start('Neural corruption detected...');</div>
@@ -311,13 +311,15 @@ typing.start('Neural corruption detected...');</div>
       // SFW instance
       const typingSFW = new TypingAnimation(outputSFW, {
         nsfw: false,
-        glitchChance: 0.10
+        loop: true,
+        loopDelay: 2000
       });
 
       // NSFW instance
       const typingNSFW = new TypingAnimation(outputNSFW, {
         nsfw: true,
-        glitchChance: 0.10
+        loop: true,
+        loopDelay: 2000
       });
 
       // Start both simultaneously
@@ -329,8 +331,8 @@ typing.start('Neural corruption detected...');</div>
     const outputNSFWOnly = document.getElementById('outputNSFWOnly');
     let typingNSFWOnly = new TypingAnimation(outputNSFWOnly, {
       nsfw: true,
-      typingSpeed: 35,
-      glitchChance: 0.12
+      loop: true,
+      loopDelay: 2000
     });
 
     window.startNSFWOnly = () => {

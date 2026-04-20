@@ -1,14 +1,17 @@
 /**
  * Typing Animation with Buffer Corruption
  *
- * Simulates typing text with "buffer corruption" - phrases flickering through
- * as the neural network attempts to decode corrupted data before revealing
- * the final stable text.
+ * Simulates typing text with "buffer corruption" - phrases continuously flickering
+ * to the right of the revealed text as the neural network decodes corrupted data,
+ * before finally settling on stable readable output.
  *
  * Implements Pattern 2 (Phrase Flickering / Buffer Corruption) from CORRUPTED_THEME_SPEC.md
  *
+ * Key design: char-advance and buffer-flicker run on **independent** timers so the
+ * buffer is always visible while typing is in progress, not probabilistic.
+ *
  * @class TypingAnimation
- * @version 1.0.0
+ * @version 1.1.0
  * @author whykusanagi
  * @license MIT
  *
@@ -16,8 +19,9 @@
  * ```javascript
  * const element = document.querySelector('.typing-text');
  * const typing = new TypingAnimation(element, {
- *   typingSpeed: 40,
- *   glitchChance: 0.08
+ *   duration: 2000,         // 2s total regardless of text length
+ *   loop: true,
+ *   loopDelay: 1500,
  *   // nsfw: false (default - SFW phrases only)
  * });
  *
@@ -38,33 +42,66 @@
 
 import { getRandomPhrase, getRandomPhraseByCategory } from './corruption-phrases.js';
 
+/**
+ * Module-scope flag: fire the glitchChance deprecation warning at most once per page load,
+ * regardless of how many TypingAnimation instances are created.
+ * @type {boolean}
+ */
+TypingAnimation._warnedGlitchChance = false;
+
 class TypingAnimation {
   /**
    * Creates a new TypingAnimation instance
    *
    * @param {HTMLElement} element - The DOM element to animate
    * @param {Object} [options={}] - Configuration options
-   * @param {number} [options.typingSpeed=40] - Characters per second
-   * @param {number} [options.glitchChance=0.08] - Probability of corruption appearing (0-1)
-   * @param {number} [options.tickRate=33] - Update interval in milliseconds (~30fps)
+   * @param {number|null} [options.duration=null] - Total ms for one typing pass.
+   *   When set, char interval = max(33, duration/length). Takes priority over typingSpeed.
+   * @param {number} [options.typingSpeed=12] - Chars/sec; used only when duration is null.
+   * @param {boolean} [options.bufferEnabled=true] - Show always-on buffer corruption phrase.
+   *   Set false for a clean typewriter effect with no buffer.
+   * @param {number} [options.bufferFlickerSpeed=100] - ms between buffer phrase swaps
+   *   (independent of char-advance rate).
+   * @param {boolean} [options.loop=false] - Automatically restart after loopDelay ms.
+   * @param {number} [options.loopDelay=1500] - ms to hold settled text before restarting.
    * @param {boolean} [options.nsfw=false] - Enable NSFW phrases (explicit opt-in required)
    * @param {Function} [options.onComplete=null] - Callback when typing completes
+   * @param {number} [options.glitchChance] - DEPRECATED. Ignored; buffer is always-on.
+   *   Fires a one-time console.warn per page load. Use bufferEnabled: false to disable buffer.
    */
   constructor(element, options = {}) {
     this.element = element;
+
+    // Deprecation warning for glitchChance — fires at most once per page load
+    if (options.glitchChance !== undefined && !TypingAnimation._warnedGlitchChance) {
+      console.warn(
+        "TypingAnimation: 'glitchChance' is deprecated and ignored — buffer is always-on now. " +
+        "Use bufferEnabled: false to disable."
+      );
+      TypingAnimation._warnedGlitchChance = true;
+    }
+
     this.options = {
-      typingSpeed: options.typingSpeed || 40, // characters per second
-      glitchChance: options.glitchChance || 0.08, // 8% chance of buffer corruption
-      tickRate: options.tickRate || 33, // ~30fps update rate
-      nsfw: options.nsfw || false, // SFW by default
-      onComplete: options.onComplete || null,
-      ...options
+      duration:            options.duration            ?? null,
+      typingSpeed:         options.typingSpeed         ?? 12,
+      bufferEnabled:       options.bufferEnabled       ?? true,
+      bufferFlickerSpeed:  options.bufferFlickerSpeed  ?? 100,
+      loop:                options.loop                ?? false,
+      loopDelay:           options.loopDelay           ?? 1500,
+      nsfw:                options.nsfw                ?? false,
+      onComplete:          options.onComplete          ?? null,
     };
 
-    this.content = '';
-    this.displayedLen = 0;
-    this.done = false;
-    this.intervalId = null;
+    // Instance state
+    this.content            = '';
+    this.displayedLen       = 0;
+    this.done               = false;
+    this.currentBufferPhrase = null;
+
+    // Three independent timer IDs (replacing the old single intervalId)
+    this.charIntervalId    = null;
+    this.flickerIntervalId = null;
+    this.loopTimeoutId     = null;
   }
 
   /**
@@ -181,60 +218,103 @@ class TypingAnimation {
     '▲', '▼', '◄', '►', '◊', '○', '●', '◘'
   ];
 
+  // ---------------------------------------------------------------------------
+  // Public API
+  // ---------------------------------------------------------------------------
+
   /**
    * Start typing animation with buffer corruption
+   *
+   * Clears any running timers, resets state, then kicks off two independent
+   * intervals: one for char-advance, one for buffer-phrase flicker.
    *
    * @param {string} content - The final text to reveal
    * @public
    */
   start(content) {
-    this.content = content;
-    this.displayedLen = 0;
-    this.done = false;
+    this._clearTimers();
 
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
+    this.content      = content;
+    this.displayedLen = 0;
+    this.done         = false;
+
+    // Seed initial buffer phrase so first render() is not empty
+    if (this.options.bufferEnabled) {
+      this.currentBufferPhrase = this.getRandomCorruption();
     }
 
-    this.intervalId = setInterval(() => this.tick(), this.options.tickRate);
+    // Render first frame immediately (no 1-tick blank flash)
+    this.render();
+
+    // Char-advance timer
+    const charInterval = this._computeCharInterval();
+    this.charIntervalId = setInterval(() => this.tick(), charInterval);
+
+    // Buffer-flicker timer (independent of char advance)
+    if (this.options.bufferEnabled) {
+      this.flickerIntervalId = setInterval(() => {
+        this.currentBufferPhrase = this.getRandomCorruption();
+        this.render();
+      }, this.options.bufferFlickerSpeed);
+    }
   }
 
   /**
-   * Stop the typing animation
+   * Stop the typing animation, clearing all timers.
+   * Leaves current visual state intact.
    * @public
    */
   stop() {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-      this.intervalId = null;
-    }
+    this._clearTimers();
     this.done = true;
   }
 
   /**
-   * Advance the typing animation by one tick
+   * Restart the animation from the beginning using the same content.
+   * @public
+   */
+  restart() {
+    this.start(this.content);
+  }
+
+  /**
+   * Stop animation and immediately show final text (no animation).
+   *
+   * @param {string} [finalText] - Text to display (defaults to this.content)
+   * @public
+   */
+  settle(finalText) {
+    this.stop();
+    this.currentBufferPhrase = null;
+    this.element.textContent = '';
+    const span = document.createElement('span');
+    span.style.color = '#ffffff';
+    span.textContent = finalText || this.content;
+    this.element.appendChild(span);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Internal helpers
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Advance revealed text by one character and call render().
+   * Delegates to _onComplete() when the full text is revealed.
    * @private
    */
   tick() {
     if (this.isDone()) {
-      this.stop();
-      if (this.options.onComplete) {
-        this.options.onComplete();
-      }
+      this._onComplete();
       return;
     }
 
-    // Calculate characters to advance based on speed
-    // typingSpeed is chars/sec, we tick ~30 times/sec
-    const charsPerTick = Math.max(1, Math.floor(this.options.typingSpeed / 30));
-    this.displayedLen = Math.min(this.displayedLen + charsPerTick, this.content.length);
-
+    this.displayedLen = Math.min(this.displayedLen + 1, this.content.length);
     this.render();
   }
 
   /**
-   * Check if typing is complete
-   * @returns {boolean} True if animation is done
+   * Check if typing is complete.
+   * @returns {boolean}
    * @private
    */
   isDone() {
@@ -242,8 +322,8 @@ class TypingAnimation {
   }
 
   /**
-   * Get the currently revealed portion of text
-   * @returns {string} Revealed text
+   * Get the currently revealed portion of text.
+   * @returns {string}
    * @private
    */
   getDisplayed() {
@@ -251,18 +331,133 @@ class TypingAnimation {
   }
 
   /**
-   * Get random buffer corruption phrase with appropriate color
+   * Compute char-advance interval in ms.
+   *
+   * Priority: duration (fixed total time) → typingSpeed (chars/sec).
+   * Floored at 33ms (~30fps) to avoid burning unnecessary frames.
+   *
+   * @returns {number} Interval in ms
+   * @private
+   */
+  _computeCharInterval() {
+    const { duration, typingSpeed } = this.options;
+    if (duration && this.content.length > 0) {
+      return Math.max(33, duration / this.content.length);
+    }
+    return Math.max(33, 1000 / typingSpeed);
+  }
+
+  /**
+   * Clear all three timer IDs safely (null-check guards).
+   * @private
+   */
+  _clearTimers() {
+    if (this.charIntervalId !== null) {
+      clearInterval(this.charIntervalId);
+      this.charIntervalId = null;
+    }
+    if (this.flickerIntervalId !== null) {
+      clearInterval(this.flickerIntervalId);
+      this.flickerIntervalId = null;
+    }
+    if (this.loopTimeoutId !== null) {
+      clearTimeout(this.loopTimeoutId);
+      this.loopTimeoutId = null;
+    }
+  }
+
+  /**
+   * Called when the full text has been revealed.
+   *
+   * Stops char and flicker intervals, hides buffer, fires onComplete callback,
+   * then either schedules a loop restart or marks animation as done.
+   * @private
+   */
+  _onComplete() {
+    // Stop char and flicker intervals (NOT loopTimeoutId — set below)
+    if (this.charIntervalId !== null) {
+      clearInterval(this.charIntervalId);
+      this.charIntervalId = null;
+    }
+    if (this.flickerIntervalId !== null) {
+      clearInterval(this.flickerIntervalId);
+      this.flickerIntervalId = null;
+    }
+
+    // Hide buffer, render settled state
+    this.currentBufferPhrase = null;
+    this.render();
+
+    // Fire user callback
+    if (this.options.onComplete) {
+      this.options.onComplete();
+    }
+
+    if (this.options.loop) {
+      // Schedule restart; store ID so stop()/destroy() can cancel it
+      this.loopTimeoutId = setTimeout(() => {
+        this.loopTimeoutId = null;
+        this.start(this.content);
+      }, this.options.loopDelay);
+    } else {
+      this.done = true;
+    }
+  }
+
+  /**
+   * Render the current state of the typing animation.
+   *
+   * DOM layout while typing:
+   *   [revealed-text (white)] [space] [bufferPhrase (magenta/purple)]
+   *
+   * DOM layout when done:
+   *   [revealed-text (white)]
+   *
+   * All DOM construction uses createElement/textContent/appendChild —
+   * no innerHTML, preserving XSS hardening from v0.1.7.
+   *
+   * @private
+   */
+  render() {
+    const isDone = this.isDone();
+    const displayed = this.getDisplayed();
+
+    // Clear and rebuild safely (no innerHTML)
+    this.element.textContent = '';
+
+    // Revealed text span (white)
+    const textSpan = document.createElement('span');
+    textSpan.style.color = '#ffffff';
+    textSpan.textContent = displayed;
+    this.element.appendChild(textSpan);
+
+    // Buffer corruption phrase — always present while typing, if enabled and available
+    if (!isDone && this.options.bufferEnabled && this.currentBufferPhrase) {
+      this.element.appendChild(document.createTextNode(' '));
+      this.element.appendChild(this.currentBufferPhrase.cloneNode(true));
+    }
+  }
+
+  /**
+   * Get random buffer corruption phrase as a colored <span> element.
    *
    * Samples from phrase buffer based on SFW/NSFW mode and renders
    * with color-coded corruption aesthetic.
    *
-   * Color scheme:
-   * - SFW phrases: Magenta (#d94f90) - playful corruption
-   * - NSFW phrases: Purple (#8b5cf6) - deep/intimate corruption
-   * - Symbols: Magenta (#d94f90)
-   * - Blocks: Red (#ff0000) - terminal/critical state
+   * Category distribution:
+   *   0–29%  Japanese phrase  (SFW or NSFW per options.nsfw)
+   *   30–49% English phrase
+   *   50–64% Romaji phrase
+   *   65–79% Symbol (always SFW)
+   *   80–99% Block character (always SFW)
    *
-   * @returns {string} HTML string with colored corruption phrase
+   * Color scheme:
+   *   SFW phrases:  Magenta (#d94f90) — playful corruption
+   *   NSFW phrases: Purple  (#8b5cf6) — deep/intimate corruption
+   *   Symbols:      Magenta (#d94f90)
+   *   Blocks:       Red     (#ff0000) — terminal/critical state
+   *
+   * @returns {HTMLSpanElement} Colored span with textContent set
    * @private
    */
   getRandomCorruption() {
@@ -300,73 +495,24 @@ class TypingAnimation {
       text = romajiSet[Math.floor(Math.random() * romajiSet.length)];
       color = phraseColor;
     } else if (r < 0.80) {
-      // Symbols - decorative corruption (always SFW)
+      // Symbols — decorative corruption (always SFW)
       text = TypingAnimation.SYMBOLS[
         Math.floor(Math.random() * TypingAnimation.SYMBOLS.length)
       ];
       color = '#d94f90';
     } else {
-      // Block chars - terminal/critical state (always SFW)
+      // Block chars — terminal/critical state (always SFW)
       text = TypingAnimation.BLOCKS[
         Math.floor(Math.random() * TypingAnimation.BLOCKS.length)
       ];
       color = '#ff0000';
     }
 
-    // Return DOM element instead of HTML string (XSS-safe)
+    // Build DOM element (XSS-safe — no innerHTML)
     const span = document.createElement('span');
     span.style.color = color;
     span.textContent = text;
     return span;
-  }
-
-  /**
-   * Render the current state of the typing animation
-   *
-   * Displays revealed text (white) and occasional buffer corruption
-   * phrases (magenta or purple) simulating neural decoding process.
-   *
-   * @private
-   */
-  render() {
-    const displayed = this.getDisplayed();
-
-    // Clear and rebuild using safe DOM methods (no innerHTML)
-    this.element.textContent = '';
-
-    // Stable revealed text (white)
-    const textSpan = document.createElement('span');
-    textSpan.style.color = '#ffffff';
-    textSpan.textContent = displayed;
-    this.element.appendChild(textSpan);
-
-    // Add buffer corruption element at the "cursor" position
-    if (!this.isDone() && Math.random() < this.options.glitchChance) {
-      this.element.appendChild(this.getRandomCorruption());
-    }
-  }
-
-  /**
-   * Stop animation and immediately show final text
-   *
-   * @param {string} [finalText] - Text to display (defaults to content)
-   * @public
-   */
-  settle(finalText) {
-    this.stop();
-    const span = document.createElement('span');
-    span.style.color = '#ffffff';
-    span.textContent = finalText || this.content;
-    this.element.textContent = '';
-    this.element.appendChild(span);
-  }
-
-  /**
-   * Restart the animation from the beginning
-   * @public
-   */
-  restart() {
-    this.start(this.content);
   }
 }
 

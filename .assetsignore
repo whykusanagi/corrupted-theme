@@ -1,0 +1,83 @@
+# Cloudflare Workers Static Assets ignore file
+# Used by `wrangler deploy` when the Worker's assets.directory is the repo root.
+# Wrangler does NOT respect .gitignore, so dev artifacts + internal docs must be
+# listed here explicitly. Syntax is gitignore-style (supports globs).
+# Docs: https://developers.cloudflare.com/workers/static-assets/binding/#ignoring-files
+
+# -----------------------------------------------------------------------------
+# Build-time artifacts (installed into the CF build environment, not shipped)
+# -----------------------------------------------------------------------------
+node_modules/
+
+# -----------------------------------------------------------------------------
+# Git + CI metadata (shouldn't be publicly served)
+# -----------------------------------------------------------------------------
+.git/
+.github/
+.gitignore
+
+# -----------------------------------------------------------------------------
+# Wrangler working state
+# -----------------------------------------------------------------------------
+.wrangler/
+wrangler.jsonc
+wrangler.toml
+
+# -----------------------------------------------------------------------------
+# AI development policy (not intended for the public site)
+# -----------------------------------------------------------------------------
+CLAUDE.md
+
+# -----------------------------------------------------------------------------
+# Internal specs (mirrors .npmignore — kept in repo for history,
+# never meant to ship publicly)
+# -----------------------------------------------------------------------------
+CORRUPTED_THEME_SPEC.md
+CORRUPTION_BUFFER_IMPLEMENTATIONS.md
+
+# -----------------------------------------------------------------------------
+# Internal planning docs (kept in repo for history, not for the public site)
+# -----------------------------------------------------------------------------
+docs/planning/
+
+# -----------------------------------------------------------------------------
+# Lockfiles + package manifest (public can inspect via npmjs — no need to ship)
+# -----------------------------------------------------------------------------
+package-lock.json
+bun.lockb
+bun.lock
+
+# -----------------------------------------------------------------------------
+# OS + editor junk
+# -----------------------------------------------------------------------------
+.DS_Store
+._*
+.AppleDouble
+.Spotlight-V100
+.Trashes
+.vscode/
+.idea/
+*.swp
+
+# -----------------------------------------------------------------------------
+# Logs
+# -----------------------------------------------------------------------------
+*.log
+npm-debug.log*
+
+# -----------------------------------------------------------------------------
+# Docker artifacts (not meant for the web deployment)
+# -----------------------------------------------------------------------------
+Dockerfile
+docker-entrypoint.sh
+docker-compose.override.yml
+
+# -----------------------------------------------------------------------------
+# Local-only scratch (never committed but listed defensively)
+# -----------------------------------------------------------------------------
+CLAUDE.local.md
+notes/CLAUDE-scratch.md
+.env
+.env.*
+.secrets/
+*.key

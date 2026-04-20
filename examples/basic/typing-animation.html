@@ -197,8 +197,9 @@
 const element = document.getElementById('output');
 const typing = new TypingAnimation(element, {
   typingSpeed: 40,      // Characters per second
-  glitchChance: 0.08,   // 8% corruption chance
-  nsfw: false           // SFW mode (default)
+  nsfw: false,          // SFW mode (default)
+  loop: true,           // Loop continuously
+  loopDelay: 2000       // 2s pause before looping
 });
 
 typing.start('Neural corruption detected...');</div>
@@ -219,12 +220,6 @@ typing.start('Neural corruption detected...');</div>
         <span id="speedValue">40 chars/sec</span>
       </div>
 
-      <div class="slider-container">
-        <label for="glitch"><i class="fas fa-bolt"></i> Corruption:</label>
-        <input type="range" id="glitch" min="0" max="30" value="8" class="form-range">
-        <span id="glitchValue">8%</span>
-      </div>
-
       <div class="controls">
         <button class="btn" onclick="startExample2()">
           <i class="fas fa-play"></i> Start with Settings
@@ -232,8 +227,9 @@ typing.start('Neural corruption detected...');</div>
       </div>
 
       <div class="code-block">const typing = new TypingAnimation(element, {
-  typingSpeed: 80,     // Faster typing
-  glitchChance: 0.20   // More corruption
+  typingSpeed: 80,    // Faster typing
+  loop: true,         // Loop continuously
+  loopDelay: 2000     // 2s pause before looping
 });</div>
     </section>
 
@@ -284,9 +280,9 @@ typing.start(message);</div>
     // Example 1: Basic
     const output1 = document.getElementById('output1');
     let typing1 = new TypingAnimation(output1, {
-      typingSpeed: 40,
-      glitchChance: 0.08,
-      nsfw: false
+      nsfw: false,
+      loop: true,
+      loopDelay: 2000
     });
 
     window.startExample1 = () => {
@@ -304,23 +300,18 @@ typing.start(message);</div>
     // Example 2: Adjustable
     const output2 = document.getElementById('output2');
     const speedSlider = document.getElementById('speed');
-    const glitchSlider = document.getElementById('glitch');
     const speedValue = document.getElementById('speedValue');
-    const glitchValue = document.getElementById('glitchValue');
 
     speedSlider.addEventListener('input', (e) => {
       speedValue.textContent = `${e.target.value} chars/sec`;
     });
 
-    glitchSlider.addEventListener('input', (e) => {
-      glitchValue.textContent = `${e.target.value}%`;
-    });
-
     window.startExample2 = () => {
       const typing2 = new TypingAnimation(output2, {
         typingSpeed: parseInt(speedSlider.value),
-        glitchChance: parseInt(glitchSlider.value) / 100,
-        nsfw: false
+        nsfw: false,
+        loop: true,
+        loopDelay: 2000
       });
       typing2.start('Loading data streams... Reality.exe has stopped responding...');
     };
@@ -332,7 +323,9 @@ typing.start(message);</div>
     window.startExample3 = () => {
       const message = customInput.value || 'Enter a message above!';
       const typing3 = new TypingAnimation(output3, {
-        nsfw: false
+        nsfw: false,
+        loop: true,
+        loopDelay: 2000
       });
       typing3.start(message);
     };

@@ -42,7 +42,6 @@
     "docs/CORRUPTION_PHRASES.md",
     "docs/CHARACTER_LEVEL_CORRUPTION.md",
     "docs/STYLE_GUIDE.md",
-    "docs/ROADMAP.md",
     "examples",
     "Dockerfile",
     "docker-entrypoint.sh",

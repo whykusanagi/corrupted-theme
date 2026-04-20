@@ -26,6 +26,14 @@
 
 **@whykusanagi/corrupted-theme** is the official CSS framework for the Celeste brand system, providing a complete implementation of the translation-failure corruption aesthetic with glassmorphism design.
 
+### Live Demo
+
+All examples in this package are deployed to **[corrupted.whykusanagi.xyz](https://corrupted.whykusanagi.xyz/)** via Cloudflare Workers Static Assets. Auto-deploys from `main` on every merged PR. See:
+- [Examples Index](https://corrupted.whykusanagi.xyz/examples/) — full catalog
+- [Buffer Corruption](https://corrupted.whykusanagi.xyz/examples/basic/typing-animation) — `TypingAnimation` with SFW/NSFW toggle
+- [Character Corruption](https://corrupted.whykusanagi.xyz/examples/basic/corrupted-text) — `CorruptedText` multi-language cycling
+- [Component Showcase](https://corrupted.whykusanagi.xyz/examples/showcase-complete) — full design-system demo
+
 ### Package Information
 
 ```json

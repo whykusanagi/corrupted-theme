@@ -40,16 +40,14 @@
  * @see corruption-phrases.js - Phrase library with SFW/NSFW split
  */
 
-import { getRandomPhrase, getRandomPhraseByCategory } from './corruption-phrases.js';
-
-/**
- * Module-scope flag: fire the glitchChance deprecation warning at most once per page load,
- * regardless of how many TypingAnimation instances are created.
- * @type {boolean}
- */
-TypingAnimation._warnedGlitchChance = false;
-
 class TypingAnimation {
+  /**
+   * Module-scope flag: fire the glitchChance deprecation warning at most once
+   * per page load, regardless of how many TypingAnimation instances are created.
+   * @type {boolean}
+   */
+  static _warnedGlitchChance = false;
+
   /**
    * Creates a new TypingAnimation instance
    *
@@ -270,6 +268,22 @@ class TypingAnimation {
   }
 
   /**
+   * Fully tear down this instance: stop all timers, clear the element,
+   * and release the DOM reference. After calling destroy(), this instance
+   * is not reusable — create a new TypingAnimation if you need one.
+   * @public
+   */
+  destroy() {
+    this._clearTimers();
+    this.done = true;
+    this.currentBufferPhrase = null;
+    if (this.element) {
+      this.element.textContent = '';
+      this.element = null;
+    }
+  }
+
+  /**
    * Restart the animation from the beginning using the same content.
    * @public
    */
@@ -341,7 +355,7 @@ class TypingAnimation {
    */
   _computeCharInterval() {
     const { duration, typingSpeed } = this.options;
-    if (duration && this.content.length > 0) {
+    if (duration !== null && this.content.length > 0) {
       return Math.max(33, duration / this.content.length);
     }
     return Math.max(33, 1000 / typingSpeed);

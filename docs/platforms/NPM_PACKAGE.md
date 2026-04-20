@@ -674,7 +674,7 @@ Example: 0.1.9
 
 | Version | Date | Changes | Migration |
 |---------|------|---------|-----------|
-| **0.1.9** | 2026-04-19 | Deduplicate `CorruptedText` (orphaned `src/core/` copy removed) | N/A |
+| **0.1.9** | 2026-04-19 | CorruptedText dedup, TypingAnimation buffer redesign, NSFW page consolidation, layout fix, orphan docs removed, CI workflow | N/A |
 | 0.1.8 | 2026-03-01 | GLSL vortex, Canvas particles, new JS components | N/A |
 | 0.1.7 | 2026-02-07 | Security, lifecycle, new components | N/A |
 | 0.1.6 | 2026-01-15 | Package cleanup | N/A |

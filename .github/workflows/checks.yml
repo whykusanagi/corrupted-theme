@@ -1,0 +1,63 @@
+name: Build & Lint Checks
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build CSS bundle
+        run: npm run build
+
+      - name: JS syntax check (all src/)
+        run: |
+          set -e
+          fail=0
+          for f in $(find src -name '*.js'); do
+            if ! node --check "$f"; then
+              echo "::error file=$f::syntax error"
+              fail=1
+            fi
+          done
+          [ $fail -eq 0 ]
+
+      - name: Verify dist artifact
+        run: |
+          test -f dist/theme.min.css || (echo "::error::MISSING dist/theme.min.css" && exit 1)
+          test -s dist/theme.min.css || (echo "::error::EMPTY dist/theme.min.css" && exit 1)
+          size=$(wc -c < dist/theme.min.css)
+          echo "dist/theme.min.css OK (${size} bytes)"
+
+      - name: Verify package.json exports resolve
+        run: |
+          node -e "
+            const fs = require('fs');
+            const exports = require('./package.json').exports;
+            let bad = 0;
+            for (const [key, value] of Object.entries(exports)) {
+              const target = typeof value === 'string' ? value : (value.import || value.require);
+              if (!fs.existsSync(target)) {
+                console.error('MISSING EXPORT TARGET:', key, '->', target);
+                bad++;
+              } else {
+                console.log('OK', key, '->', target);
+              }
+            }
+            if (bad > 0) { console.error(bad, 'broken export(s)'); process.exit(1); }
+            console.log('All', Object.keys(exports).length, 'exports resolve.');
+          "

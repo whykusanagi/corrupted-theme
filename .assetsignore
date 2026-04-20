@@ -17,11 +17,17 @@ node_modules/
 .gitignore
 
 # -----------------------------------------------------------------------------
-# Wrangler working state
+# Wrangler config + Worker script (bundled separately, not served as assets)
 # -----------------------------------------------------------------------------
 .wrangler/
 wrangler.jsonc
 wrangler.toml
+worker/
+
+# -----------------------------------------------------------------------------
+# This ignore file itself
+# -----------------------------------------------------------------------------
+.assetsignore
 
 # -----------------------------------------------------------------------------
 # AI development policy (not intended for the public site)

@@ -47,6 +47,7 @@
     "docker-entrypoint.sh",
     "README.md",
     "CHANGELOG.md",
+    "SECURITY.md",
     "LICENSE"
   ],
   "repository": {

@@ -41,6 +41,7 @@
     "docs/COMPONENTS_REFERENCE.md",
     "docs/CORRUPTION_PHRASES.md",
     "docs/CHARACTER_LEVEL_CORRUPTION.md",
+    "docs/CROSS_LANGUAGE_CONTRACT.md",
     "docs/STYLE_GUIDE.md",
     "examples",
     "Dockerfile",

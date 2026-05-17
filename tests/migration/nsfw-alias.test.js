@@ -2,9 +2,44 @@
 // TDD red→green for the includeLewd → nsfw deprecation shim in CorruptedParticles
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
+
+// -------------------------------------------------------------------
+// Node.js global stubs — CorruptedParticles calls window/RAF/Observers
+// inside init() which runs from the constructor.
+// -------------------------------------------------------------------
+if (typeof global.window === 'undefined') {
+  global.window = {
+    devicePixelRatio: 1,
+    innerWidth: 1024,
+    innerHeight: 768,
+  };
+}
+if (typeof global.ResizeObserver === 'undefined') {
+  global.ResizeObserver = class {
+    observe() {}
+    disconnect() {}
+  };
+}
+if (typeof global.IntersectionObserver === 'undefined') {
+  global.IntersectionObserver = class {
+    constructor(cb, opts) {}
+    observe() {}
+    disconnect() {}
+  };
+}
+if (typeof global.requestAnimationFrame === 'undefined') {
+  global.requestAnimationFrame = () => 0;
+}
+if (typeof global.cancelAnimationFrame === 'undefined') {
+  global.cancelAnimationFrame = () => {};
+}
+
 import { CorruptedParticles } from '../../src/lib/corrupted-particles.js';
 
-// Minimal Canvas 2D context stub — enough for CorruptedParticles constructor
+// -------------------------------------------------------------------
+// Minimal Canvas 2D context stub — enough for CorruptedParticles
+// constructor to complete without errors.
+// -------------------------------------------------------------------
 function mockCanvas() {
   const ctx = {
     clearRect: () => {}, fillRect: () => {}, fillText: () => {},
@@ -28,6 +63,10 @@ function mockCanvas() {
   ctx.canvas = canvas;
   return canvas;
 }
+
+// -------------------------------------------------------------------
+// Tests
+// -------------------------------------------------------------------
 
 test('CorruptedParticles: nsfw option works as canonical name', () => {
   const c = mockCanvas();

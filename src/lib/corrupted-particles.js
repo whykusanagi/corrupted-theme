@@ -19,18 +19,34 @@ const PURPLE_RGB  = { r: 139, g: 92,  b: 246 };
 const MAGENTA_RGB = { r: 255, g: 0,   b: 255 };
 
 export class CorruptedParticles {
+  /** @internal — tracks whether the includeLewd deprecation warning has fired */
+  static _warnedIncludeLewd = false;
+
   constructor(canvas, options = {}) {
     this.canvas = canvas;
     this.ctx    = canvas.getContext('2d');
+
+    // Deprecation shim: includeLewd → nsfw (removed in 0.3.0)
+    if (options.includeLewd !== undefined) {
+      if (!CorruptedParticles._warnedIncludeLewd) {
+        console.warn(
+          "CorruptedParticles: 'includeLewd' is deprecated. Use 'nsfw' instead. " +
+          "Aliased automatically; will be removed in 0.3.0."
+        );
+        CorruptedParticles._warnedIncludeLewd = true;
+      }
+      options.nsfw = options.includeLewd;
+    }
+
     this.options = {
       count:        options.count        ?? 60,
-      includeLewd:  options.includeLewd  ?? false,
+      nsfw:         options.nsfw         ?? false,
       speed:        options.speed        ?? 1.0,
       lineDistance: options.lineDistance ?? 150,
     };
 
-    if (this.options.includeLewd) {
-      console.info('CorruptedParticles: lewd mode enabled — 18+ content only');
+    if (this.options.nsfw) {
+      console.info('CorruptedParticles: NSFW mode enabled — 18+ content only');
     }
 
     this.particles             = [];
@@ -69,7 +85,7 @@ export class CorruptedParticles {
   }
 
   _pickPhrase() {
-    const useLewd = this.options.includeLewd && Math.random() < 0.25;
+    const useLewd = this.options.nsfw && Math.random() < 0.25;
     const pool    = useLewd ? NSFW_PHRASES : SFW_PHRASES;
     return pool[Math.floor(Math.random() * pool.length)];
   }
@@ -80,7 +96,7 @@ export class CorruptedParticles {
     const angle      = Math.random() * Math.PI * 2;
     const speed      = (L.minSpeed + Math.random() * (L.maxSpeed - L.minSpeed)) * this.options.speed;
     const phrase    = this._pickPhrase();
-    const lewd      = this.options.includeLewd && NSFW_PHRASES.includes(phrase);
+    const lewd      = this.options.nsfw && NSFW_PHRASES.includes(phrase);
     const colorRgb  = lewd
       ? (Math.random() < 0.5 ? MAGENTA_RGB : PURPLE_RGB)
       : CYAN_RGB;

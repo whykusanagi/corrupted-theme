@@ -77,11 +77,22 @@ export function getRandomPhrase(nsfw = false) {
  */
 function selectPool(word) {
   const lw = String(word ?? '').toLowerCase();
-  if (/data|usage|stat|analytic|read|write|load/.test(lw))   return 'data';
-  if (/sys|process|run|exec|monitor|watch|kernel/.test(lw))   return 'system';
-  if (/status|state|wait|observ|analy/.test(lw))               return 'status';
-  if (/void|abyss|dark|empty|fall|consume|degrad/.test(lw))    return 'void';
-  if (/mem|forget|self|mind|identity|name|think/.test(lw))     return 'memory';
+  // Keyword lists ported verbatim from celeste-cli corruptTextSimple switch
+  // (celeste-cli/cmd/celeste/commands/corruption.go:73-84).
+  // Two separate Go cases both map to dataCorruption, so they are merged here.
+  // Order matters: data is checked first so "stat" matches data before "status"
+  // matches the status pool — this preserves the canonical Go ordering.
+  const dataKeywords   = ["data", "usage", "stat", "analytic", "metric", "token", "count", "cost", "session", "provider", "model"];
+  const systemKeywords = ["system", "process", "execute", "operation", "control"];
+  const statusKeywords = ["status", "state", "level", "progress", "complete"];
+  const memoryKeywords = ["time", "day", "week", "history", "past"];
+  const voidKeywords   = ["void", "abyss", "corrupt", "consume", "decay"];
+
+  if (dataKeywords.some(k => lw.includes(k)))   return 'data';
+  if (systemKeywords.some(k => lw.includes(k))) return 'system';
+  if (statusKeywords.some(k => lw.includes(k))) return 'status';
+  if (memoryKeywords.some(k => lw.includes(k))) return 'memory';
+  if (voidKeywords.some(k => lw.includes(k)))   return 'void';
   return 'glitch';
 }
 

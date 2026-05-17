@@ -61,3 +61,27 @@ test('getPhraseByContext("void abyss") picks from void pool', () => {
     assert.ok(allVoidSfw.includes(phrase), `'${phrase}' not in void pools`);
   }
 });
+
+test('getPhraseByContext("time history") picks from memory pool (not glitch)', () => {
+  for (let i = 0; i < 50; i++) {
+    const phrase = getPhraseByContext('time history');
+    const allMemorySfw = [
+      ...POOLS.sfw.japanese.memory,
+      ...POOLS.sfw.romaji.memory,
+      ...POOLS.sfw.english.memory,
+    ];
+    assert.ok(allMemorySfw.includes(phrase), `'${phrase}' not in memory pools`);
+  }
+});
+
+test('getPhraseByContext("token usage cost") picks from data pool', () => {
+  for (let i = 0; i < 50; i++) {
+    const phrase = getPhraseByContext('token usage cost');
+    const allDataSfw = [
+      ...POOLS.sfw.japanese.data,
+      ...POOLS.sfw.romaji.data,
+      ...POOLS.sfw.english.data,
+    ];
+    assert.ok(allDataSfw.includes(phrase), `'${phrase}' not in data pools`);
+  }
+});

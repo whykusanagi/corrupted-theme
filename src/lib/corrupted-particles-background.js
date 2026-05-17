@@ -20,7 +20,7 @@ export class CorruptedParticlesBackground {
    * @param {object} [options]
    * @param {string}  [options.targetSelector='.glass-backdrop']  CSS selector for the element
    *                                                               the canvas is inserted before.
-   * @param {boolean} [options.nsfw=false]        Passed through as includeLewd to CorruptedParticles.
+   * @param {boolean} [options.nsfw=false]        Passed through as nsfw to CorruptedParticles.
    * @param {number}  [options.count=25]          Particle count (default lower than CorruptedParticles
    *                                               default because the canvas sits behind blur).
    * @param {number}  [options.speed=0.5]         Particle speed multiplier.
@@ -95,7 +95,7 @@ export class CorruptedParticlesBackground {
       count:        this.options.count,
       speed:        this.options.speed,
       lineDistance: this.options.lineDistance,
-      includeLewd:  this.options.nsfw,
+      nsfw:         this.options.nsfw,
     });
 
     // Restore so other components (e.g. vortex, main canvas) use the real DPR.

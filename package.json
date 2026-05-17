@@ -26,7 +26,10 @@
     "./components-js": "./src/lib/components.js",
     "./carousel": "./src/lib/carousel.js",
     "./corrupted-vortex": "./src/lib/corrupted-vortex.js",
-    "./corrupted-particles": "./src/lib/corrupted-particles.js"
+    "./corrupted-particles": "./src/lib/corrupted-particles.js",
+    "./data/phrases.json":  "./src/data/phrases.json",
+    "./data/charsets.json": "./src/data/charsets.json",
+    "./data/colors.json":   "./src/data/colors.json"
   },
   "files": [
     "src",

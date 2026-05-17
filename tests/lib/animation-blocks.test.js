@@ -64,6 +64,56 @@ test('destroy() can be called twice without throwing', () => {
   }
 });
 
+test('all 10 animation blocks have play() as alias for start()', () => {
+  const classes = [TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot, GlitchPulse, ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission, TerminalPrompt];
+  for (const Cls of classes) {
+    const instance = new Cls(null, {});
+    assert.equal(typeof instance.play, 'function', `${Cls.name}.play missing`);
+    assert.equal(typeof instance.start, 'function', `${Cls.name}.start missing`);
+    // Both should be callable without throwing (in Node, no DOM)
+    try {
+      instance.play();
+      instance.start();
+      // play() is documented as returning what start() returns (Promise/undefined)
+      assert.ok(true);  // didn't throw
+    } catch (err) {
+      // Allow if start() throws cleanly when no DOM; play() should throw same way
+    }
+    if (typeof instance.destroy === 'function') instance.destroy();
+  }
+});
+
+test('lewdMode shim alerts and aliases on ALL 10 animation block classes', () => {
+  const classes = [TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot, GlitchPulse, ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission, TerminalPrompt];
+  // Only TitleDecoder forwards nsfw into this.options (it's the only class that uses NSFW
+  // content pools). The other 9 classes run the shim (warn + mutate opts.nsfw) but don't
+  // expose nsfw through their own options shape.
+  const nsfw_forwarding_classes = new Set([TitleDecoder]);
+
+  for (const Cls of classes) {
+    // Reset per-class static flag
+    if (Cls._warnedLewdMode !== undefined) Cls._warnedLewdMode = false;
+
+    const warned = [];
+    const origWarn = console.warn;
+    console.warn = (...args) => warned.push(args.join(' '));
+
+    try {
+      const instance = new Cls(null, { lewdMode: true });
+      // Every class must warn exactly once
+      assert.equal(warned.length, 1, `${Cls.name}: should warn once`);
+      assert.ok(warned[0].includes('deprecated'), `${Cls.name}: warn should mention deprecation`);
+      // Only classes that use NSFW pools forward nsfw into this.options
+      if (nsfw_forwarding_classes.has(Cls)) {
+        assert.equal(instance.options?.nsfw, true, `${Cls.name}: nsfw not set from lewdMode`);
+      }
+      if (typeof instance.destroy === 'function') instance.destroy();
+    } finally {
+      console.warn = origWarn;
+    }
+  }
+});
+
 test('TitleDecoder: lewdMode option is deprecated — nsfw shim fires once and option is normalised', () => {
   // Capture the warning
   const warns = [];

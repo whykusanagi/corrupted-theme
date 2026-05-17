@@ -67,3 +67,21 @@ test('CRTEffects.applyChromaticAberration() sets filter on element', () => {
   assert.ok(fakeEl.style.filter, 'filter should be set by chromatic aberration');
   instance.destroy();
 });
+
+test('CRTEffects.stopFlicker() clears the pending flicker timeout', () => {
+  const e = new CRTEffects(null);
+  e._effects.flicker = true;  // bypass DOM-check
+  e._flickerTimeoutId = 12345;  // mock a pending timeout
+  // Stub clearTimeout to verify it's called with the right ID
+  let clearedWith = null;
+  const origClear = globalThis.clearTimeout;
+  globalThis.clearTimeout = (id) => { clearedWith = id; };
+  try {
+    e.stopFlicker(null);
+    assert.equal(clearedWith, 12345);
+    assert.equal(e._flickerTimeoutId, null);
+  } finally {
+    globalThis.clearTimeout = origClear;
+  }
+  e.destroy();
+});

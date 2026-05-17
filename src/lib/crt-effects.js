@@ -138,6 +138,8 @@ export class CRTEffects {
       flicker:   false,  // running flag
     };
 
+    this._flickerTimeoutId = null;
+
     if (this._opts.autoStart) this.start();
   }
 
@@ -232,11 +234,11 @@ export class CRTEffects {
       if (!this._effects.flicker || this._destroyed) return;
       element.style.opacity = String(1 - Math.random() * intensity);
       const nextDelay = frequency + Math.random() * frequency;
-      setTimeout(tick, nextDelay);
+      this._flickerTimeoutId = setTimeout(tick, nextDelay);
     };
 
     this._effects.flicker = true;
-    tick();
+    this._flickerTimeoutId = setTimeout(tick, 0);
   }
 
   /**
@@ -245,6 +247,10 @@ export class CRTEffects {
    */
   stopFlicker(element) {
     this._effects.flicker = false;
+    if (this._flickerTimeoutId !== null && this._flickerTimeoutId !== undefined) {
+      clearTimeout(this._flickerTimeoutId);
+      this._flickerTimeoutId = null;
+    }
     if (element) element.style.opacity = '1';
   }
 

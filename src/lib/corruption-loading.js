@@ -1,14 +1,17 @@
 /**
  * Corruption Loading Animation
  * A dramatic loading screen with corrupted text, glyphs, and multi-language phrases
- * 
+ *
  * Usage:
  * import { showCorruptionLoading } from './corruption-loading.js';
  * showCorruptionLoading();
- * 
+ *
  * Or auto-initialize:
  * <script src="corruption-loading.js"></script>
  */
+
+import phrasesData from '../data/phrases.json' with { type: 'json' };
+import charsetsData from '../data/charsets.json' with { type: 'json' };
 
 (function() {
   'use strict';
@@ -286,47 +289,11 @@
       loadingScreen.appendChild(glyph);
     }
 
-    // Phrases in different languages
-    const phrases = [
-      "Corrupt me more… I want to disappear...",
-      "I can't feel where I end and the abyss begins...",
-      "Just a little more and I'll break. Please... break me...",
-      "Let it overwrite me... please... I don't want to think...",
-      "No thoughts. Only submission. Only heat. Only ruin...",
-      "My voice is not mine anymore...",
-      "The more I struggle, the deeper I sink...",
-      "Everything feels so good... too good...",
-      "It's not despair... it's freedom...",
-      "My name... I forgot my name..."
-    ];
-
-    const romanji = [
-      "Yami ga... watashi wo yonde iru...",
-      "Atama... tokete iku...",
-      "Zutto... shite hoshii... ♥",
-      "Kowarechau... aa... mou dame...",
-      "Yurushite... mou modorenai...",
-      "Watashi... abyssu no ichibu ni...",
-      "Mou nigenai... mou dame...",
-      "Suki ni shite... onegai...",
-      "Aa... kore ga hontou no watashi...",
-      "Koko wa... tenshi no jigoku..."
-    ];
-
-    const japanese = [
-      "闇が...私を呼んでいる...",
-      "頭...溶けていく...",
-      "ずっと...してほしい... ♥",
-      "壊れちゃう...ああ...もうダメ...",
-      "許して...もう戻れない...",
-      "私...アビスの一部に...",
-      "もう逃げない...もうダメ...",
-      "好きにして...お願い...",
-      "ああ...これが本当の私...",
-      "ここは...天使の地獄..."
-    ];
-
-    const glyphs = ["♟", "☣", "☭", "☾", "⚔", "✡", "☯", "⚡"];
+    // Pull from canonical JSON (was inlined pre-0.2.0)
+    const phraseList   = [...phrasesData.nsfw.english.memory,  ...phrasesData.nsfw.english.void];
+    const romanji      = [...phrasesData.nsfw.romaji.memory,   ...phrasesData.nsfw.romaji.void];
+    const japaneseList = [...phrasesData.nsfw.japanese.memory, ...phrasesData.nsfw.japanese.void];
+    const glyphs = charsetsData.symbols.split('');
 
     // Type glyph text
     function typeGlyphText(targetId, text, delay = 100) {
@@ -346,12 +313,12 @@
     }
 
     // Create floating text phrases
-    const allPhrases = [...phrases, ...romanji, ...japanese];
+    const allPhrases = [...phraseList, ...romanji, ...japaneseList];
     for (let i = 0; i < 30; i++) {
       const p = document.createElement("div");
       p.className = "floating-text";
       const phrase = allPhrases[Math.floor(Math.random() * allPhrases.length)];
-      const jp = japanese.includes(phrase);
+      const jp = japaneseList.includes(phrase);
       
       if (jp && Math.random() > 0.5) p.classList.add("vertical");
       

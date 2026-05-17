@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "corrupted-theme phrases",
+  "type": "object",
+  "required": ["schemaVersion", "sfw", "nsfw"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "sfw":  { "$ref": "#/definitions/languageBundle" },
+    "nsfw": { "$ref": "#/definitions/languageBundle" },
+    "pairings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["romaji", "kanji", "pool"],
+        "additionalProperties": false,
+        "properties": {
+          "romaji": { "type": "string", "minLength": 1 },
+          "kanji":  { "type": "string", "minLength": 1 },
+          "pool":   { "type": "string", "enum": ["data", "system", "status", "void", "memory", "glitch"] }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "languageBundle": {
+      "type": "object",
+      "required": ["japanese", "romaji", "english"],
+      "additionalProperties": false,
+      "properties": {
+        "japanese": { "$ref": "#/definitions/poolSet" },
+        "romaji":   { "$ref": "#/definitions/poolSet" },
+        "english":  { "$ref": "#/definitions/poolSet" }
+      }
+    },
+    "poolSet": {
+      "type": "object",
+      "required": ["data", "system", "status", "void", "memory", "glitch"],
+      "additionalProperties": false,
+      "properties": {
+        "data":   { "type": "array", "items": { "type": "string" } },
+        "system": { "type": "array", "items": { "type": "string" } },
+        "status": { "type": "array", "items": { "type": "string" } },
+        "void":   { "type": "array", "items": { "type": "string" } },
+        "memory": { "type": "array", "items": { "type": "string" } },
+        "glitch": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

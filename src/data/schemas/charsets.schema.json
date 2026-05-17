@@ -1,0 +1,15 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "corrupted-theme charsets",
+  "type": "object",
+  "required": ["schemaVersion", "katakana", "hiragana", "kanji", "symbols", "blocks"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "katakana": { "type": "string", "minLength": 10 },
+    "hiragana": { "type": "string", "minLength": 10 },
+    "kanji":    { "type": "string", "minLength": 1 },
+    "symbols":  { "type": "string", "minLength": 1 },
+    "blocks":   { "type": "string", "minLength": 1 }
+  }
+}

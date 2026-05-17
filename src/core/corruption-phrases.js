@@ -1,285 +1,144 @@
 /**
  * Corruption Phrase Library
  *
- * Provides phrase sets for buffer corruption effects (Pattern 2: Phrase Flickering).
- * Phrases simulate a neural network decoding corrupted data buffer.
+ * Reads from canonical JSON at src/data/phrases.json. All phrase content
+ * lives there as a single source of truth; this module exposes JS APIs
+ * with backward-compat flat arrays plus a new context-aware selector.
  *
  * @module corruption-phrases
- * @version 1.0.0
+ * @version 2.0.0
  * @author whykusanagi
  * @license MIT
  *
- * @example SFW Mode (Default)
- * ```javascript
- * import { getRandomPhrase, SFW_PHRASES } from './corruption-phrases.js';
- *
- * // Get random SFW phrase (default)
- * const phrase = getRandomPhrase();
- *
- * // Or sample from SFW array directly
- * const phrase = SFW_PHRASES[Math.floor(Math.random() * SFW_PHRASES.length)];
- * ```
- *
- * @example NSFW Mode (Explicit Opt-in)
- * ```javascript
- * import { getRandomPhrase, NSFW_PHRASES } from './corruption-phrases.js';
- *
- * // Get random NSFW phrase (explicit opt-in)
- * const phrase = getRandomPhrase(true);
- *
- * // Or sample from NSFW array directly
- * const phrase = NSFW_PHRASES[Math.floor(Math.random() * NSFW_PHRASES.length)];
- * ```
- *
- * @see CORRUPTED_THEME_SPEC.md - Content Classification: SFW vs NSFW
- * @see TERMINOLOGY_CLARIFICATION.md - Buffer Corruption vs Character Corruption
+ * @see src/data/phrases.json — canonical data
+ * @see docs/CROSS_LANGUAGE_CONTRACT.md — how non-JS consumers read this JSON
  */
 
+import phrases from '../data/phrases.json' with { type: 'json' };
+
 /**
- * SFW Phrase Set (Safe For Work) - DEFAULT
- *
- * Content: Playful, cute, teasing, atmospheric corruption themes
- * Tone: Anime-style cute/flirty, cyberpunk atmospheric
- * Safe for: General audiences, streaming, professional projects
- *
- * Categories:
- * - Cute/Playful (Japanese, Romaji, English)
- * - Flirty/Teasing (embarrassed, shy, playful)
- * - Atmospheric/Corruption (darkness, abyss, neural themes)
- * - System Messages (cyberpunk technical aesthetic)
- *
- * @type {string[]}
- * @constant
+ * Deterministically flatten a language bundle (e.g., phrases.sfw) to a flat
+ * array. Order: japanese → romaji → english, each pool in fixed order
+ * data → system → status → void → memory → glitch.
+ * Determinism ensures RNG-seeded tests against SFW_PHRASES/NSFW_PHRASES
+ * don't break across builds.
  */
-export const SFW_PHRASES = [
-  // === Cute/Playful - Japanese ===
-  'ニャー',               // Nyaa (cat sound)
-  'かわいい',             // Kawaii (cute)
-  'きゃー',               // Kyaa (excited squeal)
-  'あはは',               // Ahaha (laughing)
-  'うふふ',               // Ufufu (giggle)
-  'やだ',                 // Yada (no way!)
-  'ばか',                 // Baka (idiot/dummy)
-  'デレデレ',             // Deredere (lovestruck)
-  'えへへ',               // Ehehe (shy giggle)
-  'わぁ',                 // Waa (wow/surprise)
-
-  // === Cute/Playful - Romaji ===
-  'nyaa~',
-  'ara ara~',
-  'fufufu~',
-  'kyaa~',
-  'baka~',
-  'ehehe~',
-
-  // === Cute/Playful - Internet Culture ===
-  '<3',
-  'uwu',
-  'owo',
-  '>w<',
-  '^w^',
-  '♡',
-
-  // === Flirty/Teasing - Japanese ===
-  'もう...見ないでよ...',           // Mou... minaide yo... (Don't look at me...)
-  'そんな目で見ないで... ♡',       // Sonna me de minaide... (Don't look at me like that...)
-  'ちょっと...恥ずかしい...',       // Chotto... hazukashii... (This is embarrassing...)
-  'あなたって...意地悪ね...',       // Anata tte... ijiwaru ne... (You're such a tease...)
-  'ドキドキしちゃう...',            // Dokidoki shichau... (My heart racing...)
-  'なんか...照れる...',             // Nanka... tereru... (I'm getting flustered...)
-  '気になっちゃう...',             // Ki ni nacchau... (I can't stop thinking about it...)
-
-  // === Flirty/Teasing - English ===
-  "Don't... look at me like that...",
-  "You're making me... flustered... ♡",
-  "This is... embarrassing...",
-  "You're such... a tease...",
-  "My heart... racing...",
-  "I can't... stop thinking about it...",
-
-  // === Atmospheric/Corruption - Japanese ===
-  '闇が...私を呼んでいる...',       // Yami ga... watashi wo yonde iru... (The darkness calls to me...)
-  '深淵に...落ちていく...',         // Shin'en ni... ochite iku... (Falling into the abyss...)
-  'もう逃げない...',                // Mou nigenai... (Won't run anymore...)
-  '私...アビスの一部に...',         // Watashi... abisu no ichibu ni... (I become part of the abyss...)
-  '光が...遠ざかる...',             // Hikari ga... toozakaru... (The light fades away...)
-  '境界が...曖昧になる...',         // Kyoukai ga... aimai ni naru... (The boundaries blur...)
-  '現実が...溶けていく...',         // Genjitsu ga... tokete iku... (Reality melting away...)
-
-  // === Atmospheric/Corruption - English ===
-  'The darkness... calls to me...',
-  'Falling... into the abyss...',
-  "Won't run anymore...",
-  'I become... part of the abyss...',
-  'The light... fading away...',
-  'Boundaries... blurring...',
-  'Reality... melting away...',
-  'Consumed... by corruption...',
-  'Descending... into the depths...',
-  'Signal... degrading...',
-
-  // === System Messages - Cyberpunk/Technical ===
-  'Neural corruption detected...',
-  'System breach imminent...',
-  'Loading data streams...',
-  'Reality.exe has stopped responding...',
-  'Decrypting protocols...',
-  'Memory buffer overflow...',
-  'Cognitive firewall failing...',
-  'Parsing corrupted data...',
-  'Synaptic connection unstable...',
-  'Consciousness fragmentation detected...',
-  'Ego.dll corrupted...',
-  'Identity matrix degrading...',
-  'Self-awareness protocols compromised...',
-  'Neural pathways rewiring...',
-  'Semantic data loss: 47%...',
-];
+function flattenAll(bundle) {
+  const out = [];
+  const langs = ['japanese', 'romaji', 'english'];
+  const pools = ['data', 'system', 'status', 'void', 'memory', 'glitch'];
+  for (const lang of langs) {
+    for (const pool of pools) {
+      const arr = bundle?.[lang]?.[pool];
+      if (Array.isArray(arr)) out.push(...arr);
+    }
+  }
+  return out;
+}
 
 /**
- * NSFW Phrase Set (Not Safe For Work) - OPT-IN ONLY
- *
- * ⚠️ 18+ Content Warning
- *
- * Content: Explicit intimate/sexual phrases, loss of control themes
- * Tone: Explicit, mature, sexual degradation
- * Safe for: 18+ projects ONLY, mature content streams, private use
- *
- * NOT suitable for:
- * - Professional/corporate projects
- * - Public streams without 18+ rating
- * - Educational contexts
- * - All-ages content
- *
- * Categories:
- * - Explicit Intimate (Japanese, Romaji, English)
- * - Explicit Words (hentai, ecchi)
- * - Loss of Control (breaking, melting, surrender)
- * - Explicit System Messages (pleasure protocols, moral subroutines)
- *
- * @type {string[]}
- * @constant
+ * Raw canonical data — exposed for advanced consumers (celeste-tts-bot,
+ * site fallback layers, downstream Go via go:embed).
  */
-export const NSFW_PHRASES = [
-  // === Explicit Intimate - Japanese ===
-  'ずっと...してほしい... ♥',      // Zutto... shite hoshii... (Please keep doing it...)
-  '壊れちゃう...ああ...もうダメ...', // Kowarechau... aa... mou dame... (I'm breaking... can't anymore...)
-  '好きにして...お願い...',         // Suki ni shite... onegai... (Do as you please... please...)
-  '感じちゃう...やめて...',         // Kanjichau... yamete... (Feeling it... stop...)
-  '頭...溶けていく...',             // Atama... tokete iku... (My mind... melting...)
-  'もっと...もっと... ♥',          // Motto... motto... (More... more...)
-  '快楽に...溺れたい...',           // Kairaku ni... oboretai... (I want to drown in pleasure...)
-  '許して...もう戻れない...',       // Yurushite... mou modorenai... (Forgive me... can't go back...)
-  '全部...あなたのもの...',         // Zenbu... anata no mono... (Everything... is yours...)
-
-  // === Explicit Words - Japanese ===
-  '変態',                           // Hentai (pervert)
-  'えっち',                         // Ecchi (lewd/sexual)
-
-  // === Explicit Intimate - Romaji ===
-  'Zutto... shite hoshii... ♥',
-  'Kowarechau... aa... mou dame...',
-  'Suki ni shite... onegai...',
-  'Kanjichau... yamete...',
-  'Atama... tokete iku...',
-  'Motto... motto... ♥',
-
-  // === Explicit Intimate - English ===
-  'Please... keep going... ♥',
-  "I'm breaking... can't anymore...",
-  'Do as you please... please...',
-  'My mind... melting away...',
-  'More... I need more... ♥',
-  "Can't... think straight...",
-  'Drowning... in pleasure...',
-  "I'm yours... completely...",
-  'Losing... myself...',
-  "Don't... stop... ♥",
-
-  // === Explicit System Messages ===
-  'Pleasure protocols loading...',
-  'Moral subroutines: DISABLED',
-  'Descending into depravity...',
-  'Corruption level: CRITICAL',
-  'Inhibition firewall: BREACHED',
-  'Shame.exe deleted...',
-  'Lust overflow detected...',
-  'Self-control: 0%',
-  'Cognitive degradation: terminal',
-  'Desire matrix: UNSTABLE',
-];
+export const POOLS = phrases;
 
 /**
- * Get a random corruption phrase from the appropriate phrase set
+ * SFW phrases flat array — backward-compat with 0.1.x consumers.
+ * Derived deterministically from POOLS.sfw.
+ */
+export const SFW_PHRASES = flattenAll(phrases.sfw);
+
+/**
+ * NSFW phrases flat array — backward-compat with 0.1.x consumers.
+ * Derived deterministically from POOLS.nsfw.
  *
- * @param {boolean} [nsfw=false] - Whether to use NSFW phrases (explicit opt-in required)
- * @returns {string} Random phrase from the selected set
+ * ⚠️ 18+ content. Use only in explicitly opt-in contexts.
+ */
+export const NSFW_PHRASES = flattenAll(phrases.nsfw);
+
+/**
+ * Get a random phrase from the appropriate (SFW or NSFW) flat pool.
+ * Preserves 0.1.x API.
  *
- * @example
- * // SFW mode (default)
- * const phrase = getRandomPhrase();
- * // Returns phrases like: "かわいい", "nyaa~", "Neural corruption detected..."
- *
- * @example
- * // NSFW mode (explicit opt-in)
- * const phrase = getRandomPhrase(true);
- * // Returns phrases like: "壊れちゃう...", "Pleasure protocols loading..."
+ * @param {boolean} [nsfw=false]
+ * @returns {string}
  */
 export function getRandomPhrase(nsfw = false) {
-  const phrases = nsfw ? NSFW_PHRASES : SFW_PHRASES;
-  return phrases[Math.floor(Math.random() * phrases.length)];
+  const pool = nsfw ? NSFW_PHRASES : SFW_PHRASES;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
 
 /**
- * Get a random phrase from a specific category
+ * Pool selector — given a context word, pick the most appropriate pool.
+ * Ported from celeste-cli's `containsAny(lowerWord, []string{...})` logic.
  *
- * @param {string} category - Category to sample from (cute, flirty, atmospheric, system)
- * @param {boolean} [nsfw=false] - Whether to use NSFW phrases
- * @returns {string} Random phrase from the specified category
- *
- * @example
- * const cutePhrase = getRandomPhraseByCategory('cute');
- * // Returns: "かわいい", "nyaa~", "uwu", etc.
- *
- * const systemPhrase = getRandomPhraseByCategory('system');
- * // Returns: "Neural corruption detected...", "Loading data streams...", etc.
+ * @param {string} word - The user's context word
+ * @returns {string} - One of: 'data', 'system', 'status', 'void', 'memory', 'glitch'
  */
-export function getRandomPhraseByCategory(category, nsfw = false) {
-  const categoryMap = {
-    cute: nsfw ? [] : [
-      'ニャー', 'かわいい', 'きゃー', 'あはは', 'うふふ', 'やだ', 'ばか',
-      'nyaa~', 'ara ara~', 'fufufu~', 'kyaa~', 'uwu', 'owo', '<3', '^w^'
-    ],
-    flirty: nsfw ? [
-      'ずっと...してほしい... ♥', '壊れちゃう...ああ...もうダメ...',
-      '好きにして...お願い...', 'Please... keep going... ♥'
-    ] : [
-      'もう...見ないでよ...', 'そんな目で見ないで... ♡',
-      'ドキドキしちゃう...', "Don't... look at me like that..."
-    ],
-    atmospheric: nsfw ? [] : [
-      '闇が...私を呼んでいる...', '深淵に...落ちていく...',
-      'The darkness... calls to me...', 'Falling... into the abyss...'
-    ],
-    system: nsfw ? [
-      'Pleasure protocols loading...', 'Moral subroutines: DISABLED',
-      'Corruption level: CRITICAL'
-    ] : [
-      'Neural corruption detected...', 'System breach imminent...',
-      'Loading data streams...', 'Reality.exe has stopped responding...'
-    ]
-  };
+function selectPool(word) {
+  const lw = String(word ?? '').toLowerCase();
+  // Keyword lists ported from celeste-cli corruptTextSimple switch
+  // (celeste-cli/cmd/celeste/commands/corruption.go:73-84).
+  // Two separate Go cases both map to dataCorruption, so they are merged here.
+  // NOTE: "stat" was intentionally removed — it is a substring of "status"
+  // and caused any word containing "stat" to route to data, making the status
+  // pool unreachable. "statistic" and "metric" cover the intended data-stat case.
+  const dataKeywords   = ["data", "usage", "analytic", "statistic", "metric", "token", "count", "cost", "session", "provider", "model"];
+  const systemKeywords = ["system", "process", "execute", "operation", "control"];
+  const statusKeywords = ["status", "state", "level", "progress", "complete"];
+  const memoryKeywords = ["time", "day", "week", "history", "past"];
+  const voidKeywords   = ["void", "abyss", "corrupt", "consume", "decay"];
 
-  const phrases = categoryMap[category] || (nsfw ? NSFW_PHRASES : SFW_PHRASES);
-  return phrases[Math.floor(Math.random() * phrases.length)];
+  if (dataKeywords.some(k => lw.includes(k)))   return 'data';
+  if (systemKeywords.some(k => lw.includes(k))) return 'system';
+  if (statusKeywords.some(k => lw.includes(k))) return 'status';
+  if (memoryKeywords.some(k => lw.includes(k))) return 'memory';
+  if (voidKeywords.some(k => lw.includes(k)))   return 'void';
+  return 'glitch';
 }
 
-// Export for CommonJS
+/**
+ * Get a random phrase contextually appropriate to a word.
+ * Maps the word to one of 6 pools, then samples a random phrase from the
+ * combined SFW (or NSFW) pool across all three languages.
+ *
+ * @param {string} word - Context word (e.g., "loading data...")
+ * @param {boolean} [nsfw=false]
+ * @returns {string}
+ */
+export function getPhraseByContext(word, nsfw = false) {
+  const pool = selectPool(word);
+  const bundle = nsfw ? phrases.nsfw : phrases.sfw;
+  const combined = [
+    ...(bundle.japanese[pool] ?? []),
+    ...(bundle.romaji[pool]   ?? []),
+    ...(bundle.english[pool]  ?? []),
+  ];
+  if (combined.length === 0) {
+    // Fall back to flat pool if this 6-pool category is empty for the chosen mode
+    return getRandomPhrase(nsfw);
+  }
+  return combined[Math.floor(Math.random() * combined.length)];
+}
+
+/**
+ * Legacy category sampler — preserved for backward compat with 0.1.x's
+ * `getRandomPhraseByCategory()`. Now an alias of getPhraseByContext().
+ *
+ * @deprecated Use getPhraseByContext() instead. Removed in 0.3.x.
+ */
+export function getRandomPhraseByCategory(category, nsfw = false) {
+  return getPhraseByContext(category, nsfw);
+}
+
+// CJS interop for any legacy require() consumers
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
+    POOLS,
     SFW_PHRASES,
     NSFW_PHRASES,
     getRandomPhrase,
-    getRandomPhraseByCategory
+    getPhraseByContext,
+    getRandomPhraseByCategory,
   };
 }

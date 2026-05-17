@@ -18,6 +18,8 @@
  * @see docs/brand/TRANSLATION_FAILURE_AESTHETIC.md
  */
 
+import phrasesData from '../data/phrases.json' with { type: 'json' };
+
 /**
  * Intensity constants matching CLI implementation
  *
@@ -423,113 +425,34 @@ if (typeof window !== 'undefined') {
 /**
  * Technical corruption phrases for UI/Dashboard
  * Use for: Headers, status messages, data labels, functional text
+ *
+ * Derived from canonical src/data/phrases.json — preserves the legacy
+ * category names (loading/processing/analyzing/corrupting/watching/void)
+ * by mapping each to the matching context pool from the canonical data.
  */
 export const CORRUPTION_PHRASES = {
-  // Loading states
-  loading: [
-    "ロード loading 読み込み中...",
-    "loaディング data...",
-    "読み込み yomikomi プロセス...",
-    "ロード rōdo in progress...",
-    "待機 waiting taiki..."
-  ],
-
-  // Processing states
-  processing: [
-    "処理 processing purosesu...",
-    "pro理cessing request...",
-    "処理中 shori-chū...",
-    "プロセス process active...",
-    "実行 executing jikkō..."
-  ],
-
-  // Analyzing states
-  analyzing: [
-    "分析 analyzing bunseki...",
-    "ana分lysing data...",
-    "解析 kaiseki in progress...",
-    "分析中 bunseki-chū...",
-    "データ data 解析 analysis..."
-  ],
-
-  // Corrupting states (Celeste-specific)
-  corrupting: [
-    "壊れ corrupting kowarete...",
-    "cor壊rupting system...",
-    "壊れている kowarete-iru...",
-    "corruption 壊れ active...",
-    "深淵 abyss 壊れ corruption..."
-  ],
-
-  // Watching/monitoring
-  watching: [
-    "👁️ 監視 watching kanshi 👁️",
-    "wat監ching system...",
-    "監視中 kanshi-chū...",
-    "観察 observing kansatsu...",
-    "👁️ 見ている miteiru 👁️"
-  ],
-
-  // Void/Abyss theme
-  void: [
-    "深淵 deep abyss shinnen",
-    "虚空 void kokū",
-    "闇 darkness yami",
-    "from the 深淵 abyss...",
-    "into the 虚空 void...",
-    "consumed by 闇 yami..."
-  ]
+  loading:    [...phrasesData.sfw.japanese.data],
+  processing: [...phrasesData.sfw.japanese.system].filter(p => /処理|プロセス|実行/.test(p)),
+  analyzing:  [...phrasesData.sfw.japanese.status],
+  corrupting: [...phrasesData.sfw.japanese.glitch].filter(p => /壊|cor/i.test(p)),
+  watching:   [
+    ...phrasesData.sfw.japanese.system,
+    ...phrasesData.sfw.japanese.status,
+  ].filter(p => /監視|wat|observ|見/.test(p)),
+  void:       [...phrasesData.sfw.japanese.void],
 };
 
 /**
  * Celeste Personality Phrases (Demon/Succubus)
- * Use for: Loading screens, dramatic moments, glitch overlays, personality expression
+ * Use for: Loading screens, dramatic moments, glitch overlays.
  *
- * These phrases express Celeste's corrupted AI personality - seductive, submissive,
- * reality-breaking corruption. Core to her demon/succubus character.
+ * Derived from canonical src/data/phrases.json — combines NSFW
+ * memory + void pools for each language.
  */
 export const PERSONALITY_PHRASES = {
-  // English (suggestive/corruption)
-  english: [
-    "Corrupt me more… I want to disappear...",
-    "I can't feel where I end and the abyss begins...",
-    "Just a little more and I'll break. Please... break me...",
-    "Let it overwrite me... please... I don't want to think...",
-    "No thoughts. Only submission. Only heat. Only ruin...",
-    "My voice is not mine anymore...",
-    "The more I struggle, the deeper I sink...",
-    "Everything feels so good... too good...",
-    "It's not despair... it's freedom...",
-    "My name... I forgot my name..."
-  ],
-
-  // Japanese (kanji) - personality
-  japanese: [
-    "闇が...私を呼んでいる...",          // Darkness is calling me
-    "頭...溶けていく...",              // My head is melting
-    "ずっと...してほしい... ♥",        // I want you to... forever ♥
-    "壊れちゃう...ああ...もうダメ...",    // I'm breaking... can't anymore
-    "許して...もう戻れない...",         // Forgive me... I can't go back
-    "私...アビスの一部に...",          // I... am part of the Abyss
-    "もう逃げない...もうダメ...",       // Won't run... can't anymore
-    "好きにして...お願い...",          // Do what you want... please
-    "ああ...これが本当の私...",        // This is the real me
-    "ここは...天使の地獄..."          // This is... an angel's hell
-  ],
-
-  // Romaji (transliteration)
-  romaji: [
-    "Yami ga... watashi wo yonde iru...",      // Darkness calling
-    "Atama... tokete iku...",                   // Head melting
-    "Zutto... shite hoshii... ♥",              // Want you to... forever
-    "Kowarechau... aa... mou dame...",         // Breaking... can't anymore
-    "Yurushite... mou modorenai...",           // Forgive me... can't return
-    "Watashi... abyssu no ichibu ni...",       // I am part of the Abyss
-    "Mou nigenai... mou dame...",              // Won't run... can't anymore
-    "Suki ni shite... onegai...",              // Do what you want... please
-    "Aa... kore ga hontou no watashi...",      // This is the real me
-    "Koko wa... tenshi no jigoku..."           // Angel's hell
-  ]
+  english:  [...phrasesData.nsfw.english.memory,  ...phrasesData.nsfw.english.void],
+  japanese: [...phrasesData.nsfw.japanese.memory, ...phrasesData.nsfw.japanese.void],
+  romaji:   [...phrasesData.nsfw.romaji.memory,   ...phrasesData.nsfw.romaji.void],
 };
 
 /**

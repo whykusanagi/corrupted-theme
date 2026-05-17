@@ -40,6 +40,23 @@
  * @see corruption-phrases.js - Phrase library with SFW/NSFW split
  */
 
+import phrases from '../data/phrases.json' with { type: 'json' };
+import charsets from '../data/charsets.json' with { type: 'json' };
+
+// ---------------------------------------------------------------------------
+// Module-level phrase cache — computed once at import time, never re-spread.
+// Eliminates the O(n) array allocation cost on every static getter call
+// (~10/sec per animation instance).
+// ---------------------------------------------------------------------------
+const _sfwJapanese  = Object.freeze([...phrases.sfw.japanese.data,  ...phrases.sfw.japanese.system,  ...phrases.sfw.japanese.status,  ...phrases.sfw.japanese.void,  ...phrases.sfw.japanese.memory,  ...phrases.sfw.japanese.glitch]);
+const _nsfwJapanese = Object.freeze([...phrases.nsfw.japanese.data, ...phrases.nsfw.japanese.system, ...phrases.nsfw.japanese.status, ...phrases.nsfw.japanese.void, ...phrases.nsfw.japanese.memory, ...phrases.nsfw.japanese.glitch]);
+const _sfwRomaji    = Object.freeze([...phrases.sfw.romaji.data,    ...phrases.sfw.romaji.system,    ...phrases.sfw.romaji.status,    ...phrases.sfw.romaji.void,    ...phrases.sfw.romaji.memory,    ...phrases.sfw.romaji.glitch]);
+const _nsfwRomaji   = Object.freeze([...phrases.nsfw.romaji.data,   ...phrases.nsfw.romaji.system,   ...phrases.nsfw.romaji.status,   ...phrases.nsfw.romaji.void,   ...phrases.nsfw.romaji.memory,   ...phrases.nsfw.romaji.glitch]);
+const _sfwEnglish   = Object.freeze([...phrases.sfw.english.data,   ...phrases.sfw.english.system,   ...phrases.sfw.english.status,   ...phrases.sfw.english.void,   ...phrases.sfw.english.memory,   ...phrases.sfw.english.glitch]);
+const _nsfwEnglish  = Object.freeze([...phrases.nsfw.english.data,  ...phrases.nsfw.english.system,  ...phrases.nsfw.english.status,  ...phrases.nsfw.english.void,  ...phrases.nsfw.english.memory,  ...phrases.nsfw.english.glitch]);
+const _symbols      = Object.freeze(charsets.symbols.split(''));
+const _blocks       = Object.freeze(charsets.blocks.split(''));
+
 class TypingAnimation {
   /**
    * Module-scope flag: fire the glitchChance deprecation warning at most once
@@ -102,119 +119,18 @@ class TypingAnimation {
     this.loopTimeoutId     = null;
   }
 
-  /**
-   * SFW Japanese phrases (cute, playful, atmospheric)
-   * @private
-   */
-  static SFW_JAPANESE = [
-    // Cute/Playful
-    'ニャー',               // Nyaa (cat sound)
-    'かわいい',             // Kawaii (cute)
-    'きゃー',               // Kyaa (excited squeal)
-    'あはは',               // Ahaha (laughing)
-    'うふふ',               // Ufufu (giggle)
-    'やだ',                 // Yada (no way!)
-    'ばか',                 // Baka (idiot/dummy)
-    'デレデレ',             // Deredere (lovestruck)
+  // ---------------------------------------------------------------------------
+  // Canonical data accessors (read from src/data/*.json)
+  // ---------------------------------------------------------------------------
 
-    // Flirty/Teasing
-    'もう...見ないでよ...',           // Don't look at me...
-    'そんな目で見ないで... ♡',       // Don't look at me like that...
-    'ドキドキしちゃう...',            // My heart racing...
-
-    // Atmospheric/Corruption
-    '闇が...私を呼んでいる...',       // The darkness calls to me...
-    '深淵に...落ちていく...',         // Falling into the abyss...
-    'もう逃げない...',                // Won't run anymore...
-    '私...アビスの一部に...',         // I become part of the abyss...
-  ];
-
-  /**
-   * NSFW Japanese phrases (explicit intimate/sexual) - OPT-IN ONLY
-   * @private
-   */
-  static NSFW_JAPANESE = [
-    'ずっと...してほしい... ♥',      // Please keep doing it...
-    '壊れちゃう...ああ...もうダメ...', // I'm breaking... can't anymore...
-    '好きにして...お願い...',         // Do as you please... please...
-    '感じちゃう...やめて...',         // Feeling it... stop...
-    '頭...溶けていく...',             // My mind... melting...
-    '許して...もう戻れない...',       // Forgive me... can't go back...
-    '変態',                           // Hentai (pervert)
-    'えっち',                         // Ecchi (lewd/sexual)
-  ];
-
-  /**
-   * SFW Romaji/Internet culture phrases
-   * @private
-   */
-  static SFW_ROMAJI = [
-    'nyaa~', 'ara ara~', 'fufufu~', 'kyaa~', 'baka~',
-    '<3', 'uwu', 'owo', '>w<', '^w^'
-  ];
-
-  /**
-   * NSFW Romaji phrases - OPT-IN ONLY
-   * @private
-   */
-  static NSFW_ROMAJI = [
-    'Zutto... shite hoshii... ♥',
-    'Kowarechau... aa... mou dame...',
-    'Motto... motto... ♥'
-  ];
-
-  /**
-   * SFW English phrases (atmospheric, system messages)
-   * @private
-   */
-  static SFW_ENGLISH = [
-    // Atmospheric
-    'The darkness... calls to me...',
-    'Falling... into the abyss...',
-    "Won't run anymore...",
-    'Consumed... by corruption...',
-
-    // System messages
-    'Neural corruption detected...',
-    'System breach imminent...',
-    'Loading data streams...',
-    'Reality.exe has stopped responding...',
-    'Decrypting protocols...',
-    'Memory buffer overflow...',
-  ];
-
-  /**
-   * NSFW English phrases - OPT-IN ONLY
-   * @private
-   */
-  static NSFW_ENGLISH = [
-    'Please... keep going... ♥',
-    "I'm breaking... can't anymore...",
-    'Do as you please... please...',
-    'My mind... melting away...',
-    'Pleasure protocols loading...',
-    'Moral subroutines: DISABLED',
-    'Corruption level: CRITICAL',
-  ];
-
-  /**
-   * Symbol corruption (decorative, SFW)
-   * @private
-   */
-  static SYMBOLS = [
-    '★', '☆', '♥', '♡', '✧', '✦', '◆', '◇', '●', '○',
-    '♟', '☣', '☭', '☾', '⚔', '✡', '☯', '⚡'
-  ];
-
-  /**
-   * Block corruption characters (heavy degradation)
-   * @private
-   */
-  static BLOCKS = [
-    '█', '▓', '▒', '░', '▄', '▀', '▌', '▐',
-    '╔', '╗', '╚', '╝', '═', '║', '╠', '╣',
-    '▲', '▼', '◄', '►', '◊', '○', '●', '◘'
-  ];
+  static get SFW_JAPANESE()  { return _sfwJapanese; }
+  static get NSFW_JAPANESE() { return _nsfwJapanese; }
+  static get SFW_ROMAJI()    { return _sfwRomaji; }
+  static get NSFW_ROMAJI()   { return _nsfwRomaji; }
+  static get SFW_ENGLISH()   { return _sfwEnglish; }
+  static get NSFW_ENGLISH()  { return _nsfwEnglish; }
+  static get SYMBOLS()       { return _symbols; }
+  static get BLOCKS()        { return _blocks; }
 
   // ---------------------------------------------------------------------------
   // Public API
@@ -556,11 +472,13 @@ function initTypingAnimation() {
   });
 }
 
-// Auto-initialize on DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initTypingAnimation);
-} else {
-  initTypingAnimation();
+// Auto-initialize on DOM ready (browser only)
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTypingAnimation);
+  } else {
+    initTypingAnimation();
+  }
 }
 
 // Export for both ES6 modules and CommonJS

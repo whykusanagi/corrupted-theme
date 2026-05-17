@@ -26,11 +26,13 @@
     "./components-js": "./src/lib/components.js",
     "./carousel": "./src/lib/carousel.js",
     "./corrupted-vortex": "./src/lib/corrupted-vortex.js",
-    "./corrupted-particles": "./src/lib/corrupted-particles.js"
+    "./corrupted-particles": "./src/lib/corrupted-particles.js",
+    "./data/phrases.json":  "./src/data/phrases.json",
+    "./data/charsets.json": "./src/data/charsets.json",
+    "./data/colors.json":   "./src/data/colors.json"
   },
   "files": [
     "src",
-    "scripts",
     "docs/brand",
     "docs/components",
     "docs/governance",
@@ -41,6 +43,7 @@
     "docs/COMPONENTS_REFERENCE.md",
     "docs/CORRUPTION_PHRASES.md",
     "docs/CHARACTER_LEVEL_CORRUPTION.md",
+    "docs/CROSS_LANGUAGE_CONTRACT.md",
     "docs/STYLE_GUIDE.md",
     "examples",
     "Dockerfile",
@@ -75,6 +78,7 @@
     "node": ">=18.0.0"
   },
   "devDependencies": {
+    "ajv": "^8.20.0",
     "cssnano": "^7.1.2",
     "postcss": "^8.4.0",
     "postcss-cli": "^11.0.1"
@@ -84,7 +88,9 @@
     "watch": "postcss --watch src/css/theme.css -o dist/theme.min.css",
     "dev:proxy": "node scripts/celeste-proxy-server.js",
     "dev:static": "node scripts/static-server.js",
-    "start": "npm run dev:static"
+    "start": "npm run dev:static",
+    "validate-data": "node scripts/validate-data.js",
+    "test": "node --test 'tests/data/*.test.js'"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

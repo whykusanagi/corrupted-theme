@@ -40,6 +40,9 @@
  * @see corruption-phrases.js - Phrase library with SFW/NSFW split
  */
 
+import phrases from '../data/phrases.json' with { type: 'json' };
+import charsets from '../data/charsets.json' with { type: 'json' };
+
 class TypingAnimation {
   /**
    * Module-scope flag: fire the glitchChance deprecation warning at most once
@@ -102,119 +105,40 @@ class TypingAnimation {
     this.loopTimeoutId     = null;
   }
 
-  /**
-   * SFW Japanese phrases (cute, playful, atmospheric)
-   * @private
-   */
-  static SFW_JAPANESE = [
-    // Cute/Playful
-    'ニャー',               // Nyaa (cat sound)
-    'かわいい',             // Kawaii (cute)
-    'きゃー',               // Kyaa (excited squeal)
-    'あはは',               // Ahaha (laughing)
-    'うふふ',               // Ufufu (giggle)
-    'やだ',                 // Yada (no way!)
-    'ばか',                 // Baka (idiot/dummy)
-    'デレデレ',             // Deredere (lovestruck)
+  // ---------------------------------------------------------------------------
+  // Canonical data accessors (read from src/data/*.json)
+  // ---------------------------------------------------------------------------
 
-    // Flirty/Teasing
-    'もう...見ないでよ...',           // Don't look at me...
-    'そんな目で見ないで... ♡',       // Don't look at me like that...
-    'ドキドキしちゃう...',            // My heart racing...
-
-    // Atmospheric/Corruption
-    '闇が...私を呼んでいる...',       // The darkness calls to me...
-    '深淵に...落ちていく...',         // Falling into the abyss...
-    'もう逃げない...',                // Won't run anymore...
-    '私...アビスの一部に...',         // I become part of the abyss...
-  ];
-
-  /**
-   * NSFW Japanese phrases (explicit intimate/sexual) - OPT-IN ONLY
-   * @private
-   */
-  static NSFW_JAPANESE = [
-    'ずっと...してほしい... ♥',      // Please keep doing it...
-    '壊れちゃう...ああ...もうダメ...', // I'm breaking... can't anymore...
-    '好きにして...お願い...',         // Do as you please... please...
-    '感じちゃう...やめて...',         // Feeling it... stop...
-    '頭...溶けていく...',             // My mind... melting...
-    '許して...もう戻れない...',       // Forgive me... can't go back...
-    '変態',                           // Hentai (pervert)
-    'えっち',                         // Ecchi (lewd/sexual)
-  ];
-
-  /**
-   * SFW Romaji/Internet culture phrases
-   * @private
-   */
-  static SFW_ROMAJI = [
-    'nyaa~', 'ara ara~', 'fufufu~', 'kyaa~', 'baka~',
-    '<3', 'uwu', 'owo', '>w<', '^w^'
-  ];
-
-  /**
-   * NSFW Romaji phrases - OPT-IN ONLY
-   * @private
-   */
-  static NSFW_ROMAJI = [
-    'Zutto... shite hoshii... ♥',
-    'Kowarechau... aa... mou dame...',
-    'Motto... motto... ♥'
-  ];
-
-  /**
-   * SFW English phrases (atmospheric, system messages)
-   * @private
-   */
-  static SFW_ENGLISH = [
-    // Atmospheric
-    'The darkness... calls to me...',
-    'Falling... into the abyss...',
-    "Won't run anymore...",
-    'Consumed... by corruption...',
-
-    // System messages
-    'Neural corruption detected...',
-    'System breach imminent...',
-    'Loading data streams...',
-    'Reality.exe has stopped responding...',
-    'Decrypting protocols...',
-    'Memory buffer overflow...',
-  ];
-
-  /**
-   * NSFW English phrases - OPT-IN ONLY
-   * @private
-   */
-  static NSFW_ENGLISH = [
-    'Please... keep going... ♥',
-    "I'm breaking... can't anymore...",
-    'Do as you please... please...',
-    'My mind... melting away...',
-    'Pleasure protocols loading...',
-    'Moral subroutines: DISABLED',
-    'Corruption level: CRITICAL',
-  ];
-
-  /**
-   * Symbol corruption (decorative, SFW)
-   * @private
-   */
-  static SYMBOLS = [
-    '★', '☆', '♥', '♡', '✧', '✦', '◆', '◇', '●', '○',
-    '♟', '☣', '☭', '☾', '⚔', '✡', '☯', '⚡'
-  ];
-
-  /**
-   * Block corruption characters (heavy degradation)
-   * @private
-   */
-  static BLOCKS = [
-    '█', '▓', '▒', '░', '▄', '▀', '▌', '▐',
-    '╔', '╗', '╚', '╝', '═', '║', '╠', '╣',
-    '▲', '▼', '◄', '►', '◊', '○', '●', '◘'
-  ];
+  static get SFW_JAPANESE() {
+    const j = phrases.sfw.japanese;
+    return [...j.data, ...j.system, ...j.status, ...j.void, ...j.memory, ...j.glitch];
+  }
+  static get NSFW_JAPANESE() {
+    const j = phrases.nsfw.japanese;
+    return [...j.data, ...j.system, ...j.status, ...j.void, ...j.memory, ...j.glitch];
+  }
+  static get SFW_ROMAJI() {
+    const r = phrases.sfw.romaji;
+    return [...r.data, ...r.system, ...r.status, ...r.void, ...r.memory, ...r.glitch];
+  }
+  static get NSFW_ROMAJI() {
+    const r = phrases.nsfw.romaji;
+    return [...r.data, ...r.system, ...r.status, ...r.void, ...r.memory, ...r.glitch];
+  }
+  static get SFW_ENGLISH() {
+    const e = phrases.sfw.english;
+    return [...e.data, ...e.system, ...e.status, ...e.void, ...e.memory, ...e.glitch];
+  }
+  static get NSFW_ENGLISH() {
+    const e = phrases.nsfw.english;
+    return [...e.data, ...e.system, ...e.status, ...e.void, ...e.memory, ...e.glitch];
+  }
+  static get SYMBOLS() {
+    return charsets.symbols.split('');
+  }
+  static get BLOCKS() {
+    return charsets.blocks.split('');
+  }
 
   // ---------------------------------------------------------------------------
   // Public API
@@ -556,11 +480,13 @@ function initTypingAnimation() {
   });
 }
 
-// Auto-initialize on DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initTypingAnimation);
-} else {
-  initTypingAnimation();
+// Auto-initialize on DOM ready (browser only)
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTypingAnimation);
+  } else {
+    initTypingAnimation();
+  }
 }
 
 // Export for both ES6 modules and CommonJS

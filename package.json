@@ -85,7 +85,8 @@
     "watch": "postcss --watch src/css/theme.css -o dist/theme.min.css",
     "dev:proxy": "node scripts/celeste-proxy-server.js",
     "dev:static": "node scripts/static-server.js",
-    "start": "npm run dev:static"
+    "start": "npm run dev:static",
+    "validate-data": "node scripts/validate-data.js"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

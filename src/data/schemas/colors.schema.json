@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "corrupted-theme colors",
+  "type": "object",
+  "required": ["schemaVersion", "palette", "semanticUse"],
+  "additionalProperties": false,
+  "properties": {
+    "schemaVersion": { "type": "string", "pattern": "^[0-9]+\\.[0-9]+$" },
+    "palette": {
+      "type": "object",
+      "required": ["cyan", "magenta", "purple", "magenta2", "red", "green"],
+      "additionalProperties": false,
+      "properties": {
+        "cyan":     { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "magenta":  { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "purple":   { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "magenta2": { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "red":      { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" },
+        "green":    { "type": "string", "pattern": "^#[0-9a-fA-F]{6}$" }
+      }
+    },
+    "semanticUse": {
+      "type": "object",
+      "additionalProperties": { "type": "string", "enum": ["cyan", "magenta", "purple", "magenta2", "red", "green"] }
+    },
+    "tierPaletteNotes": { "type": "string" }
+  }
+}

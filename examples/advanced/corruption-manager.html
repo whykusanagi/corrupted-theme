@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CorruptionManager · corrupted-theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 2rem;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .page-header h1 {
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 20px var(--corrupted-cyan);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      color: var(--corrupted-cyan);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-bottom: 2rem;
+    }
+
+    .back-link:hover { opacity: 0.7; }
+
+    /* ── Three demo sections ─────────────────────────────────────────────── */
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .demo-card {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .demo-card__header {
+      padding: 0.75rem 1rem;
+      background: rgba(0,0,0,0.3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .demo-card__header h2 {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--corrupted-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .demo-card__header p {
+      margin: 0.25rem 0 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Target element that CorruptionManager writes text into */
+    .demo-target {
+      flex: 1;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.5);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      word-break: break-all;
+      text-align: center;
+    }
+
+    .demo-card__footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .demo-card__footer .btn {
+      font-size: 0.78rem;
+      padding: 0.3rem 0.8rem;
+    }
+
+    /* ── Manager-level controls ──────────────────────────────────────────── */
+
+    .manager-controls {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: 2rem;
+    }
+
+    .manager-controls h3 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .manager-controls .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── Code block ─────────────────────────────────────────────────────── */
+
+    .code-block {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .code-block h3 {
+      color: var(--accent);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .code-block pre {
+      margin: 0;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      color: var(--corrupted-cyan);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Examples home</a>
+
+  <div class="page-header">
+    <h1><i class="fas fa-brain"></i> CorruptionManager</h1>
+    <p>Unified lifecycle manager for the three canonical corruption patterns — <code>src/core/corruption-manager.js</code></p>
+  </div>
+
+  <!-- Manager-level stop/destroy -->
+  <div class="manager-controls">
+    <h3><i class="fas fa-layer-group"></i> Manager</h3>
+    <div class="btn-row">
+      <button class="btn" id="btn-stop-all">Stop All</button>
+      <button class="btn" id="btn-destroy-manager">Destroy Manager</button>
+      <button class="btn" id="btn-recreate-manager">Re-create Manager</button>
+    </div>
+  </div>
+
+  <!-- Three pattern demos side-by-side -->
+  <div class="demo-grid">
+
+    <!-- Pattern 1: Decode -->
+    <div class="demo-card">
+      <div class="demo-card__header">
+        <h2>Pattern 1 · Decode</h2>
+        <p>Character-by-character corruption → readable text</p>
+      </div>
+      <div class="demo-target" id="target-decode" style="color: var(--corrupted-cyan);">
+        Click Decode to start
+      </div>
+      <div class="demo-card__footer">
+        <button class="btn" id="btn-decode">Decode</button>
+      </div>
+    </div>
+
+    <!-- Pattern 2: Flicker -->
+    <div class="demo-card">
+      <div class="demo-card__header">
+        <h2>Pattern 2 · Flicker</h2>
+        <p>Rapid phrase cycling — unstable signal simulation</p>
+      </div>
+      <div class="demo-target" id="target-flicker" style="color: var(--corrupted-magenta);">
+        Click Flicker to start
+      </div>
+      <div class="demo-card__footer">
+        <button class="btn" id="btn-flicker">Flicker</button>
+      </div>
+    </div>
+
+    <!-- Pattern 3: Hybrid -->
+    <div class="demo-card">
+      <div class="demo-card__header">
+        <h2>Pattern 3 · Hybrid</h2>
+        <p>Flicker phase → decode phase (maximum chaos)</p>
+      </div>
+      <div class="demo-target" id="target-hybrid" style="color: var(--corrupted-purple);">
+        Click Hybrid to start
+      </div>
+      <div class="demo-card__footer">
+        <button class="btn" id="btn-hybrid">Hybrid</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Usage snippet -->
+  <div class="code-block">
+    <h3>Usage</h3>
+    <pre><code>import { CorruptionManager } from 'src/core/corruption-manager.js';
+
+const mgr = new CorruptionManager({ nsfw: false });
+
+// Pattern 1 — character decode
+mgr.decode(element, 'SYSTEM ONLINE', { duration: 2000 });
+
+// Pattern 2 — phrase flicker
+mgr.flicker(element, ['LOADING...', 'CALIBRATING...', 'STANDBY...'], {
+  duration: 3000,
+  finalText: 'READY',
+});
+
+// Pattern 3 — hybrid (flicker then decode)
+mgr.hybrid(element, ['CORRUPTING...', 'REWRITING...'], 'REALITY RESTORED', {
+  duration: 4000,
+});
+
+mgr.stop();     // cancel all running animations
+mgr.destroy();  // full teardown (visibilitychange listener removed)</code></pre>
+  </div>
+
+  <script type="module">
+    import { CorruptionManager } from '../../src/core/corruption-manager.js';
+
+    let mgr = new CorruptionManager({ nsfw: false });
+
+    // ── Pattern 1: Decode ──────────────────────────────────────────────────────
+    document.getElementById('btn-decode').addEventListener('click', () => {
+      const el = document.getElementById('target-decode');
+      mgr.decode(el, 'NEURAL CORE ONLINE', { duration: 2000 });
+    });
+
+    // ── Pattern 2: Flicker ─────────────────────────────────────────────────────
+    document.getElementById('btn-flicker').addEventListener('click', () => {
+      const el = document.getElementById('target-flicker');
+      mgr.flicker(
+        el,
+        ['LOADING...', 'CALIBRATING...', 'STANDBY...', 'BUFFERING...', 'SYNCING...'],
+        { duration: 3000, finalText: 'SIGNAL LOCKED' }
+      );
+    });
+
+    // ── Pattern 3: Hybrid ──────────────────────────────────────────────────────
+    document.getElementById('btn-hybrid').addEventListener('click', () => {
+      const el = document.getElementById('target-hybrid');
+      mgr.hybrid(
+        el,
+        ['CORRUPTING MATRIX...', 'REWRITING REALITY...', 'DESTABILISING...'],
+        'REALITY RESTORED',
+        { duration: 4000 }
+      );
+    });
+
+    // ── Manager-level controls ─────────────────────────────────────────────────
+    document.getElementById('btn-stop-all').addEventListener('click', () => {
+      mgr.stop();
+    });
+
+    document.getElementById('btn-destroy-manager').addEventListener('click', () => {
+      mgr.destroy();
+    });
+
+    document.getElementById('btn-recreate-manager').addEventListener('click', () => {
+      mgr.destroy();
+      mgr = new CorruptionManager({ nsfw: false });
+      // Reset display text
+      document.getElementById('target-decode').textContent  = 'Click Decode to start';
+      document.getElementById('target-flicker').textContent = 'Click Flicker to start';
+      document.getElementById('target-hybrid').textContent  = 'Click Hybrid to start';
+    });
+  </script>
+</body>
+</html>

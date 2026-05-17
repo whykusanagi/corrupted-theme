@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRT Effects · corrupted-theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ── Page layout ────────────────────────────────────────────────────── */
+
+    .ui-layer {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--spacing-2xl);
+      gap: var(--spacing-xl);
+    }
+
+    h1 {
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 20px var(--corrupted-cyan);
+      text-align: center;
+      font-size: 1.8rem;
+      margin: 0;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      text-align: center;
+      margin-top: -0.75rem;
+    }
+
+    /* ── CRT demo stage ─────────────────────────────────────────────────── */
+
+    #crt-stage {
+      /*
+       * position:relative is required — CRTEffects appends scanline and
+       * vignette overlay divs with position:absolute inside this container.
+       */
+      position: relative;
+      width: 100%;
+      max-width: 680px;
+      min-height: 280px;
+      background: #000;
+      border: 2px solid var(--corrupted-cyan);
+      box-shadow: 0 0 30px var(--corrupted-cyan);
+      border-radius: var(--radius-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 2rem;
+    }
+
+    .stage-content {
+      text-align: center;
+      z-index: 1;   /* sits above the CRT overlays (z-index 999/1000) via stacking */
+    }
+
+    .stage-content h2 {
+      font-size: 2rem;
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 15px var(--corrupted-cyan);
+      letter-spacing: 4px;
+      margin: 0 0 1rem;
+    }
+
+    .stage-content p {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    /* ── Controls panel ─────────────────────────────────────────────────── */
+
+    .controls-panel {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      width: 100%;
+      max-width: 680px;
+      backdrop-filter: blur(12px);
+    }
+
+    .controls-panel h3 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .toggle-row {
+      display: flex;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      margin-top: var(--spacing-md);
+      padding-top: var(--spacing-md);
+      border-top: 1px solid var(--border);
+    }
+
+    .toggle-row label {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      user-select: none;
+    }
+
+    .toggle-row input[type="checkbox"] {
+      accent-color: var(--corrupted-cyan);
+      width: 14px;
+      height: 14px;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-top: var(--spacing-sm);
+    }
+
+    .slider-row label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      width: 140px;
+      flex-shrink: 0;
+    }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--corrupted-magenta);
+    }
+
+    .slider-val {
+      color: var(--corrupted-cyan);
+      font-size: 0.8rem;
+      width: 36px;
+      text-align: right;
+    }
+
+    /* ── Code block ─────────────────────────────────────────────────────── */
+
+    .code-block {
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      width: 100%;
+      max-width: 680px;
+    }
+
+    .code-block h3 {
+      color: var(--accent);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .code-block pre {
+      margin: 0;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      color: var(--corrupted-cyan);
+      line-height: 1.5;
+      white-space: pre;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="ui-layer">
+
+    <h1><i class="fas fa-tv"></i> CRT Effects</h1>
+    <p class="subtitle">Scanlines, vignette, chromatic aberration, screen shake and more — <code>src/lib/crt-effects.js</code></p>
+
+    <!-- Demo stage — CRTEffects overlays are injected as absolute children here -->
+    <div id="crt-stage">
+      <div class="stage-content">
+        <h2>SYSTEM ACTIVE</h2>
+        <p>CRT overlays are appended inside this container.<br>Toggle effects below to see scanlines, vignette and flicker.</p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls-panel">
+      <h3><i class="fas fa-sliders-h"></i> Effect Controls</h3>
+
+      <div class="btn-row">
+        <button class="btn" id="btn-start">Start</button>
+        <button class="btn" id="btn-stop">Stop</button>
+        <button class="btn" id="btn-destroy">Destroy</button>
+        <button class="btn" id="btn-rgb-split">RGB Split (200 ms)</button>
+        <button class="btn" id="btn-shake">Screen Shake</button>
+        <button class="btn" id="btn-chroma">Chromatic Aberration</button>
+      </div>
+
+      <div class="toggle-row">
+        <label>
+          <input type="checkbox" id="chk-scanlines" checked>
+          Scanlines
+        </label>
+        <label>
+          <input type="checkbox" id="chk-vignette" checked>
+          Vignette
+        </label>
+        <label>
+          <input type="checkbox" id="chk-flicker">
+          Flicker
+        </label>
+      </div>
+
+      <div class="slider-row">
+        <label>Vignette intensity</label>
+        <input type="range" id="ctrl-vignette" min="0.0" max="1.0" step="0.05" value="0.3">
+        <span class="slider-val" id="val-vignette">0.30</span>
+      </div>
+
+      <div class="slider-row">
+        <label>Flicker intensity</label>
+        <input type="range" id="ctrl-flicker" min="0.01" max="0.5" step="0.01" value="0.05">
+        <span class="slider-val" id="val-flicker">0.05</span>
+      </div>
+    </div>
+
+    <!-- Usage snippet -->
+    <div class="code-block">
+      <h3>Usage</h3>
+      <pre><code>import { CRTEffects } from 'src/lib/crt-effects.js';
+
+const crt = new CRTEffects(containerEl, {
+  scanlines:         true,
+  vignette:          true,
+  vignetteIntensity: 0.3,
+  flicker:           false,
+  flickerIntensity:  0.05,
+  flickerFrequency:  100,  // ms base interval
+});
+
+crt.start();                        // inject overlays
+crt.screenShake(containerEl, 300);  // 300 ms shake
+crt.animateRGBSplit(containerEl);   // 200 ms RGB split
+crt.stop();                         // pause flicker only
+crt.destroy();                      // full teardown</code></pre>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { CRTEffects } from '../../src/lib/crt-effects.js';
+
+    const stage = document.getElementById('crt-stage');
+    let crt = null;
+
+    function buildOptions() {
+      return {
+        scanlines:         document.getElementById('chk-scanlines').checked,
+        vignette:          document.getElementById('chk-vignette').checked,
+        vignetteIntensity: parseFloat(document.getElementById('ctrl-vignette').value),
+        flicker:           document.getElementById('chk-flicker').checked,
+        flickerIntensity:  parseFloat(document.getElementById('ctrl-flicker').value),
+        flickerFrequency:  100,
+      };
+    }
+
+    document.getElementById('btn-start').addEventListener('click', () => {
+      if (crt) crt.destroy();
+      crt = new CRTEffects(stage, buildOptions());
+      crt.start();
+    });
+
+    document.getElementById('btn-stop').addEventListener('click', () => {
+      crt?.stop();
+    });
+
+    document.getElementById('btn-destroy').addEventListener('click', () => {
+      crt?.destroy();
+      crt = null;
+    });
+
+    document.getElementById('btn-rgb-split').addEventListener('click', () => {
+      if (!crt) { crt = new CRTEffects(stage, buildOptions()); crt.start(); }
+      crt.animateRGBSplit(stage, 200);
+    });
+
+    document.getElementById('btn-shake').addEventListener('click', () => {
+      if (!crt) { crt = new CRTEffects(stage, buildOptions()); crt.start(); }
+      crt.screenShake(stage, 400, 8);
+    });
+
+    document.getElementById('btn-chroma').addEventListener('click', () => {
+      if (!crt) { crt = new CRTEffects(stage, buildOptions()); crt.start(); }
+      crt.applyChromaticAberration(stage, 4);
+      setTimeout(() => { if (stage) stage.style.filter = 'none'; }, 500);
+    });
+
+    // Live slider labels
+    function bindSlider(id, valId, decimals) {
+      const el = document.getElementById(id);
+      const vl = document.getElementById(valId);
+      el.addEventListener('input', () => {
+        vl.textContent = parseFloat(el.value).toFixed(decimals);
+      });
+    }
+    bindSlider('ctrl-vignette', 'val-vignette', 2);
+    bindSlider('ctrl-flicker',  'val-flicker',  2);
+
+    // Auto-start with defaults so the effect is visible on page load
+    crt = new CRTEffects(stage, buildOptions());
+    crt.start();
+  </script>
+</body>
+</html>

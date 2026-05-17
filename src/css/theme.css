@@ -28,6 +28,21 @@
 /* ========== EXTENSION COMPONENTS ========== */
 @import './extensions.css';
 
+/* ========== CONTAINER (structural-only — 0.2.0+) ========== */
+/*
+ * .container is intentionally minimal: max-width + horizontal centering.
+ * Opinionated layouts (grid, transparent background, etc.) are opt-in via
+ * modifier classes in components.css.
+ *
+ * Migration from <= 0.1.9: see docs/MIGRATION_CONTAINER_0.2.0.md
+ */
+.container {
+  width: 100%;
+  max-width: var(--container-max-width, 1200px);
+  margin-inline: auto;
+  padding-inline: var(--container-padding-x, 1rem);
+}
+
 .content {
   padding: 2.5rem;
   background: var(--glass);
@@ -187,10 +202,13 @@ footer a:hover {
 /* ========== RESPONSIVE DESIGN ========== */
 
 @media screen and (max-width: 1200px) {
-  .container {
+  .container.container--grid-2col,
+  .container.container--grid-3col {
     grid-template-columns: 1fr;
     gap: 3rem;
-    padding: 2.5rem 2rem;
+  }
+  .container {
+    padding-inline: 2rem;
   }
 
   .character img {
@@ -218,9 +236,11 @@ footer a:hover {
 
 @media screen and (max-width: 768px) {
   .container {
-    padding: 2rem 1.5rem;
+    padding-inline: 1.5rem;
+  }
+  .container.container--grid-2col,
+  .container.container--grid-3col {
     gap: 2rem;
-    min-height: auto;
   }
 
   .content {

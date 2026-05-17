@@ -1121,6 +1121,8 @@ const particles = new CorruptedParticles(canvas, options);
 | `lineDistance` | number | `150` | Max distance between particles for connection lines (px) |
 | `includeLewd` | boolean | `false` | Enable 18+ phrase mode (logs console warning) |
 
+> **Deprecated option:** `includeLewd` is a deprecated alias for `nsfw`. It is forwarded automatically with a one-time console warning. Removed in 0.3.0 — migrate to `nsfw: true` instead.
+
 **Methods:**
 
 | Method | Description |
@@ -1250,7 +1252,376 @@ Full-screen cinematic loading curtain with dramatic corruption animation.
 
 ---
 
-**Last Updated:** 2026-04-05
-**Version:** 2.1
+## CorruptionCharsets
+
+**Module:** `@whykusanagi/corrupted-theme/corruption-charsets`
+**Source:** `src/core/corruption-charsets.js`
+**Type:** Static registry (plain object with getters)
+**Since:** 0.2.0
+
+Named registry over the canonical `src/data/charsets.json`. All getters read through to that JSON so updates to the data file are reflected automatically. Provides five named sets plus four computed convenience sets.
+
+```js
+import { CorruptionCharsets } from '@whykusanagi/corrupted-theme/corruption-charsets';
+
+// Named sets (maps directly to charsets.json)
+CorruptionCharsets.katakana;  // Full-width Katakana glyphs (primary corruption)
+CorruptionCharsets.hiragana;  // Hiragana glyphs (softer corruption)
+CorruptionCharsets.kanji;     // Kanji set (deep/heavy corruption, 0.2.0+)
+CorruptionCharsets.symbols;   // Decorative symbols (★☆♥ etc.)
+CorruptionCharsets.blocks;    // Block-drawing characters (█▓▒░ etc.)
+
+// Computed convenience sets
+CorruptionCharsets.standard;  // katakana + symbols  (matrix-style glitch)
+CorruptionCharsets.soft;      // hiragana            (gentle / intimate degradation)
+CorruptionCharsets.intense;   // kanji + blocks      (heavy data-loss look)
+CorruptionCharsets.all;       // union of every set
+```
+
+**Available sets:** `katakana`, `hiragana`, `kanji`, `symbols`, `blocks`, `standard`, `soft`, `intense`, `all`.
+
+All getters return a `string` — index directly with `Math.random()` or pass as `charset` to `CorruptionManager` / animation block options.
+
+---
+
+## CorruptionManager
+
+**Module:** `@whykusanagi/corrupted-theme/corruption-manager`
+**Source:** `src/core/corruption-manager.js`
+**Since:** 0.2.0
+
+Unified lifecycle runner for all three canonical corruption patterns defined in `CORRUPTED_THEME_SPEC.md`. Tracks every active timer via `TimerRegistry` so a single `stop()` / `destroy()` call cleans up everything. Auto-stops when `document.hidden` becomes `true` (Visibility API).
+
+```js
+import {
+  CorruptionManager,
+  decodeText,
+  phraseFlicker,
+  hybridDecode,
+} from '@whykusanagi/corrupted-theme/corruption-manager';
+
+const mgr = new CorruptionManager({ nsfw: false, charset: CorruptionCharsets.standard });
+
+// Pattern 1 — character-by-character decode
+const id1 = mgr.decode(el, 'SYSTEM READY', { duration: 2000 });
+
+// Pattern 2 — phrase flickering
+const id2 = mgr.flicker(el, ['アイウエオ', 'LOADING...', '██████'], { duration: 3000, finalText: '' });
+
+// Pattern 3 — hybrid (flicker phase → decode phase)
+const id3 = mgr.hybrid(el, ['CORRUPTION DETECTED'], 'SIGNAL RESTORED', { duration: 4000 });
+
+mgr.cleanup(id1);   // cancel one animation early
+mgr.stop();         // cancel all animations (Visibility API auto-calls this)
+mgr.start();        // resume hook (intentional no-op — re-queue animations explicitly)
+mgr.destroy();      // full teardown; instance not reusable after this
+```
+
+**Constructor Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nsfw` | boolean | `false` | Include NSFW phrase pools when auto-generating default phrase lists |
+| `charset` | string | `CorruptionCharsets.standard` | Default charset for decode/hybrid; overridable per call |
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `decode(element, content, opts?)` | `number` | Start Pattern 1. `opts`: `duration` (ms), `charset` |
+| `flicker(element, phrases, opts?)` | `number` | Start Pattern 2. `opts`: `duration`, `flickerInterval`, `finalText`, `nsfw` |
+| `hybrid(element, phrases, content, opts?)` | `number` | Start Pattern 3. `opts`: `duration`, `charset`, `flickerInterval`, `nsfw` |
+| `cleanup(id)` | `void` | Cancel one animation by its return ID |
+| `stop()` | `void` | Cancel all active animations; element text preserved as-is |
+| `start()` | `void` | No-op resume hook; re-queue animations explicitly |
+| `destroy()` | `void` | stop() + remove Visibility listener + mark destroyed |
+| `getActiveCount()` | `number` | Number of tracked animations (may include finished ones not yet auto-removed) |
+| `isAnimating(id)` | `boolean` | Whether animation `id` is still running |
+| `cleanupAll()` | `void` | **Deprecated** — alias for `stop()`. Removed in 0.3.x |
+
+**Standalone one-shot exports** (no manager instance needed — each returns a cleanup `Function`):
+
+| Export | Signature |
+|--------|-----------|
+| `decodeText` | `(element, finalText, opts?) → Function` |
+| `phraseFlicker` | `(element, phrases, finalText, opts?) → Function` |
+| `hybridDecode` | `(element, flickerPhrases, finalText, opts?) → Function` |
+
+---
+
+## CRTEffects
+
+**Module:** `@whykusanagi/corrupted-theme/crt-effects`
+**Source:** `src/lib/crt-effects.js`
+**Since:** 0.2.0
+
+CRT post-processing layer — scanlines, vignette, chromatic aberration, opacity flicker, pixel distortion, phosphor trail, RGB split animation, and screen shake. Ported from `celeste-tts-bot/obs/transitions/crt-effects.js`.
+
+```js
+import { CRTEffects, applyCRTGlow, injectCRTStyles } from '@whykusanagi/corrupted-theme/crt-effects';
+
+const crt = new CRTEffects(containerEl, {
+  autoStart:         false,
+  scanlines:         true,
+  vignette:          true,
+  vignetteIntensity: 0.3,
+  flicker:           false,
+  flickerIntensity:  0.05,
+  flickerFrequency:  100,
+});
+
+crt.start();    // attach overlay nodes; begin flicker if enabled
+crt.stop();     // pause flicker; overlays remain
+crt.destroy();  // full teardown: remove overlays, reset styles, mark destroyed
+
+// Effect primitives (callable on the instance directly):
+crt.createScanlines();
+crt.applyChromaticAberration(el, intensity);  // default intensity: 2 (px offset)
+crt.startFlicker(el, intensity, frequency);   // default: 0.05, 100ms
+crt.stopFlicker(el);
+crt.applyPixelDistortion(canvas);             // glitch-slice horizontal rows
+crt.applyCRTGlow(el, color, intensity);       // phosphor glow via drop-shadow filter
+crt.addPhosphorTrail(canvas, color);          // semi-transparent fill overlay
+crt.applyVignette(el, intensity);             // radial-gradient overlay node
+crt.animateRGBSplit(el, duration);            // rAF-driven RGB split (default 200ms)
+crt.screenShake(el, duration, intensity);     // transform-shake (default 300ms, 5px)
+crt.cleanup();                                // alias for destroy() — upstream compat
+```
+
+**Constructor Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `autoStart` | boolean | `false` | Call `start()` on construction |
+| `scanlines` | boolean | `true` | Attach scanline overlay div |
+| `vignette` | boolean | `true` | Attach vignette overlay div |
+| `vignetteIntensity` | number | `0.3` | Vignette opacity at edges (0–1) |
+| `flicker` | boolean | `false` | Enable opacity flicker loop |
+| `flickerIntensity` | number | `0.05` | Max opacity reduction per flicker tick |
+| `flickerFrequency` | number | `100` | Base interval in ms between flicker ticks |
+
+**Standalone exports:**
+
+| Export | Description |
+|--------|-------------|
+| `applyCRTGlow(el, color?, intensity?)` | Apply phosphor glow to any element without a CRTEffects instance. Default color: `#d94f90`, intensity: `20` |
+| `injectCRTStyles()` | Inject `.crt-screen`, `.crt-phosphor-glow`, `.crt-text`, `.chromatic-aberration` rules. Called automatically by `start()` |
+
+**CSS classes injected by `injectCRTStyles()`:**
+
+| Class | Description |
+|-------|-------------|
+| `.crt-screen` | `position: relative; overflow: hidden; background: #000` |
+| `.crt-phosphor-glow` | Multi-layer drop-shadow glow using spec colors |
+| `.crt-text` | Monospace font + phosphor text-shadow + letter-spacing |
+| `.chromatic-aberration` | CSS `::before`/`::after` pseudo red/cyan split (requires `data-text` attribute) |
+
+---
+
+## Animation Blocks
+
+**Module:** `@whykusanagi/corrupted-theme/animation-blocks`
+**Source:** `src/lib/animation-blocks.js`
+**Since:** 0.2.0
+
+Ten modular animation components that compose into full transition scenes. All classes share the same API contract:
+
+```js
+import {
+  TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot, GlitchPulse,
+  ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission, TerminalPrompt,
+  playParallel, playSequence, playStaggered,
+} from '@whykusanagi/corrupted-theme/animation-blocks';
+
+const block = new ClassName(containerElement, options);
+await block.start();   // returns Promise<void> that resolves when animation completes
+block.play();          // alias for start() — backward compat with celeste-tts-bot
+block.stop();          // cancel in-progress animation; leaves DOM in place
+block.destroy();       // cancel + remove all DOM nodes created by this block
+```
+
+> **Note on `lewdMode`:** The `lewdMode` option is a deprecated alias for `nsfw`. It is forwarded with a one-time `console.warn` per class. Removed in 0.3.0 — use `nsfw: true` instead.
+
+**Composition helpers:**
+
+| Helper | Description |
+|--------|-------------|
+| `playParallel(blocks)` | Run all blocks concurrently; calls `destroy()` on each when all finish |
+| `playSequence(blocks)` | Run blocks one after another; calls `destroy()` on each as it finishes |
+| `playStaggered(blocks, staggerDelay?)` | Start each block `staggerDelay` ms after the previous (default: 200ms) |
+
+### TitleDecoder
+
+Character-by-character decode from corruption to readable text. Implements Canonical Pattern 1 (`CORRUPTED_THEME_SPEC.md §5.1`).
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `finalText` | string | `'SYSTEM READY'` | Target text to decode to |
+| `duration` | number | `2000` | Animation duration in ms |
+| `nsfw` | boolean | `false` | Use `CorruptionCharsets.all` instead of `standard` for the chaos buffer |
+| `color` | string | `'#00ffff'` | Text and glow color |
+| `fontSize` | string | `'48px'` | CSS font-size |
+
+### ProgressBar
+
+Horizontal loading bar with glitch flicker effect. Fills left-to-right over `duration`.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `2000` | Fill duration in ms |
+| `color` | string | `'#00ffff'` | Bar and glow color |
+| `height` | number | `4` | Bar height in px |
+| `position` | string | `'bottom'` | `'top'` or `'bottom'` of container |
+| `glitch` | boolean | `true` | Random magenta glow burst |
+
+### ScanlineSweep
+
+CRT-style horizontal scan line that sweeps top-to-bottom for `sweeps` passes over `duration`.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `1500` | Total animation duration in ms |
+| `color` | string | `'#00ffff'` | Scan line color |
+| `sweeps` | number | `2` | Number of vertical passes |
+
+### TerminalBoot
+
+Typewriter-style terminal boot log — reveals lines sequentially with a blinking cursor.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `3000` | Total duration in ms |
+| `lines` | string[] | `['> INITIALIZING...', ...]` | Boot log lines |
+| `color` | string | `'#00ffff'` | Text and glow color |
+| `fontSize` | string | `'16px'` | CSS font-size |
+
+### GlitchPulse
+
+Full-screen corruption pulse — semi-transparent horizontal glitch bars flash at random positions.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `1000` | Pulse duration in ms |
+| `intensity` | number | `0.5` | Max bar opacity |
+| `color` | string | `'#ff00ff'` | Bar fill color |
+
+### ASCIIBorder
+
+Terminal-style box border built from Unicode box-drawing characters. Supports four border styles and three draw orders.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `1500` | Draw animation duration in ms |
+| `color` | string | `'#ff8c00'` | Border and glow color |
+| `style` | string | `'double'` | `'single'`, `'double'`, `'heavy'`, `'rounded'` |
+| `padding` | number | `20` | Inset from container edges in px |
+| `drawOrder` | string | `'clockwise'` | `'clockwise'`, `'simultaneous'`, `'corners-first'` |
+
+**Static property:** `ASCIIBorder.CHARS` — object mapping style name → `{ h, v, tl, tr, br, bl }` character sets.
+
+### SystemDiagnostic
+
+Scrolling diagnostic log that fades in lines one at a time with an optional blinking cursor.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `3000` | Total duration in ms |
+| `lines` | string[] | `['> INITIALIZING NEURAL CORE...', ...]` | Log lines |
+| `color` | string | `'#00ff00'` | Text and glow color |
+| `position` | string | `'left'` | `'left'`, `'right'`, `'center'` |
+| `fontSize` | string | `'16px'` | CSS font-size |
+| `scrollSpeed` | number | `1.0` | Line reveal speed multiplier (0.5 = slow, 2.0 = fast) |
+| `showCursor` | boolean | `true` | Show blinking block cursor on active line |
+
+### LoadingBarMulti
+
+Multiple labelled loading bars with individual speeds, scanline shimmer, and optional glitch stutter.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `3000` | Base duration in ms |
+| `bars` | Array | `[{ label, speed, color }, ...]` | Bar configs; defaults to 4 bars (NEURAL CORE, MEMORY BANKS, CORRUPTION MODULE, REALITY MATRIX) |
+| `width` | number | `400` | Bar width in px |
+| `height` | number | `20` | Bar height in px |
+| `position` | string | `'center'` | `'center'`, `'top'`, `'bottom'` |
+| `showPercentage` | boolean | `true` | Show `XX%` label inside each bar |
+| `glitchEffect` | boolean | `true` | Random opacity flicker stutter |
+
+Each bar config: `{ label: string, speed: number, color: string }` — `speed` multiplies base progress (e.g. `1.2` = finishes 20% faster than base).
+
+### DataTransmission
+
+Streaming data-packet animation — light pulses traverse the container horizontally or vertically with a live data-rate counter.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `2500` | Animation duration in ms |
+| `color` | string | `'#00ffff'` | Packet and glow color |
+| `direction` | string | `'horizontal'` | `'horizontal'` or `'vertical'` |
+| `packetCount` | number | `20` | Number of simultaneous packets |
+| `packetSize` | number | `6` | Packet cross-axis size in px |
+| `showDataRate` | boolean | `true` | Display live `DATA RATE: X KB/s` counter |
+
+### TerminalPrompt
+
+Character-by-character typewriter of command strings with a blinking block cursor. Renders in a styled terminal-box overlay.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number | `2000` | Safety cap in ms (animation driven by `typingSpeed`) |
+| `commands` | string[] | `['celeste@abyss:~$ sudo init neural_core', ...]` | Lines to type |
+| `color` | string | `'#00ff00'` | Text and glow color |
+| `position` | string | `'bottom-left'` | `'bottom-left'`, `'top-left'`, `'center'` |
+| `fontSize` | string | `'16px'` | CSS font-size |
+| `typingSpeed` | number | `50` | Ms per character |
+
+---
+
+## CorruptedParticlesBackground
+
+**Module:** `@whykusanagi/corrupted-theme/corrupted-particles-background`
+**Source:** `src/lib/corrupted-particles-background.js`
+**Since:** 0.2.0
+
+Auto-injects a `CorruptedParticles` canvas as a fixed full-viewport background layer behind a target element. Handles `DOMContentLoaded` timing, forces DPR=1 on the background canvas (the canvas sits behind `backdrop-filter: blur()` so retina resolution is invisible but costly), and pauses rendering on `document.hidden`.
+
+```js
+import { CorruptedParticlesBackground } from '@whykusanagi/corrupted-theme/corrupted-particles-background';
+
+const bg = new CorruptedParticlesBackground({
+  targetSelector: '.glass-backdrop',  // canvas inserted as sibling immediately before this element
+  nsfw:           false,
+  count:          25,
+  speed:          0.5,
+  lineDistance:   100,
+  canvasId:       'particles-bg',
+});
+
+bg.start();    // resume after stop()
+bg.stop();     // pause rendering (canvas stays in DOM)
+bg.destroy();  // stop + remove canvas + remove listeners; instance not reusable
+```
+
+**Constructor Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `targetSelector` | string | `'.glass-backdrop'` | CSS selector for the element the canvas is inserted before |
+| `nsfw` | boolean | `false` | Enable NSFW phrase mode (forwarded to CorruptedParticles) |
+| `count` | number | `25` | Particle count (lower than `CorruptedParticles` default because the canvas sits behind blur) |
+| `speed` | number | `0.5` | Particle speed multiplier |
+| `lineDistance` | number | `100` | Max connection line distance in px |
+| `canvasId` | string | `'particles-bg'` | `id` attribute on the injected `<canvas>` |
+
+**Behavior notes:**
+- Canvas is `position: fixed; inset: 0; z-index: 0` — it sits below page content but above most backgrounds.
+- `window.devicePixelRatio` is temporarily shadowed to `1` during `CorruptedParticles` construction and immediately restored so other components (vortex, main canvas) use the real DPR.
+- Constructor is safe to call before `DOMContentLoaded` — initialization is deferred automatically.
+- Node.js / SSR: constructor is a no-op when `document` is undefined.
+
+---
+
+**Last Updated:** 2026-05-17
+**Version:** 2.2
 **Status:** Complete and Production Ready
 

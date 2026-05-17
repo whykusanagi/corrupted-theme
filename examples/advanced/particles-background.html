@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Particles Background · corrupted-theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      /* CorruptedParticlesBackground inserts its canvas as a fixed-position
+         sibling immediately before .glass-backdrop, so it covers the whole
+         page behind all content. No manual canvas tag is needed. */
+    }
+
+    /* ── Content layer ────────────────────────────────────────────────── */
+
+    .page {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: var(--spacing-2xl);
+      gap: var(--spacing-xl);
+      pointer-events: none;
+    }
+
+    /* ────────────────────────────────────────────────────────────────────
+       .glass-backdrop is the TARGET SELECTOR that CorruptedParticlesBackground
+       uses by default. The particles canvas is injected as a *sibling* just
+       before this element, placing it in the z-index stack below the blur.
+       ──────────────────────────────────────────────────────────────────── */
+    .glass-backdrop {
+      position: relative;
+      z-index: 1;
+      /* backdrop-filter here would blur the canvas sitting behind this element.
+         We keep it transparent to let the particles show through clearly. */
+    }
+
+    /* ── Card content ─────────────────────────────────────────────────── */
+
+    .hero-card {
+      pointer-events: auto;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-xl) var(--spacing-2xl);
+      max-width: 560px;
+      width: 100%;
+      backdrop-filter: blur(8px);
+      text-align: center;
+    }
+
+    .hero-card h1 {
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 20px var(--corrupted-cyan);
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+      font-family: 'Courier New', monospace;
+    }
+
+    .hero-card p {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      line-height: 1.7;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ── Controls panel ───────────────────────────────────────────────── */
+
+    .controls-panel {
+      pointer-events: auto;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      width: 100%;
+      max-width: 560px;
+      backdrop-filter: blur(12px);
+    }
+
+    .controls-panel h2 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+      font-family: 'Courier New', monospace;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+      margin-bottom: var(--spacing-sm);
+    }
+
+    .control-row label {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      width: 120px;
+      flex-shrink: 0;
+      font-family: 'Courier New', monospace;
+    }
+
+    .control-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--corrupted-magenta);
+    }
+
+    .val {
+      color: var(--corrupted-cyan);
+      font-size: 0.8rem;
+      width: 44px;
+      text-align: right;
+      font-family: 'Courier New', monospace;
+    }
+
+    .nsfw-row {
+      border-top: 1px solid var(--border);
+      margin-top: var(--spacing-sm);
+      padding-top: var(--spacing-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-md);
+    }
+
+    .nsfw-row label {
+      color: var(--corrupted-purple);
+      font-size: 0.8rem;
+      flex: 1;
+      font-family: 'Courier New', monospace;
+    }
+
+    .rating-badge {
+      color: var(--corrupted-red);
+      font-size: 0.7rem;
+      border: 1px solid var(--corrupted-red);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: var(--spacing-md);
+      flex-wrap: wrap;
+    }
+
+    /* ── Code block ───────────────────────────────────────────────────── */
+
+    .code-block {
+      pointer-events: auto;
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      width: 100%;
+      max-width: 560px;
+      backdrop-filter: blur(12px);
+    }
+
+    .code-block h3 {
+      color: var(--accent);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+      font-family: 'Courier New', monospace;
+    }
+
+    .code-block pre {
+      margin: 0;
+      overflow-x: auto;
+      font-size: 0.75rem;
+      color: var(--corrupted-cyan);
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <!--
+    CorruptedParticlesBackground auto-discovers .glass-backdrop (the default
+    targetSelector) and inserts the canvas immediately before it in the DOM.
+    No manual <canvas> tag is required.
+  -->
+  <div class="page">
+
+    <div class="hero-card glass-backdrop">
+      <h1><i class="fas fa-atom"></i> Particles Background</h1>
+      <p>
+        <code>CorruptedParticlesBackground</code> auto-injects a floating Japanese-phrase
+        canvas behind its target element. No manual <code>&lt;canvas&gt;</code> tag needed.
+        The canvas sits at <code>z-index: 0</code> — content above it remains interactive.
+      </p>
+    </div>
+
+    <div class="controls-panel">
+      <h2><i class="fas fa-sliders-h"></i> Particle Controls</h2>
+
+      <div class="control-row">
+        <label>Count</label>
+        <input type="range" id="ctrl-count" min="5" max="80" step="5" value="25">
+        <span class="val" id="val-count">25</span>
+      </div>
+
+      <div class="control-row">
+        <label>Speed</label>
+        <input type="range" id="ctrl-speed" min="0.1" max="3.0" step="0.1" value="0.5">
+        <span class="val" id="val-speed">0.5</span>
+      </div>
+
+      <div class="control-row">
+        <label>Line Distance</label>
+        <input type="range" id="ctrl-linedist" min="40" max="250" step="10" value="100">
+        <span class="val" id="val-linedist">100</span>
+      </div>
+
+      <div class="nsfw-row">
+        <label for="ctrl-nsfw"><i class="fas fa-exclamation-triangle"></i> NSFW phrases</label>
+        <span class="rating-badge">18+</span>
+        <input type="checkbox" id="ctrl-nsfw">
+      </div>
+
+      <div class="btn-row">
+        <button class="btn" id="btn-rebuild">Apply</button>
+        <button class="btn" id="btn-stop">Stop</button>
+        <button class="btn" id="btn-start">Resume</button>
+        <button class="btn" id="btn-destroy">Destroy</button>
+      </div>
+    </div>
+
+    <!-- Code usage -->
+    <div class="code-block">
+      <h3>Usage</h3>
+      <pre><code>import { CorruptedParticlesBackground }
+  from 'src/lib/corrupted-particles-background.js';
+
+// Injects a canvas immediately before .glass-backdrop (default selector).
+// No &lt;canvas&gt; tag needed — the canvas is created and inserted automatically.
+const bg = new CorruptedParticlesBackground({
+  targetSelector: '.glass-backdrop',
+  count:          25,
+  speed:          0.5,
+  lineDistance:   100,
+  nsfw:           false,  // opt-in 18+ phrase pool
+});
+
+bg.stop();     // pause rendering (saves GPU when hidden)
+bg.start();    // resume
+bg.destroy();  // remove canvas + listeners</code></pre>
+    </div>
+
+  </div>
+
+  <script type="module">
+    import { CorruptedParticlesBackground }
+      from '../../src/lib/corrupted-particles-background.js';
+
+    let bg = new CorruptedParticlesBackground({
+      targetSelector: '.glass-backdrop',
+      count:          25,
+      speed:          0.5,
+      lineDistance:   100,
+      nsfw:           false,
+    });
+
+    function currentOptions() {
+      return {
+        targetSelector: '.glass-backdrop',
+        count:          parseInt(document.getElementById('ctrl-count').value),
+        speed:          parseFloat(document.getElementById('ctrl-speed').value),
+        lineDistance:   parseInt(document.getElementById('ctrl-linedist').value),
+        nsfw:           document.getElementById('ctrl-nsfw').checked,
+      };
+    }
+
+    document.getElementById('btn-rebuild').addEventListener('click', () => {
+      bg.destroy();
+      bg = new CorruptedParticlesBackground(currentOptions());
+    });
+
+    document.getElementById('btn-stop').addEventListener('click', () => bg.stop());
+    document.getElementById('btn-start').addEventListener('click', () => bg.start());
+    document.getElementById('btn-destroy').addEventListener('click', () => {
+      bg.destroy();
+    });
+
+    // Live slider labels (display only — Apply button rebuilds the instance)
+    function wire(id, valId, decimals) {
+      const el = document.getElementById(id);
+      const vl = document.getElementById(valId);
+      el.addEventListener('input', () => {
+        vl.textContent = decimals
+          ? parseFloat(el.value).toFixed(decimals)
+          : el.value;
+      });
+    }
+    wire('ctrl-count',    'val-count',    0);
+    wire('ctrl-speed',    'val-speed',    1);
+    wire('ctrl-linedist', 'val-linedist', 0);
+  </script>
+</body>
+</html>

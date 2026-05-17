@@ -647,3 +647,34 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ========== CRT EFFECTS (0.2.0 — ported from celeste-tts-bot) ========== */
+
+/* Horizontal scanline drift — used by .crt-scanlines overlay */
+@keyframes scanline-movement {
+  0%   { background-position: 0 0; }
+  100% { background-position: 0 100px; }
+}
+
+/* Screen flicker — opacity micro-oscillation */
+@keyframes crt-flicker {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.96; }
+}
+
+/* Word-level glitch: translate + hue-rotate cycle */
+@keyframes glitch-word {
+  0%, 100% { transform: translate(0);      filter: hue-rotate(0deg); }
+  20%       { transform: translate(-2px, 1px); filter: hue-rotate(90deg); }
+  40%       { transform: translate(2px, -1px); filter: hue-rotate(-90deg); }
+  60%       { transform: translate(-1px, 2px); filter: hue-rotate(180deg); }
+  80%       { transform: translate(1px, -2px); filter: hue-rotate(0deg); }
+}
+
+/* Kanji-block glitch: scale + skew + opacity pulse */
+@keyframes glitch-kanji {
+  0%, 100% { transform: scale(1) skew(0deg);    opacity: 1; }
+  25%       { transform: scale(1.02) skew(-2deg); opacity: 0.7; }
+  50%       { transform: scale(0.98) skew(2deg);  opacity: 1; }
+  75%       { transform: scale(1.01) skew(-1deg); opacity: 0.8; }
+}

@@ -27,6 +27,11 @@
     "./carousel": "./src/lib/carousel.js",
     "./corrupted-vortex": "./src/lib/corrupted-vortex.js",
     "./corrupted-particles": "./src/lib/corrupted-particles.js",
+    "./corruption-charsets": "./src/core/corruption-charsets.js",
+    "./corruption-manager": "./src/core/corruption-manager.js",
+    "./crt-effects": "./src/lib/crt-effects.js",
+    "./animation-blocks": "./src/lib/animation-blocks.js",
+    "./corrupted-particles-background": "./src/lib/corrupted-particles-background.js",
     "./data/phrases.json":  "./src/data/phrases.json",
     "./data/charsets.json": "./src/data/charsets.json",
     "./data/colors.json":   "./src/data/colors.json"
@@ -44,6 +49,7 @@
     "docs/CORRUPTION_PHRASES.md",
     "docs/CHARACTER_LEVEL_CORRUPTION.md",
     "docs/CROSS_LANGUAGE_CONTRACT.md",
+    "docs/MIGRATION_CONTAINER_0.2.0.md",
     "docs/STYLE_GUIDE.md",
     "examples",
     "Dockerfile",
@@ -90,7 +96,7 @@
     "dev:static": "node scripts/static-server.js",
     "start": "npm run dev:static",
     "validate-data": "node scripts/validate-data.js",
-    "test": "node --test 'tests/data/*.test.js'"
+    "test": "node --test --test-reporter=spec 'tests/**/*.test.js'"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

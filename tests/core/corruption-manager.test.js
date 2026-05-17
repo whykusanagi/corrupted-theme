@@ -73,3 +73,31 @@ test('CorruptionManager.hybrid() returns a numeric id without document', () => {
   m.stop();
   m.destroy();
 });
+
+test('decode() registers timers; destroy() clears them', () => {
+  const m = new CorruptionManager();
+  const el = { textContent: '' };
+  m.decode(el, 'hello', { duration: 5000 });
+  // Should have registered at least one timer
+  assert.ok(m._timers.pendingCount > 0, 'expected timers after decode()');
+  m.destroy();
+  assert.equal(m._timers.pendingCount, 0, 'expected zero timers after destroy()');
+});
+
+test('flicker() registers timers; destroy() clears them', () => {
+  const m = new CorruptionManager();
+  const el = { textContent: '' };
+  m.flicker(el, ['a', 'b', 'c']);
+  assert.ok(m._timers.pendingCount > 0, 'expected timers after flicker()');
+  m.destroy();
+  assert.equal(m._timers.pendingCount, 0, 'expected zero timers after destroy()');
+});
+
+test('hybrid() registers timers; destroy() clears them', () => {
+  const m = new CorruptionManager();
+  const el = { textContent: '' };
+  m.hybrid(el, ['a', 'b'], 'final text', { phaseDuration: 1000 });
+  assert.ok(m._timers.pendingCount > 0, 'expected timers after hybrid()');
+  m.destroy();
+  assert.equal(m._timers.pendingCount, 0, 'expected zero timers after destroy()');
+});

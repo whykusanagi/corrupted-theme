@@ -173,6 +173,8 @@ function _hybrid(element, flickerPhrases, finalText, timers, opts = {}) {
   });
 
   // Phase 2: schedule decode start after flickerDuration
+  let doneMarkerId = null;
+
   const phase2Id = timers.setTimeout(() => {
     flickerHandle.cleanup();
     decodeHandle = _decode(element, finalText, timers, {
@@ -180,8 +182,9 @@ function _hybrid(element, flickerPhrases, finalText, timers, opts = {}) {
       charset,
     });
 
-    // Mark done after decode completes
-    timers.setTimeout(() => {
+    // Mark done after decode completes; store handle so cleanup() can cancel it
+    doneMarkerId = timers.setTimeout(() => {
+      doneMarkerId = null;
       done = true;
     }, decodeDuration);
   }, flickerDuration);
@@ -191,6 +194,10 @@ function _hybrid(element, flickerPhrases, finalText, timers, opts = {}) {
       timers.clearTimeout(phase2Id);
       flickerHandle.cleanup();
       if (decodeHandle) decodeHandle.cleanup();
+      if (doneMarkerId !== null) {
+        timers.clearTimeout(doneMarkerId);
+        doneMarkerId = null;
+      }
       done = true;
     },
     isAnimating: () => !done,
@@ -389,11 +396,11 @@ export class CorruptionManager {
   }
 
   /**
-   * Cancel all animations (alias of stop() for source-compat with
-   * celeste-tts-bot callers that used cleanupAll()).
+   * @deprecated Use stop() instead. Kept for source-compat with
+   * celeste-tts-bot consumers. Slated for removal in 0.3.x.
    */
   cleanupAll() {
-    this.stop();
+    return this.stop();
   }
 
   /**

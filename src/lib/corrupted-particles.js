@@ -2,20 +2,7 @@
 // CorruptedParticles — Canvas 2D floating phrase particles background
 // Part of @whykusanagi/corrupted-theme
 
-const SFW_PHRASES = [
-  '壊れ corrupting', 'ロード loading', '処理中', '接続 connecting',
-  '分析 analyzing', '待機 waiting', '実行 executing', '深淵 abyss',
-  '監視中', 'cor壊rupting', '読み込み yomikomi', 'データ data',
-  '解析 kaiseki', '壊れている', 'エラー error', 'システム system',
-  '接続中 setsuzoku', '処理 processing', '壊れ kowarete',
-];
-
-const NSFW_PHRASES = [
-  '壊れちゃう...ああ...', 'ずっと...してほしい... ♥',
-  '変態', 'えっち', '好きにして...お願い...',
-  'Moral subroutines: DISABLED', 'Pleasure protocols...',
-  '壊れている kowarete-iru',
-];
+import { SFW_PHRASES, NSFW_PHRASES } from '../core/corruption-phrases.js';
 
 // Depth layer definitions — far (dim/slow) to near (bright/fast)
 const LAYERS = [

@@ -27,6 +27,11 @@
     "./carousel": "./src/lib/carousel.js",
     "./corrupted-vortex": "./src/lib/corrupted-vortex.js",
     "./corrupted-particles": "./src/lib/corrupted-particles.js",
+    "./corruption-charsets": "./src/core/corruption-charsets.js",
+    "./corruption-manager": "./src/core/corruption-manager.js",
+    "./crt-effects": "./src/lib/crt-effects.js",
+    "./animation-blocks": "./src/lib/animation-blocks.js",
+    "./corrupted-particles-background": "./src/lib/corrupted-particles-background.js",
     "./data/phrases.json":  "./src/data/phrases.json",
     "./data/charsets.json": "./src/data/charsets.json",
     "./data/colors.json":   "./src/data/colors.json"

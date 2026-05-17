@@ -216,7 +216,7 @@ export class CRTEffects {
       drop-shadow(${intensity}px 0 0 red)
       drop-shadow(-${intensity}px 0 0 cyan)
     `;
-    element.style.cssText += `--chroma-offset: ${intensity}px;`;
+    element.style.setProperty('--chroma-offset', `${intensity}px`);
   }
 
   /**

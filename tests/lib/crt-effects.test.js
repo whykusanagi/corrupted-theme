@@ -11,11 +11,10 @@ test('applyCRTGlow exported as function', () => {
   assert.equal(typeof applyCRTGlow, 'function');
 });
 
-test('CRTEffects can be constructed without crashing in Node', () => {
-  // Module-load smoke; instances may need DOM but constructor with mock or
-  // no element shouldn't throw on import
-  // Skip actual instantiation if it requires document
-  assert.ok(true);
+test('CRTEffects can be constructed and destroyed in Node', () => {
+  const e = new CRTEffects(null);
+  e.destroy();
+  assert.equal(e._destroyed, true);
 });
 
 test('CRTEffects exposes start/stop/destroy lifecycle methods', () => {
@@ -59,7 +58,11 @@ test('applyCRTGlow() accepts element, optional color and intensity args', () => 
 
 test('CRTEffects.applyChromaticAberration() sets filter on element', () => {
   const instance = new CRTEffects(null);
-  const fakeEl = { style: { cssText: '' } };
+  const styleObj = { cssText: '', filter: '' };
+  styleObj.setProperty = function(name, value) {
+    this[name] = value;
+  };
+  const fakeEl = { style: styleObj };
   assert.doesNotThrow(() => instance.applyChromaticAberration(fakeEl, 3));
   assert.ok(fakeEl.style.filter, 'filter should be set by chromatic aberration');
   instance.destroy();

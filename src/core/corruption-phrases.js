@@ -77,12 +77,13 @@ export function getRandomPhrase(nsfw = false) {
  */
 function selectPool(word) {
   const lw = String(word ?? '').toLowerCase();
-  // Keyword lists ported verbatim from celeste-cli corruptTextSimple switch
+  // Keyword lists ported from celeste-cli corruptTextSimple switch
   // (celeste-cli/cmd/celeste/commands/corruption.go:73-84).
   // Two separate Go cases both map to dataCorruption, so they are merged here.
-  // Order matters: data is checked first so "stat" matches data before "status"
-  // matches the status pool — this preserves the canonical Go ordering.
-  const dataKeywords   = ["data", "usage", "stat", "analytic", "metric", "token", "count", "cost", "session", "provider", "model"];
+  // NOTE: "stat" was intentionally removed — it is a substring of "status"
+  // and caused any word containing "stat" to route to data, making the status
+  // pool unreachable. "statistic" and "metric" cover the intended data-stat case.
+  const dataKeywords   = ["data", "usage", "analytic", "statistic", "metric", "token", "count", "cost", "session", "provider", "model"];
   const systemKeywords = ["system", "process", "execute", "operation", "control"];
   const statusKeywords = ["status", "state", "level", "progress", "complete"];
   const memoryKeywords = ["time", "day", "week", "history", "past"];

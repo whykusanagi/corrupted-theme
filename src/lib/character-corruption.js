@@ -435,7 +435,10 @@ export const CORRUPTION_PHRASES = {
   processing: [...phrasesData.sfw.japanese.system].filter(p => /処理|プロセス|実行/.test(p)),
   analyzing:  [...phrasesData.sfw.japanese.status],
   corrupting: [...phrasesData.sfw.japanese.glitch].filter(p => /壊|cor/i.test(p)),
-  watching:   [...phrasesData.sfw.japanese.system].filter(p => /監視|wat|observ|見/.test(p)),
+  watching:   [
+    ...phrasesData.sfw.japanese.system,
+    ...phrasesData.sfw.japanese.status,
+  ].filter(p => /監視|wat|observ|見/.test(p)),
   void:       [...phrasesData.sfw.japanese.void],
 };
 

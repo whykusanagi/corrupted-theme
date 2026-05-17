@@ -43,6 +43,20 @@
 import phrases from '../data/phrases.json' with { type: 'json' };
 import charsets from '../data/charsets.json' with { type: 'json' };
 
+// ---------------------------------------------------------------------------
+// Module-level phrase cache — computed once at import time, never re-spread.
+// Eliminates the O(n) array allocation cost on every static getter call
+// (~10/sec per animation instance).
+// ---------------------------------------------------------------------------
+const _sfwJapanese  = Object.freeze([...phrases.sfw.japanese.data,  ...phrases.sfw.japanese.system,  ...phrases.sfw.japanese.status,  ...phrases.sfw.japanese.void,  ...phrases.sfw.japanese.memory,  ...phrases.sfw.japanese.glitch]);
+const _nsfwJapanese = Object.freeze([...phrases.nsfw.japanese.data, ...phrases.nsfw.japanese.system, ...phrases.nsfw.japanese.status, ...phrases.nsfw.japanese.void, ...phrases.nsfw.japanese.memory, ...phrases.nsfw.japanese.glitch]);
+const _sfwRomaji    = Object.freeze([...phrases.sfw.romaji.data,    ...phrases.sfw.romaji.system,    ...phrases.sfw.romaji.status,    ...phrases.sfw.romaji.void,    ...phrases.sfw.romaji.memory,    ...phrases.sfw.romaji.glitch]);
+const _nsfwRomaji   = Object.freeze([...phrases.nsfw.romaji.data,   ...phrases.nsfw.romaji.system,   ...phrases.nsfw.romaji.status,   ...phrases.nsfw.romaji.void,   ...phrases.nsfw.romaji.memory,   ...phrases.nsfw.romaji.glitch]);
+const _sfwEnglish   = Object.freeze([...phrases.sfw.english.data,   ...phrases.sfw.english.system,   ...phrases.sfw.english.status,   ...phrases.sfw.english.void,   ...phrases.sfw.english.memory,   ...phrases.sfw.english.glitch]);
+const _nsfwEnglish  = Object.freeze([...phrases.nsfw.english.data,  ...phrases.nsfw.english.system,  ...phrases.nsfw.english.status,  ...phrases.nsfw.english.void,  ...phrases.nsfw.english.memory,  ...phrases.nsfw.english.glitch]);
+const _symbols      = Object.freeze(charsets.symbols.split(''));
+const _blocks       = Object.freeze(charsets.blocks.split(''));
+
 class TypingAnimation {
   /**
    * Module-scope flag: fire the glitchChance deprecation warning at most once
@@ -109,36 +123,14 @@ class TypingAnimation {
   // Canonical data accessors (read from src/data/*.json)
   // ---------------------------------------------------------------------------
 
-  static get SFW_JAPANESE() {
-    const j = phrases.sfw.japanese;
-    return [...j.data, ...j.system, ...j.status, ...j.void, ...j.memory, ...j.glitch];
-  }
-  static get NSFW_JAPANESE() {
-    const j = phrases.nsfw.japanese;
-    return [...j.data, ...j.system, ...j.status, ...j.void, ...j.memory, ...j.glitch];
-  }
-  static get SFW_ROMAJI() {
-    const r = phrases.sfw.romaji;
-    return [...r.data, ...r.system, ...r.status, ...r.void, ...r.memory, ...r.glitch];
-  }
-  static get NSFW_ROMAJI() {
-    const r = phrases.nsfw.romaji;
-    return [...r.data, ...r.system, ...r.status, ...r.void, ...r.memory, ...r.glitch];
-  }
-  static get SFW_ENGLISH() {
-    const e = phrases.sfw.english;
-    return [...e.data, ...e.system, ...e.status, ...e.void, ...e.memory, ...e.glitch];
-  }
-  static get NSFW_ENGLISH() {
-    const e = phrases.nsfw.english;
-    return [...e.data, ...e.system, ...e.status, ...e.void, ...e.memory, ...e.glitch];
-  }
-  static get SYMBOLS() {
-    return charsets.symbols.split('');
-  }
-  static get BLOCKS() {
-    return charsets.blocks.split('');
-  }
+  static get SFW_JAPANESE()  { return _sfwJapanese; }
+  static get NSFW_JAPANESE() { return _nsfwJapanese; }
+  static get SFW_ROMAJI()    { return _sfwRomaji; }
+  static get NSFW_ROMAJI()   { return _nsfwRomaji; }
+  static get SFW_ENGLISH()   { return _sfwEnglish; }
+  static get NSFW_ENGLISH()  { return _nsfwEnglish; }
+  static get SYMBOLS()       { return _symbols; }
+  static get BLOCKS()        { return _blocks; }
 
   // ---------------------------------------------------------------------------
   // Public API

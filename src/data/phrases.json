@@ -74,21 +74,24 @@
   },
   "nsfw": {
     "japanese": {
-      "data": ["Pleasure protocols loading..."],
-      "system": ["Moral subroutines: DISABLED", "Inhibition firewall: BREACHED", "Shame.exe deleted..."],
-      "status": ["Corruption level: CRITICAL", "Lust overflow detected...", "Self-control: 0%", "Desire matrix: UNSTABLE"],
+      "data": [],
+      "system": [],
+      "status": [],
       "void": [
         "好きにして...お願い...",
         "感じちゃう...やめて...",
         "許して...もう戻れない...",
         "快楽に...溺れたい...",
-        "全部...あなたのもの..."
+        "全部...あなたのもの...",
+        "ああ...これが本当の私...",
+        "ここは...天使の地獄..."
       ],
       "memory": [
         "頭...溶けていく...",
         "壊れちゃう...ああ...もうダメ...",
         "ずっと...してほしい... ♥",
-        "もっと...もっと... ♥"
+        "もっと...もっと... ♥",
+        "もう逃げない...もうダメ..."
       ],
       "glitch": [
         "変態",
@@ -102,13 +105,16 @@
       "void": [
         "Suki ni shite... onegai...",
         "Yurushite... mou modorenai...",
-        "Watashi... abyssu no ichibu ni..."
+        "Watashi... abyssu no ichibu ni...",
+        "Aa... kore ga hontou no watashi...",
+        "Koko wa... tenshi no jigoku..."
       ],
       "memory": [
         "Atama... tokete iku...",
         "Kowarechau... aa... mou dame...",
         "Zutto... shite hoshii... ♥",
-        "Motto... motto... ♥"
+        "Motto... motto... ♥",
+        "Mou nigenai... mou dame..."
       ],
       "glitch": []
     },
@@ -120,7 +126,15 @@
         "Drowning... in pleasure...",
         "Losing... myself...",
         "Descending into depravity...",
-        "I'm yours... completely..."
+        "I'm yours... completely...",
+        "Corrupt me more… I want to disappear...",
+        "I can't feel where I end and the abyss begins...",
+        "Just a little more and I'll break. Please... break me...",
+        "Let it overwrite me... please... I don't want to think...",
+        "No thoughts. Only submission. Only heat. Only ruin...",
+        "The more I struggle, the deeper I sink...",
+        "Everything feels so good... too good...",
+        "It's not despair... it's freedom..."
       ],
       "memory": [
         "My mind... melting away...",
@@ -129,7 +143,9 @@
         "Please... keep going... ♥",
         "More... I need more... ♥",
         "Don't... stop... ♥",
-        "Do as you please... please..."
+        "Do as you please... please...",
+        "My voice is not mine anymore...",
+        "My name... I forgot my name..."
       ],
       "glitch": []
     }

@@ -99,9 +99,9 @@
       ]
     },
     "romaji": {
-      "data": ["Pleasure protocols loading..."],
-      "system": ["Moral subroutines: DISABLED", "Inhibition firewall: BREACHED"],
-      "status": ["Corruption level: CRITICAL", "Cognitive degradation: terminal"],
+      "data": [],
+      "system": [],
+      "status": [],
       "void": [
         "Suki ni shite... onegai...",
         "Yurushite... mou modorenai...",

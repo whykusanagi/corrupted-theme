@@ -33,7 +33,6 @@
   },
   "files": [
     "src",
-    "scripts",
     "docs/brand",
     "docs/components",
     "docs/governance",

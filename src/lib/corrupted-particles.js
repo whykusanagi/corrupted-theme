@@ -18,7 +18,7 @@ const CYAN_RGB    = { r: 0,   g: 255, b: 255 };
 const PURPLE_RGB  = { r: 139, g: 92,  b: 246 };
 const MAGENTA_RGB = { r: 255, g: 0,   b: 255 };
 
-class CorruptedParticles {
+export class CorruptedParticles {
   constructor(canvas, options = {}) {
     this.canvas = canvas;
     this.ctx    = canvas.getContext('2d');

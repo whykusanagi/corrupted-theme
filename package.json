@@ -90,7 +90,8 @@
     "dev:proxy": "node scripts/celeste-proxy-server.js",
     "dev:static": "node scripts/static-server.js",
     "start": "npm run dev:static",
-    "validate-data": "node scripts/validate-data.js"
+    "validate-data": "node scripts/validate-data.js",
+    "test": "node --test 'tests/data/*.test.js'"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

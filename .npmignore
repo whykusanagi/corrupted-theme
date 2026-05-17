@@ -46,3 +46,7 @@ docs/planning/
 # Internal spec files (AI development only)
 CORRUPTED_THEME_SPEC.md
 CORRUPTION_BUFFER_IMPLEMENTATIONS.md
+
+# Tests and dev scripts (not needed by consumers)
+tests/
+scripts/validate-data.js

@@ -85,3 +85,27 @@ test('getPhraseByContext("token usage cost") picks from data pool', () => {
     assert.ok(allDataSfw.includes(phrase), `'${phrase}' not in data pools`);
   }
 });
+
+test('getPhraseByContext("status") routes to status pool, not data', () => {
+  for (let i = 0; i < 50; i++) {
+    const phrase = getPhraseByContext('status');
+    const allStatusSfw = [
+      ...POOLS.sfw.japanese.status,
+      ...POOLS.sfw.romaji.status,
+      ...POOLS.sfw.english.status,
+    ];
+    assert.ok(allStatusSfw.includes(phrase), `'${phrase}' not in status pools`);
+  }
+});
+
+test('getPhraseByContext("state") routes to status pool', () => {
+  for (let i = 0; i < 50; i++) {
+    const phrase = getPhraseByContext('state');
+    const allStatusSfw = [
+      ...POOLS.sfw.japanese.status,
+      ...POOLS.sfw.romaji.status,
+      ...POOLS.sfw.english.status,
+    ];
+    assert.ok(allStatusSfw.includes(phrase), `'${phrase}' not in status pools`);
+  }
+});

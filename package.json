@@ -19,6 +19,7 @@
     "./nikke-utilities": "./src/css/nikke-utilities.css",
     "./extensions": "./src/css/extensions.css",
     "./gallery": "./src/lib/gallery.js",
+    "./lightbox": "./src/lib/lightbox.js",
     "./countdown": "./src/lib/countdown-widget.js",
     "./corrupted-text": "./src/lib/corrupted-text.js",
     "./corruption-loading": "./src/lib/corruption-loading.js",
@@ -88,10 +89,12 @@
     "ajv": "^8.20.0",
     "cssnano": "^7.1.9",
     "postcss": "^8.5.14",
-    "postcss-cli": "^11.0.1"
+    "postcss-cli": "^11.0.1",
+    "rollup": "^4.60.4"
   },
   "scripts": {
     "build": "postcss src/css/theme.css -o dist/theme.min.css",
+    "build:umd": "rollup -c rollup.config.js",
     "watch": "postcss --watch src/css/theme.css -o dist/theme.min.css",
     "dev:proxy": "node scripts/celeste-proxy-server.js",
     "dev:static": "node scripts/static-server.js",

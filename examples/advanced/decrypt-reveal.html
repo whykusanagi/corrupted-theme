@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Corruption Manager - Corrupted Theme</title>
+  <title>Decrypt Reveal - Corrupted Theme</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../../src/css/theme.css">
   <style>
@@ -60,7 +60,7 @@
       margin-block: var(--spacing-md);
     }
 
-    /* ── Three demo cards ─────────────────────────────────────────────── */
+    /* ── Demo cards ─────────────────────────────────────────────────────── */
 
     .demo-grid {
       display: grid;
@@ -98,7 +98,7 @@
       color: var(--text-muted);
     }
 
-    /* Target element that CorruptionManager writes text into */
+    /* Target element that DecryptReveal writes text into */
     .demo-target {
       flex: 1;
       min-height: 100px;
@@ -152,7 +152,7 @@
             <a href="../basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
             <a href="../animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
             <a href="../advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
-            <a href="../advanced/corruption-manager.html" class="active"><i class="fas fa-sitemap"></i> Corruption Manager</a>
+            <a href="../advanced/decrypt-reveal.html" class="active"><i class="fas fa-key"></i> Decrypt Reveal</a>
             <a href="../components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
           </div>
         </li>
@@ -162,10 +162,18 @@
   </nav>
 
   <div class="container">
-    <h1><i class="fas fa-sitemap"></i> Corruption Manager</h1>
+    <h1><i class="fas fa-key"></i> Decrypt Reveal</h1>
     <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
-      Unified corruption animation lifecycle — decode, flicker, hybrid.
-      Provided by <code>src/core/corruption-manager.js</code>.
+      Fixed-length decryption animation — text is shown at its final length from frame 1,
+      scrambled with random characters, then progressively resolves left-to-right.
+      Useful for password reveals, terminal boot sequences, and code decryption effects.
+      Provided by <code>src/core/decrypt-reveal.js</code>.
+    </p>
+    <p style="color: var(--text-muted); margin-bottom: var(--spacing-2xl); font-size: 0.9rem;">
+      <i class="fas fa-info-circle"></i>
+      <strong>Distinct from TypingAnimation</strong> — TypingAnimation grows the string over time
+      (streaming/typed reveal with phrase-buffer flicker). DecryptReveal keeps the string at
+      final length from the start and scrambles unrevealed positions.
     </p>
 
     <!-- Manager-level controls -->
@@ -178,51 +186,51 @@
       </div>
     </section>
 
-    <!-- Three pattern demos side-by-side -->
+    <!-- Decode variations side-by-side -->
     <section class="example-group">
-      <h3><i class="fas fa-random"></i> Three Canonical Patterns</h3>
+      <h3><i class="fas fa-unlock-alt"></i> Decode Variations</h3>
 
       <div class="demo-grid">
 
-        <!-- Pattern 1: Decode -->
+        <!-- Short string — katakana charset -->
         <div class="demo-card">
           <div class="demo-card__header">
-            <h4>Pattern 1 · Decode</h4>
-            <p>Character-by-character corruption → readable text</p>
+            <h4>Short String · Katakana</h4>
+            <p>Default charset — standard katakana + block chars</p>
           </div>
-          <div class="demo-target" id="target-decode" style="color: var(--corrupted-cyan, #00ffff);">
+          <div class="demo-target" id="target-short" style="color: var(--corrupted-cyan, #00ffff);">
             Click Decode to start
           </div>
           <div class="demo-card__footer">
-            <button class="btn" id="btn-decode">Decode</button>
+            <button class="btn" id="btn-short">Decode</button>
           </div>
         </div>
 
-        <!-- Pattern 2: Flicker -->
+        <!-- Long string — blocks charset -->
         <div class="demo-card">
           <div class="demo-card__header">
-            <h4>Pattern 2 · Flicker</h4>
-            <p>Rapid phrase cycling — unstable signal simulation</p>
+            <h4>Long String · Block Chars</h4>
+            <p>Intense charset — kanji + block characters</p>
           </div>
-          <div class="demo-target" id="target-flicker" style="color: var(--corrupted-magenta, #ff00ff);">
-            Click Flicker to start
+          <div class="demo-target" id="target-long" style="color: var(--corrupted-magenta, #ff00ff);">
+            Click Decode to start
           </div>
           <div class="demo-card__footer">
-            <button class="btn" id="btn-flicker">Flicker</button>
+            <button class="btn" id="btn-long">Decode</button>
           </div>
         </div>
 
-        <!-- Pattern 3: Hybrid -->
+        <!-- Kanji charset — slow reveal -->
         <div class="demo-card">
           <div class="demo-card__header">
-            <h4>Pattern 3 · Hybrid</h4>
-            <p>Flicker phase → decode phase (maximum chaos)</p>
+            <h4>Kanji Charset · Slow</h4>
+            <p>Deep-corruption kanji charset, extended duration</p>
           </div>
-          <div class="demo-target" id="target-hybrid" style="color: var(--corrupted-purple, #8b5cf6);">
-            Click Hybrid to start
+          <div class="demo-target" id="target-kanji" style="color: var(--corrupted-purple, #8b5cf6);">
+            Click Decode to start
           </div>
           <div class="demo-card__footer">
-            <button class="btn" id="btn-hybrid">Hybrid</button>
+            <button class="btn" id="btn-kanji">Decode</button>
           </div>
         </div>
 
@@ -233,79 +241,78 @@
     <section class="example-group">
       <h3><i class="fas fa-code"></i> Usage</h3>
       <div class="code-block">
-        <pre><code>import { CorruptionManager } from 'src/core/corruption-manager.js';
+        <pre><code>import { DecryptReveal, decodeText } from 'src/core/decrypt-reveal.js';
 
-const mgr = new CorruptionManager({ nsfw: false });
+// Class API — manage multiple concurrent animations
+const dr = new DecryptReveal({ charset: CorruptionCharsets.standard });
 
-// Pattern 1 — character decode
-mgr.decode(element, 'SYSTEM ONLINE', { duration: 2000 });
+// Fixed-length decrypt: text shown scrambled at full length, resolves left-to-right
+const id = dr.decode(element, 'NEURAL CORE ONLINE', { duration: 2000 });
 
-// Pattern 2 — phrase flicker
-mgr.flicker(element, ['LOADING...', 'CALIBRATING...', 'STANDBY...'], {
+// Override charset per-call
+dr.decode(element, 'アクセス許可', {
   duration: 3000,
-  finalText: 'READY',
+  charset: CorruptionCharsets.kanji,
 });
 
-// Pattern 3 — hybrid (flicker then decode)
-mgr.hybrid(element, ['CORRUPTING...', 'REWRITING...'], 'REALITY RESTORED', {
-  duration: 4000,
-});
+dr.cleanup(id);  // cancel one animation early
+dr.stop();       // cancel all animations
+dr.destroy();    // full teardown (visibilitychange listener removed)
 
-mgr.stop();     // cancel all running animations
-mgr.destroy();  // full teardown (visibilitychange listener removed)</code></pre>
+// One-shot helper — no instance needed
+const cancel = decodeText(element, 'SYSTEM READY', { duration: 1500 });
+// cancel() to stop early</code></pre>
       </div>
     </section>
 
   </div>
 
   <script type="module">
-    import { CorruptionManager } from '../../src/core/corruption-manager.js';
+    import { DecryptReveal } from '../../src/core/decrypt-reveal.js';
+    import { CorruptionCharsets } from '../../src/core/corruption-charsets.js';
 
-    let mgr = new CorruptionManager({ nsfw: false });
+    let dr = new DecryptReveal();
 
-    // ── Pattern 1: Decode ──────────────────────────────────────────────────────
-    document.getElementById('btn-decode').addEventListener('click', () => {
-      const el = document.getElementById('target-decode');
-      mgr.decode(el, 'NEURAL CORE ONLINE', { duration: 2000 });
+    // ── Short string — default charset ────────────────────────────────────────
+    document.getElementById('btn-short').addEventListener('click', () => {
+      const el = document.getElementById('target-short');
+      dr.decode(el, 'NEURAL CORE ONLINE', { duration: 2000 });
     });
 
-    // ── Pattern 2: Flicker ─────────────────────────────────────────────────────
-    document.getElementById('btn-flicker').addEventListener('click', () => {
-      const el = document.getElementById('target-flicker');
-      mgr.flicker(
-        el,
-        ['LOADING...', 'CALIBRATING...', 'STANDBY...', 'BUFFERING...', 'SYNCING...'],
-        { duration: 3000, finalText: 'SIGNAL LOCKED' }
-      );
+    // ── Long string — intense charset ─────────────────────────────────────────
+    document.getElementById('btn-long').addEventListener('click', () => {
+      const el = document.getElementById('target-long');
+      dr.decode(el, 'SIGNAL RESTORATION IN PROGRESS', {
+        duration: 3000,
+        charset: CorruptionCharsets.intense,
+      });
     });
 
-    // ── Pattern 3: Hybrid ──────────────────────────────────────────────────────
-    document.getElementById('btn-hybrid').addEventListener('click', () => {
-      const el = document.getElementById('target-hybrid');
-      mgr.hybrid(
-        el,
-        ['CORRUPTING MATRIX...', 'REWRITING REALITY...', 'DESTABILISING...'],
-        'REALITY RESTORED',
-        { duration: 4000 }
-      );
+    // ── Kanji charset — slow reveal ───────────────────────────────────────────
+    document.getElementById('btn-kanji').addEventListener('click', () => {
+      const el = document.getElementById('target-kanji');
+      dr.decode(el, 'アクセス許可 / ACCESS GRANTED', {
+        duration: 4000,
+        charset: CorruptionCharsets.kanji,
+      });
     });
 
-    // ── Manager-level controls ─────────────────────────────────────────────────
+    // ── Manager-level controls ────────────────────────────────────────────────
     document.getElementById('btn-stop-all').addEventListener('click', () => {
-      mgr.stop();
+      dr.stop();
     });
 
     document.getElementById('btn-destroy-manager').addEventListener('click', () => {
-      mgr.destroy();
+      dr.destroy();
     });
 
     document.getElementById('btn-recreate-manager').addEventListener('click', () => {
-      mgr.destroy();
-      mgr = new CorruptionManager({ nsfw: false });
+      dr.destroy();
+      dr = new DecryptReveal();
       // Reset display text
-      document.getElementById('target-decode').textContent  = 'Click Decode to start';
-      document.getElementById('target-flicker').textContent = 'Click Flicker to start';
-      document.getElementById('target-hybrid').textContent  = 'Click Hybrid to start';
+      document.getElementById('target-short').textContent = 'Click Decode to start';
+      document.getElementById('target-long').textContent  = 'Click Decode to start';
+      document.getElementById('target-kanji').textContent = 'Click Decode to start';
     });
   </script>
 </body>

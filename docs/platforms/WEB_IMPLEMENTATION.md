@@ -1219,7 +1219,7 @@ Quick reference:
 <!-- Individual JS module (ESM) -->
 <script type="module">
   import { CorruptedText } from 'https://corrupted.whykusanagi.xyz/src/lib/corrupted-text.js';
-  import { CorruptionManager } from 'https://corrupted.whykusanagi.xyz/src/core/corruption-manager.js';
+  import { DecryptReveal } from 'https://corrupted.whykusanagi.xyz/src/core/decrypt-reveal.js';
 </script>
 ```
 

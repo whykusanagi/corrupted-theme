@@ -43,7 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added — Drift reconvergence with celeste-tts-bot (sub-project #2)
 
 - **`CorruptionCharsets`** — named registry backed by `src/data/charsets.json` (standard/soft/intense/all computed sets).
-- **`CorruptionManager`** — unified `decode`/`flicker`/`hybrid` lifecycle with `visibilitychange` auto-cleanup.
+- **`DecryptReveal`** — fixed-length decryption animation (`@whykusanagi/corrupted-theme/decrypt-reveal`). Renamed from CorruptionManager during 0.2.0 development to distinguish from TypingAnimation's streaming-typed pattern. Provides `.decode(element, finalText, opts)` for the chaos-buffer → resolved-text effect.
 - **`CRTEffects`** — CRT post-processing layer (scanlines, chromatic aberration, flicker, screen shake, RGB split).
 - **`animation-blocks`** — 10 classes: `TitleDecoder`, `ProgressBar`, `ScanlineSweep`, `TerminalBoot`, `GlitchPulse`, `ASCIIBorder`, `SystemDiagnostic`, `LoadingBarMulti`, `DataTransmission`, `TerminalPrompt`.
 - **`corrupted-particles-background`** — auto-injector for behind-blur particles with DPR=1 performance mode.

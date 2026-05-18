@@ -1280,57 +1280,53 @@ CorruptionCharsets.all;       // union of every set
 
 **Available sets:** `katakana`, `hiragana`, `kanji`, `symbols`, `blocks`, `standard`, `soft`, `intense`, `all`.
 
-All getters return a `string` — index directly with `Math.random()` or pass as `charset` to `CorruptionManager` / animation block options.
+All getters return a `string` — index directly with `Math.random()` or pass as `charset` to `DecryptReveal` / animation block options.
 
 ---
 
-## CorruptionManager
+## DecryptReveal
 
-**Module:** `@whykusanagi/corrupted-theme/corruption-manager`
-**Source:** `src/core/corruption-manager.js`
+**Module:** `@whykusanagi/corrupted-theme/decrypt-reveal`
+**Source:** `src/core/decrypt-reveal.js`
 **Since:** 0.2.0
 
-Unified lifecycle runner for all three canonical corruption patterns defined in `CORRUPTED_THEME_SPEC.md`. Tracks every active timer via `TimerRegistry` so a single `stop()` / `destroy()` call cleans up everything. Auto-stops when `document.hidden` becomes `true` (Visibility API).
+Fixed-length decryption animation. The target string is shown at its final length from frame 1, scrambled with random characters from a charset, and progressively resolves left-to-right to the target text (chaos → order).
+
+**Distinct from TypingAnimation:** TypingAnimation grows the string over time (streaming/typed reveal with a phrase-buffer flicker in the not-yet-revealed tail). DecryptReveal keeps the string at final length and scrambles unrevealed positions. Use DecryptReveal for code reveals, passwords, and terminal boot sequences.
+
+Tracks every active timer via `TimerRegistry` so a single `stop()` / `destroy()` call cleans up everything. Auto-stops when `document.hidden` becomes `true` (Visibility API).
 
 ```js
 import {
-  CorruptionManager,
+  DecryptReveal,
   decodeText,
-  phraseFlicker,
-  hybridDecode,
-} from '@whykusanagi/corrupted-theme/corruption-manager';
+} from '@whykusanagi/corrupted-theme/decrypt-reveal';
 
-const mgr = new CorruptionManager({ nsfw: false, charset: CorruptionCharsets.standard });
+const dr = new DecryptReveal({ charset: CorruptionCharsets.standard });
 
-// Pattern 1 — character-by-character decode
-const id1 = mgr.decode(el, 'SYSTEM READY', { duration: 2000 });
+// Fixed-length decrypt — text shown scrambled at full length, resolves left-to-right
+const id1 = dr.decode(el, 'SYSTEM READY', { duration: 2000 });
 
-// Pattern 2 — phrase flickering
-const id2 = mgr.flicker(el, ['アイウエオ', 'LOADING...', '██████'], { duration: 3000, finalText: '' });
+// Override charset per-call
+const id2 = dr.decode(el, 'アクセス許可', { duration: 3000, charset: CorruptionCharsets.kanji });
 
-// Pattern 3 — hybrid (flicker phase → decode phase)
-const id3 = mgr.hybrid(el, ['CORRUPTION DETECTED'], 'SIGNAL RESTORED', { duration: 4000 });
-
-mgr.cleanup(id1);   // cancel one animation early
-mgr.stop();         // cancel all animations (Visibility API auto-calls this)
-mgr.start();        // resume hook (intentional no-op — re-queue animations explicitly)
-mgr.destroy();      // full teardown; instance not reusable after this
+dr.cleanup(id1);  // cancel one animation early
+dr.stop();        // cancel all animations (Visibility API auto-calls this)
+dr.start();       // resume hook (intentional no-op — re-queue animations explicitly)
+dr.destroy();     // full teardown; instance not reusable after this
 ```
 
 **Constructor Options:**
 
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
-| `nsfw` | boolean | `false` | Include NSFW phrase pools when auto-generating default phrase lists |
-| `charset` | string | `CorruptionCharsets.standard` | Default charset for decode/hybrid; overridable per call |
+| `charset` | string | `CorruptionCharsets.standard` | Default charset for decode operations; overridable per call |
 
 **Methods:**
 
 | Method | Returns | Description |
 |--------|---------|-------------|
-| `decode(element, content, opts?)` | `number` | Start Pattern 1. `opts`: `duration` (ms), `charset` |
-| `flicker(element, phrases, opts?)` | `number` | Start Pattern 2. `opts`: `duration`, `flickerInterval`, `finalText`, `nsfw` |
-| `hybrid(element, phrases, content, opts?)` | `number` | Start Pattern 3. `opts`: `duration`, `charset`, `flickerInterval`, `nsfw` |
+| `decode(element, content, opts?)` | `number` | Start decryption animation. `opts`: `duration` (ms), `charset` |
 | `cleanup(id)` | `void` | Cancel one animation by its return ID |
 | `stop()` | `void` | Cancel all active animations; element text preserved as-is |
 | `start()` | `void` | No-op resume hook; re-queue animations explicitly |
@@ -1339,13 +1335,11 @@ mgr.destroy();      // full teardown; instance not reusable after this
 | `isAnimating(id)` | `boolean` | Whether animation `id` is still running |
 | `cleanupAll()` | `void` | **Deprecated** — alias for `stop()`. Removed in 0.3.x |
 
-**Standalone one-shot exports** (no manager instance needed — each returns a cleanup `Function`):
+**Standalone one-shot export** (no manager instance needed — returns a cleanup `Function`):
 
 | Export | Signature |
 |--------|-----------|
 | `decodeText` | `(element, finalText, opts?) → Function` |
-| `phraseFlicker` | `(element, phrases, finalText, opts?) → Function` |
-| `hybridDecode` | `(element, flickerPhrases, finalText, opts?) → Function` |
 
 ---
 
@@ -1899,7 +1893,7 @@ Methods: `connect()`, `disconnect()`, `send(msg)`, `on(handler)`, `off(handler)`
 
 ### TimerRegistry
 
-**Module:** `@whykusanagi/corrupted-theme/corruption-manager` (internal; also used directly in lib components)
+**Module:** `@whykusanagi/corrupted-theme/decrypt-reveal` (internal; also used directly in lib components)
 **Source:** `src/core/timer-registry.js`
 **Type:** Class
 **Since:** 0.1.x (merged with TimerManager API in 0.2.0)
@@ -1912,7 +1906,7 @@ Centralized timer tracking for component lifecycle cleanup. Wraps `setTimeout`, 
 - `destroy()`: calls `clearAll()` then sets `destroyed = true`
 
 ```js
-import { TimerRegistry } from '@whykusanagi/corrupted-theme/corruption-manager';
+import { TimerRegistry } from '@whykusanagi/corrupted-theme/decrypt-reveal';
 // or import directly for internal use:
 // import { TimerRegistry } from '@whykusanagi/corrupted-theme/src/core/timer-registry.js';
 

@@ -141,7 +141,7 @@ For production hardening, add SRI hashes (published in `CHANGELOG.md` for each r
 │   │   ├── timer-registry.js          # lifecycle: tracked setTimeout/setInterval/rAF
 │   │   ├── event-tracker.js           # lifecycle: tracked addEventListener
 │   │   ├── corruption-charsets.js     # CorruptionCharsets registry (0.2.0)
-│   │   ├── corruption-manager.js      # CorruptionManager unified lifecycle (0.2.0)
+│   │   ├── decrypt-reveal.js          # DecryptReveal fixed-length decryption (0.2.0)
 │   │   ├── websocket-manager.js       # WebSocketManager auto-reconnect (0.2.0)
 │   │   ├── random-utils.js            # randomPick / randomInt / shuffle … (0.2.0)
 │   │   ├── time-utils.js              # formatTime / timeAgo / formatDuration … (0.2.0)
@@ -258,7 +258,7 @@ See [docs/CROSS_LANGUAGE_CONTRACT.md](docs/CROSS_LANGUAGE_CONTRACT.md) for the G
 | `CorruptedParticles` | `includeLewd` | `nsfw` |
 | `animation-blocks` | `lewdMode` | `nsfw` |
 | `TypingAnimation` | `nsfw` | `nsfw` (unchanged) |
-| `CorruptionManager` | — | `nsfw` |
+| `DecryptReveal` | — | — |
 
 ```js
 // Correct — all components now use the same option name
@@ -414,8 +414,8 @@ import { initCountdown } from '@whykusanagi/corrupted-theme/countdown';
 
 // 0.2.0 — Drift reconvergence (canonical corruption layer)
 import { CorruptionCharsets }  from '@whykusanagi/corrupted-theme/corruption-charsets';
-import { CorruptionManager, decodeText, phraseFlicker, hybridDecode }
-                               from '@whykusanagi/corrupted-theme/corruption-manager';
+import { DecryptReveal, decodeText }
+                               from '@whykusanagi/corrupted-theme/decrypt-reveal';
 import { CRTEffects, applyCRTGlow } from '@whykusanagi/corrupted-theme/crt-effects';
 import { TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot, GlitchPulse,
          ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission, TerminalPrompt,
@@ -642,25 +642,27 @@ CorruptionCharsets.all;       // union of every set
 
 See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#corruptioncharsets) for all sets.
 
-#### CorruptionManager
+#### DecryptReveal
 
-Unified lifecycle runner for all three canonical corruption patterns.
+Fixed-length decryption animation. The target string is shown at its final length from frame 1 (scrambled with charset characters), then progressively resolves left-to-right to the target text.
+
+**Distinct from TypingAnimation** — TypingAnimation grows the string over time (streaming/typed reveal with phrase-buffer flicker in the not-yet-revealed tail). DecryptReveal keeps the string at final length and scrambles unrevealed positions.
 
 ```js
-import { CorruptionManager } from '@whykusanagi/corrupted-theme/corruption-manager';
+import { DecryptReveal, decodeText } from '@whykusanagi/corrupted-theme/decrypt-reveal';
 
-const mgr = new CorruptionManager({ nsfw: false });
+const dr = new DecryptReveal({ charset: CorruptionCharsets.standard });
 
-mgr.decode(el, 'SYSTEM READY', { duration: 2000 });        // Pattern 1
-mgr.flicker(el, ['アイウエオ', '██████'], { duration: 3000 }); // Pattern 2
-mgr.hybrid(el, ['CORRUPTION'], 'SIGNAL RESTORED', {});     // Pattern 3
-mgr.stop();    // cancel all
-mgr.destroy(); // full teardown
+dr.decode(el, 'SYSTEM READY', { duration: 2000 });
+dr.decode(el, 'アクセス許可', { duration: 3000, charset: CorruptionCharsets.kanji });
+dr.stop();    // cancel all
+dr.destroy(); // full teardown
+
+// One-shot helper (no instance needed) — returns a cancel function
+const cancel = decodeText(el, 'NEURAL CORE ONLINE', { duration: 1500 });
 ```
 
-One-shot helpers (no instance needed): `decodeText`, `phraseFlicker`, `hybridDecode` — each returns a cancel function.
-
-See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#corruptionmanager) for full method table.
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#decryptreveal) for full method table.
 
 #### CRTEffects
 

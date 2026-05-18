@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Phrase Cycle - Corrupted Theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
+    }
+
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
+
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
+
+    .demo-area {
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-block: var(--spacing-md);
+    }
+
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .controls {
+      display: flex;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+      margin-block: var(--spacing-md);
+    }
+
+    /* ── Demo cards ─────────────────────────────────────────────────────── */
+
+    .demo-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-block: var(--spacing-md);
+    }
+
+    .demo-card {
+      background: var(--glass-darker);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .demo-card__header {
+      padding: 0.75rem 1rem;
+      background: rgba(0,0,0,0.3);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .demo-card__header h4 {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .demo-card__header p {
+      margin: 0.25rem 0 0;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Target element that PhraseCycle writes text into */
+    .demo-target {
+      flex: 1;
+      min-height: 100px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: rgba(0,0,0,0.5);
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      word-break: break-all;
+      text-align: center;
+      font-family: 'Courier New', monospace;
+    }
+
+    .demo-card__footer {
+      padding: 0.75rem 1rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .demo-card__footer .btn {
+      font-size: 0.78rem;
+      padding: 0.3rem 0.8rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Global Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
+        <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
+        <li class="has-submenu">
+          <a href="#" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="../nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="../button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="../card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="../form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="../layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="../basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="../basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="../animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="../advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="../advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
+            <a href="../advanced/phrase-cycle.html" class="active"><i class="fas fa-history"></i> Phrase Cycle</a>
+            <a href="../components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+          </div>
+        </li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1><i class="fas fa-history"></i> Phrase Cycle</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Discrete phrase-state cycling. Replaces the entire element's text with phrase A, then phrase B,
+      etc., at a fixed interval, then settles on <code>finalText</code>. Useful for loading screens,
+      boot sequences, and "decrypting" preambles. Provided by <code>src/lib/phrase-cycle.js</code>.
+    </p>
+    <p style="color: var(--text-muted); margin-bottom: var(--spacing-2xl); font-size: 0.9rem;">
+      <i class="fas fa-info-circle"></i>
+      <strong>3-way distinction:</strong>
+      <strong>TypingAnimation</strong> grows the string char-by-char (streaming/typed, string length increases).
+      <strong>DecryptReveal</strong> shows the string at final length, scrambled, resolving left-to-right (char-level).
+      <strong>PhraseCycle</strong> replaces the entire element text each tick — string length may vary between phrases.
+    </p>
+
+    <!-- Demo 1: Loading sequence -->
+    <section class="example-group">
+      <h3><i class="fas fa-spinner"></i> Loading Sequence</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+        Cycles through status phrases and settles on a final "ready" message. interval: 400ms.
+      </p>
+
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="demo-card__header">
+            <h4>Loading · Settle</h4>
+            <p>Initializing → Connecting → Authenticating → Ready.</p>
+          </div>
+          <div class="demo-target" id="target-loading" style="color: var(--corrupted-cyan, #00ffff);">
+            Click Start to begin
+          </div>
+          <div class="demo-card__footer">
+            <button class="btn" id="btn-loading-start">Start</button>
+            <button class="btn" id="btn-loading-stop">Stop</button>
+            <button class="btn" id="btn-loading-destroy">Destroy</button>
+            <button class="btn" id="btn-loading-reset">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <pre><code>const cycle = new PhraseCycle(element, {
+  phrases: ['Initializing...', 'Connecting...', 'Authenticating...'],
+  interval: 400,
+  finalText: 'Ready.',
+});
+cycle.start();</code></pre>
+      </div>
+    </section>
+
+    <!-- Demo 2: Boot sequence -->
+    <section class="example-group">
+      <h3><i class="fas fa-terminal"></i> Boot Sequence</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+        System boot preamble with a welcome message as the final settled state. interval: 500ms.
+      </p>
+
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="demo-card__header">
+            <h4>Boot · Settle</h4>
+            <p>BIOS check → Loading kernel → Mounting filesystems → Welcome</p>
+          </div>
+          <div class="demo-target" id="target-boot" style="color: var(--corrupted-magenta, #ff00ff);">
+            Click Start to begin
+          </div>
+          <div class="demo-card__footer">
+            <button class="btn" id="btn-boot-start">Start</button>
+            <button class="btn" id="btn-boot-stop">Stop</button>
+            <button class="btn" id="btn-boot-destroy">Destroy</button>
+            <button class="btn" id="btn-boot-reset">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <pre><code>const boot = new PhraseCycle(element, {
+  phrases: [
+    'BIOS check OK',
+    'Loading kernel...',
+    'Mounting filesystems...',
+    'Starting services...',
+  ],
+  interval: 500,
+  finalText: 'WELCOME.',
+});
+boot.start();</code></pre>
+      </div>
+    </section>
+
+    <!-- Demo 3: Looping spinner -->
+    <section class="example-group">
+      <h3><i class="fas fa-sync-alt"></i> Looping Spinner</h3>
+      <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+        Loops indefinitely with no finalText. Perfect for persistent loading indicators. interval: 300ms.
+      </p>
+
+      <div class="demo-grid">
+        <div class="demo-card">
+          <div class="demo-card__header">
+            <h4>Spinner · Loop</h4>
+            <p>loop: true — cycles forever, ignores duration and finalText</p>
+          </div>
+          <div class="demo-target" id="target-spinner" style="color: var(--corrupted-purple, #8b5cf6);">
+            Click Start to begin
+          </div>
+          <div class="demo-card__footer">
+            <button class="btn" id="btn-spinner-start">Start</button>
+            <button class="btn" id="btn-spinner-stop">Stop</button>
+            <button class="btn" id="btn-spinner-destroy">Destroy</button>
+            <button class="btn" id="btn-spinner-reset">Reset</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <pre><code>const spinner = new PhraseCycle(element, {
+  phrases: ['Loading.', 'Loading..', 'Loading...'],
+  interval: 300,
+  loop: true,         // cycle forever — no finalText, no duration limit
+});
+spinner.start();</code></pre>
+      </div>
+    </section>
+
+    <!-- Full API usage snippet -->
+    <section class="example-group">
+      <h3><i class="fas fa-code"></i> Full API Reference</h3>
+      <div class="code-block">
+        <pre><code>import { PhraseCycle } from '@whykusanagi/corrupted-theme/phrase-cycle';
+
+// ── Settling cycle (default): one full pass then display finalText ─────────
+const cycle = new PhraseCycle(element, {
+  phrases:   ['Initializing...', 'Connecting...', 'Authenticating...'],
+  interval:  400,          // ms between phrase swaps (default: 200)
+  duration:  null,         // null = phrases.length × interval (one full pass)
+  finalText: 'Ready.',     // text written after settle; null = leave last phrase
+  loop:      false,        // false = settle after duration (default)
+});
+cycle.start();             // idempotent — safe to call while already running
+
+// ── Looping (no settle): cycle forever ───────────────────────────────────
+const spinner = new PhraseCycle(element, {
+  phrases:  ['Loading.', 'Loading..', 'Loading...'],
+  interval: 300,
+  loop:     true,          // ignores duration + finalText
+});
+spinner.start();
+spinner.stop();            // pause; leaves last phrase visible; reusable
+spinner.start();           // restart from first phrase
+
+// ── Lifecycle ─────────────────────────────────────────────────────────────
+cycle.stop();              // stop timers; last phrase stays visible; reusable
+cycle.destroy();           // teardown + release element reference; not reusable
+cycle.isRunning();         // → boolean</code></pre>
+      </div>
+    </section>
+
+  </div>
+
+  <script type="module">
+    import { PhraseCycle } from '../../src/lib/phrase-cycle.js';
+
+    /* ── Demo 1: Loading sequence ─────────────────────────────────────────── */
+    let loading = null;
+
+    document.getElementById('btn-loading-start').addEventListener('click', () => {
+      if (!loading) {
+        loading = new PhraseCycle(document.getElementById('target-loading'), {
+          phrases:   ['Initializing...', 'Connecting...', 'Authenticating...'],
+          interval:  400,
+          finalText: 'Ready.',
+        });
+      }
+      loading.start();
+    });
+    document.getElementById('btn-loading-stop').addEventListener('click', () => {
+      loading?.stop();
+    });
+    document.getElementById('btn-loading-destroy').addEventListener('click', () => {
+      loading?.destroy();
+      loading = null;
+    });
+    document.getElementById('btn-loading-reset').addEventListener('click', () => {
+      loading?.destroy();
+      loading = null;
+      document.getElementById('target-loading').textContent = 'Click Start to begin';
+    });
+
+    /* ── Demo 2: Boot sequence ────────────────────────────────────────────── */
+    let boot = null;
+
+    document.getElementById('btn-boot-start').addEventListener('click', () => {
+      if (!boot) {
+        boot = new PhraseCycle(document.getElementById('target-boot'), {
+          phrases:   ['BIOS check OK', 'Loading kernel...', 'Mounting filesystems...', 'Starting services...'],
+          interval:  500,
+          finalText: 'WELCOME.',
+        });
+      }
+      boot.start();
+    });
+    document.getElementById('btn-boot-stop').addEventListener('click', () => {
+      boot?.stop();
+    });
+    document.getElementById('btn-boot-destroy').addEventListener('click', () => {
+      boot?.destroy();
+      boot = null;
+    });
+    document.getElementById('btn-boot-reset').addEventListener('click', () => {
+      boot?.destroy();
+      boot = null;
+      document.getElementById('target-boot').textContent = 'Click Start to begin';
+    });
+
+    /* ── Demo 3: Looping spinner ──────────────────────────────────────────── */
+    let spinner = null;
+
+    document.getElementById('btn-spinner-start').addEventListener('click', () => {
+      if (!spinner) {
+        spinner = new PhraseCycle(document.getElementById('target-spinner'), {
+          phrases:  ['Loading.', 'Loading..', 'Loading...'],
+          interval: 300,
+          loop:     true,
+        });
+      }
+      spinner.start();
+    });
+    document.getElementById('btn-spinner-stop').addEventListener('click', () => {
+      spinner?.stop();
+    });
+    document.getElementById('btn-spinner-destroy').addEventListener('click', () => {
+      spinner?.destroy();
+      spinner = null;
+    });
+    document.getElementById('btn-spinner-reset').addEventListener('click', () => {
+      spinner?.destroy();
+      spinner = null;
+      document.getElementById('target-spinner').textContent = 'Click Start to begin';
+    });
+  </script>
+</body>
+</html>

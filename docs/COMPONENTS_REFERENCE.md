@@ -27,6 +27,8 @@ This document provides a comprehensive reference for all components available in
     - [Countdown Widget](#countdown-widget)
 11. [JavaScript Corruption Components](#javascript-corruption-components)
     - [CorruptedText](#corruptedtext) | [CorruptedParticles](#corruptedparticles) | [CorruptedVortex](#corruptedvortex) | [Character Corruption](#character-corruption) | [Corruption Loading Screen](#corruption-loading-screen)
+12. [Primitive Corruption Modules](#primitive-corruption-modules)
+    - [DecryptReveal](#decryptreveal) | [PhraseCycle](#phrasecycle) | [CRTEffects](#crteffects) | [Animation Blocks](#animation-blocks)
 
 ---
 
@@ -1340,6 +1342,79 @@ dr.destroy();     // full teardown; instance not reusable after this
 | Export | Signature |
 |--------|-----------|
 | `decodeText` | `(element, finalText, opts?) → Function` |
+
+---
+
+## PhraseCycle
+
+**Module:** `@whykusanagi/corrupted-theme/phrase-cycle`
+**Source:** `src/lib/phrase-cycle.js`
+**Since:** 0.2.0
+
+Discrete phrase-state cycling. Replaces the entire element's text with each phrase in sequence at a fixed interval, then settles on `finalText`. Optional `loop: true` cycles forever without settling.
+
+**3-way conceptual distinction:**
+- **TypingAnimation** (`src/lib/typing-animation.js`) — streaming/typed reveal: the string *grows* over time, character-by-character, with a phrase-buffer flicker in the not-yet-revealed tail.
+- **DecryptReveal** (`src/core/decrypt-reveal.js`) — fixed-length decryption: the string is always at its *final length* but scrambled; random charset characters fill unrevealed positions and resolve left-to-right.
+- **PhraseCycle** (this module) — discrete phrase cycling: the *entire element text* is replaced each tick. String length may vary between phrases. No character scrambling.
+
+Recovers the `.flicker` pattern that was dropped from `CorruptionManager` during the `DecryptReveal` rename (PR #23).
+
+```js
+import { PhraseCycle } from '@whykusanagi/corrupted-theme/phrase-cycle';
+
+// Settling cycle — one full pass, then write finalText
+const cycle = new PhraseCycle(element, {
+  phrases:   ['Initializing...', 'Connecting...', 'Authenticating...'],
+  interval:  400,        // ms between phrase swaps
+  finalText: 'Ready.',   // text written after settle; null = leave last phrase visible
+});
+cycle.start();
+
+// Custom duration: settle after 1200ms regardless of phrase count
+const fast = new PhraseCycle(element, {
+  phrases:  ['BIOS check OK', 'Loading kernel...', 'Mounting filesystems...'],
+  interval: 400,
+  duration: 1200,
+  finalText: 'WELCOME.',
+});
+fast.start();
+
+// Looping: cycle forever, no settle
+const spinner = new PhraseCycle(element, {
+  phrases:  ['Loading.', 'Loading..', 'Loading...'],
+  interval: 300,
+  loop:     true,
+});
+spinner.start();
+spinner.stop();    // pause; last phrase stays visible; reusable after stop()
+spinner.destroy(); // teardown + release element reference; not reusable after destroy()
+```
+
+**Constructor Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `phrases` | string[] | `[]` | Ordered array of phrases to cycle through |
+| `interval` | number | `200` | ms between phrase swaps |
+| `duration` | number \| null | `null` | Total ms before settling. `null` = `phrases.length × interval` (one full pass) |
+| `finalText` | string \| null | `null` | Text written to element after cycle ends. `null` = leave last-shown phrase visible |
+| `loop` | boolean | `false` | If `true`, cycle forever — `duration` and `finalText` are ignored |
+
+**Methods:**
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `start()` | `this` | Start the cycle. Idempotent — no-op if already running |
+| `stop()` | `void` | Pause timers; last phrase stays visible. Instance is reusable |
+| `destroy()` | `void` | `stop()` + release element reference. Instance not reusable after this. Idempotent |
+| `isRunning()` | `boolean` | Whether the cycle is currently running |
+
+**Notes:**
+- `start()` immediately writes `phrases[0]` before the first interval tick, so there is no initial blank-state flash.
+- `stop()` + `start()` restarts from `phrases[0]`.
+- Safe to construct with `element = null` (useful for testing in Node/SSR).
+- No external dependencies beyond `TimerRegistry` (bundled in core).
 
 ---
 

@@ -798,6 +798,38 @@ lb.destroy();
 
 See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#lightbox-standalone).
 
+#### PhraseCycle
+
+Discrete phrase-state cycling. Replaces the entire element's text with phrase A, then phrase B, etc., at a fixed interval, then settles on `finalText`. Optional `loop: true` cycles forever without settling.
+
+**Distinct from TypingAnimation and DecryptReveal:** TypingAnimation grows the string character-by-character (streaming/typed — string length increases over time). DecryptReveal shows the string at final length scrambled with charset characters and resolves left-to-right (char-level). PhraseCycle replaces the *entire element text* each tick — string length may vary between phrases.
+
+Use for: loading screens (`Initializing... → Connecting... → Ready.`), boot sequences, "decrypting" preambles before a result is shown, glitch transitions between named states.
+
+```js
+import { PhraseCycle } from '@whykusanagi/corrupted-theme/phrase-cycle';
+
+// Settling cycle: one pass then display finalText
+const cycle = new PhraseCycle(element, {
+  phrases:   ['Initializing...', 'Connecting...', 'Authenticating...'],
+  interval:  400,       // ms between phrase swaps (default: 200)
+  finalText: 'Ready.',  // text written after cycle ends; null = leave last phrase
+});
+cycle.start();
+
+// Looping: cycle forever with no settle
+const spinner = new PhraseCycle(element, {
+  phrases:  ['Loading.', 'Loading..', 'Loading...'],
+  interval: 300,
+  loop:     true,
+});
+spinner.start();
+spinner.stop();    // pause; last phrase stays visible; reusable
+spinner.destroy(); // teardown + release element reference
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#phrasecycle) and the [live demo](examples/advanced/phrase-cycle.html).
+
 #### NsfwReveal
 
 Age-gate blur overlay with click-to-reveal. Session persistence handled by the caller.

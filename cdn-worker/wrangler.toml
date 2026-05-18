@@ -1,0 +1,21 @@
+name = "corrupted-theme-cdn"
+main = "index.js"
+compatibility_date = "2026-05-17"
+
+# Deploy from repo root: npx wrangler deploy --config cdn-worker/wrangler.toml
+# Running from inside cdn-worker/ causes wrangler 4.x to auto-detect the
+# parent directory as a Workers Assets bundle. Always use --config from root.
+
+# Routes bound to BOTH first-party CDN domains
+routes = [
+  { pattern = "cdn.whykusanagi.xyz/corrupted-theme/@latest/*", zone_name = "whykusanagi.xyz" },
+  { pattern = "cdn.nikkers.cc/corrupted-theme/@latest/*",      zone_name = "nikkers.cc" },
+]
+
+# KV namespace for the @latest pointer (ID populated in T2)
+kv_namespaces = [
+  { binding = "CDN_KV", id = "8745f4ef73094a33a9f73a6ab00df671" }
+]
+
+[observability]
+enabled = true

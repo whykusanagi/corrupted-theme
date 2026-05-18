@@ -32,9 +32,9 @@
     "./crt-effects": "./src/lib/crt-effects.js",
     "./animation-blocks": "./src/lib/animation-blocks.js",
     "./corrupted-particles-background": "./src/lib/corrupted-particles-background.js",
-    "./data/phrases.json":  "./src/data/phrases.json",
+    "./data/phrases.json": "./src/data/phrases.json",
     "./data/charsets.json": "./src/data/charsets.json",
-    "./data/colors.json":   "./src/data/colors.json"
+    "./data/colors.json": "./src/data/colors.json"
   },
   "files": [
     "src",
@@ -45,6 +45,7 @@
     "docs/platforms/NPM_PACKAGE.md",
     "docs/platforms/WEB_IMPLEMENTATION.md",
     "docs/platforms/COMPONENT_MAPPING.md",
+    "docs/CDN_CONSUMPTION.md",
     "docs/COMPONENTS_REFERENCE.md",
     "docs/CORRUPTION_PHRASES.md",
     "docs/CHARACTER_LEVEL_CORRUPTION.md",
@@ -96,7 +97,9 @@
     "dev:static": "node scripts/static-server.js",
     "start": "npm run dev:static",
     "validate-data": "node scripts/validate-data.js",
-    "test": "node --test --test-reporter=spec 'tests/**/*.test.js'"
+    "test": "node --test --test-reporter=spec 'tests/**/*.test.js'",
+    "publish-cdn": "bash scripts/publish-to-cdn.sh",
+    "generate-sri": "bash scripts/generate-sri.sh"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

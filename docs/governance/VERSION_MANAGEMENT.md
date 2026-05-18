@@ -431,11 +431,54 @@ npm view @whykusanagi/corrupted-theme version
 
 ---
 
+## CDN Distribution (0.2.0+)
+
+After `npm publish` succeeds, also publish to the CDN:
+
+### 1. Upload to R2
+
+```bash
+CT_CDN_BUCKET=whykusanagi npm run publish-cdn
+```
+
+This uploads `dist/` and `src/data/` to R2 under
+`/corrupted-theme/@<version>/` and bumps the `@latest` KV pointer.
+
+If `CT_CDN_BUCKET` is omitted, defaults to `whykusanagi`. If you ever
+host on a different bucket, set the env var to override.
+
+### 2. Verify
+
+```bash
+curl -I https://cdn.whykusanagi.xyz/corrupted-theme/@<version>/dist/theme.min.css
+curl -I https://cdn.nikkers.cc/corrupted-theme/@<version>/dist/theme.min.css
+curl -I https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/theme.min.css
+```
+
+All three should return 200.
+
+### 3. Generate SRI hashes
+
+```bash
+npm run generate-sri
+```
+
+Paste the output into the CHANGELOG.md entry for the release.
+
+### 4. CDN architecture reference
+
+See `docs/CDN_CONSUMPTION.md` for the consumer-facing model and
+`cdn-worker/r2-config/cors-notes.md` for the shared-bucket CORS
+context.
+
+---
+
 ## Related Documentation
 
 - [DESIGN_SYSTEM_GOVERNANCE.md](./DESIGN_SYSTEM_GOVERNANCE.md) - Governance process
 - [CONTRIBUTION_GUIDELINES.md](./CONTRIBUTION_GUIDELINES.md) - Contributing guide
 - [NPM_PACKAGE.md](../platforms/NPM_PACKAGE.md) - Package management
+- [CDN_CONSUMPTION.md](../CDN_CONSUMPTION.md) - CDN usage guide
 
 ---
 

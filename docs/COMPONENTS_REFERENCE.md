@@ -28,7 +28,7 @@ This document provides a comprehensive reference for all components available in
 11. [JavaScript Corruption Components](#javascript-corruption-components)
     - [CorruptedText](#corruptedtext) | [CorruptedParticles](#corruptedparticles) | [CorruptedVortex](#corruptedvortex) | [Character Corruption](#character-corruption) | [Corruption Loading Screen](#corruption-loading-screen)
 12. [Primitive Corruption Modules](#primitive-corruption-modules)
-    - [DecryptReveal](#decryptreveal) | [PhraseCycle](#phrasecycle) | [CRTEffects](#crteffects) | [Animation Blocks](#animation-blocks)
+    - [TypingAnimation](#typinganimation) | [DecryptReveal](#decryptreveal) | [PhraseCycle](#phrasecycle) | [CRTEffects](#crteffects) | [Animation Blocks](#animation-blocks)
 
 ---
 
@@ -1283,6 +1283,81 @@ CorruptionCharsets.all;       // union of every set
 **Available sets:** `katakana`, `hiragana`, `kanji`, `symbols`, `blocks`, `standard`, `soft`, `intense`, `all`.
 
 All getters return a `string` — index directly with `Math.random()` or pass as `charset` to `DecryptReveal` / animation block options.
+
+---
+
+## TypingAnimation
+
+**Module:** `@whykusanagi/corrupted-theme/typing-animation`
+**Source:** `src/core/typing-animation.js`
+**Since:** 0.1.x (export added in 0.2.0)
+
+Streaming / typed reveal. The string **grows over time**, character-by-character, with a continuous phrase-buffer flicker visible to the right of the revealed text (the "neural network decoding" effect). Settles on the final character once typed.
+
+Implements **Pattern 2 (Phrase Flickering / Buffer Corruption)** from `CORRUPTED_THEME_SPEC.md`. Char-advance and buffer-flicker run on independent timers so the buffer is always visible while typing is in progress (not probabilistic).
+
+**Distinct from DecryptReveal and PhraseCycle:**
+- **TypingAnimation** = streaming/typed reveal — string length GROWS over time
+- **DecryptReveal** = fixed-length decryption — string is at final length but scrambled, resolves left-to-right
+- **PhraseCycle** = discrete phrase cycling — entire element text replaced each tick
+
+Pulls phrase content from canonical `src/data/phrases.json` (SFW/NSFW × Japanese/Romaji/English × 6 context pools). Symbol and block characters from `src/data/charsets.json`.
+
+```js
+import { TypingAnimation } from '@whykusanagi/corrupted-theme/typing-animation';
+
+// SFW (default)
+const typing = new TypingAnimation(element, {
+  duration: 2000,         // 2s total, regardless of text length
+  bufferEnabled: true,    // continuous flicker to the right of typed text
+  loop: true,
+  loopDelay: 1500,
+});
+typing.start('Neural corruption detected...');
+
+// NSFW (explicit opt-in)
+const lewd = new TypingAnimation(element, { nsfw: true });
+lewd.start('Pleasure protocols loading...');
+
+typing.stop();         // pause; current visual preserved
+typing.restart();      // restart with same content
+typing.settle('READY'); // stop and write final text immediately
+typing.destroy();      // full teardown; instance not reusable
+```
+
+**Constructor Options:**
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `duration` | number\|null | `null` | Total ms for one typing pass. When set, char interval = `max(33, duration/length)`. Takes priority over `typingSpeed` |
+| `typingSpeed` | number | `12` | Chars/sec; used only when `duration` is null |
+| `bufferEnabled` | boolean | `true` | Show always-on phrase-buffer to the right of typed text |
+| `bufferFlickerSpeed` | number | `100` | ms between buffer phrase swaps (independent of char-advance) |
+| `loop` | boolean | `false` | Auto-restart after `loopDelay` ms |
+| `loopDelay` | number | `1500` | ms between loops when `loop: true` |
+| `nsfw` | boolean | `false` | Use NSFW phrase pools for buffer (18+ content) |
+| `glitchChance` | number | — | **Deprecated**: pre-1.0 probabilistic glitch; now a no-op (one-time `console.warn`) |
+
+**Methods:**
+
+| Method | Description |
+|--------|-------------|
+| `start(content)` | Begin typing `content` (string). Resets state if already running |
+| `stop()` | Pause animation; current visual preserved |
+| `restart()` | Stop and start with the most recent content |
+| `settle(finalText)` | Stop and write `finalText` immediately (skip remaining type-out) |
+| `destroy()` | Full teardown — clears timers, releases element reference. Instance not reusable |
+
+**Static accessors** (read from canonical JSON, returned as frozen arrays):
+
+- `TypingAnimation.SFW_JAPANESE`, `NSFW_JAPANESE`
+- `TypingAnimation.SFW_ROMAJI`, `NSFW_ROMAJI`
+- `TypingAnimation.SFW_ENGLISH`, `NSFW_ENGLISH`
+- `TypingAnimation.SYMBOLS`, `BLOCKS`
+
+These are the same pools used internally; exposed for callers who want to build custom buffer behaviors.
+
+**Related:** see [DecryptReveal](#decryptreveal) and [PhraseCycle](#phrasecycle) for the other two text-reveal patterns. See `CORRUPTED_THEME_SPEC.md` Pattern 2 for the canonical buffer-corruption design.
 
 ---
 

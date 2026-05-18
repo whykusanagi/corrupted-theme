@@ -21,6 +21,7 @@
     "./gallery": "./src/lib/gallery.js",
     "./lightbox": "./src/lib/lightbox.js",
     "./countdown": "./src/lib/countdown-widget.js",
+    "./typing-animation": "./src/core/typing-animation.js",
     "./corrupted-text": "./src/lib/corrupted-text.js",
     "./corruption-loading": "./src/lib/corruption-loading.js",
     "./character-corruption": "./src/lib/character-corruption.js",

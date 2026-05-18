@@ -606,12 +606,13 @@ document.addEventListener('click', e => {
 <div class="typing-output" id="typing1"></div>
 
 <script type="module">
-import { TypingAnimation } from '@whykusanagi/corrupted-theme/src/core/typing-animation.js';
+import { TypingAnimation } from '@whykusanagi/corrupted-theme/typing-animation';
 
 const typing = new TypingAnimation(document.getElementById('typing1'), {
-    typingSpeed: 40,      // chars/sec
-    glitchChance: 0.08,   // 8% buffer corruption
-    nsfw: false           // SFW mode (default)
+    duration: 2000,            // 2s total typing pass
+    bufferEnabled: true,       // always-on phrase buffer (default)
+    bufferFlickerSpeed: 100,   // 100ms between buffer phrase swaps
+    nsfw: false                // SFW mode (default)
 });
 
 typing.start('Neural corruption detected... System Online');
@@ -1089,16 +1090,17 @@ ct.destroy();        // full teardown
 - Demo: `examples/basic/typing-animation.html`
 
 ```js
-import { TypingAnimation } from '@whykusanagi/corrupted-theme/src/core/typing-animation.js';
+import { TypingAnimation } from '@whykusanagi/corrupted-theme/typing-animation';
 
 const typing = new TypingAnimation(element, {
-  typingSpeed: 50,     // ms per character
-  glitchChance: 0.3,   // probability of glitch per character
-  nsfw: false          // enable 18+ phrase mode
+  duration: 2000,             // 2s total typing pass
+  bufferEnabled: true,        // always-on phrase buffer (default)
+  bufferFlickerSpeed: 100,    // ms between buffer phrase swaps
+  nsfw: false,                // enable 18+ phrase mode
 });
-typing.start();
+typing.start('Neural corruption detected...');
 typing.stop();
-typing.settle();       // resolve to final text
+typing.settle('READY');       // skip remaining type-out, write final text
 ```
 
 **CorruptedParticles** - Canvas 2D Floating Phrase Background

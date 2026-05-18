@@ -1059,7 +1059,7 @@ The 0.2.0 release adds a canonical JS layer on top of the CSS framework. Full AP
 
 | Module | Class / Export | Purpose |
 |--------|---------------|---------|
-| `corruption-manager.js` | `CorruptionManager` | Lifecycle-managed multi-animation runner |
+| `decrypt-reveal.js` | `DecryptReveal` | Fixed-length decryption animation |
 | `corruption-charsets.js` | charset helpers | Canonical charset access from `src/data/charsets.json` |
 | `corruption-phrases.js` | phrase helpers | Canonical phrase access from `src/data/phrases.json` |
 | `typing-animation.js` | `TypingAnimation` | Buffer-style corruption with SFW/NSFW modes |

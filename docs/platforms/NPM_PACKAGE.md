@@ -684,7 +684,7 @@ Example: 0.2.0
 
 | Version | Date | Changes | Migration |
 |---------|------|---------|-----------|
-| **0.2.0** | 2026-05-18 | Canonical JSON data layer, CDN distribution, CorruptionManager, CRTEffects, animation-blocks (10 classes), 7 new widgets, 5 utility modules, glassmorphism CSS merge, UMD build, .container redesign | [Migration guide](../MIGRATION_CONTAINER_0.2.0.md) |
+| **0.2.0** | 2026-05-18 | Canonical JSON data layer, CDN distribution, DecryptReveal, CRTEffects, animation-blocks (10 classes), 7 new widgets, 5 utility modules, glassmorphism CSS merge, UMD build, .container redesign | [Migration guide](../MIGRATION_CONTAINER_0.2.0.md) |
 | 0.1.9 | 2026-04-19 | CorruptedText dedup, TypingAnimation buffer redesign, NSFW page consolidation, layout fix, orphan docs removed, CI workflow | N/A |
 | 0.1.8 | 2026-03-01 | GLSL vortex, Canvas particles, new JS components | N/A |
 | 0.1.7 | 2026-02-07 | Security, lifecycle, new components | N/A |
@@ -732,7 +732,7 @@ See [`docs/MIGRATION_CONTAINER_0.2.0.md`](../MIGRATION_CONTAINER_0.2.0.md) for t
 
 - **`.container` class redesigned** — now controls max-width layout; replace old `.container` usage with new `.glass-container` variants where glass effect was intended
 - **New canonical JSON data** — phrase lists and charsets live in `src/data/` instead of inline in JS
-- **New JS exports** — 19 new modules available under `./corruption-manager`, `./animation-blocks`, `./crt-effects`, etc. in `package.json` exports map
+- **New JS exports** — 19 new modules available under `./decrypt-reveal`, `./animation-blocks`, `./crt-effects`, etc. in `package.json` exports map
 - **No removed exports** — all 0.1.x CSS classes and JS classes remain; 0.2.0 is additive
 
 ### From Custom CSS to Corrupted Theme

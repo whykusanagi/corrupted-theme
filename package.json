@@ -29,7 +29,7 @@
     "./corrupted-vortex": "./src/lib/corrupted-vortex.js",
     "./corrupted-particles": "./src/lib/corrupted-particles.js",
     "./corruption-charsets": "./src/core/corruption-charsets.js",
-    "./corruption-manager": "./src/core/corruption-manager.js",
+    "./decrypt-reveal": "./src/core/decrypt-reveal.js",
     "./crt-effects": "./src/lib/crt-effects.js",
     "./animation-blocks": "./src/lib/animation-blocks.js",
     "./corrupted-particles-background": "./src/lib/corrupted-particles-background.js",

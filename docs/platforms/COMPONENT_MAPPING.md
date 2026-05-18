@@ -122,7 +122,7 @@ The following JS modules have no CLI equivalent — they target browser/canvas/W
 
 | npm Export | Class | Category | CLI Equivalent |
 |------------|-------|----------|---------------|
-| `./corruption-manager` | `CorruptionManager` | Core | None (CLI uses Go structs) |
+| `./decrypt-reveal` | `DecryptReveal` | Core | None (CLI uses Go structs) |
 | `./animation-blocks` | 10 block classes | Animation | `CorruptText()` + `CorruptTextJapanese()` (approximate) |
 | `./crt-effects` | `CRTEffects` | Animation | None |
 | `./corrupted-text` | `CorruptedText` | Corruption | `CorruptTextJapanese()` |

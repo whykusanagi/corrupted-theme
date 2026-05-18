@@ -1,11 +1,18 @@
 /* seamless-background.css — Multi-layer parallax tiled background
+ *
+ * USAGE: Add the class .seamless-bg-host to your <body> (or wrapping
+ * element) to enable the background. The CSS variable
+ * --seamless-background-image controls the tile image URL.
+ *
+ * Without .seamless-bg-host, this file has no effect — safe to import.
+ *
  * Adapted from celeste-tts-bot/obs/seamless-background.css
- * Consumers: set --seamless-background-image to your tileable image URL.
  */
 
-/* ===== OVERRIDE DEFAULT HTML/BODY BACKGROUNDS ===== */
-html, body {
-    background: #000 !important; /* Force black background to prevent white default */
+/* ===== HOST ELEMENT BACKGROUND ===== */
+/* Apply .seamless-bg-host to <body> (or any wrapping element) to opt in */
+.seamless-bg-host {
+    background: #000;
 }
 
 /* ===== BASE SEAMLESS BACKGROUND LAYER ===== */

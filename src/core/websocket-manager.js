@@ -23,6 +23,7 @@ export class WebSocketManager {
    * @param {string}  [options.clientId]             - Client identifier for auto-registration
    * @param {number}  [options.maxAttempts=10]       - Max reconnect attempts
    * @param {number}  [options.baseDelay=2000]       - Base reconnect delay (ms)
+   * @param {number}  [options.maxDelay=30000]       - Maximum reconnect delay cap (ms)
    * @param {boolean} [options.useExponentialBackoff=true]
    * @param {boolean} [options.autoReconnect=true]
    * @param {boolean} [options.trackEvents=false]    - Enable event-ID dedup
@@ -45,6 +46,7 @@ export class WebSocketManager {
       clientId:               options.clientId               ?? null,
       maxAttempts:            options.maxAttempts            ?? 10,
       baseDelay:              options.baseDelay              ?? 2000,
+      maxDelay:               options.maxDelay               ?? 30000,
       useExponentialBackoff:  options.useExponentialBackoff  ?? true,
       autoReconnect:          options.autoReconnect          ?? true,
       trackEvents:            options.trackEvents            ?? false,
@@ -292,7 +294,10 @@ export class WebSocketManager {
     this.reconnectAttempts++;
 
     const delay = this.options.useExponentialBackoff
-      ? this.options.baseDelay * this.reconnectAttempts   // linear growth: 2s, 4s, 6s…
+      ? Math.min(
+          this.options.baseDelay * Math.pow(2, this.reconnectAttempts - 1),
+          this.options.maxDelay
+        )  // exponential growth capped at maxDelay: 2s, 4s, 8s, 16s, 30s…
       : this.options.baseDelay;
 
     console.log(

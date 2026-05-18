@@ -1885,7 +1885,8 @@ ws.destroy();
 | `clientId` | string | `null` | Sent as `{ type: 'register', client_id }` on connect |
 | `maxAttempts` | number | `10` | Max reconnect attempts |
 | `baseDelay` | number | `2000` | Base reconnect delay in ms |
-| `useExponentialBackoff` | boolean | `true` | Linear growth: 2s, 4s, 6s… |
+| `maxDelay` | number | `30000` | Maximum reconnect delay cap in ms |
+| `useExponentialBackoff` | boolean | `true` | Exponential growth: 2s, 4s, 8s, 16s, capped at 30s |
 | `autoReconnect` | boolean | `true` | Reconnect on unexpected close |
 | `trackEvents` | boolean | `false` | Deduplicate by `message.event_id` |
 | `enableAck` | boolean | `false` | Auto-send ACK for `requires_ack` messages |
@@ -2050,6 +2051,72 @@ applyParamsToForm(form, params);
 | `serializeFormToParams` | `(formEl) → URLSearchParams` | Serialize all named fields |
 | `applyParamsToForm` | `(formEl, params) → void` | Apply params back to form fields |
 | `buildShareUrl` | `(formEl, baseUrl?) → string` | Full absolute URL with form state |
+
+---
+
+### seamless-background.css
+
+**Module:** `@whykusanagi/corrupted-theme/seamless-background`
+**Source:** `src/css/seamless-background.css`
+**Type:** CSS-only utility
+**Since:** 0.2.0
+
+Multi-layer parallax tiled background with depth opacity, blur, and brightness filters. Ported from celeste-tts-bot's overlay background system.
+
+**Without `.seamless-bg-host` on a parent element, this file has no effect — safe to import even if not currently using.**
+
+```html
+<head>
+  <link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/dist/seamless-background.css">
+</head>
+<body class="seamless-bg-host" style="--seamless-background-image: url('/path/to/tile.png');">
+  <div class="seamless-background seamless-background-mid"></div>
+  <!-- your content -->
+</body>
+```
+
+**CSS variables**
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `--seamless-background-image` | `url('./pattern.png')` | Tile image URL |
+
+**Layer classes** (apply to `.seamless-background` elements)
+
+| Class | Opacity | Filter | Speed |
+|---|---|---|---|
+| `.seamless-background-base` | 0.15 | blur(2px) brightness(0.7) | 120s |
+| `.seamless-background-mid` | 0.25 | blur(1px) brightness(0.8) | 90s |
+| `.seamless-background-front` | 0.35 | brightness(0.9) | 60s |
+
+**Context-specific presets**
+
+| Class | Use Case |
+|---|---|
+| `.gaming-seamless` | Sidebar area only (clip-path, overlay blend) |
+| `.break-seamless` | Full-screen break overlay (very subtle) |
+| `.ending-seamless` | Ending overlay (slow, moderate visibility) |
+
+**Modifier classes**
+
+| Class | Effect |
+|---|---|
+| `.seamless-static` | Disables scroll animation |
+| `.seamless-reverse` | Reverses scroll direction |
+| `.seamless-fast` | 30s animation duration |
+| `.seamless-slow` | 240s animation duration |
+| `.seamless-frozen` | Pauses animation |
+| `.seamless-large` | 768px tile size |
+| `.seamless-small` | 384px tile size |
+| `.seamless-tiny` | 256px tile size |
+| `.seamless-multiply` | multiply blend mode |
+| `.seamless-screen` | screen blend mode |
+| `.seamless-overlay` | overlay blend mode |
+| `.seamless-sidebar-only` | Mask to right 22.4% of viewport |
+| `.seamless-game-area` | Mask to left 77.6% (game capture area) |
+| `.seamless-parallax` | Enable parallax perspective on container |
+| `.seamless-vignette` | Fixed radial vignette overlay (z-index 16) |
+| `.seamless-tint-purple` | Diagonal purple/magenta tint overlay (z-index 17) |
 
 ---
 

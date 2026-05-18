@@ -139,3 +139,7 @@ export class TimerRegistry {
     return this._timeouts.size + this._intervals.size + this._rafs.size;
   }
 }
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { TimerRegistry };
+}

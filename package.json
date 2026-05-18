@@ -45,6 +45,7 @@
     "docs/platforms/NPM_PACKAGE.md",
     "docs/platforms/WEB_IMPLEMENTATION.md",
     "docs/platforms/COMPONENT_MAPPING.md",
+    "docs/CDN_CONSUMPTION.md",
     "docs/COMPONENTS_REFERENCE.md",
     "docs/CORRUPTION_PHRASES.md",
     "docs/CHARACTER_LEVEL_CORRUPTION.md",

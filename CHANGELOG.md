@@ -7,16 +7,110 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- **Live example site** — `examples/` deployed to Cloudflare Workers Static Assets at [corrupted.whykusanagi.xyz](https://corrupted.whykusanagi.xyz/). Auto-deploys on every merge to `main`. README + NPM_PACKAGE.md docs linked to the demos.
-- **Worker with security-response headers** (`worker/index.js` + `wrangler.jsonc`) — wraps static-asset responses with HSTS, CSP, X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy.
-- **`SECURITY.md`** at repo root — threat model, vulnerability reporting address, list of hardening controls, notes on secret handling. Shipped in the npm package for consumer visibility.
+---
 
-### Planned
-- [ ] CDN distribution via jsDelivr
-- [ ] Figma design system (components library)
-- [ ] Storybook integration for component showcase
-- [ ] 0.2.0: port celeste-tts-bot animation blocks (corruption-manager, animation-blocks, crt-effects)
+## [0.2.0] - 2026-05-18
+
+> **Significant release.** Reframes corrupted-theme as a durable cross-project foundation. Canonical JSON source of truth, CDN distribution, 14 new base components, drift reconvergence with downstream sites, and a `.container` redesign that is a breaking change.
+
+### Added — New base components (sub-project #6)
+
+**Widgets (7 classes):**
+- **`Toast`** — singleton notification helper (`Toast.show/success/error/info`); replaces the inline toast in components.js with a standalone module and export.
+- **`WebSocketManager`** — auto-reconnect (exponential backoff capped at 30 s), event-ID dedup, visibility-aware pause/resume, ACK support.
+- **`ClockWidget`** — cycling multi-timezone clock using `Intl.DateTimeFormat` for DST correctness.
+- **`Lightbox`** — extracted from `gallery.js` as a standalone export; `gallery.js` re-exports for backward compat.
+- **`EventBar`** — scrolling event-ticker banner with configurable speed and pause-on-hover.
+- **`LogoBanner`** — animated logo/title banner with corruption flicker on mount.
+- **`NsfwReveal`** — age-gate overlay (session-persistent opt-in) wrapping any content block.
+
+**Core utilities (5 modules):**
+- **`random-utils`** — `randomPick`, `randomInt`, `randomFloat`, `randomVariance`, `shuffle`, `randomSample`.
+- **`time-utils`** — `formatTime24h`/`12h`, `formatDate`, `formatDateTime`, `timeAgo`, `formatDuration`.
+- **`clipboard-helpers`** — `copyWithFeedback(button, text, options)` with visual confirmation.
+- **`url-state`** — `serializeFormToParams`, `applyParamsToForm`, `buildShareUrl`.
+- **`PngExport`** — `exportElementAsPng()` with **optional** `html2canvas` peer dep (base install stays dep-free).
+
+**CSS:**
+- **`.scrollbar-corrupted`** utility (Firefox + WebKit).
+- **`seamless-background.css`** — multi-layer parallax tiled background scoped to `.seamless-bg-host`.
+- **`glassmorphism.css`** — merged dark/subtle/gradient variants with cyan/magenta/purple modifier classes and `@supports backdrop-filter` fallback.
+
+**Infrastructure:**
+- UMD/global build: `dist/timer-registry.global.js` (consumable from IIFE contexts without a bundler).
+- `TimerManager` API merged additively into existing `timer-registry.js`.
+
+### Added — Drift reconvergence with celeste-tts-bot (sub-project #2)
+
+- **`CorruptionCharsets`** — named registry backed by `src/data/charsets.json` (standard/soft/intense/all computed sets).
+- **`CorruptionManager`** — unified `decode`/`flicker`/`hybrid` lifecycle with `visibilitychange` auto-cleanup.
+- **`CRTEffects`** — CRT post-processing layer (scanlines, chromatic aberration, flicker, screen shake, RGB split).
+- **`animation-blocks`** — 10 classes: `TitleDecoder`, `ProgressBar`, `ScanlineSweep`, `TerminalBoot`, `GlitchPulse`, `ASCIIBorder`, `SystemDiagnostic`, `LoadingBarMulti`, `DataTransmission`, `TerminalPrompt`.
+- **`corrupted-particles-background`** — auto-injector for behind-blur particles with DPR=1 performance mode.
+- Kanji charset (deep-corruption variant) added to the charset registry.
+
+### Added — Canonical data layer (sub-project #1)
+
+- Canonical JSON source of truth: `src/data/{phrases,charsets,colors}.json` with AJV schemas.
+- Context-aware phrase API: `getPhraseByContext(word, nsfw)` with 6 pools (data/system/status/void/memory/glitch).
+- Romaji–kanji pairing convention in phrase library.
+- Cross-language contract docs for celeste-cli (Go `go:embed` consumption).
+- `npm run validate-data` — AJV schema validation available in CI.
+
+### Added — CDN distribution (sub-project #3)
+
+- Same-origin loads from `cdn.whykusanagi.xyz` AND `cdn.nikkers.cc` (both bound to shared R2 bucket).
+- Floating `@latest` route via Cloudflare Worker with KV version pointer.
+- `npm run publish-cdn` — uploads `dist/` + `src/data/` to R2, bumps KV pointer.
+- `npm run generate-sri` — SRI hash generation for consumer hardening.
+- `docs/CDN_CONSUMPTION.md` — same-origin rule, pinned vs `@latest` modes, CSP guidance.
+
+### Added — Live site and security headers (shipped on main post-0.1.9)
+
+- **Live example site** — `examples/` deployed to Cloudflare Workers Static Assets at [corrupted.whykusanagi.xyz](https://corrupted.whykusanagi.xyz/). Auto-deploys on every merge to `main`.
+- **Worker security-response headers** (`worker/index.js` + `wrangler.jsonc`) — HSTS, CSP, X-Frame-Options DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy on all live-site responses.
+- **`SECURITY.md`** — threat model, vulnerability reporting address, hardening controls, CDN Distribution Threat Model section.
+
+### Changed
+
+- **NSFW option canonicalized to `nsfw`** across all components. `includeLewd` (corrupted-particles) and `lewdMode` (animation-blocks) are deprecated aliases with a one-time `console.warn`; scheduled for removal in 0.3.x.
+- Internal data harmonization: `corrupted-particles.js`, `corruption-loading.js`, `character-corruption.js`, `typing-animation.js` now consume `src/data/*.json` instead of inline arrays.
+- `Lightbox` extracted from `gallery.js` as a standalone export; `gallery.js` re-exports it for backward compat.
+
+### Breaking
+
+- **`.container` redesigned.** Default is now structural-only (max-width + horizontal center). Opinionated layouts (`grid-2col`, `grid-3col`, `transparent`, `with-bg`, `fullscreen`, `centered`) are opt-in via modifier classes. See [`docs/MIGRATION_CONTAINER_0.2.0.md`](docs/MIGRATION_CONTAINER_0.2.0.md) for a migration guide. Pre-1.0 status permits this without a major version bump; pin to `^0.1.9` if you cannot migrate yet.
+
+### Security
+
+- `npm audit` clean (0 vulnerabilities).
+- Dependencies refreshed to current minor/patch (`cssnano` ^7.1.2 → ^7.1.9, `postcss` ^8.4.0 → ^8.5.14).
+
+### Documentation
+
+- New: `docs/MIGRATION_CONTAINER_0.2.0.md`
+- New: `docs/CROSS_LANGUAGE_CONTRACT.md` (Go consumers via `go:embed`)
+- New: `docs/CDN_CONSUMPTION.md`
+- Updated: `docs/COMPONENTS_REFERENCE.md` (28+ entries for new modules)
+- Updated: `docs/governance/VERSION_MANAGEMENT.md` (CDN publish step in release checklist)
+
+### First optional peer dependency
+
+- `html2canvas` is an optional peer dep for `png-export`. Base install remains dep-free; install only if you use PNG export.
+
+### SRI Hashes for CDN consumers
+
+For consumers loading 0.2.0 from `cdn.whykusanagi.xyz` / `cdn.nikkers.cc` with `integrity="..."` for production hardening:
+
+```
+dist/theme.min.css
+  integrity="sha384-yVLRYDitu5uQvdKPs8s6MuPdAY2xyxl8nxoJC6G6+LzbMVsBo3d8+dKpIIae8eSq"
+
+dist/timer-registry.global.js
+  integrity="sha384-KEG+XQpvQzne1xE9Rdr1iTWHikjW6G0pcfqvwOTst1Ufn78lgbbzGhy9k5cERDCU"
+```
+
+Regenerate at any time via `npm run generate-sri`.
 
 ---
 

@@ -39,7 +39,7 @@ All examples in this package are deployed to **[corrupted.whykusanagi.xyz](https
 ```json
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "Premium corrupted AI aesthetic with glassmorphism and translation-failure linguistics",
   "author": "Kusanagi <you@example.com>",
   "license": "MIT",
@@ -672,7 +672,7 @@ The package follows [Semantic Versioning 2.0.0](https://semver.org/):
 ```
 MAJOR.MINOR.PATCH
 
-Example: 0.1.9
+Example: 0.2.0
          │ │ └─ Patch: Bug fixes (backward compatible)
          │ └─── Minor: New features (backward compatible)
          └───── Major: Breaking changes
@@ -682,7 +682,8 @@ Example: 0.1.9
 
 | Version | Date | Changes | Migration |
 |---------|------|---------|-----------|
-| **0.1.9** | 2026-04-19 | CorruptedText dedup, TypingAnimation buffer redesign, NSFW page consolidation, layout fix, orphan docs removed, CI workflow | N/A |
+| **0.2.0** | 2026-05-18 | Canonical JSON data layer, CDN distribution, CorruptionManager, CRTEffects, animation-blocks (10 classes), 7 new widgets, 5 utility modules, glassmorphism CSS merge, UMD build, .container redesign | [Migration guide](../MIGRATION_CONTAINER_0.2.0.md) |
+| 0.1.9 | 2026-04-19 | CorruptedText dedup, TypingAnimation buffer redesign, NSFW page consolidation, layout fix, orphan docs removed, CI workflow | N/A |
 | 0.1.8 | 2026-03-01 | GLSL vortex, Canvas particles, new JS components | N/A |
 | 0.1.7 | 2026-02-07 | Security, lifecycle, new components | N/A |
 | 0.1.6 | 2026-01-15 | Package cleanup | N/A |
@@ -702,7 +703,7 @@ npm update @whykusanagi/corrupted-theme
 npm install @whykusanagi/corrupted-theme@^0.2.0
 
 # Update to specific version
-npm install @whykusanagi/corrupted-theme@0.1.9
+npm install @whykusanagi/corrupted-theme@0.2.0
 
 # Update to latest (including major - may have breaking changes)
 npm install @whykusanagi/corrupted-theme@latest
@@ -860,6 +861,6 @@ import '@whykusanagi/corrupted-theme/src/css/components.css';
 
 **Last Updated**: 2025-12-13
 **Version**: 1.0.0
-**Package Version**: 0.1.9
+**Package Version**: 0.2.0
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Production Ready

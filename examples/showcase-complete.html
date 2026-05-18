@@ -133,6 +133,7 @@
             <a href="#nikke"><i class="fas fa-gamepad"></i> Nikke</a>
             <a href="#corrupted"><i class="fas fa-magic"></i> Corrupted</a>
             <a href="#backgrounds"><i class="fas fa-image"></i> Backgrounds</a>
+            <a href="#v020-components"><i class="fas fa-layer-group"></i> 0.2.0 New</a>
           </div>
         </li>
         <li><a href="extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
@@ -149,6 +150,10 @@
             <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
             <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
             <a href="basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="advanced/corruption-manager.html"><i class="fas fa-sitemap"></i> Corruption Manager</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
           </div>
         </li>
         <li><a href="showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
@@ -1666,6 +1671,97 @@ const theme = {
 &lt;!-- Screen reader only --&gt;
 &lt;span class="visually-hidden"&gt;For screen readers&lt;/span&gt;
         </div>
+      </div>
+    </section>
+
+    <!-- 0.2.0 New Components Section -->
+    <section class="showcase-section" id="v020-components">
+      <h2><i class="fas fa-layer-group"></i> 0.2.0 New Components</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Standalone demo pages for all new components added in the 0.2.0 release. Each page is
+        self-contained and fully documented.
+      </p>
+
+      <div class="showcase-grid">
+        <!-- Animation Blocks -->
+        <a href="animation-blocks/index.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-film"></i> Animation Blocks</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            10 terminal-style animation classes: TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot,
+            GlitchPulse, ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission, TerminalPrompt.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+
+        <!-- CRT Effects -->
+        <a href="advanced/crt-effects.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-tv"></i> CRT Effects</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Full CRT post-processing layer with scanlines, vignette, phosphor glow, and
+            <code>.glitch-word</code> / <code>.glitch-kanji</code> keyframe utilities.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+
+        <!-- Corruption Manager -->
+        <a href="advanced/corruption-manager.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-sitemap"></i> Corruption Manager</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Lifecycle-managed multi-animation runner. Coordinates multiple concurrent corruption
+            effects with start/stop/destroy hooks and IntersectionObserver-based activation.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+
+        <!-- Particles Background -->
+        <a href="advanced/particles-background.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-atom"></i> Particles Background</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Canvas 2D floating Japanese phrase background with 3 depth layers, hover repel,
+            click burst, phrase flickering, and connection lines. <code>includeLewd: false</code> by default.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+
+        <!-- Widgets Showcase -->
+        <a href="components/showcase.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-th-large"></i> Widgets Showcase</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Toast notifications (singleton), ClockWidget, NsfwReveal overlay, event-bar,
+            logo-banner, and other reusable widget components.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+
+        <!-- Utilities -->
+        <a href="components/utilities.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-tools"></i> Utilities</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            random-utils, time-utils, clipboard-helpers, url-state, and seamless-bg CSS utilities.
+            Modular helpers for common tasks with zero external dependencies.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+
+        <!-- PNG Export -->
+        <a href="components/png-export.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-file-image"></i> PNG Export</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            html2canvas-backed PNG snapshot utility. Export any DOM element as a high-quality PNG
+            with one function call. Peer dependency on html2canvas.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+
+        <!-- WebSocket Manager -->
+        <a href="components/websocket-manager.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-plug"></i> WebSocket Manager</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Reconnecting WebSocket wrapper with exponential backoff, event bus, and
+            typed message dispatching. Fully self-contained, no runtime dependencies.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
       </div>
     </section>
 

@@ -11,14 +11,14 @@
     body {
       margin: 0;
       background: #000;
-      color: var(--text-primary);
+      color: var(--text);
       font-family: 'Courier New', monospace;
       padding: var(--spacing-2xl);
     }
 
     h1 {
-      color: var(--corrupted-cyan);
-      text-shadow: 0 0 20px var(--corrupted-cyan);
+      color: var(--corrupted-cyan, #00ffff);
+      text-shadow: 0 0 20px var(--corrupted-cyan, #00ffff);
       text-align: center;
       font-size: 1.8rem;
       margin: 0 0 0.25rem;
@@ -65,7 +65,7 @@
       padding: 0.75rem 1rem;
       min-height: 3.5rem;
       font-size: 0.8rem;
-      color: var(--corrupted-cyan);
+      color: var(--corrupted-cyan, #00ffff);
       white-space: pre-wrap;
       word-break: break-word;
       margin-top: 0.5rem;
@@ -96,7 +96,7 @@
 
     .time-row .time-value {
       font-size: 0.85rem;
-      color: var(--corrupted-cyan);
+      color: var(--corrupted-cyan, #00ffff);
     }
 
     /* ── url-state form ──────────────────────────────── */
@@ -112,14 +112,14 @@
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       padding: 0.4rem 0.6rem;
-      color: var(--text-primary);
+      color: var(--text);
       font-family: inherit;
       font-size: 0.8rem;
       outline: none;
     }
 
     #url-form input[type="text"]:focus {
-      border-color: var(--corrupted-cyan);
+      border-color: var(--corrupted-cyan, #00ffff);
     }
 
     .checkbox-row {
@@ -138,7 +138,7 @@
     }
 
     .checkbox-row input[type="checkbox"] {
-      accent-color: var(--corrupted-cyan);
+      accent-color: var(--corrupted-cyan, #00ffff);
     }
 
     #url-share-link {
@@ -147,7 +147,7 @@
       border-radius: var(--radius-sm);
       padding: 0.5rem 0.75rem;
       font-size: 0.75rem;
-      color: var(--corrupted-magenta);
+      color: var(--corrupted-magenta, #ff00ff);
       word-break: break-all;
       min-height: 2.5rem;
       margin-top: 0.5rem;
@@ -171,6 +171,38 @@
   </style>
 </head>
 <body>
+
+  <!-- Global Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
+        <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
+        <li class="has-submenu">
+          <a href="#">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="../nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="../button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="../card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="../form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="../layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="../basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="../basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="../animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="../advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="../advanced/corruption-manager.html"><i class="fas fa-sitemap"></i> Corruption Manager</a>
+            <a href="../components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+          </div>
+        </li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
 
   <h1><i class="fas fa-tools"></i> Utility Modules</h1>
   <p class="subtitle">random-utils · time-utils · url-state · scrollbar-corrupted — <code>0.2.0</code></p>

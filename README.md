@@ -7,22 +7,26 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 ## Table of Contents
 1. [Overview](#overview)
 2. [Installation](#installation)
-3. [Project Architecture](#project-architecture)
-4. [Base Layout & Background](#base-layout--background)
-5. [CSS & JS Imports](#css--js-imports)
-6. [Component Quick Reference](#component-quick-reference)
-7. [Interactive Components](#interactive-components)
-8. [Animations & Experience Layer](#animations--experience-layer)
-9. [Lifecycle Management](#lifecycle-management)
-10. [Nikke Utilities](#nikke-utilities)
-11. [Extension Components](#extension-components)
-12. [Customization & Tokens](#customization--tokens)
-13. [Coding Standards](#coding-standards)
-14. [Development Workflow](#development-workflow)
-15. [Testing & QA Expectations](#testing--qa-expectations)
-16. [Support](#support)
-17. [Celeste Widget Integration](#celeste-widget-integration-optional)
-18. [License](#license)
+3. [CDN Distribution](#cdn-distribution)
+4. [Project Architecture](#project-architecture)
+5. [Container Layout (0.2.0 Breaking Change)](#container-layout-020-breaking-change)
+6. [Canonical Data (JSON Source of Truth)](#canonical-data-json-source-of-truth)
+7. [NSFW Option Canonicalization](#nsfw-option-canonicalization)
+8. [Base Layout & Background](#base-layout--background)
+9. [CSS & JS Imports](#css--js-imports)
+10. [Component Quick Reference](#component-quick-reference)
+11. [Interactive Components](#interactive-components)
+12. [Animations & Experience Layer](#animations--experience-layer)
+13. [Lifecycle Management](#lifecycle-management)
+14. [Nikke Utilities](#nikke-utilities)
+15. [Extension Components](#extension-components)
+16. [Customization & Tokens](#customization--tokens)
+17. [Coding Standards](#coding-standards)
+18. [Development Workflow](#development-workflow)
+19. [Testing & QA Expectations](#testing--qa-expectations)
+20. [Support](#support)
+21. [Celeste Widget Integration](#celeste-widget-integration-optional)
+22. [License](#license)
 
 <div align="center" style="margin: 2rem 0;">
 
@@ -73,54 +77,119 @@ npm install @whykusanagi/corrupted-theme
 ```
 > Tip: make sure you are logged in with `npm login` if the package is private. No `.npmrc` token is needed for the public release.
 
-### CDN (when mirrored)
+### CDN
 ```html
-<link rel="stylesheet" href="https://s3.whykusanagi.xyz/corrupted-theme/theme.css">
+<!-- Pinned version (recommended for production) -->
+<link rel="stylesheet"
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/theme.min.css">
+
+<!-- Floating @latest (use only for sites you control and update together) -->
+<link rel="stylesheet"
+      href="https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/theme.min.css">
 ```
+
+Use `cdn.nikkers.cc` for sites under `nikkers.cc`, and `cdn.whykusanagi.xyz` for sites under `whykusanagi.xyz` — same-origin loads skip CORS and need no extra CSP entries. See [CDN Distribution](#cdn-distribution) and [docs/CDN_CONSUMPTION.md](docs/CDN_CONSUMPTION.md) for full guidance.
 
 ### Manual Copy
 Copy `src/css` into your project (or use `dist/theme.min.css`) and import it locally.
+
+## CDN Distribution
+
+corrupted-theme is served from a Cloudflare R2 bucket bound to two domains:
+
+- **`cdn.whykusanagi.xyz`** — for sites under `whykusanagi.xyz`
+- **`cdn.nikkers.cc`** — for sites under `nikkers.cc`
+
+Both domains serve the same content. Use the domain that matches your site's root to keep the load same-origin, which avoids CORS preflights and simplifies CSP policy.
+
+**Pinned version** (production-safe — breaking changes never auto-propagate):
+```html
+<link rel="stylesheet"
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/theme.min.css">
+<script type="module"
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/corrupted-text.min.js"></script>
+```
+
+**Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):
+```html
+<link rel="stylesheet"
+      href="https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/theme.min.css">
+```
+
+For production hardening, add SRI hashes (published in `CHANGELOG.md` for each release; regenerate with `npm run generate-sri`). See [docs/CDN_CONSUMPTION.md](docs/CDN_CONSUMPTION.md) for the same-origin rule, CSP guidance, CORS allowlist, and JSON data fetching.
 
 ## Project Architecture
 ```
 .
 ├── src/
 │   ├── css/
-│   │   ├── variables.css          # design tokens
-│   │   ├── typography.css         # font stack + hierarchy
-│   │   ├── glassmorphism.css      # shared glass utilities
-│   │   ├── animations.css         # motion + corruption keyframes
-│   │   ├── components.css         # UI primitives + layouts (incl. carousel)
-│   │   ├── utilities.css          # spacing, flex, layout utilities
-│   │   └── theme.css              # entry point (imports all modules)
+│   │   ├── variables.css              # design tokens
+│   │   ├── typography.css             # font stack + hierarchy
+│   │   ├── glassmorphism.css          # glass utilities (dark/subtle/gradient + modifiers)
+│   │   ├── animations.css             # motion + corruption keyframes (.glitch-word etc.)
+│   │   ├── components.css             # UI primitives + layouts (incl. carousel)
+│   │   ├── utilities.css              # spacing, flex, layout utilities
+│   │   ├── toast.css                  # Toast notification styles (0.2.0)
+│   │   ├── seamless-background.css    # multi-layer parallax tiled background (0.2.0)
+│   │   └── theme.css                  # entry point (imports all modules)
+│   ├── data/                          # canonical JSON source of truth (0.2.0)
+│   │   ├── phrases.json               # SFW+NSFW phrases, 6 context pools × 3 languages
+│   │   ├── charsets.json              # katakana / hiragana / kanji / symbols / blocks
+│   │   ├── colors.json                # 6-hex palette + semantic-use map
+│   │   └── schemas/                   # AJV schemas for each JSON file
 │   ├── core/
-│   │   ├── timer-registry.js      # lifecycle: tracked setTimeout/setInterval/rAF
-│   │   └── event-tracker.js       # lifecycle: tracked addEventListener
+│   │   ├── timer-registry.js          # lifecycle: tracked setTimeout/setInterval/rAF
+│   │   ├── event-tracker.js           # lifecycle: tracked addEventListener
+│   │   ├── corruption-charsets.js     # CorruptionCharsets registry (0.2.0)
+│   │   ├── corruption-manager.js      # CorruptionManager unified lifecycle (0.2.0)
+│   │   ├── websocket-manager.js       # WebSocketManager auto-reconnect (0.2.0)
+│   │   ├── random-utils.js            # randomPick / randomInt / shuffle … (0.2.0)
+│   │   ├── time-utils.js              # formatTime / timeAgo / formatDuration … (0.2.0)
+│   │   ├── clipboard-helpers.js       # copyWithFeedback (0.2.0)
+│   │   └── url-state.js               # serializeFormToParams / buildShareUrl (0.2.0)
 │   └── lib/
-│       ├── carousel.js            # carousel/slideshow with autoplay + swipe
-│       ├── celeste-proxy.js       # Celeste CLI proxy integration
-│       ├── celeste-widget.js      # Celeste chat widget
-│       ├── character-corruption.js# auto-corruption for individual characters
-│       ├── components.js          # modal, dropdown, tabs, collapse, accordion, toast
-│       ├── corrupted-particles.js # Canvas 2D floating phrase particle background
-│       ├── corrupted-text.js      # multi-language glitch animation
-│       ├── corrupted-vortex.js    # WebGL raymarched spiral vortex shader
-│       ├── corruption-loading.js  # cinematic loading curtain
-│       ├── countdown-widget.js    # event countdown with shapes
-│       └── gallery.js             # gallery grid with filtering + lightbox
-├── dist/theme.min.css              # postcss + cssnano build output
+│       ├── animation-blocks.js        # 10 block classes: TitleDecoder, ProgressBar … (0.2.0)
+│       ├── carousel.js                # carousel/slideshow with autoplay + swipe
+│       ├── celeste-proxy.js           # Celeste CLI proxy integration
+│       ├── celeste-widget.js          # Celeste chat widget
+│       ├── character-corruption.js    # auto-corruption for individual characters
+│       ├── clock-widget.js            # multi-timezone cycling clock (0.2.0)
+│       ├── components.js              # modal, dropdown, tabs, collapse, accordion, toast
+│       ├── corrupted-particles-background.js # auto-injector background particles (0.2.0)
+│       ├── corrupted-particles.js     # Canvas 2D floating phrase particle background
+│       ├── corrupted-text.js          # multi-language glitch animation
+│       ├── corrupted-vortex.js        # WebGL raymarched spiral vortex shader
+│       ├── corruption-loading.js      # cinematic loading curtain
+│       ├── countdown-widget.js        # event countdown with shapes
+│       ├── crt-effects.js             # CRT post-processing layer (0.2.0)
+│       ├── event-bar.js               # scrolling event-ticker banner (0.2.0)
+│       ├── gallery.js                 # gallery grid with filtering + lightbox
+│       ├── lightbox.js                # standalone lightbox (extracted 0.2.0)
+│       ├── logo-banner.js             # animated logo/title banner (0.2.0)
+│       ├── nsfw-reveal.js             # age-gate click-to-reveal overlay (0.2.0)
+│       ├── png-export.js              # exportElementAsPng (html2canvas peer dep, 0.2.0)
+│       └── toast.js                   # Toast singleton (0.2.0)
+├── dist/
+│   ├── theme.min.css                  # postcss + cssnano build output
+│   └── timer-registry.global.js       # UMD build for IIFE contexts (0.2.0)
+├── cdn-worker/                        # Cloudflare Worker for @latest CDN routing (0.2.0)
 ├── examples/
-│   ├── showcase-complete.html      # full design system demo
-│   ├── interactive-components.html # modal, dropdown, tabs, carousel demo
+│   ├── showcase-complete.html         # full design system demo
+│   ├── interactive-components.html    # modal, dropdown, tabs, carousel demo
 │   ├── basic/
-│   │   ├── corrupted-text.html     # CorruptedText demo
-│   │   ├── multi-gallery.html      # multi-instance gallery demo
-│   │   └── typing-animation.html   # TypingAnimation demo
+│   │   ├── corrupted-text.html        # CorruptedText demo
+│   │   ├── multi-gallery.html         # multi-instance gallery demo
+│   │   └── typing-animation.html      # TypingAnimation demo (with NSFW toggle)
 │   └── advanced/
-│       ├── glsl-vortex.html        # CorruptedVortex WebGL demo
-│       └── particles-bg.html       # CorruptedParticles demo
-├── scripts/static-server.js        # ESM static server (Docker)
-└── docs/COMPONENTS_REFERENCE.md    # exhaustive snippets
+│       ├── glsl-vortex.html           # CorruptedVortex WebGL demo
+│       └── particles-bg.html          # CorruptedParticles demo
+├── scripts/static-server.js           # ESM static server (Docker)
+└── docs/
+    ├── COMPONENTS_REFERENCE.md        # exhaustive component snippets (28+ entries)
+    ├── CDN_CONSUMPTION.md             # CDN setup, same-origin rule, SRI, CSP
+    ├── CROSS_LANGUAGE_CONTRACT.md     # phrases/charsets JSON schema + Go embed guide
+    ├── MIGRATION_CONTAINER_0.2.0.md   # .container breaking change migration guide
+    └── governance/                    # versioning, design governance, contribution guides
 ```
 
 **npm scripts**
@@ -128,6 +197,76 @@ Copy `src/css` into your project (or use `dist/theme.min.css`) and import it loc
 - `npm run watch` – rebuilds on change (dev use)
 - `npm run dev:static` – serves `/examples` (port 8000)
 - `npm run dev:proxy` – Celeste proxy (port 5000)
+- `npm run validate-data` – AJV schema validation for `src/data/*.json` (0.2.0)
+- `npm run generate-sri` – generate SRI hashes for CDN consumers (0.2.0)
+- `npm run publish-cdn` – upload `dist/` + `src/data/` to R2, bump `@latest` pointer (0.2.0)
+
+## Container Layout (0.2.0 Breaking Change)
+
+> **Breaking change.** The `.container` class is now structural-only in 0.2.0 — it applies `max-width`, `margin-inline: auto`, and horizontal padding, but **no grid layout**. Sites that previously relied on the implicit grid behavior must add a modifier class.
+
+```css
+/* 0.2.0 — base is structural only */
+.container { max-width: 1200px; margin-inline: auto; padding-inline: 1rem; }
+
+/* Opt-in modifiers */
+.container--grid-2col   { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+.container--grid-3col   { display: grid; grid-template-columns: repeat(3,1fr); gap: 2rem; }
+.container--with-bg     { background: var(--glass); border: 1px solid var(--border); border-radius: var(--radius-2xl); backdrop-filter: blur(15px); }
+.container--fullscreen  { max-width: none; min-height: 100vh; }
+.container--centered    { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+```
+
+**Migration:** If you were forcing a 2-column grid, add `container--grid-2col`. If you had workaround rules that `unset`-ed `.container`, remove them — the base no longer fights downstream layouts. Pin to `^0.1.9` in the meantime if you cannot migrate yet.
+
+See [docs/MIGRATION_CONTAINER_0.2.0.md](docs/MIGRATION_CONTAINER_0.2.0.md) for the full guide.
+
+## Canonical Data (JSON Source of Truth)
+
+0.2.0 introduces a `src/data/` layer that all internal corruption modules (and downstream Go consumers via `go:embed`) read from instead of maintaining inline arrays:
+
+| File | Contents |
+|------|----------|
+| `src/data/phrases.json` | SFW + NSFW phrases across 6 context pools (`data`, `system`, `status`, `void`, `memory`, `glitch`) × 3 languages |
+| `src/data/charsets.json` | katakana, hiragana, kanji, symbols, blocks |
+| `src/data/colors.json` | 6-hex palette + semantic-use map |
+
+The context-aware phrase API:
+
+```js
+import { getPhraseByContext } from '@whykusanagi/corrupted-theme/corruption-phrases';
+
+// Pick a phrase from a specific context pool
+const phrase = getPhraseByContext('system', false);        // SFW system pool
+const nsfw   = getPhraseByContext('void',   true);         // NSFW void pool
+
+// Or consume the JSON directly
+import phrases from '@whykusanagi/corrupted-theme/data/phrases.json' with { type: 'json' };
+const pool = phrases.sfw.japanese.status;
+```
+
+Each file has a `schemaVersion` field. Additive changes (new pool, new charset) bump the minor version; breaking changes bump the major version. Run `npm run validate-data` to verify the JSON against AJV schemas before publishing.
+
+See [docs/CROSS_LANGUAGE_CONTRACT.md](docs/CROSS_LANGUAGE_CONTRACT.md) for the Go `go:embed` integration guide and stability guarantees.
+
+## NSFW Option Canonicalization
+
+**0.2.0 canonicalizes the NSFW option name to `nsfw` across all components.** The previous per-component names are deprecated aliases that emit a one-time `console.warn` and will be removed in 0.3.x.
+
+| Component | Old (deprecated) | New (canonical) |
+|-----------|-----------------|-----------------|
+| `CorruptedParticles` | `includeLewd` | `nsfw` |
+| `animation-blocks` | `lewdMode` | `nsfw` |
+| `TypingAnimation` | `nsfw` | `nsfw` (unchanged) |
+| `CorruptionManager` | — | `nsfw` |
+
+```js
+// Correct — all components now use the same option name
+new CorruptedParticles(canvas, { nsfw: false });   // was: { includeLewd: false }
+new TitleDecoder(el, { nsfw: false });             // was: { lewdMode: false }
+```
+
+**All defaults are `nsfw: false`.** Opt-in to NSFW content only in 18+ or explicit-consent contexts.
 
 ## Base Layout & Background
 
@@ -231,12 +370,15 @@ Import only the modules you need for smaller bundle sizes.
 #### CSS @import Syntax
 ```css
 /* Correct order (matches theme.css structure) */
-@import '@whykusanagi/corrupted-theme/variables';     /* 1. Foundation tokens */
-@import '@whykusanagi/corrupted-theme/typography';    /* 2. Font styles */
-@import '@whykusanagi/corrupted-theme/glassmorphism'; /* 3. Glass effects */
-@import '@whykusanagi/corrupted-theme/animations';    /* 4. Keyframes - MUST come before components */
-@import '@whykusanagi/corrupted-theme/components';    /* 5. UI components - MUST come after animations */
-@import '@whykusanagi/corrupted-theme/utilities';     /* 6. Utility classes */
+@import '@whykusanagi/corrupted-theme/variables';          /* 1. Foundation tokens */
+@import '@whykusanagi/corrupted-theme/typography';         /* 2. Font styles */
+@import '@whykusanagi/corrupted-theme/glassmorphism';      /* 3. Glass effects */
+@import '@whykusanagi/corrupted-theme/animations';         /* 4. Keyframes - MUST come before components */
+@import '@whykusanagi/corrupted-theme/components';         /* 5. UI components - MUST come after animations */
+@import '@whykusanagi/corrupted-theme/utilities';          /* 6. Utility classes */
+/* 0.2.0 additions (opt-in) */
+@import '@whykusanagi/corrupted-theme/toast-css';          /* Toast notification styles */
+@import '@whykusanagi/corrupted-theme/seamless-background';/* Parallax tiled background */
 ```
 
 #### HTML Link Tags
@@ -269,6 +411,34 @@ import { initCarousel } from '@whykusanagi/corrupted-theme/carousel';
 import { initCorruptedText } from '@whykusanagi/corrupted-theme/corrupted-text';
 import { initGallery, destroyGallery } from '@whykusanagi/corrupted-theme/gallery';
 import { initCountdown } from '@whykusanagi/corrupted-theme/countdown';
+
+// 0.2.0 — Drift reconvergence (canonical corruption layer)
+import { CorruptionCharsets }  from '@whykusanagi/corrupted-theme/corruption-charsets';
+import { CorruptionManager, decodeText, phraseFlicker, hybridDecode }
+                               from '@whykusanagi/corrupted-theme/corruption-manager';
+import { CRTEffects, applyCRTGlow } from '@whykusanagi/corrupted-theme/crt-effects';
+import { TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot, GlitchPulse,
+         ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission, TerminalPrompt,
+         playParallel, playSequence, playStaggered }
+                               from '@whykusanagi/corrupted-theme/animation-blocks';
+import CorruptedParticlesBackground
+                               from '@whykusanagi/corrupted-theme/corrupted-particles-background';
+
+// 0.2.0 — Widgets
+import { Toast }               from '@whykusanagi/corrupted-theme/toast';
+import { ClockWidget }         from '@whykusanagi/corrupted-theme/clock-widget';
+import { EventBar }            from '@whykusanagi/corrupted-theme/event-bar';
+import { LogoBanner }          from '@whykusanagi/corrupted-theme/logo-banner';
+import { Lightbox }            from '@whykusanagi/corrupted-theme/lightbox';
+import { NsfwReveal }          from '@whykusanagi/corrupted-theme/nsfw-reveal';
+import { exportElementAsPng }  from '@whykusanagi/corrupted-theme/png-export';
+import { WebSocketManager }    from '@whykusanagi/corrupted-theme/websocket-manager';
+
+// 0.2.0 — Core utilities
+import { randomPick, randomInt, shuffle }  from '@whykusanagi/corrupted-theme/random-utils';
+import { formatTime12h, timeAgo }         from '@whykusanagi/corrupted-theme/time-utils';
+import { copyWithFeedback }               from '@whykusanagi/corrupted-theme/clipboard-helpers';
+import { buildShareUrl, applyParamsToForm } from '@whykusanagi/corrupted-theme/url-state';
 ```
 
 Components auto-initialize on `DOMContentLoaded` when imported. For manual control:
@@ -454,6 +624,286 @@ typing.start('Neural corruption detected... System Online');
 
 See `examples/basic/typing-animation.html` — it has a toggle switch at the top to opt into NSFW phrases (checkbox resets each page load per the explicit-opt-in spec).
 
+### Drift Reconvergence — Canonical Corruption Layer (0.2.0)
+
+#### CorruptionCharsets
+
+Named charset registry backed by `src/data/charsets.json`.
+
+```js
+import { CorruptionCharsets } from '@whykusanagi/corrupted-theme/corruption-charsets';
+
+CorruptionCharsets.katakana;  // primary corruption glyphs
+CorruptionCharsets.standard;  // katakana + symbols (matrix-style)
+CorruptionCharsets.soft;      // hiragana only (gentle degradation)
+CorruptionCharsets.intense;   // kanji + blocks (heavy data-loss)
+CorruptionCharsets.all;       // union of every set
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#corruptioncharsets) for all sets.
+
+#### CorruptionManager
+
+Unified lifecycle runner for all three canonical corruption patterns.
+
+```js
+import { CorruptionManager } from '@whykusanagi/corrupted-theme/corruption-manager';
+
+const mgr = new CorruptionManager({ nsfw: false });
+
+mgr.decode(el, 'SYSTEM READY', { duration: 2000 });        // Pattern 1
+mgr.flicker(el, ['アイウエオ', '██████'], { duration: 3000 }); // Pattern 2
+mgr.hybrid(el, ['CORRUPTION'], 'SIGNAL RESTORED', {});     // Pattern 3
+mgr.stop();    // cancel all
+mgr.destroy(); // full teardown
+```
+
+One-shot helpers (no instance needed): `decodeText`, `phraseFlicker`, `hybridDecode` — each returns a cancel function.
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#corruptionmanager) for full method table.
+
+#### CRTEffects
+
+CRT post-processing layer — scanlines, vignette, chromatic aberration, RGB split, screen shake.
+
+```js
+import { CRTEffects } from '@whykusanagi/corrupted-theme/crt-effects';
+
+const crt = new CRTEffects(containerEl, { scanlines: true, vignette: true, flicker: false });
+crt.start();
+crt.screenShake(containerEl, 300, 5); // duration ms, intensity px
+crt.destroy();
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#crteffects) for the full options table.
+
+#### animation-blocks (10 classes)
+
+Composable animation blocks that return Promises. Mix with `playParallel` / `playSequence` / `playStaggered`.
+
+```js
+import {
+  TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot, GlitchPulse,
+  ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission, TerminalPrompt,
+  playSequence,
+} from '@whykusanagi/corrupted-theme/animation-blocks';
+
+await playSequence([
+  new TitleDecoder(el, { text: 'CORRUPTED STREAM', nsfw: false }),
+  new ProgressBar(el,   { label: 'Loading...', duration: 2000 }),
+  new TerminalBoot(el,  { lines: ['Initializing...', 'Ready.'] }),
+]);
+```
+
+> `lewdMode` is a deprecated alias for `nsfw` — use `nsfw: true` in new code.
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#animation-blocks) for all 10 class descriptions.
+
+#### CorruptedParticlesBackground
+
+Auto-injecting background particles (DPR=1 performance mode, sits behind blur layers).
+
+```js
+import CorruptedParticlesBackground from '@whykusanagi/corrupted-theme/corrupted-particles-background';
+
+const bg = new CorruptedParticlesBackground({ nsfw: false, count: 25 });
+// automatically inserts a fixed canvas before .glass-backdrop
+bg.destroy();
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#corruptedparticlesbackground).
+
+### Widgets (0.2.0)
+
+#### Toast
+
+Singleton notification helper. Auto-mounts its own DOM container on first use.
+
+```js
+import { Toast } from '@whykusanagi/corrupted-theme/toast';
+
+Toast.show('Saved');
+Toast.success('Submitted!', { duration: 3000 });
+Toast.error('Upload failed');
+Toast.info('Loading…');
+```
+
+Import `@whykusanagi/corrupted-theme/toast-css` alongside (or include in your `theme.css` build). See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#toast).
+
+#### ClockWidget
+
+Cycling multi-timezone clock using `Intl.DateTimeFormat` for DST correctness.
+
+```js
+import { ClockWidget } from '@whykusanagi/corrupted-theme/clock-widget';
+
+const widget = new ClockWidget(document.getElementById('clock'), {
+  timezones: ['America/Los_Angeles', 'Europe/London'],
+  cycleMs: 10000,
+  format: '12h',
+});
+widget.start();
+widget.destroy();
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#clockwidget).
+
+#### EventBar
+
+Scrolling event-ticker banner with label + content + optional icon. Supports live `update()`.
+
+```js
+import { EventBar } from '@whykusanagi/corrupted-theme/event-bar';
+
+const eb = new EventBar(document.getElementById('events'), {
+  items: [{ label: 'Latest Follow', content: '@user1', icon: '★' }],
+});
+eb.update([{ label: 'Latest Tip', content: '$10.00', icon: '✦' }]);
+eb.destroy();
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#eventbar).
+
+#### LogoBanner
+
+Animated logo/title banner with five position presets and reveal animation.
+
+```js
+import { LogoBanner } from '@whykusanagi/corrupted-theme/logo-banner';
+
+const banner = new LogoBanner(el, {
+  src: '/assets/logo.png', subtitle: 'LIVE', position: 'top-right', animation: 'fade',
+});
+banner.show();
+banner.update({ position: 'center' });
+banner.destroy();
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#logobanner).
+
+#### Lightbox (standalone)
+
+Extracted from `gallery.js` as its own module. Keyboard (Escape/arrows) + touch-swipe. `gallery.js` re-exports it for backward compat.
+
+```js
+import { Lightbox } from '@whykusanagi/corrupted-theme/lightbox';
+
+const lb = new Lightbox(null, { onOpen: (img, i) => {}, onClose: () => {} });
+lb.setImages([{ src: 'a.jpg', alt: 'A', caption: 'Caption' }]);
+lb.open(0);
+lb.destroy();
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#lightbox-standalone).
+
+#### NsfwReveal
+
+Age-gate blur overlay with click-to-reveal. Session persistence handled by the caller.
+
+```js
+import { NsfwReveal } from '@whykusanagi/corrupted-theme/nsfw-reveal';
+
+const nr = new NsfwReveal(document.getElementById('img'), {
+  warning: 'NSFW — click to reveal',
+  blurPx: 20,
+});
+nr.reveal();   // programmatic reveal
+nr.destroy();  // restore original state
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#nsfwreveal).
+
+#### PngExport
+
+Capture a DOM element as PNG and trigger a download. Requires optional peer dep `html2canvas`.
+
+```js
+import { exportElementAsPng } from '@whykusanagi/corrupted-theme/png-export';
+
+await exportElementAsPng(document.getElementById('card'), {
+  filename: 'my-card.png',
+  scale: 2,
+});
+```
+
+Install the peer dep only when using: `npm install html2canvas`. See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#pngexport).
+
+#### WebSocketManager
+
+Auto-reconnect WebSocket wrapper with exponential backoff (capped 30s), event-ID dedup, ACK support, and visibility-aware pause/resume.
+
+```js
+import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager';
+
+const ws = new WebSocketManager({ url: 'wss://your-server/ws', autoConnect: false });
+ws.on((msg) => console.log(msg));
+ws.connect();
+ws.destroy();
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#websocketmanager) for all options.
+
+### Core Utilities (0.2.0)
+
+All utility modules are pure functions with no DOM dependency — safe in Node.js and SSR contexts.
+
+#### random-utils
+```js
+import { randomPick, randomInt, randomFloat, randomVariance, shuffle, randomSample }
+  from '@whykusanagi/corrupted-theme/random-utils';
+
+randomPick(['a', 'b', 'c']);       // random element
+randomVariance(50, 0.2);           // 50 ± 20%
+shuffle([1, 2, 3]);                // Fisher-Yates in-place
+randomSample([1,2,3,4], 2);        // 2 elements without replacement
+```
+
+#### time-utils
+```js
+import { formatTime12h, formatDate, timeAgo, formatDuration }
+  from '@whykusanagi/corrupted-theme/time-utils';
+
+formatTime12h();                   // "02:32 PM"
+timeAgo(new Date(Date.now() - 3e5)); // "5m ago"
+formatDuration(3661);              // "1h 1m 1s"  (input: seconds)
+```
+
+#### clipboard-helpers
+```js
+import { copyWithFeedback } from '@whykusanagi/corrupted-theme/clipboard-helpers';
+
+await copyWithFeedback(btn, 'text to copy', { successLabel: 'COPIED!', durationMs: 1200 });
+// Button label briefly becomes "COPIED!" then reverts. Returns Promise<boolean>.
+```
+
+#### url-state
+```js
+import { buildShareUrl, applyParamsToForm } from '@whykusanagi/corrupted-theme/url-state';
+
+const url = buildShareUrl(form, 'https://example.com/embed');
+// → "https://example.com/embed?username=alice&dark=1"
+applyParamsToForm(form, new URLSearchParams(window.location.search));
+```
+
+### CSS Utilities (0.2.0)
+
+**`.scrollbar-corrupted`** — styled scrollbar (Firefox + WebKit) matching the theme accent colors. Apply to any scrollable container:
+
+```html
+<div class="scrollbar-corrupted" style="overflow-y: auto; max-height: 400px;">…</div>
+```
+
+**`seamless-background.css`** — multi-layer parallax tiled background. Import the CSS module, add `.seamless-bg-host` to a parent, and set the `--seamless-background-image` variable:
+
+```html
+<body class="seamless-bg-host" style="--seamless-background-image: url('/tile.png');">
+  <div class="seamless-background seamless-background-mid"></div>
+  <!-- content -->
+</body>
+```
+
+See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#seamless-backgroundcss) for the full modifier class list.
+
 ## Interactive Components
 
 v0.1.8 adds JS-driven interactive components that self-initialize via `data-ct-*` attributes. Import the components module and everything wires up automatically on `DOMContentLoaded`.
@@ -620,22 +1070,22 @@ typing.settle();       // resolve to final text
 **CorruptedParticles** - Canvas 2D Floating Phrase Background
 - Floating Japanese phrase particles across three depth layers
 - Mouse hover repel, click burst (6 particles), connection lines between nearby particles
-- SFW/NSFW phrase modes with `includeLewd` toggle
+- SFW/NSFW phrase modes via `nsfw` toggle (`includeLewd` is a deprecated alias)
 - Demo: `examples/advanced/particles-bg.html`
 
 ```js
 import CorruptedParticles from '@whykusanagi/corrupted-theme/corrupted-particles';
 
 const particles = new CorruptedParticles(canvas, {
-  count: 60,           // number of particles
-  speed: 1.0,          // global speed multiplier
-  lineDistance: 150,    // max distance for connection lines (px)
-  includeLewd: false   // enable 18+ phrases (default: off)
+  count: 60,         // number of particles
+  speed: 1.0,        // global speed multiplier
+  lineDistance: 150, // max distance for connection lines (px)
+  nsfw: false        // enable 18+ phrases (default: off)
 });
 // auto-starts on construction
-particles.stop();      // pause animation
-particles.start();     // resume
-particles.destroy();   // full teardown
+particles.stop();    // pause animation
+particles.start();   // resume
+particles.destroy(); // full teardown
 ```
 
 **CorruptedVortex** - WebGL Raymarched Spiral Vortex
@@ -890,11 +1340,14 @@ These guidelines keep contributions aligned with enterprise frameworks:
 
 ## Development Workflow
 ```bash
-npm install          # install dependencies
-npm run build        # compile CSS bundle
-npm run watch        # dev rebuild loop
-npm run dev:static   # serve /examples on :8000
-npm run dev:proxy    # optional Celeste proxy on :5000
+npm install           # install dependencies
+npm run build         # compile CSS bundle
+npm run watch         # dev rebuild loop
+npm run dev:static    # serve /examples on :8000
+npm run dev:proxy     # optional Celeste proxy on :5000
+npm run validate-data # AJV schema validation for src/data/*.json
+npm run generate-sri  # generate SRI hashes for CDN consumers
+npm run publish-cdn   # upload dist/ + src/data/ to R2, bump @latest pointer
 
 # Docker showcase
 docker build -t corrupted-theme:latest .

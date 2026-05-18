@@ -1,5 +1,13 @@
 # Celeste CLI - Corruption Phrases Library
 
+> **As of 0.2.0** — The canonical phrase data now lives in **`src/data/phrases.json`** (published with the npm package). The JSON file is the single source of truth for all phrase pools (SFW and NSFW, by language and theme). The `corruption-phrases.js` module in `src/core/` provides typed access to those pools from JavaScript.
+>
+> For multi-language consumers (Go, Python, etc.) see **[`docs/CROSS_LANGUAGE_CONTRACT.md`](CROSS_LANGUAGE_CONTRACT.md)** for the full JSON schema and consumption guide.
+>
+> This document remains as **narrative context and a human-readable reference** for the phrase library. All phrase additions should go into `src/data/phrases.json`, not here.
+
+---
+
 **Seeded phrases for consistent branding across the application**
 
 This file provides pre-made corrupted phrases following the translation-failure aesthetic. Use these directly in your code instead of inventing new corruptions ad-hoc.
@@ -517,10 +525,12 @@ Final: "生成 generating repōto..."
 
 ## Related Files
 
+- **Canonical JSON** (0.2.0): `src/data/phrases.json` — source of truth for all phrase pools
+- **JS Access**: `src/core/corruption-phrases.js` — typed access helpers
+- **Contract doc**: `docs/CROSS_LANGUAGE_CONTRACT.md` — JSON schema + Go/non-JS consumption
 - **Style Guide**: `/docs/STYLE_GUIDE.md` - Full aesthetic documentation
 - **Go Implementation**: `/cmd/celeste/tui/streaming.go` - Corruption functions
 - **Official Theme**: `@whykusanagi/corrupted-theme` - npm package
-- **TypeScript Reference**: `../_archive/celeste-cli-typescript/src/ui/corruption.ts` (legacy)
 
 ---
 

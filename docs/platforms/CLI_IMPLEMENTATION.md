@@ -1009,17 +1009,44 @@ func stripAnsi(s string) string {
 
 ---
 
+## Cross-Language Data Contract (0.2.0)
+
+As of 0.2.0, phrase lists, character sets, and the canonical color palette are no longer embedded as inline arrays in celeste-cli Go source. They are published as JSON in the npm package and available to any language consumer.
+
+**Canonical data files** (in `@whykusanagi/corrupted-theme`):
+
+| File | Content |
+|------|---------|
+| `src/data/phrases.json` | SFW + NSFW phrase pools (void, memory, japanese, english, romaji) |
+| `src/data/charsets.json` | Katakana, Hiragana, Kanji, symbol, block character sets |
+| `src/data/colors.json` | Canonical 6-color palette + semantic use mapping |
+
+For the full contract — including JSON schema, field semantics, and Go consumption examples — see [`docs/CROSS_LANGUAGE_CONTRACT.md`](../CROSS_LANGUAGE_CONTRACT.md).
+
+**Quick Go consumption example**:
+```go
+// Embed the JSON files from the npm package (or a local copy)
+//go:embed phrases.json charsets.json
+var phraseData []byte
+var charsetData []byte
+```
+
+This replaces the previous pattern of hardcoded `katakana` and `hiragana` slices defined inline in `tui/streaming.go`.
+
+---
+
 ## Related Documentation
 
 - [WEB_IMPLEMENTATION.md](./WEB_IMPLEMENTATION.md) - Web platform comparison
 - [COMPONENT_MAPPING.md](./COMPONENT_MAPPING.md) - CLI ↔ Web equivalents
+- [CROSS_LANGUAGE_CONTRACT.md](../CROSS_LANGUAGE_CONTRACT.md) - JSON data contract for Go/non-JS consumers
 - [ANIMATION_GUIDELINES.md](../components/ANIMATION_GUIDELINES.md) - Animation timing reference
 - [COLOR_SYSTEM.md](../brand/COLOR_SYSTEM.md) - Color specifications
 - [TRANSLATION_FAILURE_AESTHETIC.md](../brand/TRANSLATION_FAILURE_AESTHETIC.md) - Corruption rules
 
 ---
 
-**Last Updated**: 2025-12-13
-**Version**: 1.0.0
+**Last Updated**: 2026-05-18
+**Version**: 0.2.0 (added cross-language contract reference)
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Ready for Production

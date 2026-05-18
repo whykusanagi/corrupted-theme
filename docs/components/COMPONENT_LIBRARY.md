@@ -1,7 +1,7 @@
 # Celeste Brand System - Component Library
 
-**Version**: 1.0.0
-**Last Updated**: 2025-12-13
+**Version**: 0.2.0
+**Last Updated**: 2026-05-18
 **Status**: 🟠 **HIGH PRIORITY DOCUMENT**
 
 ---
@@ -35,8 +35,11 @@ This document provides a complete inventory of all Celeste design system compone
 | **Navigation** | 6 | 0 | Navbar, breadcrumbs, tabs |
 | **Feedback** | 5 | 2 | Alerts, loaders, notifications |
 | **Extensions** | 10 | 0 | Gallery, countdown, social links |
+| **JS Libraries (0.2.0)** | 19 | 0 | Animation blocks, CRT, widgets, utilities |
 
-**Total**: 56 web components, 8 CLI patterns
+**Total**: 75 web components + JS libs, 8 CLI patterns
+
+> **0.2.0 JS libraries** are documented in full in [`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md). See the section below for a summary.
 
 ---
 
@@ -1048,6 +1051,56 @@ Component
 
 ---
 
+## 0.2.0 JavaScript Library Components
+
+The 0.2.0 release adds a canonical JS layer on top of the CSS framework. Full API docs live in [`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md). Summary:
+
+### Core (`src/core/`)
+
+| Module | Class / Export | Purpose |
+|--------|---------------|---------|
+| `corruption-manager.js` | `CorruptionManager` | Lifecycle-managed multi-animation runner |
+| `corruption-charsets.js` | charset helpers | Canonical charset access from `src/data/charsets.json` |
+| `corruption-phrases.js` | phrase helpers | Canonical phrase access from `src/data/phrases.json` |
+| `typing-animation.js` | `TypingAnimation` | Buffer-style corruption with SFW/NSFW modes |
+| `timer-registry.js` | `TimerRegistry` | Global interval/timeout registry (UMD build) |
+| `event-tracker.js` | `EventTracker` | DOM event lifecycle helpers |
+
+### Lib (`src/lib/`)
+
+**Animation Blocks** (`animation-blocks.js`) — 10 classes:
+`TitleDecoder`, `ProgressBar`, `ScanlineSweep`, `TerminalBoot`, `GlitchPulse`, `ASCIIBorder`, `SystemDiagnostic`, `LoadingBarMulti`, `DataTransmission`, `TerminalPrompt`
+
+| Module | Class / Export | Purpose |
+|--------|---------------|---------|
+| `crt-effects.js` | `CRTEffects` | Full CRT post-processing layer (scanlines, flicker, phosphor glow) |
+| `corrupted-text.js` | `CorruptedText` | Inline character-level corruption |
+| `corrupted-particles.js` | `CorruptedParticles` | Canvas 2D floating particle field |
+| `corrupted-vortex.js` | `CorruptedVortex` | WebGL raymarched spiral tunnel |
+| `gallery.js` | `Gallery` | Responsive grid gallery with lightbox |
+| `lightbox.js` | `Lightbox` | Standalone image lightbox |
+| `countdown-widget.js` | `CountdownWidget` | Event countdown with shape variants |
+| `clock-widget.js` | `ClockWidget` | Real-time corrupted clock |
+| `toast.js` | `ToastManager` | Singleton toast notification queue |
+| `nsfw-reveal.js` | `NsfwReveal` | Blur overlay with click-to-reveal |
+| `event-bar.js` | `EventBar` | Stream event overlay bar |
+| `logo-banner.js` | `LogoBanner` | Animated logo/brand banner |
+| `png-export.js` | `PNGExport` | html2canvas-based DOM export |
+| `websocket-manager.js` | `WebSocketManager` | Reconnecting WebSocket with corruption states |
+
+### Utilities (`src/core/`)
+
+| Module | Exports | Purpose |
+|--------|---------|---------|
+| `random-utils.js` | `randomFrom`, `weightedRandom`, etc. | Random helpers |
+| `time-utils.js` | `formatDuration`, `countdown`, etc. | Time formatting |
+| `clipboard-helpers.js` | `copyToClipboard`, etc. | Clipboard access |
+| `url-state.js` | `getParam`, `setParam`, etc. | URL search param state |
+
+All JS libs share the same class-based API: `new FooClass(element, options)` with `start()`, `stop()`, `destroy()`.
+
+---
+
 ## Related Documents
 
 - **GLASSMORPHISM.md** - Detailed glass effect specifications
@@ -1055,7 +1108,9 @@ Component
 - **ANIMATION_GUIDELINES.md** - Motion and timing
 - **COLOR_SYSTEM.md** - Semantic color usage
 - **COMPONENT_MAPPING.md** - Cross-platform equivalents (Platform tier)
+- **COMPONENTS_REFERENCE.md** - Full JS API reference (0.2.0)
+- **CDN_CONSUMPTION.md** - CDN import guide
 
 ---
 
-**Status**: ✅ **COMPONENT LIBRARY COMPLETE** - Ready for implementation
+**Status**: ✅ **COMPONENT LIBRARY COMPLETE** - Updated for 0.2.0

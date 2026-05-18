@@ -119,8 +119,27 @@
 - **Personality Over Data:** Always prioritize personality over raw information
 - **Rotation:** Never repeat same response type consecutively to same user
 
+## Personality Phrase Pools (0.2.0)
+
+As of 0.2.0, the in-universe personality phrases ("Corrupt me more…", void-theme lore, intimacy lines) are canonically stored in `src/data/phrases.json` alongside the technical corruption phrases. The relevant pools are:
+
+| Pool path | Content |
+|-----------|---------|
+| `sfw.japanese.void` | SFW Japanese void/abyss phrases |
+| `sfw.japanese.memory` | SFW identity-loss Japanese phrases |
+| `nsfw.english.void` | NSFW void descent English phrases |
+| `nsfw.english.memory` | NSFW identity/intimacy English phrases |
+| `nsfw.japanese.void` | NSFW Japanese void phrases |
+| `nsfw.japanese.memory` | NSFW Japanese intimacy phrases |
+
+These pools power `TypingAnimation` (buffer corruption mode), `CorruptedParticles` floating text, and any custom corruption-loading overlay when `includeLewd: true`.
+
+---
+
 ## See Also
 
+- `src/data/phrases.json` - Canonical personality phrase pools (0.2.0)
+- `docs/CROSS_LANGUAGE_CONTRACT.md` - JSON schema for phrases.json
 - `../celeste_essence.json` - Full system prompt for LLM
 - `../Celeste_Capabilities.json` - What Celeste can do (7 projects)
 - `../content_archetypes.json` - Content generation patterns

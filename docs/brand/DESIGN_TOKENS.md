@@ -1,7 +1,7 @@
 # Celeste Brand System - Design Tokens
 
-**Version**: 1.0.0
-**Last Updated**: 2025-12-13
+**Version**: 0.2.0
+**Last Updated**: 2026-05-18
 **Token Format**: W3C Design Tokens Community Group (DTCG)
 **Status**: 🔴 **CRITICAL FOUNDATION DOCUMENT**
 
@@ -19,7 +19,8 @@ Design tokens are **platform-agnostic design decisions** stored in a structured 
 - ✅ **Tooling support** (Figma, Style Dictionary, Theo)
 
 **Celeste's Implementation**:
-- **Master file**: `design-tokens.json` (W3C DTCG format)
+- **Master file**: `design-tokens.json` (W3C DTCG format — full token set)
+- **Canonical color subset (0.2.0)**: `src/data/colors.json` — the 6-color corruption palette and semantic mapping, published with the npm package as a machine-readable source of truth. Values are identical to the color tokens below. See [`docs/CROSS_LANGUAGE_CONTRACT.md`](../CROSS_LANGUAGE_CONTRACT.md) for the schema.
 - **Generated files**:
   - `tokens.css` (CSS custom properties for web)
   - `tokens.go` (Go constants for CLI)
@@ -1006,4 +1007,4 @@ module.exports = {
 
 ---
 
-**Status**: ✅ **FOUNDATION COMPLETE** - Tokens defined, ready for generation
+**Status**: ✅ **FOUNDATION COMPLETE** - Tokens defined, ready for generation (0.2.0: colors.json is canonical color subset)

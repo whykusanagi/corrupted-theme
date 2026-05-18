@@ -137,6 +137,54 @@ CI runs `npm install` + `npm run build` on every PR. `npm audit` is run locally 
 
 ---
 
+## CDN Distribution Threat Model (0.2.0+)
+
+Starting with 0.2.0, corrupted-theme is served from a Cloudflare R2-backed
+CDN at `cdn.whykusanagi.xyz` and `cdn.nikkers.cc`. This section documents
+the threat surface introduced by CDN distribution.
+
+### Trust Boundaries
+
+| Boundary | Trust Level | Notes |
+|---|---|---|
+| Maintainer → R2 bucket | Trusted (auth via wrangler) | Only the maintainer holds R2 write credentials |
+| R2 bucket → Consumer browsers | Untrusted reader | All consumers are anonymous; content is public |
+| Worker → KV namespace | Trusted (binding) | KV write requires Worker-level auth |
+| Consumer browsers → Worker | Untrusted | Worker validates path, no user input parsing |
+
+### Threats and Mitigations
+
+| Threat | Likelihood | Mitigation |
+|---|---|---|
+| Content tampering at R2 layer | Low | Only maintainer can write; SRI hashes available for consumers (see `docs/CDN_CONSUMPTION.md`) |
+| Supply-chain via stale/malicious JS in `@latest` | Low | Versioned paths immutable; `@latest` is a maintainer-controlled pointer; consumers can pin instead |
+| PII/secret leakage in published JSON | None | JSON contents are public MIT-licensed phrase/charset/color data; no secrets in package |
+| Cross-origin exfiltration via curated CORS allowlist | Low | Existing allowlist limits cross-origin embedders (`whykusanagi.xyz`, `nikkers.cc`, github mirrors, etc.). No wildcard. Same-origin loads don't trigger CORS. |
+| Torn state on partial publish failure | Low | Publish script uploads files first, bumps KV pointer last; if upload fails, `@latest` still resolves to last good version |
+| KV vs R2 propagation lag | Low | KV is eventually consistent (~60s globally); some edges resolve `@latest` to old version for up to a minute after publish — acceptable |
+| Worker downtime | Medium | Only `@latest` consumers affected; pinned-version consumers continue working via R2 direct |
+| Shared-bucket cross-contamination | Low | `corrupted-theme/` prefix scopes uploads; doesn't collide with `optimized_assets/` or other existing content on the shared `whykusanagi` bucket |
+
+### Consumer Recommendations
+
+- **Production sites:** pin a specific version (`@0.2.0`, not `@latest`). Add SRI hashes per `docs/CDN_CONSUMPTION.md`.
+- **Sites the maintainer controls and updates together:** `@latest` is acceptable.
+- **Don't pass user input to corrupted-theme APIs that build phrase pools.** The XSS-hardening in `src/**` assumes upstream-controlled content.
+- **CSP recommendation:** consumer sites should list `https://cdn.{matching-root-domain}` in `script-src` and `style-src` if they're loading from the CDN. Same-origin loads still benefit from explicit CSP.
+
+### Operational Notes
+
+- Publish flow: `npm publish --access public` (npm) → `npm run publish-cdn` (R2 + KV pointer bump)
+- The publish script REQUIRES `wrangler login` to be current; tokens are not embedded in the script
+- KV pointer is the single source of truth for `@latest` — bumping it is atomic
+- Worker route bindings: `cdn.{whykusanagi.xyz,nikkers.cc}/corrupted-theme/@latest/*`. Non-`@latest` requests pass through to R2 directly.
+
+### Reporting
+
+Same channels as the rest of this document. See top of SECURITY.md.
+
+---
+
 ## References
 
 - [Cloudflare Workers Static Assets — security features](https://developers.cloudflare.com/workers/static-assets/)

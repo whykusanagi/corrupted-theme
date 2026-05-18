@@ -1,7 +1,9 @@
 # Character-Level Corruption - Implementation Guide
 
-**Date**: 2025-12-12
+**Date**: 2025-12-12 (updated 2026-05-18 for 0.2.0 canonical charsets)
 **Issue Fixed**: Dashboard titles now use character-level Japanese mixing instead of word replacement
+
+> **0.2.0 note**: The Katakana, Hiragana, and Kanji arrays used by `CorruptTextJapanese()` are now defined canonically in **`src/data/charsets.json`** (part of the npm package). JS callers should consume them via `src/core/corruption-charsets.js` or `src/core/corruption-phrases.js`. Go callers can embed or fetch the JSON — see [`docs/CROSS_LANGUAGE_CONTRACT.md`](CROSS_LANGUAGE_CONTRACT.md). The inline array patterns shown in this document remain valid reference implementations but are superseded by the canonical JSON for production use.
 
 ---
 
@@ -251,6 +253,9 @@ Character-level mixing is slightly more expensive than word replacement, but the
 
 ## Related Files
 
+- **Canonical charsets (0.2.0)**: `src/data/charsets.json` — Katakana, Hiragana, Kanji, symbols
+- **JS access**: `src/core/corruption-charsets.js`
+- **Cross-language contract**: `docs/CROSS_LANGUAGE_CONTRACT.md`
 - **Implementation**: `tui/streaming.go:252` and `commands/corruption.go:124`
 - **Usage**: `commands/stats.go:194`
 - **Style Guide**: `docs/STYLE_GUIDE.md`

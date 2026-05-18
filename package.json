@@ -96,7 +96,8 @@
     "dev:static": "node scripts/static-server.js",
     "start": "npm run dev:static",
     "validate-data": "node scripts/validate-data.js",
-    "test": "node --test --test-reporter=spec 'tests/**/*.test.js'"
+    "test": "node --test --test-reporter=spec 'tests/**/*.test.js'",
+    "publish-cdn": "bash scripts/publish-to-cdn.sh"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

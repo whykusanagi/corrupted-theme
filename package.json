@@ -45,6 +45,7 @@
     "./logo-banner": "./src/lib/logo-banner.js",
     "./png-export": "./src/lib/png-export.js",
     "./nsfw-reveal": "./src/lib/nsfw-reveal.js",
+    "./phrase-cycle": "./src/lib/phrase-cycle.js",
     "./seamless-background": "./src/css/seamless-background.css",
     "./data/phrases.json": "./src/data/phrases.json",
     "./data/charsets.json": "./src/data/charsets.json",

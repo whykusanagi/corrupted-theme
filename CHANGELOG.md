@@ -44,6 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **`CorruptionCharsets`** — named registry backed by `src/data/charsets.json` (standard/soft/intense/all computed sets).
 - **`DecryptReveal`** — fixed-length decryption animation (`@whykusanagi/corrupted-theme/decrypt-reveal`). Renamed from CorruptionManager during 0.2.0 development to distinguish from TypingAnimation's streaming-typed pattern. Provides `.decode(element, finalText, opts)` for the chaos-buffer → resolved-text effect.
+- **`PhraseCycle`** — discrete phrase-state cycling (`@whykusanagi/corrupted-theme/phrase-cycle`). Replaces the entire element's text with phrase A, then phrase B, etc., at a fixed interval, then settles on `finalText`. Optional `loop: true` cycles forever. Use for loading screens, boot sequences, and "decrypting" preambles. Recovers the `.flicker` pattern that was dropped from `CorruptionManager` during the `DecryptReveal` rename (PR #23); completes the 3-way distinction: TypingAnimation (streaming/typed) | DecryptReveal (fixed-length char scramble) | PhraseCycle (discrete phrase cycling).
 - **`CRTEffects`** — CRT post-processing layer (scanlines, chromatic aberration, flicker, screen shake, RGB split).
 - **`animation-blocks`** — 10 classes: `TitleDecoder`, `ProgressBar`, `ScanlineSweep`, `TerminalBoot`, `GlitchPulse`, `ASCIIBorder`, `SystemDiagnostic`, `LoadingBarMulti`, `DataTransmission`, `TerminalPrompt`.
 - **`corrupted-particles-background`** — auto-injector for behind-blur particles with DPR=1 performance mode.

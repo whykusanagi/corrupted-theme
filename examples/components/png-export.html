@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PNG Export · corrupted-theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+      padding: var(--spacing-2xl);
+    }
+
+    h1 {
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 20px var(--corrupted-cyan);
+      text-align: center;
+      font-size: 1.8rem;
+      margin: 0 0 0.25rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-align: center;
+      margin: 0 0 var(--spacing-2xl);
+    }
+
+    .demo-section {
+      padding: 1.5rem;
+      margin-block: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      max-width: 760px;
+      margin-inline: auto;
+    }
+
+    .demo-section h2 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-block: 0.75rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* ── Warning banner ────────────────────────────── */
+    .peer-dep-warning {
+      border: 1px solid var(--corrupted-magenta);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      background: rgba(255,0,255,0.06);
+      font-size: 0.8rem;
+      color: var(--corrupted-magenta);
+      line-height: 1.6;
+    }
+
+    .peer-dep-warning code {
+      background: rgba(255,0,255,0.1);
+      border-radius: 3px;
+      padding: 0.1em 0.3em;
+      font-family: inherit;
+    }
+
+    /* ── Export target card ────────────────────────── */
+    #export-target {
+      background: linear-gradient(135deg, #0a0a1a, #1a001a);
+      border: 2px solid var(--corrupted-cyan);
+      border-radius: var(--radius-md);
+      padding: 2rem;
+      text-align: center;
+      box-shadow: 0 0 30px rgba(0,255,255,0.15);
+    }
+
+    #export-target h3 {
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 12px var(--corrupted-cyan);
+      font-size: 1.5rem;
+      margin: 0 0 0.5rem;
+      letter-spacing: 0.15em;
+    }
+
+    #export-target p {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin: 0;
+    }
+
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
+
+    .badge {
+      background: rgba(0,255,255,0.1);
+      border: 1px solid var(--corrupted-cyan);
+      border-radius: 999px;
+      padding: 0.25rem 0.65rem;
+      font-size: 0.7rem;
+      color: var(--corrupted-cyan);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Status indicator ──────────────────────────── */
+    #export-status {
+      margin-top: 0.75rem;
+      font-size: 0.8rem;
+      min-height: 1.4rem;
+      color: var(--corrupted-green);
+    }
+
+    /* ── Code block ────────────────────────────────── */
+    .code-block {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      margin-top: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--corrupted-cyan);
+      line-height: 1.5;
+      white-space: pre;
+    }
+
+    .code-block .comment { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <h1><i class="fas fa-camera"></i> PNG Export</h1>
+  <p class="subtitle">Export any DOM element to a PNG download — <code>exportElementAsPng</code> from <code>src/lib/png-export.js</code></p>
+
+  <!-- Peer dep warning -->
+  <div class="demo-section">
+    <div class="peer-dep-warning">
+      <strong><i class="fas fa-exclamation-triangle"></i> OPTIONAL PEER DEPENDENCY</strong><br>
+      <code>png-export</code> dynamically imports <code>html2canvas</code> at runtime.
+      If it is not installed the function will throw with a clear error message.<br><br>
+      <strong>Install before using:</strong><br>
+      <code>npm install html2canvas</code><br><br>
+      This demo loads html2canvas from a CDN so no local install is required.
+      In a production bundle, install it as a project dependency (not a devDependency).
+    </div>
+
+    <h2><i class="fas fa-download"></i> Export Demo</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Click "Export as PNG" to capture the card below and download it as a file.
+      Open the browser's Network tab to confirm html2canvas loaded from CDN.
+    </p>
+
+    <!-- The element we will export -->
+    <div id="export-target">
+      <h3>CORRUPTED SIGNAL</h3>
+      <p>アイウエオ · Neural core stability: 42%</p>
+      <div class="badge-row">
+        <span class="badge">0.2.0</span>
+        <span class="badge">@whykusanagi/corrupted-theme</span>
+        <span class="badge">png-export</span>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="btn-export">Export as PNG</button>
+      <button class="btn" id="btn-export-retina">Export 3× (retina)</button>
+      <button class="btn" id="btn-export-bg">Export with background</button>
+    </div>
+
+    <div id="export-status"></div>
+
+    <!-- Usage code -->
+    <div class="code-block">
+      <pre><code><span class="comment">// Install peer dep first:  npm install html2canvas</span>
+import { exportElementAsPng } from '@whykusanagi/corrupted-theme/png-export';
+
+const el = document.getElementById('my-card');
+
+<span class="comment">// Default: scale=2, transparent background, filename="export.png"</span>
+await exportElementAsPng(el);
+
+<span class="comment">// With options</span>
+await exportElementAsPng(el, {
+  filename:        'corrupted-card.png',
+  scale:           3,               <span class="comment">// 3× resolution for retina</span>
+  backgroundColor: '#000000',       <span class="comment">// null = transparent</span>
+});</code></pre>
+    </div>
+  </div>
+
+  <!--
+    Load html2canvas from CDN so the demo works without a local npm install.
+    In a real project: npm install html2canvas  (then it loads via dynamic import)
+  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script type="module">
+    import { exportElementAsPng } from '../../src/lib/png-export.js';
+
+    const target = document.getElementById('export-target');
+    const status = document.getElementById('export-status');
+
+    async function runExport(opts) {
+      status.style.color = 'var(--corrupted-cyan)';
+      status.textContent = 'Rendering…';
+      try {
+        await exportElementAsPng(target, opts);
+        status.style.color = 'var(--corrupted-green)';
+        status.textContent = `Exported: ${opts.filename ?? 'export.png'}`;
+      } catch (err) {
+        status.style.color = 'var(--corrupted-red)';
+        status.textContent = `Error: ${err.message}`;
+      }
+    }
+
+    document.getElementById('btn-export').addEventListener('click', () =>
+      runExport({ filename: 'corrupted-card.png', scale: 2 }));
+
+    document.getElementById('btn-export-retina').addEventListener('click', () =>
+      runExport({ filename: 'corrupted-card-3x.png', scale: 3 }));
+
+    document.getElementById('btn-export-bg').addEventListener('click', () =>
+      runExport({ filename: 'corrupted-card-bg.png', scale: 2, backgroundColor: '#000000' }));
+  </script>
+</body>
+</html>

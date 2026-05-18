@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebSocketManager · corrupted-theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+      padding: var(--spacing-2xl);
+    }
+
+    h1 {
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 20px var(--corrupted-cyan);
+      text-align: center;
+      font-size: 1.8rem;
+      margin: 0 0 0.25rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-align: center;
+      margin: 0 0 var(--spacing-2xl);
+    }
+
+    .demo-section {
+      padding: 1.5rem;
+      margin-block: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      max-width: 760px;
+      margin-inline: auto;
+    }
+
+    .demo-section h2 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-block: 0.5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    /* ── Setup note ────────────────────────────────── */
+    .setup-note {
+      border: 1px solid var(--corrupted-cyan);
+      border-radius: var(--radius-md);
+      padding: 0.75rem 1rem;
+      margin-bottom: 1rem;
+      background: rgba(0,255,255,0.04);
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    .setup-note code {
+      background: rgba(0,255,255,0.08);
+      border-radius: 3px;
+      padding: 0.1em 0.3em;
+      color: var(--corrupted-cyan);
+      font-family: inherit;
+    }
+
+    /* ── Connection status badge ───────────────────── */
+    .status-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+
+    #ws-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      letter-spacing: 0.05em;
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+      border: 1px solid var(--border);
+    }
+
+    #ws-status-badge.status-connected  { background: rgba(0,255,0,0.1);  border-color: var(--corrupted-green);   color: var(--corrupted-green);   }
+    #ws-status-badge.status-connecting { background: rgba(255,255,0,0.1); border-color: #ffff00;                  color: #ffff00;                  }
+    #ws-status-badge.status-closed,
+    #ws-status-badge.status-error,
+    #ws-status-badge.status-failed     { background: rgba(255,0,0,0.1);  border-color: var(--corrupted-red);     color: var(--corrupted-red);     }
+    #ws-status-badge.status-disconnected { background: rgba(128,128,128,0.1); border-color: var(--text-muted); color: var(--text-muted); }
+
+    /* ── Message log ───────────────────────────────── */
+    #msg-log {
+      height: 200px;
+      overflow-y: auto;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.6rem 0.75rem;
+      font-size: 0.75rem;
+      line-height: 1.6;
+    }
+
+    .log-entry {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .log-ts     { color: var(--text-muted); flex-shrink: 0; }
+    .log-in     { color: var(--corrupted-green); }
+    .log-out    { color: var(--corrupted-cyan); }
+    .log-system { color: var(--corrupted-magenta); font-style: italic; }
+
+    /* ── Send row ──────────────────────────────────── */
+    .send-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+    }
+
+    .send-row input[type="text"] {
+      flex: 1;
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.4rem 0.65rem;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    .send-row input[type="text"]:focus {
+      border-color: var(--corrupted-cyan);
+    }
+
+    /* ── Code block ────────────────────────────────── */
+    .code-block {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      margin-top: 0.75rem;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--corrupted-cyan);
+      line-height: 1.5;
+      white-space: pre;
+    }
+
+    .code-block .comment { color: var(--text-muted); }
+  </style>
+</head>
+<body>
+
+  <h1><i class="fas fa-plug"></i> WebSocketManager</h1>
+  <p class="subtitle">Auto-reconnecting WebSocket wrapper with event dedup and ACK support — <code>src/core/websocket-manager.js</code></p>
+
+  <div class="demo-section">
+
+    <div class="setup-note">
+      <strong><i class="fas fa-info-circle"></i> Setup</strong><br>
+      This demo uses the public <strong>wss://echo.websocket.org</strong> echo server.
+      Every JSON message you send is echoed back unchanged.<br><br>
+      To test against your own server, change the URL in the input below.
+      When <code>autoConnect: false</code> is set, the socket will not connect
+      until you call <code>ws.connect()</code> explicitly.
+    </div>
+
+    <h2><i class="fas fa-satellite-dish"></i> Live Connection</h2>
+
+    <!-- URL + connect/disconnect -->
+    <div class="controls">
+      <input type="text" id="ws-url" value="wss://echo.websocket.org"
+             style="flex:1; background:rgba(0,0,0,0.5); border:1px solid var(--border);
+                    border-radius:var(--radius-sm); padding:0.4rem 0.6rem;
+                    color:var(--text-primary); font-family:inherit; font-size:0.8rem; outline:none;">
+      <button class="btn" id="btn-connect">connect()</button>
+      <button class="btn" id="btn-disconnect">disconnect()</button>
+      <button class="btn" id="btn-destroy">destroy()</button>
+    </div>
+
+    <!-- Status badge -->
+    <div class="status-row">
+      <span id="ws-status-badge" class="status-disconnected">
+        <i class="fas fa-circle" style="font-size:0.5rem;"></i>
+        DISCONNECTED
+      </span>
+      <span style="color:var(--text-muted); font-size:0.75rem;">
+        reconnect attempts: <span id="ws-attempts">0</span>
+      </span>
+    </div>
+
+    <!-- Message log -->
+    <div id="msg-log"></div>
+
+    <!-- Send -->
+    <div class="send-row">
+      <input type="text" id="ws-input" placeholder='{"type":"ping"}' value='{"type":"ping"}'>
+      <button class="btn" id="btn-send">send()</button>
+    </div>
+
+    <!-- Usage code -->
+    <div class="code-block">
+      <pre><code>import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager';
+
+<span class="comment">// autoConnect:false — connect only when ws.connect() is called</span>
+const ws = new WebSocketManager({
+  url:            'wss://your-server.example.com/ws',
+  clientId:       'overlay-client',
+  autoReconnect:  true,
+  maxAttempts:    10,
+  trackEvents:    true,   <span class="comment">// deduplicate by message.event_id</span>
+  enableAck:      true,   <span class="comment">// auto-ACK messages with requires_ack</span>
+  autoConnect:    false,  <span class="comment">// do not connect on construction</span>
+});
+
+ws.on((msg) => {
+  if (msg.type === 'connection') console.log('status:', msg.status);
+  else console.log('received:', msg);
+});
+
+ws.connect();
+ws.send({ type: 'hello', payload: 'world' });
+ws.disconnect();
+ws.destroy();  <span class="comment">// cleanup all listeners, prevent reconnection</span></code></pre>
+    </div>
+  </div>
+
+  <script type="module">
+    import { WebSocketManager } from '../../src/core/websocket-manager.js';
+
+    let ws = null;
+
+    const logEl      = document.getElementById('msg-log');
+    const badge      = document.getElementById('ws-status-badge');
+    const attemptsEl = document.getElementById('ws-attempts');
+
+    function log(text, type = 'system') {
+      const now = new Date().toLocaleTimeString('en-US', { hour12: false });
+      const entry = document.createElement('div');
+      entry.className = 'log-entry';
+      entry.innerHTML = `<span class="log-ts">[${now}]</span><span class="log-${type}">${text}</span>`;
+      logEl.appendChild(entry);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function setStatus(status) {
+      const label = status.toUpperCase();
+      badge.className = `status-${status}`;
+      badge.innerHTML = `<i class="fas fa-circle" style="font-size:0.5rem;"></i> ${label}`;
+    }
+
+    function buildWs() {
+      const url = document.getElementById('ws-url').value.trim();
+      if (!url) { log('No URL specified', 'system'); return; }
+
+      if (ws) ws.destroy();
+
+      log(`Connecting to ${url}…`, 'system');
+      setStatus('connecting');
+
+      ws = new WebSocketManager({
+        url,
+        autoReconnect:  true,
+        maxAttempts:    5,
+        trackEvents:    false,
+        autoConnect:    false,   // Connect below via ws.connect()
+      });
+
+      ws.on((msg) => {
+        if (msg.type === 'connection') {
+          setStatus(msg.status);
+          log(`Connection status: ${msg.status}`, 'system');
+          attemptsEl.textContent = ws.reconnectAttempts;
+        } else {
+          log(JSON.stringify(msg), 'in');
+        }
+      });
+
+      ws.connect();
+    }
+
+    document.getElementById('btn-connect').addEventListener('click', buildWs);
+
+    document.getElementById('btn-disconnect').addEventListener('click', () => {
+      ws?.disconnect();
+      setStatus('disconnected');
+      log('Manually disconnected', 'system');
+    });
+
+    document.getElementById('btn-destroy').addEventListener('click', () => {
+      ws?.destroy();
+      ws = null;
+      setStatus('disconnected');
+      log('Instance destroyed — create a new connection to reconnect', 'system');
+    });
+
+    document.getElementById('btn-send').addEventListener('click', () => {
+      const raw = document.getElementById('ws-input').value.trim();
+      if (!raw) return;
+
+      if (!ws || !ws.isConnected()) {
+        log('Not connected — connect first', 'system');
+        return;
+      }
+
+      let msg;
+      try {
+        msg = JSON.parse(raw);
+      } catch {
+        log(`Invalid JSON: ${raw}`, 'system');
+        return;
+      }
+
+      const sent = ws.send(msg);
+      if (sent) log(JSON.stringify(msg), 'out');
+    });
+
+    // Allow Enter key in send input
+    document.getElementById('ws-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') document.getElementById('btn-send').click();
+    });
+
+    log('Click "connect()" to start', 'system');
+  </script>
+</body>
+</html>

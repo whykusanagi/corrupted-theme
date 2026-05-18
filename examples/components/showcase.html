@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Components Showcase · corrupted-theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <link rel="stylesheet" href="../../src/css/toast.css">
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+      padding: var(--spacing-2xl);
+    }
+
+    h1 {
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 20px var(--corrupted-cyan);
+      text-align: center;
+      font-size: 1.8rem;
+      margin: 0 0 0.25rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-align: center;
+      margin: 0 0 var(--spacing-2xl);
+    }
+
+    .demo-section {
+      padding: 1.5rem;
+      margin-block: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      max-width: 760px;
+      margin-inline: auto;
+    }
+
+    .demo-section h2 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-block: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── ClockWidget display ─────────────────────────── */
+    #clock-display {
+      font-size: 2rem;
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 10px var(--corrupted-cyan);
+      font-weight: bold;
+      min-height: 5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.15rem;
+    }
+
+    #clock-display .clock-widget__date {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    #clock-display .clock-widget__timezone {
+      font-size: 0.65rem;
+      color: var(--corrupted-magenta);
+    }
+
+    /* ── EventBar display ────────────────────────────── */
+    .event-bar { display: flex; flex-direction: column; gap: 0.4rem; }
+
+    .event-bar__row {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: rgba(0,0,0,0.3);
+    }
+
+    .event-bar__icon { font-size: 0.9rem; }
+
+    .event-bar__label {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      min-width: 100px;
+    }
+
+    .event-bar__content {
+      color: var(--corrupted-cyan);
+      font-size: 0.8rem;
+      font-weight: bold;
+    }
+
+    /* ── LogoBanner stage ────────────────────────────── */
+    #logo-stage {
+      position: relative;
+      height: 160px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+
+    .logo-banner__subtitle {
+      color: var(--corrupted-cyan);
+      font-size: 0.8rem;
+      text-shadow: 0 0 8px var(--corrupted-cyan);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-top: 0.25rem;
+    }
+
+    /* ── NsfwReveal target ───────────────────────────── */
+    #nsfw-stage {
+      position: relative;
+      display: inline-block;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    #nsfw-target {
+      display: block;
+      width: 240px;
+      height: 120px;
+      background: linear-gradient(135deg, var(--corrupted-purple), var(--corrupted-magenta));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      color: #fff;
+      user-select: none;
+    }
+
+    /* ── Clipboard demo ──────────────────────────────── */
+    .clipboard-row {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .clipboard-row code {
+      background: rgba(0,255,255,0.08);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.3rem 0.6rem;
+      font-size: 0.8rem;
+      color: var(--corrupted-cyan);
+    }
+  </style>
+</head>
+<body>
+
+  <h1><i class="fas fa-puzzle-piece"></i> Components Showcase</h1>
+  <p class="subtitle">Toast · ClockWidget · EventBar · LogoBanner · NsfwReveal · Lightbox · clipboard — <code>0.2.0</code></p>
+
+  <!-- ── Toast ─────────────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-bell"></i> Toast — notification singleton</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Auto-mounts a container on first use. Pair with <code>src/css/toast.css</code>.
+    </p>
+    <div class="controls">
+      <button class="btn" id="btn-toast-default">show()</button>
+      <button class="btn" id="btn-toast-success">success()</button>
+      <button class="btn" id="btn-toast-error">error()</button>
+      <button class="btn" id="btn-toast-info">info()</button>
+      <button class="btn" id="btn-toast-long">Long duration</button>
+    </div>
+  </div>
+
+  <!-- ── ClockWidget ───────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-clock"></i> ClockWidget — cycling multi-timezone clock</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Cycles through timezones every 5 s. Delegates ticking to <code>TimerRegistry</code>.
+    </p>
+    <div id="clock-display"></div>
+    <div class="controls" style="margin-top:0.75rem;">
+      <button class="btn" id="btn-clock-stop">stop()</button>
+      <button class="btn" id="btn-clock-start">start()</button>
+      <button class="btn" id="btn-clock-destroy">destroy()</button>
+    </div>
+  </div>
+
+  <!-- ── EventBar ──────────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-list-alt"></i> EventBar — stream event display</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Live update with <code>update(items)</code>. Suited for stream overlays and dashboards.
+    </p>
+    <div id="event-bar-container"></div>
+    <div class="controls" style="margin-top:0.75rem;">
+      <button class="btn" id="btn-event-update">update()</button>
+      <button class="btn" id="btn-event-destroy">destroy()</button>
+    </div>
+  </div>
+
+  <!-- ── LogoBanner ────────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-image"></i> LogoBanner — positioned logo with animation</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Five position presets, three sizes, fade/slide/none animations.
+    </p>
+    <div id="logo-stage">
+      <div id="logo-banner-el"></div>
+    </div>
+    <div class="controls" style="margin-top:0.75rem;">
+      <button class="btn" id="btn-logo-show">show()</button>
+      <button class="btn" id="btn-logo-hide">hide()</button>
+      <button class="btn" id="btn-logo-topright">top-right</button>
+      <button class="btn" id="btn-logo-center">center</button>
+      <button class="btn" id="btn-logo-bottomleft">bottom-left</button>
+    </div>
+  </div>
+
+  <!-- ── NsfwReveal ────────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-eye-slash"></i> NsfwReveal — blur-until-clicked overlay</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Wraps any element. First click removes the blur. Re-apply via <code>destroy()</code> + new instance.
+    </p>
+    <div id="nsfw-stage">
+      <div id="nsfw-target">HIDDEN CONTENT</div>
+    </div>
+    <div class="controls" style="margin-top:0.75rem;">
+      <button class="btn" id="btn-nsfw-reset">Reset (re-blur)</button>
+      <button class="btn" id="btn-nsfw-reveal">reveal()</button>
+    </div>
+  </div>
+
+  <!-- ── Lightbox ──────────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-expand"></i> Lightbox — fullscreen image viewer</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Keyboard (Esc / ←→) and touch-swipe navigation. Extracted from <code>gallery.js</code>.
+    </p>
+    <div class="controls">
+      <button class="btn" id="btn-lb-open0">Open image 1</button>
+      <button class="btn" id="btn-lb-open1">Open image 2</button>
+      <button class="btn" id="btn-lb-open2">Open image 3</button>
+    </div>
+  </div>
+
+  <!-- ── Clipboard ─────────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-clipboard"></i> copyWithFeedback — clipboard helper</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Copies text to the clipboard and briefly swaps the button label to confirm.
+    </p>
+    <div class="clipboard-row">
+      <code id="copy-target-text">npm install @whykusanagi/corrupted-theme</code>
+      <button class="btn" id="btn-copy">COPY</button>
+    </div>
+  </div>
+
+  <script type="module">
+    import { Toast }           from '../../src/lib/toast.js';
+    import { ClockWidget }     from '../../src/lib/clock-widget.js';
+    import { EventBar }        from '../../src/lib/event-bar.js';
+    import { LogoBanner }      from '../../src/lib/logo-banner.js';
+    import { NsfwReveal }      from '../../src/lib/nsfw-reveal.js';
+    import { Lightbox }        from '../../src/lib/lightbox.js';
+    import { copyWithFeedback } from '../../src/core/clipboard-helpers.js';
+
+    // ── Toast ─────────────────────────────────────────────────────────────────
+    document.getElementById('btn-toast-default').addEventListener('click',
+      () => Toast.show('Default notification'));
+    document.getElementById('btn-toast-success').addEventListener('click',
+      () => Toast.success('Operation succeeded'));
+    document.getElementById('btn-toast-error').addEventListener('click',
+      () => Toast.error('Something went wrong'));
+    document.getElementById('btn-toast-info').addEventListener('click',
+      () => Toast.info('Loading in progress…'));
+    document.getElementById('btn-toast-long').addEventListener('click',
+      () => Toast.show('This persists for 5 seconds', { duration: 5000 }));
+
+    // ── ClockWidget ───────────────────────────────────────────────────────────
+    let clock = new ClockWidget(document.getElementById('clock-display'), {
+      timezones: ['America/Los_Angeles', 'America/New_York', 'Europe/London', 'Asia/Tokyo'],
+      cycleMs:   5000,
+      format:    '12h',
+      showDate:  true,
+    });
+    clock.start();
+
+    document.getElementById('btn-clock-stop').addEventListener('click',    () => clock.stop());
+    document.getElementById('btn-clock-start').addEventListener('click',   () => clock.start());
+    document.getElementById('btn-clock-destroy').addEventListener('click', () => {
+      clock.destroy();
+      // Recreate so the demo remains usable
+      clock = new ClockWidget(document.getElementById('clock-display'), {
+        timezones: ['America/Los_Angeles', 'America/New_York', 'Europe/London', 'Asia/Tokyo'],
+        cycleMs: 5000, format: '12h', showDate: true,
+      });
+    });
+
+    // ── EventBar ──────────────────────────────────────────────────────────────
+    const EVENTS_A = [
+      { label: 'Latest Follow', content: '@celeste_fan',  icon: '★' },
+      { label: 'Latest Sub',    content: '@darkwave99',   icon: '♥' },
+      { label: 'Latest Tip',    content: '$10.00',        icon: '✦' },
+    ];
+    const EVENTS_B = [
+      { label: 'Latest Follow', content: '@whykusanagi',  icon: '★' },
+      { label: 'Latest Sub',    content: '@neural_drift', icon: '♥' },
+      { label: 'Latest Cheer',  content: '500 bits',      icon: '⚡' },
+    ];
+    let eventBarState = 0;
+    const eb = new EventBar(document.getElementById('event-bar-container'), {
+      items: EVENTS_A,
+    });
+
+    document.getElementById('btn-event-update').addEventListener('click', () => {
+      eventBarState ^= 1;
+      eb.update(eventBarState ? EVENTS_B : EVENTS_A);
+    });
+    document.getElementById('btn-event-destroy').addEventListener('click', () => {
+      eb.destroy();
+      Toast.info('EventBar destroyed');
+    });
+
+    // ── LogoBanner ────────────────────────────────────────────────────────────
+    let banner = new LogoBanner(document.getElementById('logo-banner-el'), {
+      subtitle:  'CORRUPTED STREAM',
+      size:      'small',
+      animation: 'fade',
+      position:  'top-right',
+    });
+    banner.show();
+
+    document.getElementById('btn-logo-show').addEventListener('click', () => banner.show());
+    document.getElementById('btn-logo-hide').addEventListener('click', () => banner.hide());
+    document.getElementById('btn-logo-topright').addEventListener('click', () => {
+      banner.update({ position: 'top-right', animation: 'fade' });
+      banner.show();
+    });
+    document.getElementById('btn-logo-center').addEventListener('click', () => {
+      banner.update({ position: 'center', animation: 'fade' });
+      banner.show();
+    });
+    document.getElementById('btn-logo-bottomleft').addEventListener('click', () => {
+      banner.update({ position: 'bottom-left', animation: 'slide' });
+      banner.show();
+    });
+
+    // ── NsfwReveal ────────────────────────────────────────────────────────────
+    let nsfwReveal = null;
+
+    function applyNsfwReveal() {
+      const target = document.getElementById('nsfw-target');
+      if (nsfwReveal) nsfwReveal.destroy();
+      nsfwReveal = new NsfwReveal(target, {
+        warning: 'NSFW · click to reveal',
+        blurPx:  20,
+      });
+    }
+
+    applyNsfwReveal();  // Apply on load
+
+    document.getElementById('btn-nsfw-reset').addEventListener('click', applyNsfwReveal);
+    document.getElementById('btn-nsfw-reveal').addEventListener('click', () => {
+      nsfwReveal?.reveal();
+    });
+
+    // ── Lightbox ──────────────────────────────────────────────────────────────
+    // Use placeholder images (picsum.photos) so this works offline-ish from cache
+    const lb = new Lightbox(null, {
+      onOpen:  (img, i) => console.log('[lightbox] opened index', i, img.src),
+      onClose: () => console.log('[lightbox] closed'),
+    });
+
+    lb.setImages([
+      {
+        src:     'https://picsum.photos/seed/corrupt1/800/500',
+        alt:     'Corruption demo 1',
+        caption: 'Signal degradation detected — sector 7',
+        isNsfw:  false,
+      },
+      {
+        src:     'https://picsum.photos/seed/corrupt2/800/500',
+        alt:     'Corruption demo 2',
+        caption: 'Memory fragment recovered — partial read',
+        isNsfw:  false,
+      },
+      {
+        src:     'https://picsum.photos/seed/corrupt3/800/500',
+        alt:     'Corruption demo 3',
+        caption: 'Neural core diagnostic — scan complete',
+        isNsfw:  false,
+      },
+    ]);
+
+    document.getElementById('btn-lb-open0').addEventListener('click', () => lb.open(0));
+    document.getElementById('btn-lb-open1').addEventListener('click', () => lb.open(1));
+    document.getElementById('btn-lb-open2').addEventListener('click', () => lb.open(2));
+
+    // ── Clipboard ─────────────────────────────────────────────────────────────
+    const copyBtn  = document.getElementById('btn-copy');
+    const copyText = document.getElementById('copy-target-text').textContent;
+    copyBtn.addEventListener('click', () => {
+      copyWithFeedback(copyBtn, copyText, { successLabel: 'COPIED!', durationMs: 1500 });
+    });
+  </script>
+</body>
+</html>

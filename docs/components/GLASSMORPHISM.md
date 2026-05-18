@@ -1,7 +1,7 @@
 # Celeste Brand System - Glassmorphism
 
-**Version**: 1.0.0
-**Last Updated**: 2025-12-13
+**Version**: 0.2.0
+**Last Updated**: 2026-05-18
 **Status**: 🟠 **HIGH PRIORITY DOCUMENT**
 
 ---
@@ -342,6 +342,49 @@ window.addEventListener('scroll', () => {
 
 ---
 
+## 0.2.0 Container Variants
+
+The T12 glassmorphism CSS merge added standalone container classes and color modifier classes in `src/css/glassmorphism.css`. These compose with the existing depth layers.
+
+### Standalone Container Classes
+
+| Class | Opacity | Blur | Use Case |
+|-------|---------|------|----------|
+| `.glass-container` | 85% | 15px | Default container (replaces ad-hoc glass inline styles) |
+| `.glass-container-dark` | 92% | 20px | Modals, dropdowns, elevated panels |
+| `.glass-container-subtle` | 60% | 8px | Low-key background sections |
+| `.glass-container-gradient` | 80% + gradient | 15px | Hero sections with branded gradient overlay |
+| `.glass-container-animated` | 80% | 15px | Animated shimmer; adds border glow pulse |
+
+All variants include the `@supports not (backdrop-filter)` fallback automatically — no extra code needed.
+
+### Color Modifier Classes
+
+Compose with any container class to tint the border and shadow:
+
+```html
+<!-- Cyan-tinted glass card -->
+<div class="glass-container glass-container-cyan">...</div>
+
+<!-- Purple-tinted elevated panel -->
+<div class="glass-container-dark glass-container-purple">...</div>
+
+<!-- Magenta accent (default brand) -->
+<div class="glass-container glass-container-magenta">...</div>
+```
+
+| Modifier | Border Color | Shadow Tint |
+|----------|-------------|-------------|
+| `.glass-container-cyan` | `#00ffff` | cyan glow |
+| `.glass-container-purple` | `#8b5cf6` | purple glow |
+| `.glass-container-magenta` | `#d94f90` | magenta glow (default accent) |
+
+### `@supports` Fallback
+
+All new classes include an automatic `@supports not (backdrop-filter: blur(1px))` block that upgrades the background opacity to 0.95 so content remains readable on browsers without blur support.
+
+---
+
 ## CLI Equivalent (Block Characters)
 
 Since terminals don't support `backdrop-filter`, the CLI achieves glassmorphism through **block characters and color gradients**.
@@ -599,4 +642,4 @@ From `DESIGN_TOKENS.md`:
 
 ---
 
-**Status**: ✅ **GLASSMORPHISM COMPLETE** - Ready for implementation
+**Status**: ✅ **GLASSMORPHISM COMPLETE** - Updated for 0.2.0 (new container variants + color modifiers)

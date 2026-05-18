@@ -2,8 +2,8 @@
 
 > **Celeste Brand System** | Component Documentation
 > **Document**: Animation Guidelines
-> **Version**: 1.0.0
-> **Last Updated**: 2025-12-13
+> **Version**: 0.2.0
+> **Last Updated**: 2026-05-18
 
 ---
 
@@ -476,6 +476,62 @@ Multi-layer glitch effect for error states or brand moments:
 
 ---
 
+## CRT Effects & Advanced Glitch Keyframes (0.2.0)
+
+### CSS Classes
+
+Two new CSS classes ship in `src/css/animations.css` as of 0.2.0:
+
+#### `.glitch-word`
+
+Inline RGB-split glitch effect driven by CSS pseudo-elements. Activates on hover.
+
+```html
+<span class="glitch-word" data-text="CORRUPTED">CORRUPTED</span>
+```
+
+```css
+/* Defined in animations.css — activated on :hover */
+.glitch-word { position: relative; }
+.glitch-word::before { color: #d94f90; /* pink channel */ }
+.glitch-word::after  { color: #8b5cf6; /* purple channel */ }
+```
+
+#### `.glitch-kanji`
+
+Full-line glitch wrapper with scanline overlay and scattered Japanese characters. Use for dramatic headings or hover effects on corrupted text elements.
+
+```html
+<h2 class="glitch-kanji">SYSTEM CORRUPT</h2>
+```
+
+Both classes respect `prefers-reduced-motion` — animation is disabled when the user has reduced motion enabled.
+
+### CRT Effects JS Layer (`src/lib/crt-effects.js`)
+
+The `CRTEffects` class applies a post-processing CRT overlay to a container element. It uses CSS animation keyframes defined in `animations.css`:
+
+| Keyframe | Purpose |
+|----------|---------|
+| `scanline-movement` | Horizontal scanline drift |
+| `crt-flicker` | Phosphor flicker at 0.12s cadence |
+
+```javascript
+import { CRTEffects } from '@whykusanagi/corrupted-theme/crt-effects';
+
+const crt = new CRTEffects(document.querySelector('.hero'), {
+  scanlines: true,
+  flicker: true,
+  phosphor: true,
+  intensity: 0.3,
+});
+crt.start();
+```
+
+See [`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md) for the full `CRTEffects` API.
+
+---
+
 ## CLI Terminal Animations
 
 ### Terminal Constraints
@@ -895,7 +951,7 @@ Need animation?
 
 ---
 
-**Last Updated**: 2025-12-13
-**Version**: 1.0.0
+**Last Updated**: 2026-05-18
+**Version**: 0.2.0
 **Maintainer**: Celeste Brand System
-**Status**: ✅ Phase 2 Complete
+**Status**: ✅ Updated for 0.2.0 (CRT effects + glitch keyframes)

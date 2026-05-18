@@ -10,7 +10,7 @@ routes = [
 
 # KV namespace for the @latest pointer (ID populated in T2)
 kv_namespaces = [
-  { binding = "CDN_KV", id = "REPLACE_WITH_KV_NAMESPACE_ID_IN_T2" }
+  { binding = "CDN_KV", id = "8745f4ef73094a33a9f73a6ab00df671" }
 ]
 
 [observability]

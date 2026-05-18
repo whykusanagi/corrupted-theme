@@ -2,7 +2,7 @@
 
 **Purpose**: Canonical list of every file containing a version number. Update all of these when releasing a new version.
 
-**Current Version**: 0.1.9
+**Current Version**: 0.2.0
 
 ---
 
@@ -10,8 +10,8 @@
 
 | # | File | Location(s) | What to change |
 |---|------|-------------|----------------|
-| 1 | `package.json` | line 3 | `"version": "0.1.9"` |
-| 2 | `package-lock.json` | lines 3 and 9 | `"version": "0.1.9"` (both occurrences) |
+| 1 | `package.json` | line 3 | `"version": "0.2.0"` |
+| 2 | `package-lock.json` | lines 3 and 9 | `"version": "0.2.0"` (both occurrences) |
 | 3 | `CHANGELOG.md` | top of file | Add new `## [0.1.X] - YYYY-MM-DD` section |
 | 4 | `README.md` | search for old ver | Any install/usage examples with pinned version |
 | 5 | `index.html` *(root)* | lines 476, 725 | Hero badge `v0.1.X` and footer `Corrupted Theme v0.1.X` |
@@ -49,8 +49,8 @@
 ```bash
 # Set these BEFORE running — OLD must be the current version on main,
 # NEW must be the version you're bumping to. They must differ.
-NEW=0.1.10   # ← target version
-OLD=0.1.9    # ← currently shipped version (matches package.json today)
+NEW=0.2.1    # ← target version
+OLD=0.2.0    # ← currently shipped version (matches package.json today)
 
 # 1. Core package files (auto-syncs both package.json and package-lock.json)
 npm version patch --no-git-tag-version   # or minor / major
@@ -79,7 +79,7 @@ grep -rn "${OLD}" . --include="*.html" --include="*.md" --include="*.json" \
 ## Verify Current State
 
 ```bash
-# Quick check — should only show 0.1.9 in live files, old versions only in CHANGELOG
+# Quick check — should only show 0.2.0 in live files, old versions only in CHANGELOG
 grep -rn "0\.1\.[0-9]" . --include="*.html" --include="*.json" \
   | grep -v node_modules | grep -v ".git"
 ```

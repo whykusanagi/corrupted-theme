@@ -104,7 +104,7 @@ Increment when you make **backward-compatible bug fixes**:
 - **Public API**: Not stable yet
 - **Use case**: Early adopters, experimentation
 
-**Current Celeste version**: `0.1.9` (pre-1.0.0)
+**Current Celeste version**: `0.2.0` (pre-1.0.0)
 
 ### Post-1.0.0 (Stable)
 
@@ -484,7 +484,7 @@ context.
 
 **Last Updated**: 2025-12-13
 **Version**: 1.0.0
-**Current Celeste Version**: 0.1.9
+**Current Celeste Version**: 0.2.0
 **Versioning Spec**: Semantic Versioning 2.0.0
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Active Policy

@@ -88,8 +88,10 @@ pnpm add @whykusanagi/corrupted-theme
 
 ```html
 <!-- Full theme (8.2KB gzipped) -->
-<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.1.9/dist/theme.css">
+<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.2.0/dist/theme.css">
 ```
+
+> **Preferred CDN**: Use the live-site CDN for zero-latency delivery and SRI-verified assets. See [`docs/CDN_CONSUMPTION.md`](../CDN_CONSUMPTION.md) for details.
 
 ### Local Development
 
@@ -724,33 +726,14 @@ npm install @whykusanagi/corrupted-theme@latest
 
 ## Migration Guide
 
-### From v0.1.x to v0.2.x (Future)
+### From v0.1.x to v0.2.0
 
-**Planned breaking changes**:
-1. Design tokens moved to external JSON file
-2. CSS custom property names standardized (e.g., `--accent` → `--color-accent`)
-3. Component naming conventions updated
+See [`docs/MIGRATION_CONTAINER_0.2.0.md`](../MIGRATION_CONTAINER_0.2.0.md) for the full guide. Key changes:
 
-```css
-/* Before (v0.1.x) */
-.card {
-  background: var(--glass-bg);
-}
-
-/* After (v0.2.x) */
-.glass-card {  /* Renamed for clarity */
-  background: var(--color-bg-glass);  /* Standardized naming */
-}
-```
-
-**Automated migration**:
-```bash
-# Install migration tool (future)
-npm install -g @whykusanagi/theme-migrate
-
-# Run migration
-theme-migrate upgrade 0.1.x 0.2.x ./src
-```
+- **`.container` class redesigned** — now controls max-width layout; replace old `.container` usage with new `.glass-container` variants where glass effect was intended
+- **New canonical JSON data** — phrase lists and charsets live in `src/data/` instead of inline in JS
+- **New JS exports** — 19 new modules available under `./corruption-manager`, `./animation-blocks`, `./crt-effects`, etc. in `package.json` exports map
+- **No removed exports** — all 0.1.x CSS classes and JS classes remain; 0.2.0 is additive
 
 ### From Custom CSS to Corrupted Theme
 

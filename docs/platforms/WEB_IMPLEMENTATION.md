@@ -2,8 +2,8 @@
 
 > **Celeste Brand System** | Platform Documentation
 > **Document**: Web Implementation Guide
-> **Version**: 1.0.0
-> **Last Updated**: 2025-12-13
+> **Version**: 0.2.0
+> **Last Updated**: 2026-05-18
 
 ---
 
@@ -1205,9 +1205,32 @@ document.querySelector('.form').addEventListener('submit', (e) => {
 
 ---
 
+## CDN Consumption (0.2.0)
+
+For projects that cannot use npm, all JS modules are available directly via CDN. See [`docs/CDN_CONSUMPTION.md`](../CDN_CONSUMPTION.md) for the full guide, SRI hashes, and recommended `<script>` loading patterns.
+
+Quick reference:
+
+```html
+<!-- Full theme CSS -->
+<link rel="stylesheet"
+      href="https://corrupted.whykusanagi.xyz/dist/theme.css">
+
+<!-- Individual JS module (ESM) -->
+<script type="module">
+  import { CorruptedText } from 'https://corrupted.whykusanagi.xyz/src/lib/corrupted-text.js';
+  import { CorruptionManager } from 'https://corrupted.whykusanagi.xyz/src/core/corruption-manager.js';
+</script>
+```
+
+SRI hashes for all CDN assets are published in `CHANGELOG.md` alongside each release.
+
+---
+
 ## Related Documentation
 
 - [NPM_PACKAGE.md](./NPM_PACKAGE.md) - Package installation and configuration
+- [CDN_CONSUMPTION.md](../CDN_CONSUMPTION.md) - CDN import guide and SRI hashes
 - [COMPONENT_MAPPING.md](./COMPONENT_MAPPING.md) - Web ↔ CLI component equivalents
 - [COMPONENT_LIBRARY.md](../components/COMPONENT_LIBRARY.md) - All available components
 - [ANIMATION_GUIDELINES.md](../components/ANIMATION_GUIDELINES.md) - Animation specifications
@@ -1215,7 +1238,7 @@ document.querySelector('.form').addEventListener('submit', (e) => {
 
 ---
 
-**Last Updated**: 2025-12-13
-**Version**: 1.0.0
+**Last Updated**: 2026-05-18
+**Version**: 0.2.0
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Ready for Production

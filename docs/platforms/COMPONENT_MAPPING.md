@@ -2,8 +2,8 @@
 
 > **Celeste Brand System** | Platform Documentation
 > **Document**: Cross-Platform Component Mapping
-> **Version**: 1.0.0
-> **Last Updated**: 2025-12-13
+> **Version**: 0.2.0
+> **Last Updated**: 2026-05-18
 
 ---
 
@@ -110,11 +110,37 @@ This document maps **web components** (from @whykusanagi/corrupted-theme) to the
 | `.video` | N/A | 🌐 | N/A | Web-only (video player) |
 | `.audio` | N/A | 🌐 | N/A | Web-only (audio player) |
 
-**Summary**:
+**Summary** (CSS components):
 - ✅ **30 components** with 1:1 equivalents (53%)
 - 🔄 **18 components** adapted for platform (32%)
 - 🌐 **8 components** web-only (14%)
 - 💻 **0 components** CLI-only (CLI uses web equivalents)
+
+### 0.2.0 JS Library Components (Web-Only)
+
+The following JS modules have no CLI equivalent — they target browser/canvas/WebGL environments. See [`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md) for full APIs.
+
+| npm Export | Class | Category | CLI Equivalent |
+|------------|-------|----------|---------------|
+| `./corruption-manager` | `CorruptionManager` | Core | None (CLI uses Go structs) |
+| `./animation-blocks` | 10 block classes | Animation | `CorruptText()` + `CorruptTextJapanese()` (approximate) |
+| `./crt-effects` | `CRTEffects` | Animation | None |
+| `./corrupted-text` | `CorruptedText` | Corruption | `CorruptTextJapanese()` |
+| `./corrupted-particles` | `CorruptedParticles` | Visual | None |
+| `./corrupted-vortex` | `CorruptedVortex` | Visual | None |
+| `./toast` | `ToastManager` | Feedback | Banner alerts |
+| `./nsfw-reveal` | `NsfwReveal` | Overlay | None |
+| `./gallery` | `Gallery` | Extension | None |
+| `./lightbox` | `Lightbox` | Extension | None |
+| `./countdown-widget` | `CountdownWidget` | Extension | None |
+| `./clock-widget` | `ClockWidget` | Extension | None |
+| `./event-bar` | `EventBar` | Streaming | None |
+| `./logo-banner` | `LogoBanner` | Branding | None |
+| `./png-export` | `PNGExport` | Utility | None |
+| `./websocket-manager` | `WebSocketManager` | Networking | Go WebSocket client |
+| `./random-utils` | helpers | Utility | Go `math/rand` |
+| `./time-utils` | helpers | Utility | Go `time` |
+| `./clipboard-helpers` | helpers | Utility | pbcopy / xclip |
 
 ---
 
@@ -573,7 +599,7 @@ Need navigation?
 
 ---
 
-**Last Updated**: 2025-12-13
-**Version**: 1.0.0
+**Last Updated**: 2026-05-18
+**Version**: 0.2.0
 **Maintainer**: Celeste Brand System
-**Status**: ✅ Complete Cross-Platform Reference
+**Status**: ✅ Complete Cross-Platform Reference (updated for 0.2.0)

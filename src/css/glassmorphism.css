@@ -215,3 +215,95 @@
     border-radius: var(--radius-lg);
   }
 }
+
+/* ========== 0.2.0: variants ported from celeste-tts-bot/obs/shared/glass-morphism.css ========== */
+/* Adds dark/subtle/gradient container variants, an animation helper,
+   colour modifiers (cyan / purple / magenta), and a @supports fallback.
+   Resolves the 30+ duplicate glass-morphism instances flagged in the audit.
+   Source: celeste-tts-bot/obs/shared/glass-morphism.css (2026-01-23)       */
+
+/* Dark variant — high-contrast, intense glow. Use for boss battles,
+   critical alerts, primary focus elements. */
+.glass-container-dark {
+  background: rgba(0, 0, 0, 0.85);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border: 3px solid rgba(0, 255, 255, 0.6);
+  border-radius: 15px;
+  box-shadow:
+    0 0 30px rgba(0, 255, 255, 0.7),
+    0 0 50px rgba(139, 92, 246, 0.4),
+    inset 0 0 40px rgba(0, 0, 0, 0.6);
+}
+
+/* Subtle variant — minimal presence. Use for background panels,
+   decorative elements, non-interactive displays. */
+.glass-container-subtle {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 255, 255, 0.2);
+  border-radius: 12px;
+  box-shadow:
+    0 0 15px rgba(0, 255, 255, 0.3),
+    0 0 30px rgba(139, 92, 246, 0.2),
+    inset 0 0 20px rgba(0, 0, 0, 0.4);
+}
+
+/* Gradient variant — warm amber-to-brown base. Use for shop panels,
+   special UI elements with a distinct personality. */
+.glass-container-gradient {
+  background: linear-gradient(
+    135deg,
+    rgba(40, 30, 20, 0.95),
+    rgba(60, 45, 30, 0.95)
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 3px solid rgba(139, 92, 246, 0.5);
+  border-radius: 15px;
+  box-shadow:
+    0 0 20px rgba(139, 92, 246, 0.4),
+    inset 0 0 30px rgba(0, 0, 0, 0.5);
+}
+
+/* Animation performance hint. Add to glass containers that animate
+   backdrop-filter or opacity changes. */
+.glass-container-animated {
+  will-change: backdrop-filter, opacity;
+}
+
+/* @supports fallback — browsers without backdrop-filter get a solid
+   dark background rather than a transparent but unblurred panel. */
+@supports not (backdrop-filter: blur(10px)) {
+  .glass-container,
+  .glass-container-dark,
+  .glass-container-subtle,
+  .glass-container-gradient {
+    background: rgba(0, 0, 0, 0.9);
+  }
+}
+
+/* ---- Color modifier variants ---- */
+/* Compose with a base container: <div class="glass-container glass-container-cyan"> */
+
+.glass-container-cyan {
+  border-color: rgba(0, 255, 255, 0.4);
+  box-shadow:
+    0 0 20px rgba(0, 255, 255, 0.6),
+    0 0 40px rgba(0, 255, 255, 0.3);
+}
+
+.glass-container-purple {
+  border-color: rgba(139, 92, 246, 0.4);
+  box-shadow:
+    0 0 20px rgba(139, 92, 246, 0.6),
+    0 0 40px rgba(139, 92, 246, 0.3);
+}
+
+.glass-container-magenta {
+  border-color: rgba(217, 79, 144, 0.4);
+  box-shadow:
+    0 0 20px rgba(217, 79, 144, 0.6),
+    0 0 40px rgba(217, 79, 144, 0.3);
+}

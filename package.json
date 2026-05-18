@@ -107,5 +107,13 @@
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {
     "url": "https://github.com/whykusanagi/corrupted-theme/issues"
+  },
+  "peerDependencies": {
+    "html2canvas": ">=1.4.0"
+  },
+  "peerDependenciesMeta": {
+    "html2canvas": {
+      "optional": true
+    }
   }
 }

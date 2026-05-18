@@ -100,7 +100,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### SRI Hashes for CDN consumers
 
-_(Populated after build + `npm run generate-sri` in Plan #5 Task 8 — paste output here before publishing.)_
+For consumers loading 0.2.0 from `cdn.whykusanagi.xyz` / `cdn.nikkers.cc` with `integrity="..."` for production hardening:
+
+```
+dist/theme.min.css
+  integrity="sha384-yVLRYDitu5uQvdKPs8s6MuPdAY2xyxl8nxoJC6G6+LzbMVsBo3d8+dKpIIae8eSq"
+
+dist/timer-registry.global.js
+  integrity="sha384-KEG+XQpvQzne1xE9Rdr1iTWHikjW6G0pcfqvwOTst1Ufn78lgbbzGhy9k5cERDCU"
+```
+
+Regenerate at any time via `npm run generate-sri`.
 
 ---
 

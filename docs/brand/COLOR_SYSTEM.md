@@ -1,9 +1,11 @@
 # Celeste Brand System - Color System
 
-**Version**: 1.0.0
-**Last Updated**: 2025-12-13
+**Version**: 0.2.0
+**Last Updated**: 2026-05-18
 **WCAG Compliance**: AA (4.5:1 minimum)
 **Status**: 🔴 **CRITICAL FOUNDATION DOCUMENT**
+
+> **0.2.0 canonical source**: The 6-color corruption palette and semantic use mapping are now defined in **`src/data/colors.json`** (published with the npm package). That JSON file is the machine-readable single source of truth. See [`docs/CROSS_LANGUAGE_CONTRACT.md`](../CROSS_LANGUAGE_CONTRACT.md) for the schema. The values in this document match colors.json exactly.
 
 ---
 
@@ -580,4 +582,4 @@ See `DESIGN_TOKENS.md` for complete W3C DTCG format.
 
 ---
 
-**Status**: ✅ **COLOR SYSTEM COMPLETE** - All colors specified with WCAG compliance
+**Status**: ✅ **COLOR SYSTEM COMPLETE** - All colors specified with WCAG compliance (0.2.0: canonical JSON source at src/data/colors.json)

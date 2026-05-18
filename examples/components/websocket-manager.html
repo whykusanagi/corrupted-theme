@@ -3,57 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WebSocketManager · corrupted-theme</title>
+  <title>WebSocketManager - Corrupted Theme</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../../src/css/theme.css">
   <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: var(--text);
-      font-family: 'Courier New', monospace;
-      padding: var(--spacing-2xl);
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
     }
 
-    h1 {
-      color: var(--corrupted-cyan, #00ffff);
-      text-shadow: 0 0 20px var(--corrupted-cyan, #00ffff);
-      text-align: center;
-      font-size: 1.8rem;
-      margin: 0 0 0.25rem;
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
     }
 
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      text-align: center;
-      margin: 0 0 var(--spacing-2xl);
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
     }
 
-    .demo-section {
-      padding: 1.5rem;
-      margin-block: 1rem;
+    .demo-area {
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-block: var(--spacing-md);
+    }
+
+    .code-block {
+      background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      max-width: 760px;
-      margin-inline: auto;
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
     }
 
-    .demo-section h2 {
-      color: var(--accent);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin: 0 0 var(--spacing-md);
+    .code-block pre {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      white-space: pre;
     }
 
     .controls {
       display: flex;
-      gap: 0.5rem;
-      margin-block: 0.5rem;
+      gap: var(--spacing-sm);
       flex-wrap: wrap;
+      margin-block: var(--spacing-md);
       align-items: center;
     }
 
@@ -62,7 +67,7 @@
       border: 1px solid var(--corrupted-cyan, #00ffff);
       border-radius: var(--radius-md);
       padding: 0.75rem 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: var(--spacing-lg);
       background: rgba(0,255,255,0.04);
       font-size: 0.8rem;
       color: var(--text-muted);
@@ -98,12 +103,12 @@
       border: 1px solid var(--border);
     }
 
-    #ws-status-badge.status-connected  { background: rgba(0,255,0,0.1);  border-color: var(--corrupted-green, #00ff00);   color: var(--corrupted-green, #00ff00);   }
-    #ws-status-badge.status-connecting { background: rgba(255,255,0,0.1); border-color: #ffff00;                  color: #ffff00;                  }
+    #ws-status-badge.status-connected  { background: rgba(0,255,0,0.1);     border-color: var(--corrupted-green, #00ff00);   color: var(--corrupted-green, #00ff00);   }
+    #ws-status-badge.status-connecting { background: rgba(255,255,0,0.1);   border-color: #ffff00;                           color: #ffff00;                            }
     #ws-status-badge.status-closed,
     #ws-status-badge.status-error,
-    #ws-status-badge.status-failed     { background: rgba(255,0,0,0.1);  border-color: var(--corrupted-red, #ff0000);     color: var(--corrupted-red, #ff0000);     }
-    #ws-status-badge.status-disconnected { background: rgba(128,128,128,0.1); border-color: var(--text-muted); color: var(--text-muted); }
+    #ws-status-badge.status-failed     { background: rgba(255,0,0,0.1);     border-color: var(--corrupted-red, #ff0000);     color: var(--corrupted-red, #ff0000);     }
+    #ws-status-badge.status-disconnected { background: rgba(128,128,128,0.1); border-color: var(--text-muted);              color: var(--text-muted);                  }
 
     /* ── Message log ───────────────────────────────── */
     #msg-log {
@@ -150,29 +155,23 @@
       border-color: var(--corrupted-cyan, #00ffff);
     }
 
-    /* ── Code block ────────────────────────────────── */
-    .code-block {
-      background: rgba(0,0,0,0.4);
+    /* URL input in controls row */
+    .controls input[type="text"] {
+      flex: 1;
+      background: rgba(0,0,0,0.5);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 0.75rem 1rem;
-      margin-top: 0.75rem;
-      overflow-x: auto;
-    }
-
-    .code-block pre {
-      margin: 0;
-      font-size: 0.75rem;
-      color: var(--corrupted-cyan, #00ffff);
-      line-height: 1.5;
-      white-space: pre;
+      padding: 0.4rem 0.6rem;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.8rem;
+      outline: none;
     }
 
     .code-block .comment { color: var(--text-muted); }
   </style>
 </head>
 <body>
-
   <!-- Global Navigation -->
   <nav class="navbar">
     <div class="navbar-content">
@@ -182,7 +181,7 @@
         <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
         <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
         <li class="has-submenu">
-          <a href="#">
+          <a href="#" class="active">
             <i class="fas fa-flask"></i> Examples
             <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
           </a>
@@ -205,56 +204,60 @@
     </div>
   </nav>
 
-  <h1><i class="fas fa-plug"></i> WebSocketManager</h1>
-  <p class="subtitle">Auto-reconnecting WebSocket wrapper with event dedup and ACK support — <code>src/core/websocket-manager.js</code></p>
+  <div class="container">
+    <h1><i class="fas fa-plug"></i> WebSocketManager</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      WebSocketManager: auto-reconnect, dedup, ACK.
+      Provided by <code>src/core/websocket-manager.js</code>.
+    </p>
 
-  <div class="demo-section">
+    <!-- Live connection demo -->
+    <section class="example-group">
+      <h3><i class="fas fa-satellite-dish"></i> Live Connection</h3>
 
-    <div class="setup-note">
-      <strong><i class="fas fa-info-circle"></i> Setup</strong><br>
-      This demo uses the public <strong>wss://echo.websocket.org</strong> echo server.
-      Every JSON message you send is echoed back unchanged.<br><br>
-      To test against your own server, change the URL in the input below.
-      When <code>autoConnect: false</code> is set, the socket will not connect
-      until you call <code>ws.connect()</code> explicitly.
-    </div>
+      <div class="setup-note">
+        <strong><i class="fas fa-info-circle"></i> Setup</strong><br>
+        This demo uses the public <strong>wss://echo.websocket.org</strong> echo server.
+        Every JSON message you send is echoed back unchanged.<br><br>
+        To test against your own server, change the URL in the input below.
+        When <code>autoConnect: false</code> is set, the socket will not connect
+        until you call <code>ws.connect()</code> explicitly.
+      </div>
 
-    <h2><i class="fas fa-satellite-dish"></i> Live Connection</h2>
+      <!-- URL + connect/disconnect -->
+      <div class="controls">
+        <input type="text" id="ws-url" value="wss://echo.websocket.org">
+        <button class="btn" id="btn-connect">connect()</button>
+        <button class="btn" id="btn-disconnect">disconnect()</button>
+        <button class="btn" id="btn-destroy">destroy()</button>
+      </div>
 
-    <!-- URL + connect/disconnect -->
-    <div class="controls">
-      <input type="text" id="ws-url" value="wss://echo.websocket.org"
-             style="flex:1; background:rgba(0,0,0,0.5); border:1px solid var(--border);
-                    border-radius:var(--radius-sm); padding:0.4rem 0.6rem;
-                    color:var(--text); font-family:inherit; font-size:0.8rem; outline:none;">
-      <button class="btn" id="btn-connect">connect()</button>
-      <button class="btn" id="btn-disconnect">disconnect()</button>
-      <button class="btn" id="btn-destroy">destroy()</button>
-    </div>
+      <!-- Status badge -->
+      <div class="status-row">
+        <span id="ws-status-badge" class="status-disconnected">
+          <i class="fas fa-circle" style="font-size:0.5rem;"></i>
+          DISCONNECTED
+        </span>
+        <span style="color: var(--text-muted); font-size: 0.75rem;">
+          reconnect attempts: <span id="ws-attempts">0</span>
+        </span>
+      </div>
 
-    <!-- Status badge -->
-    <div class="status-row">
-      <span id="ws-status-badge" class="status-disconnected">
-        <i class="fas fa-circle" style="font-size:0.5rem;"></i>
-        DISCONNECTED
-      </span>
-      <span style="color:var(--text-muted); font-size:0.75rem;">
-        reconnect attempts: <span id="ws-attempts">0</span>
-      </span>
-    </div>
+      <!-- Message log -->
+      <div id="msg-log"></div>
 
-    <!-- Message log -->
-    <div id="msg-log"></div>
+      <!-- Send -->
+      <div class="send-row">
+        <input type="text" id="ws-input" placeholder='{"type":"ping"}' value='{"type":"ping"}'>
+        <button class="btn" id="btn-send">send()</button>
+      </div>
+    </section>
 
-    <!-- Send -->
-    <div class="send-row">
-      <input type="text" id="ws-input" placeholder='{"type":"ping"}' value='{"type":"ping"}'>
-      <button class="btn" id="btn-send">send()</button>
-    </div>
-
-    <!-- Usage code -->
-    <div class="code-block">
-      <pre><code>import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager';
+    <!-- Usage snippet -->
+    <section class="example-group">
+      <h3><i class="fas fa-code"></i> Usage</h3>
+      <div class="code-block">
+        <pre><code>import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager';
 
 <span class="comment">// autoConnect:false — connect only when ws.connect() is called</span>
 const ws = new WebSocketManager({
@@ -276,7 +279,9 @@ ws.connect();
 ws.send({ type: 'hello', payload: 'world' });
 ws.disconnect();
 ws.destroy();  <span class="comment">// cleanup all listeners, prevent reconnection</span></code></pre>
-    </div>
+      </div>
+    </section>
+
   </div>
 
   <script type="module">

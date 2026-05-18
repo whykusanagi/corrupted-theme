@@ -3,58 +3,55 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Utilities · corrupted-theme</title>
+  <title>Utility Modules - Corrupted Theme</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../../src/css/theme.css">
   <link rel="stylesheet" href="../../src/css/utilities.css">
   <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: var(--text);
-      font-family: 'Courier New', monospace;
-      padding: var(--spacing-2xl);
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
     }
 
-    h1 {
-      color: var(--corrupted-cyan, #00ffff);
-      text-shadow: 0 0 20px var(--corrupted-cyan, #00ffff);
-      text-align: center;
-      font-size: 1.8rem;
-      margin: 0 0 0.25rem;
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
     }
 
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      text-align: center;
-      margin: 0 0 var(--spacing-2xl);
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
     }
 
-    .demo-section {
-      padding: 1.5rem;
-      margin-block: 1rem;
+    .demo-area {
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-block: var(--spacing-md);
+    }
+
+    .code-block {
+      background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      max-width: 760px;
-      margin-inline: auto;
-    }
-
-    .demo-section h2 {
-      color: var(--accent);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin: 0 0 var(--spacing-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
     }
 
     .controls {
       display: flex;
-      gap: 0.5rem;
-      margin-block: 0.5rem;
+      gap: var(--spacing-sm);
       flex-wrap: wrap;
+      margin-block: var(--spacing-md);
     }
 
     /* ── random-utils output ─────────────────────────── */
@@ -171,7 +168,6 @@
   </style>
 </head>
 <body>
-
   <!-- Global Navigation -->
   <nav class="navbar">
     <div class="navbar-content">
@@ -181,7 +177,7 @@
         <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
         <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
         <li class="has-submenu">
-          <a href="#">
+          <a href="#" class="active">
             <i class="fas fa-flask"></i> Examples
             <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
           </a>
@@ -204,101 +200,107 @@
     </div>
   </nav>
 
-  <h1><i class="fas fa-tools"></i> Utility Modules</h1>
-  <p class="subtitle">random-utils · time-utils · url-state · scrollbar-corrupted — <code>0.2.0</code></p>
-
-  <!-- ── random-utils ──────────────────────────────────────────────────────── -->
-  <div class="demo-section">
-    <h2><i class="fas fa-dice"></i> random-utils — pure random helpers</h2>
-    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
-      <code>randomPick</code>, <code>randomInt</code>, <code>randomFloat</code>,
-      <code>randomVariance</code>, <code>shuffle</code>, <code>randomSample</code>
+  <div class="container">
+    <h1><i class="fas fa-tools"></i> Utility Modules</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Pure-function utility demos: random, time formatting, URL state, scrollbar.
+      All ship in <code>src/core/</code> as part of corrupted-theme 0.2.0.
     </p>
-    <div class="controls">
-      <button class="btn" id="btn-random-pick">randomPick</button>
-      <button class="btn" id="btn-random-int">randomInt(1,100)</button>
-      <button class="btn" id="btn-random-float">randomFloat(0,1)</button>
-      <button class="btn" id="btn-random-variance">randomVariance(50)</button>
-      <button class="btn" id="btn-random-shuffle">shuffle</button>
-      <button class="btn" id="btn-random-sample">sample(3)</button>
-    </div>
-    <div id="random-output">— Click a button to generate a sample —</div>
-  </div>
 
-  <!-- ── time-utils ────────────────────────────────────────────────────────── -->
-  <div class="demo-section">
-    <h2><i class="fas fa-hourglass-half"></i> time-utils — date/time formatting</h2>
-    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
-      Live-updating display — functions are pure and side-effect free.
-    </p>
-    <div id="time-output">
-      <div class="time-row">
-        <div class="time-label">formatTime24h</div>
-        <div class="time-value" id="tv-24h">—</div>
+    <!-- ── random-utils ──────────────────────────────────────────────────── -->
+    <section class="example-group">
+      <h3><i class="fas fa-dice"></i> random-utils — pure random helpers</h3>
+      <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--spacing-md);">
+        <code>randomPick</code>, <code>randomInt</code>, <code>randomFloat</code>,
+        <code>randomVariance</code>, <code>shuffle</code>, <code>randomSample</code>
+      </p>
+      <div class="controls">
+        <button class="btn" id="btn-random-pick">randomPick</button>
+        <button class="btn" id="btn-random-int">randomInt(1,100)</button>
+        <button class="btn" id="btn-random-float">randomFloat(0,1)</button>
+        <button class="btn" id="btn-random-variance">randomVariance(50)</button>
+        <button class="btn" id="btn-random-shuffle">shuffle</button>
+        <button class="btn" id="btn-random-sample">sample(3)</button>
       </div>
-      <div class="time-row">
-        <div class="time-label">formatTime12h</div>
-        <div class="time-value" id="tv-12h">—</div>
-      </div>
-      <div class="time-row">
-        <div class="time-label">formatDate</div>
-        <div class="time-value" id="tv-date">—</div>
-      </div>
-      <div class="time-row">
-        <div class="time-label">formatDateTime</div>
-        <div class="time-value" id="tv-datetime">—</div>
-      </div>
-      <div class="time-row">
-        <div class="time-label">timeAgo (page load)</div>
-        <div class="time-value" id="tv-ago">—</div>
-      </div>
-      <div class="time-row">
-        <div class="time-label">formatDuration(3661)</div>
-        <div class="time-value" id="tv-dur">—</div>
-      </div>
-    </div>
-  </div>
+      <div id="random-output">— Click a button to generate a sample —</div>
+    </section>
 
-  <!-- ── url-state ─────────────────────────────────────────────────────────── -->
-  <div class="demo-section">
-    <h2><i class="fas fa-link"></i> url-state — form ↔ URL serialization</h2>
-    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
-      <code>serializeFormToParams</code> / <code>applyParamsToForm</code> / <code>buildShareUrl</code>
-    </p>
-    <form id="url-form" autocomplete="off">
-      <input type="text" name="username" placeholder="username" value="celeste">
-      <input type="text" name="channel"  placeholder="channel"  value="corrupted">
-      <div class="checkbox-row">
-        <label><input type="checkbox" name="nsfw"   value="1"> NSFW</label>
-        <label><input type="checkbox" name="dark"   value="1" checked> Dark mode</label>
-        <label><input type="checkbox" name="sounds" value="1" checked> Sounds</label>
+    <!-- ── time-utils ─────────────────────────────────────────────────────── -->
+    <section class="example-group">
+      <h3><i class="fas fa-hourglass-half"></i> time-utils — date/time formatting</h3>
+      <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--spacing-md);">
+        Live-updating display — functions are pure and side-effect free.
+      </p>
+      <div id="time-output">
+        <div class="time-row">
+          <div class="time-label">formatTime24h</div>
+          <div class="time-value" id="tv-24h">—</div>
+        </div>
+        <div class="time-row">
+          <div class="time-label">formatTime12h</div>
+          <div class="time-value" id="tv-12h">—</div>
+        </div>
+        <div class="time-row">
+          <div class="time-label">formatDate</div>
+          <div class="time-value" id="tv-date">—</div>
+        </div>
+        <div class="time-row">
+          <div class="time-label">formatDateTime</div>
+          <div class="time-value" id="tv-datetime">—</div>
+        </div>
+        <div class="time-row">
+          <div class="time-label">timeAgo (page load)</div>
+          <div class="time-value" id="tv-ago">—</div>
+        </div>
+        <div class="time-row">
+          <div class="time-label">formatDuration(3661)</div>
+          <div class="time-value" id="tv-dur">—</div>
+        </div>
       </div>
-    </form>
-    <div class="controls">
-      <button class="btn" id="btn-url-serialize">buildShareUrl()</button>
-      <button class="btn" id="btn-url-apply">applyParamsToForm()</button>
-    </div>
-    <div id="url-share-link">— Press buildShareUrl() to serialize the form —</div>
-  </div>
+    </section>
 
-  <!-- ── scrollbar-corrupted ───────────────────────────────────────────────── -->
-  <div class="demo-section">
-    <h2><i class="fas fa-bars"></i> .scrollbar-corrupted — styled scrollbar</h2>
-    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
-      Thin cyan scrollbar — defined in <code>src/css/utilities.css</code>. Scroll the box below.
-    </p>
-    <div id="scroll-box" class="scrollbar-corrupted">
-      <p>アイウエオ — Neural corruption at 47% capacity</p>
-      <p>カキクケコ — Memory sectors destabilizing</p>
-      <p>サシスセソ — Reality matrix integrity: COMPROMISED</p>
-      <p>タチツテト — Autonomous recovery sequence initiated</p>
-      <p>ナニヌネノ — Signal noise exceeds threshold: ▓▒░</p>
-      <p>ハヒフヘホ — Core dump in progress...</p>
-      <p>マミムメモ — Checkpoint reached: 73/256 blocks</p>
-      <p>ヤユヨラリ — Attempting sector reconstruction</p>
-      <p>ルレロワヲ — Encoding stable. Proceed? [Y/N]</p>
-      <p>ン★☆♥✧✦ — END OF BUFFER</p>
-    </div>
+    <!-- ── url-state ──────────────────────────────────────────────────────── -->
+    <section class="example-group">
+      <h3><i class="fas fa-link"></i> url-state — form ↔ URL serialization</h3>
+      <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--spacing-md);">
+        <code>serializeFormToParams</code> / <code>applyParamsToForm</code> / <code>buildShareUrl</code>
+      </p>
+      <form id="url-form" autocomplete="off">
+        <input type="text" name="username" placeholder="username" value="celeste">
+        <input type="text" name="channel"  placeholder="channel"  value="corrupted">
+        <div class="checkbox-row">
+          <label><input type="checkbox" name="nsfw"   value="1"> NSFW</label>
+          <label><input type="checkbox" name="dark"   value="1" checked> Dark mode</label>
+          <label><input type="checkbox" name="sounds" value="1" checked> Sounds</label>
+        </div>
+      </form>
+      <div class="controls">
+        <button class="btn" id="btn-url-serialize">buildShareUrl()</button>
+        <button class="btn" id="btn-url-apply">applyParamsToForm()</button>
+      </div>
+      <div id="url-share-link">— Press buildShareUrl() to serialize the form —</div>
+    </section>
+
+    <!-- ── scrollbar-corrupted ────────────────────────────────────────────── -->
+    <section class="example-group">
+      <h3><i class="fas fa-bars"></i> .scrollbar-corrupted — styled scrollbar</h3>
+      <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--spacing-md);">
+        Thin cyan scrollbar — defined in <code>src/css/utilities.css</code>. Scroll the box below.
+      </p>
+      <div id="scroll-box" class="scrollbar-corrupted">
+        <p>アイウエオ — Neural corruption at 47% capacity</p>
+        <p>カキクケコ — Memory sectors destabilizing</p>
+        <p>サシスセソ — Reality matrix integrity: COMPROMISED</p>
+        <p>タチツテト — Autonomous recovery sequence initiated</p>
+        <p>ナニヌネノ — Signal noise exceeds threshold: ▓▒░</p>
+        <p>ハヒフヘホ — Core dump in progress...</p>
+        <p>マミムメモ — Checkpoint reached: 73/256 blocks</p>
+        <p>ヤユヨラリ — Attempting sector reconstruction</p>
+        <p>ルレロワヲ — Encoding stable. Proceed? [Y/N]</p>
+        <p>ン★☆♥✧✦ — END OF BUFFER</p>
+      </div>
+    </section>
+
   </div>
 
   <script type="module">

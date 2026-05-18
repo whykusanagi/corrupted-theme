@@ -3,31 +3,81 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Particles Background · corrupted-theme</title>
+  <title>Particles Background - Corrupted Theme</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../../src/css/theme.css">
   <style>
-    body {
-      margin: 0;
-      background: #000;
-      /* CorruptedParticlesBackground inserts its canvas as a fixed-position
-         sibling immediately before .glass-backdrop, so it covers the whole
-         page behind all content. No manual canvas tag is needed. */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
     }
 
-    /* ── Content layer ────────────────────────────────────────────────── */
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
 
-    .page {
-      position: relative;
-      z-index: 1;
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
+
+    .demo-area {
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-block: var(--spacing-md);
+    }
+
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .controls {
       display: flex;
-      flex-direction: column;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+      margin-block: var(--spacing-md);
+    }
+
+    /* ── Particles canvas host ────────────────────────────────────────── */
+
+    /*
+     * CorruptedParticlesBackground auto-discovers .glass-backdrop (the default
+     * targetSelector) and inserts the canvas immediately before it in the DOM.
+     * No manual <canvas> tag is required.
+     *
+     * The .particles-demo wrapper gives the canvas a bounded area to render in.
+     */
+    .particles-demo {
+      position: relative;
+      min-height: 300px;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background: rgba(0,0,0,0.5);
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: var(--spacing-2xl);
-      gap: var(--spacing-xl);
-      pointer-events: none;
     }
 
     /* ────────────────────────────────────────────────────────────────────
@@ -38,29 +88,24 @@
     .glass-backdrop {
       position: relative;
       z-index: 1;
-      /* backdrop-filter here would blur the canvas sitting behind this element.
-         We keep it transparent to let the particles show through clearly. */
     }
 
-    /* ── Card content ─────────────────────────────────────────────────── */
-
     .hero-card {
-      pointer-events: auto;
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       padding: var(--spacing-xl) var(--spacing-2xl);
-      max-width: 560px;
+      max-width: 480px;
       width: 100%;
       backdrop-filter: blur(8px);
       text-align: center;
     }
 
-    .hero-card h1 {
+    .hero-card h2 {
       color: var(--corrupted-cyan, #00ffff);
       text-shadow: 0 0 20px var(--corrupted-cyan, #00ffff);
-      font-size: 1.8rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.4rem;
+      margin-bottom: var(--spacing-sm);
       font-family: 'Courier New', monospace;
     }
 
@@ -71,27 +116,7 @@
       font-family: 'Courier New', monospace;
     }
 
-    /* ── Controls panel ───────────────────────────────────────────────── */
-
-    .controls-panel {
-      pointer-events: auto;
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: var(--spacing-lg);
-      width: 100%;
-      max-width: 560px;
-      backdrop-filter: blur(12px);
-    }
-
-    .controls-panel h2 {
-      color: var(--accent);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin: 0 0 var(--spacing-md);
-      font-family: 'Courier New', monospace;
-    }
+    /* ── Control rows ────────────────────────────────────────────────── */
 
     .control-row {
       display: flex;
@@ -101,11 +126,10 @@
     }
 
     .control-row label {
-      color: var(--text-muted);
+      color: var(--text-secondary);
       font-size: 0.8rem;
       width: 120px;
       flex-shrink: 0;
-      font-family: 'Courier New', monospace;
     }
 
     .control-row input[type="range"] {
@@ -134,7 +158,6 @@
       color: var(--corrupted-purple, #8b5cf6);
       font-size: 0.8rem;
       flex: 1;
-      font-family: 'Courier New', monospace;
     }
 
     .rating-badge {
@@ -144,47 +167,9 @@
       padding: 1px 5px;
       border-radius: 3px;
     }
-
-    .btn-row {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: var(--spacing-md);
-      flex-wrap: wrap;
-    }
-
-    /* ── Code block ───────────────────────────────────────────────────── */
-
-    .code-block {
-      pointer-events: auto;
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: var(--spacing-lg);
-      width: 100%;
-      max-width: 560px;
-      backdrop-filter: blur(12px);
-    }
-
-    .code-block h3 {
-      color: var(--accent);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin: 0 0 var(--spacing-md);
-      font-family: 'Courier New', monospace;
-    }
-
-    .code-block pre {
-      margin: 0;
-      overflow-x: auto;
-      font-size: 0.75rem;
-      color: var(--corrupted-cyan, #00ffff);
-      line-height: 1.5;
-    }
   </style>
 </head>
 <body>
-
   <!-- Global Navigation -->
   <nav class="navbar">
     <div class="navbar-content">
@@ -194,7 +179,7 @@
         <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
         <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
         <li class="has-submenu">
-          <a href="#">
+          <a href="#" class="active">
             <i class="fas fa-flask"></i> Examples
             <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
           </a>
@@ -217,24 +202,40 @@
     </div>
   </nav>
 
-  <!--
-    CorruptedParticlesBackground auto-discovers .glass-backdrop (the default
-    targetSelector) and inserts the canvas immediately before it in the DOM.
-    No manual <canvas> tag is required.
-  -->
-  <div class="page">
+  <div class="container">
+    <h1><i class="fas fa-atom"></i> Particles Background</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Auto-injected behind-blur particle background. DPR=1 for performance.
+      Provided by <code>src/lib/corrupted-particles-background.js</code>.
+    </p>
 
-    <div class="hero-card glass-backdrop">
-      <h1><i class="fas fa-atom"></i> Particles Background</h1>
-      <p>
+    <!-- Live demo -->
+    <section class="example-group">
+      <h3><i class="fas fa-play-circle"></i> Live Demo</h3>
+      <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--spacing-md);">
         <code>CorruptedParticlesBackground</code> auto-injects a floating Japanese-phrase
         canvas behind its target element. No manual <code>&lt;canvas&gt;</code> tag needed.
-        The canvas sits at <code>z-index: 0</code> — content above it remains interactive.
       </p>
-    </div>
 
-    <div class="controls-panel">
-      <h2><i class="fas fa-sliders-h"></i> Particle Controls</h2>
+      <!--
+        CorruptedParticlesBackground auto-discovers .glass-backdrop (the default
+        targetSelector) and inserts the canvas immediately before it in the DOM.
+        No manual <canvas> tag is required.
+      -->
+      <div class="particles-demo">
+        <div class="hero-card glass-backdrop">
+          <h2><i class="fas fa-atom"></i> Particles Active</h2>
+          <p>
+            The canvas sits at <code>z-index: 0</code> — content above it remains interactive.
+            Use the controls below to adjust particle density and speed.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Controls -->
+    <section class="example-group">
+      <h3><i class="fas fa-sliders-h"></i> Particle Controls</h3>
 
       <div class="control-row">
         <label>Count</label>
@@ -260,18 +261,19 @@
         <input type="checkbox" id="ctrl-nsfw">
       </div>
 
-      <div class="btn-row">
+      <div class="controls">
         <button class="btn" id="btn-rebuild">Apply</button>
         <button class="btn" id="btn-stop">Stop</button>
         <button class="btn" id="btn-start">Resume</button>
         <button class="btn" id="btn-destroy">Destroy</button>
       </div>
-    </div>
+    </section>
 
-    <!-- Code usage -->
-    <div class="code-block">
-      <h3>Usage</h3>
-      <pre><code>import { CorruptedParticlesBackground }
+    <!-- Usage snippet -->
+    <section class="example-group">
+      <h3><i class="fas fa-code"></i> Usage</h3>
+      <div class="code-block">
+        <pre><code>import { CorruptedParticlesBackground }
   from 'src/lib/corrupted-particles-background.js';
 
 // Injects a canvas immediately before .glass-backdrop (default selector).
@@ -287,7 +289,8 @@ const bg = new CorruptedParticlesBackground({
 bg.stop();     // pause rendering (saves GPU when hidden)
 bg.start();    // resume
 bg.destroy();  // remove canvas + listeners</code></pre>
-    </div>
+      </div>
+    </section>
 
   </div>
 

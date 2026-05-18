@@ -3,44 +3,64 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CRT Effects · corrupted-theme</title>
+  <title>CRT Effects - Corrupted Theme</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../../src/css/theme.css">
   <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: var(--text);
-      font-family: 'Courier New', monospace;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
     }
 
-    /* ── Page layout ────────────────────────────────────────────────────── */
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+    }
 
-    .ui-layer {
-      position: relative;
-      z-index: 1;
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
+    }
+
+    .demo-area {
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-block: var(--spacing-md);
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      padding: var(--spacing-2xl);
-      gap: var(--spacing-xl);
     }
 
-    h1 {
-      color: var(--corrupted-cyan, #00ffff);
-      text-shadow: 0 0 20px var(--corrupted-cyan, #00ffff);
-      text-align: center;
-      font-size: 1.8rem;
+    .code-block {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
+    }
+
+    .code-block pre {
       margin: 0;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
     }
 
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      text-align: center;
-      margin-top: -0.75rem;
+    .controls {
+      display: flex;
+      gap: var(--spacing-sm);
+      flex-wrap: wrap;
+      margin-block: var(--spacing-md);
     }
 
     /* ── CRT demo stage ─────────────────────────────────────────────────── */
@@ -85,32 +105,7 @@
       margin: 0;
     }
 
-    /* ── Controls panel ─────────────────────────────────────────────────── */
-
-    .controls-panel {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: var(--spacing-lg);
-      width: 100%;
-      max-width: 680px;
-      backdrop-filter: blur(12px);
-    }
-
-    .controls-panel h3 {
-      color: var(--accent);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin: 0 0 var(--spacing-md);
-    }
-
-    .btn-row {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: var(--spacing-sm);
-    }
+    /* ── Toggle / slider rows ────────────────────────────────────────────── */
 
     .toggle-row {
       display: flex;
@@ -162,38 +157,9 @@
       width: 36px;
       text-align: right;
     }
-
-    /* ── Code block ─────────────────────────────────────────────────────── */
-
-    .code-block {
-      background: var(--glass);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-lg);
-      padding: var(--spacing-lg);
-      width: 100%;
-      max-width: 680px;
-    }
-
-    .code-block h3 {
-      color: var(--accent);
-      font-size: 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin: 0 0 var(--spacing-md);
-    }
-
-    .code-block pre {
-      margin: 0;
-      overflow-x: auto;
-      font-size: 0.75rem;
-      color: var(--corrupted-cyan, #00ffff);
-      line-height: 1.5;
-      white-space: pre;
-    }
   </style>
 </head>
 <body>
-
   <!-- Global Navigation -->
   <nav class="navbar">
     <div class="navbar-content">
@@ -203,7 +169,7 @@
         <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
         <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
         <li class="has-submenu">
-          <a href="#">
+          <a href="#" class="active">
             <i class="fas fa-flask"></i> Examples
             <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
           </a>
@@ -226,24 +192,29 @@
     </div>
   </nav>
 
-  <div class="ui-layer">
-
+  <div class="container">
     <h1><i class="fas fa-tv"></i> CRT Effects</h1>
-    <p class="subtitle">Scanlines, vignette, chromatic aberration, screen shake and more — <code>src/lib/crt-effects.js</code></p>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      CRT post-processing effects: scanlines, vignette, chromatic aberration, screen shake.
+      Provided by <code>src/lib/crt-effects.js</code>.
+    </p>
 
-    <!-- Demo stage — CRTEffects overlays are injected as absolute children here -->
-    <div id="crt-stage">
-      <div class="stage-content">
-        <h2>SYSTEM ACTIVE</h2>
-        <p>CRT overlays are appended inside this container.<br>Toggle effects below to see scanlines, vignette and flicker.</p>
+    <!-- Demo stage -->
+    <section class="example-group">
+      <h3><i class="fas fa-desktop"></i> Live Demo</h3>
+
+      <div class="demo-area">
+        <!-- CRTEffects overlays are injected as absolute children here -->
+        <div id="crt-stage">
+          <div class="stage-content">
+            <h2>SYSTEM ACTIVE</h2>
+            <p>CRT overlays are appended inside this container.<br>Toggle effects below to see scanlines, vignette and flicker.</p>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Controls -->
-    <div class="controls-panel">
-      <h3><i class="fas fa-sliders-h"></i> Effect Controls</h3>
-
-      <div class="btn-row">
+      <!-- Controls -->
+      <div class="controls">
         <button class="btn" id="btn-start">Start</button>
         <button class="btn" id="btn-stop">Stop</button>
         <button class="btn" id="btn-destroy">Destroy</button>
@@ -278,12 +249,13 @@
         <input type="range" id="ctrl-flicker" min="0.01" max="0.5" step="0.01" value="0.05">
         <span class="slider-val" id="val-flicker">0.05</span>
       </div>
-    </div>
+    </section>
 
     <!-- Usage snippet -->
-    <div class="code-block">
-      <h3>Usage</h3>
-      <pre><code>import { CRTEffects } from 'src/lib/crt-effects.js';
+    <section class="example-group">
+      <h3><i class="fas fa-code"></i> Usage</h3>
+      <div class="code-block">
+        <pre><code>import { CRTEffects } from 'src/lib/crt-effects.js';
 
 const crt = new CRTEffects(containerEl, {
   scanlines:         true,
@@ -299,7 +271,8 @@ crt.screenShake(containerEl, 300);  // 300 ms shake
 crt.animateRGBSplit(containerEl);   // 200 ms RGB split
 crt.stop();                         // pause flicker only
 crt.destroy();                      // full teardown</code></pre>
-    </div>
+      </div>
+    </section>
 
   </div>
 

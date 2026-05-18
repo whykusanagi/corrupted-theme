@@ -3,69 +3,74 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PNG Export · corrupted-theme</title>
+  <title>PNG Export - Corrupted Theme</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../../src/css/theme.css">
   <style>
-    body {
-      margin: 0;
-      background: #000;
-      color: var(--text-primary);
-      font-family: 'Courier New', monospace;
-      padding: var(--spacing-2xl);
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
     }
 
-    h1 {
-      color: var(--corrupted-cyan);
-      text-shadow: 0 0 20px var(--corrupted-cyan);
-      text-align: center;
-      font-size: 1.8rem;
-      margin: 0 0 0.25rem;
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
+      background: var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
     }
 
-    .subtitle {
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      text-align: center;
-      margin: 0 0 var(--spacing-2xl);
+    .example-group h3 {
+      color: var(--accent);
+      margin-bottom: var(--spacing-lg);
+      font-size: 1.25rem;
     }
 
-    .demo-section {
-      padding: 1.5rem;
-      margin-block: 1rem;
+    .demo-area {
+      padding: var(--spacing-lg);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-md);
+      margin-block: var(--spacing-md);
+    }
+
+    .code-block {
+      background: var(--bg);
       border: 1px solid var(--border);
       border-radius: var(--radius-md);
-      background: var(--glass);
-      backdrop-filter: blur(12px);
-      max-width: 760px;
-      margin-inline: auto;
+      padding: var(--spacing-md);
+      margin-top: var(--spacing-md);
+      font-family: 'Courier New', monospace;
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      overflow-x: auto;
     }
 
-    .demo-section h2 {
-      color: var(--accent);
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      margin: 0 0 var(--spacing-md);
+    .code-block pre {
+      margin: 0;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      line-height: 1.5;
+      white-space: pre;
     }
 
     .controls {
       display: flex;
-      gap: 0.5rem;
-      margin-block: 0.75rem;
+      gap: var(--spacing-sm);
       flex-wrap: wrap;
+      margin-block: var(--spacing-md);
       align-items: center;
     }
 
     /* ── Warning banner ────────────────────────────── */
     .peer-dep-warning {
-      border: 1px solid var(--corrupted-magenta);
+      border: 1px solid var(--corrupted-magenta, #ff00ff);
       border-radius: var(--radius-md);
       padding: 0.75rem 1rem;
-      margin-bottom: 1rem;
+      margin-bottom: var(--spacing-lg);
       background: rgba(255,0,255,0.06);
       font-size: 0.8rem;
-      color: var(--corrupted-magenta);
+      color: var(--corrupted-magenta, #ff00ff);
       line-height: 1.6;
     }
 
@@ -79,16 +84,16 @@
     /* ── Export target card ────────────────────────── */
     #export-target {
       background: linear-gradient(135deg, #0a0a1a, #1a001a);
-      border: 2px solid var(--corrupted-cyan);
+      border: 2px solid var(--corrupted-cyan, #00ffff);
       border-radius: var(--radius-md);
       padding: 2rem;
       text-align: center;
       box-shadow: 0 0 30px rgba(0,255,255,0.15);
     }
 
-    #export-target h3 {
-      color: var(--corrupted-cyan);
-      text-shadow: 0 0 12px var(--corrupted-cyan);
+    #export-target h4 {
+      color: var(--corrupted-cyan, #00ffff);
+      text-shadow: 0 0 12px var(--corrupted-cyan, #00ffff);
       font-size: 1.5rem;
       margin: 0 0 0.5rem;
       letter-spacing: 0.15em;
@@ -110,11 +115,11 @@
 
     .badge {
       background: rgba(0,255,255,0.1);
-      border: 1px solid var(--corrupted-cyan);
+      border: 1px solid var(--corrupted-cyan, #00ffff);
       border-radius: 999px;
       padding: 0.25rem 0.65rem;
       font-size: 0.7rem;
-      color: var(--corrupted-cyan);
+      color: var(--corrupted-cyan, #00ffff);
       letter-spacing: 0.05em;
     }
 
@@ -123,75 +128,97 @@
       margin-top: 0.75rem;
       font-size: 0.8rem;
       min-height: 1.4rem;
-      color: var(--corrupted-green);
-    }
-
-    /* ── Code block ────────────────────────────────── */
-    .code-block {
-      background: rgba(0,0,0,0.4);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 0.75rem 1rem;
-      margin-top: 0.75rem;
-      overflow-x: auto;
-    }
-
-    .code-block pre {
-      margin: 0;
-      font-size: 0.75rem;
-      color: var(--corrupted-cyan);
-      line-height: 1.5;
-      white-space: pre;
+      color: var(--corrupted-green, #00ff00);
     }
 
     .code-block .comment { color: var(--text-muted); }
   </style>
 </head>
 <body>
-
-  <h1><i class="fas fa-camera"></i> PNG Export</h1>
-  <p class="subtitle">Export any DOM element to a PNG download — <code>exportElementAsPng</code> from <code>src/lib/png-export.js</code></p>
-
-  <!-- Peer dep warning -->
-  <div class="demo-section">
-    <div class="peer-dep-warning">
-      <strong><i class="fas fa-exclamation-triangle"></i> OPTIONAL PEER DEPENDENCY</strong><br>
-      <code>png-export</code> dynamically imports <code>html2canvas</code> at runtime.
-      If it is not installed the function will throw with a clear error message.<br><br>
-      <strong>Install before using:</strong><br>
-      <code>npm install html2canvas</code><br><br>
-      This demo loads html2canvas from a CDN so no local install is required.
-      In a production bundle, install it as a project dependency (not a devDependency).
+  <!-- Global Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
+        <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
+        <li class="has-submenu">
+          <a href="#" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="../nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="../button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="../card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="../form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="../layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="../basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="../basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="../animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="../advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="../advanced/corruption-manager.html"><i class="fas fa-sitemap"></i> Corruption Manager</a>
+            <a href="../components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+          </div>
+        </li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
     </div>
+  </nav>
 
-    <h2><i class="fas fa-download"></i> Export Demo</h2>
-    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
-      Click "Export as PNG" to capture the card below and download it as a file.
-      Open the browser's Network tab to confirm html2canvas loaded from CDN.
+  <div class="container">
+    <h1><i class="fas fa-file-image"></i> PNG Export</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      Export DOM elements as PNG via optional html2canvas peer dep.
+      Provided by <code>exportElementAsPng</code> from <code>src/lib/png-export.js</code>.
     </p>
 
-    <!-- The element we will export -->
-    <div id="export-target">
-      <h3>CORRUPTED SIGNAL</h3>
-      <p>アイウエオ · Neural core stability: 42%</p>
-      <div class="badge-row">
-        <span class="badge">0.2.0</span>
-        <span class="badge">@whykusanagi/corrupted-theme</span>
-        <span class="badge">png-export</span>
+    <!-- Peer dep warning + export demo -->
+    <section class="example-group">
+      <h3><i class="fas fa-exclamation-triangle"></i> Optional Peer Dependency</h3>
+
+      <div class="peer-dep-warning">
+        <strong><i class="fas fa-exclamation-triangle"></i> OPTIONAL PEER DEPENDENCY</strong><br>
+        <code>png-export</code> dynamically imports <code>html2canvas</code> at runtime.
+        If it is not installed the function will throw with a clear error message.<br><br>
+        <strong>Install before using:</strong><br>
+        <code>npm install html2canvas</code><br><br>
+        This demo loads html2canvas from a CDN so no local install is required.
+        In a production bundle, install it as a project dependency (not a devDependency).
       </div>
-    </div>
 
-    <div class="controls">
-      <button class="btn" id="btn-export">Export as PNG</button>
-      <button class="btn" id="btn-export-retina">Export 3× (retina)</button>
-      <button class="btn" id="btn-export-bg">Export with background</button>
-    </div>
+      <h3><i class="fas fa-download"></i> Export Demo</h3>
+      <p style="color: var(--text-muted); font-size: 0.875rem; margin-bottom: var(--spacing-md);">
+        Click "Export as PNG" to capture the card below and download it as a file.
+        Open the browser's Network tab to confirm html2canvas loaded from CDN.
+      </p>
 
-    <div id="export-status"></div>
+      <!-- The element we will export -->
+      <div id="export-target">
+        <h4>CORRUPTED SIGNAL</h4>
+        <p>アイウエオ · Neural core stability: 42%</p>
+        <div class="badge-row">
+          <span class="badge">0.2.0</span>
+          <span class="badge">@whykusanagi/corrupted-theme</span>
+          <span class="badge">png-export</span>
+        </div>
+      </div>
 
-    <!-- Usage code -->
-    <div class="code-block">
-      <pre><code><span class="comment">// Install peer dep first:  npm install html2canvas</span>
+      <div class="controls">
+        <button class="btn" id="btn-export">Export as PNG</button>
+        <button class="btn" id="btn-export-retina">Export 3× (retina)</button>
+        <button class="btn" id="btn-export-bg">Export with background</button>
+      </div>
+
+      <div id="export-status"></div>
+    </section>
+
+    <!-- Usage snippet -->
+    <section class="example-group">
+      <h3><i class="fas fa-code"></i> Usage</h3>
+      <div class="code-block">
+        <pre><code><span class="comment">// Install peer dep first:  npm install html2canvas</span>
 import { exportElementAsPng } from '@whykusanagi/corrupted-theme/png-export';
 
 const el = document.getElementById('my-card');
@@ -205,7 +232,9 @@ await exportElementAsPng(el, {
   scale:           3,               <span class="comment">// 3× resolution for retina</span>
   backgroundColor: '#000000',       <span class="comment">// null = transparent</span>
 });</code></pre>
-    </div>
+      </div>
+    </section>
+
   </div>
 
   <!--
@@ -220,14 +249,14 @@ await exportElementAsPng(el, {
     const status = document.getElementById('export-status');
 
     async function runExport(opts) {
-      status.style.color = 'var(--corrupted-cyan)';
+      status.style.color = 'var(--corrupted-cyan, #00ffff)';
       status.textContent = 'Rendering…';
       try {
         await exportElementAsPng(target, opts);
-        status.style.color = 'var(--corrupted-green)';
+        status.style.color = 'var(--corrupted-green, #00ff00)';
         status.textContent = `Exported: ${opts.filename ?? 'export.png'}`;
       } catch (err) {
-        status.style.color = 'var(--corrupted-red)';
+        status.style.color = 'var(--corrupted-red, #ff0000)';
         status.textContent = `Error: ${err.message}`;
       }
     }

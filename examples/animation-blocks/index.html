@@ -3,56 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Animation Blocks Showcase · corrupted-theme</title>
+  <title>Animation Blocks - Corrupted Theme</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
   <link rel="stylesheet" href="../../src/css/theme.css">
   <style>
-    body {
-      margin: 0;
-      padding: 2rem;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      font-family: 'Courier New', monospace;
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: var(--spacing-lg);
     }
 
-    .page-header {
-      text-align: center;
-      margin-bottom: 3rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .page-header h1 {
-      color: var(--corrupted-cyan);
-      text-shadow: 0 0 20px var(--corrupted-cyan);
-      font-size: 2rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .page-header p {
-      color: var(--text-muted);
-      font-size: 0.9rem;
-    }
-
-    .back-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--corrupted-cyan);
-      text-decoration: none;
-      font-size: 0.85rem;
-      margin-bottom: 2rem;
-    }
-
-    .back-link:hover { opacity: 0.7; }
-
-    /* Each demo block */
-    .block-section {
-      margin-bottom: 2.5rem;
+    .example-group {
+      margin-bottom: var(--spacing-2xl);
       background: var(--glass);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
       overflow: hidden;
+    }
+
+    .example-group h3 {
+      color: var(--accent);
+      margin: 0;
+      font-size: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
     }
 
     .block-header {
@@ -62,14 +36,6 @@
       padding: 0.75rem 1rem;
       background: rgba(0,0,0,0.3);
       border-bottom: 1px solid var(--border);
-    }
-
-    .block-header h2 {
-      margin: 0;
-      font-size: 0.95rem;
-      color: var(--corrupted-cyan);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
     }
 
     .block-meta {
@@ -125,193 +91,226 @@
   </style>
 </head>
 <body>
+  <!-- Global Navigation -->
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo"><i class="fas fa-palette"></i> Corrupted Theme</a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-cube"></i> Components</a></li>
+        <li><a href="../extensions-showcase.html"><i class="fas fa-puzzle-piece"></i> Extensions</a></li>
+        <li class="has-submenu">
+          <a href="#" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="../nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="../button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="../card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="../form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="../layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="../basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="../basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="../animation-blocks/index.html" class="active"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="../advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="../advanced/corruption-manager.html"><i class="fas fa-sitemap"></i> Corruption Manager</a>
+            <a href="../components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+          </div>
+        </li>
+        <li><a href="../showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
 
-  <a href="../index.html" class="back-link"><i class="fas fa-arrow-left"></i> Examples home</a>
+  <div class="container">
+    <h1><i class="fas fa-film"></i> Animation Blocks</h1>
+    <p style="color: var(--text-secondary); margin-bottom: var(--spacing-2xl);">
+      10 animation block classes ported from celeste-tts-bot. Each shows a Start/Stop/Destroy lifecycle.
+      All ship in <code>src/lib/animation-blocks.js</code> as part of corrupted-theme 0.2.0.
+    </p>
 
-  <div class="page-header">
-    <h1><i class="fas fa-cubes"></i> Animation Blocks Showcase</h1>
-    <p>10 reusable animation classes — all ship in <code>src/lib/animation-blocks.js</code> as part of corrupted-theme 0.2.0.</p>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         1. TitleDecoder
+         Character-by-character decoding: corruption → readable text.
+         SPEC §5.1 — "Character-by-Character Decoding"
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-title-decoder">
+      <div class="block-header">
+        <h3>1 · TitleDecoder</h3>
+        <span class="block-meta">Pattern: char-decode · ~2 s</span>
+      </div>
+      <div class="demo-stage" id="demo-title-decoder"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-td-start">Start</button>
+        <button class="btn" id="btn-td-stop">Stop</button>
+        <button class="btn" id="btn-td-destroy">Destroy</button>
+        <span class="status-text" id="status-td">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       1. TitleDecoder
-       Character-by-character decoding: corruption → readable text.
-       SPEC §5.1 — "Character-by-Character Decoding"
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-title-decoder">
-    <div class="block-header">
-      <h2>1 · TitleDecoder</h2>
-      <span class="block-meta">Pattern: char-decode · ~2 s</span>
-    </div>
-    <div class="demo-stage" id="demo-title-decoder"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-td-start">Start</button>
-      <button class="btn" id="btn-td-stop">Stop</button>
-      <button class="btn" id="btn-td-destroy">Destroy</button>
-      <span class="status-text" id="status-td">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         2. ProgressBar
+         Single loading bar with glitch spikes.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-progress-bar">
+      <div class="block-header">
+        <h3>2 · ProgressBar</h3>
+        <span class="block-meta">glitch: true · height: 8 px · ~2 s</span>
+      </div>
+      <div class="demo-stage" id="demo-progress-bar"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-pb-start">Start</button>
+        <button class="btn" id="btn-pb-stop">Stop</button>
+        <button class="btn" id="btn-pb-destroy">Destroy</button>
+        <span class="status-text" id="status-pb">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       2. ProgressBar
-       Single loading bar with glitch spikes.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-progress-bar">
-    <div class="block-header">
-      <h2>2 · ProgressBar</h2>
-      <span class="block-meta">glitch: true · height: 8 px · ~2 s</span>
-    </div>
-    <div class="demo-stage" id="demo-progress-bar"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-pb-start">Start</button>
-      <button class="btn" id="btn-pb-stop">Stop</button>
-      <button class="btn" id="btn-pb-destroy">Destroy</button>
-      <span class="status-text" id="status-pb">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         3. ScanlineSweep
+         Horizontal CRT scan-line travelling from top to bottom.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-scanline">
+      <div class="block-header">
+        <h3>3 · ScanlineSweep</h3>
+        <span class="block-meta">sweeps: 3 · duration: 1.5 s</span>
+      </div>
+      <div class="demo-stage" id="demo-scanline"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-sl-start">Start</button>
+        <button class="btn" id="btn-sl-stop">Stop</button>
+        <button class="btn" id="btn-sl-destroy">Destroy</button>
+        <span class="status-text" id="status-sl">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       3. ScanlineSweep
-       Horizontal CRT scan-line travelling from top to bottom.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-scanline">
-    <div class="block-header">
-      <h2>3 · ScanlineSweep</h2>
-      <span class="block-meta">sweeps: 3 · duration: 1.5 s</span>
-    </div>
-    <div class="demo-stage" id="demo-scanline"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-sl-start">Start</button>
-      <button class="btn" id="btn-sl-stop">Stop</button>
-      <button class="btn" id="btn-sl-destroy">Destroy</button>
-      <span class="status-text" id="status-sl">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         4. TerminalBoot
+         Boot-sequence log lines printed with typewriter cadence.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-terminal-boot">
+      <div class="block-header">
+        <h3>4 · TerminalBoot</h3>
+        <span class="block-meta">4 log lines · duration: 3 s</span>
+      </div>
+      <div class="demo-stage demo-stage--tall" id="demo-terminal-boot"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-tb-start">Start</button>
+        <button class="btn" id="btn-tb-stop">Stop</button>
+        <button class="btn" id="btn-tb-destroy">Destroy</button>
+        <span class="status-text" id="status-tb">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       4. TerminalBoot
-       Boot-sequence log lines printed with typewriter cadence.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-terminal-boot">
-    <div class="block-header">
-      <h2>4 · TerminalBoot</h2>
-      <span class="block-meta">4 log lines · duration: 3 s</span>
-    </div>
-    <div class="demo-stage demo-stage--tall" id="demo-terminal-boot"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-tb-start">Start</button>
-      <button class="btn" id="btn-tb-stop">Stop</button>
-      <button class="btn" id="btn-tb-destroy">Destroy</button>
-      <span class="status-text" id="status-tb">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         5. GlitchPulse
+         Full-stage random coloured bars that flash and fade.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-glitch-pulse">
+      <div class="block-header">
+        <h3>5 · GlitchPulse</h3>
+        <span class="block-meta">intensity: 0.7 · color: magenta · ~1 s</span>
+      </div>
+      <div class="demo-stage" id="demo-glitch-pulse"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-gp-start">Start</button>
+        <button class="btn" id="btn-gp-stop">Stop</button>
+        <button class="btn" id="btn-gp-destroy">Destroy</button>
+        <span class="status-text" id="status-gp">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       5. GlitchPulse
-       Full-stage random coloured bars that flash and fade.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-glitch-pulse">
-    <div class="block-header">
-      <h2>5 · GlitchPulse</h2>
-      <span class="block-meta">intensity: 0.7 · color: magenta · ~1 s</span>
-    </div>
-    <div class="demo-stage" id="demo-glitch-pulse"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-gp-start">Start</button>
-      <button class="btn" id="btn-gp-stop">Stop</button>
-      <button class="btn" id="btn-gp-destroy">Destroy</button>
-      <span class="status-text" id="status-gp">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         6. ASCIIBorder
+         Animated Unicode box-drawing border drawn clockwise.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-ascii-border">
+      <div class="block-header">
+        <h3>6 · ASCIIBorder</h3>
+        <span class="block-meta">style: double · drawOrder: clockwise · ~1.5 s</span>
+      </div>
+      <div class="demo-stage" id="demo-ascii-border"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-ab-start">Start</button>
+        <button class="btn" id="btn-ab-stop">Stop</button>
+        <button class="btn" id="btn-ab-destroy">Destroy</button>
+        <span class="status-text" id="status-ab">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       6. ASCIIBorder
-       Animated Unicode box-drawing border drawn clockwise.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-ascii-border">
-    <div class="block-header">
-      <h2>6 · ASCIIBorder</h2>
-      <span class="block-meta">style: double · drawOrder: clockwise · ~1.5 s</span>
-    </div>
-    <div class="demo-stage" id="demo-ascii-border"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-ab-start">Start</button>
-      <button class="btn" id="btn-ab-stop">Stop</button>
-      <button class="btn" id="btn-ab-destroy">Destroy</button>
-      <span class="status-text" id="status-ab">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         7. SystemDiagnostic
+         Scrolling green diagnostic log lines, each fading in.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-sysdiag">
+      <div class="block-header">
+        <h3>7 · SystemDiagnostic</h3>
+        <span class="block-meta">8 lines · color: #00ff00 · ~3 s</span>
+      </div>
+      <div class="demo-stage demo-stage--tall" id="demo-sysdiag"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-sd-start">Start</button>
+        <button class="btn" id="btn-sd-stop">Stop</button>
+        <button class="btn" id="btn-sd-destroy">Destroy</button>
+        <span class="status-text" id="status-sd">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       7. SystemDiagnostic
-       Scrolling green diagnostic log lines, each fading in.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-sysdiag">
-    <div class="block-header">
-      <h2>7 · SystemDiagnostic</h2>
-      <span class="block-meta">8 lines · color: #00ff00 · ~3 s</span>
-    </div>
-    <div class="demo-stage demo-stage--tall" id="demo-sysdiag"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-sd-start">Start</button>
-      <button class="btn" id="btn-sd-stop">Stop</button>
-      <button class="btn" id="btn-sd-destroy">Destroy</button>
-      <span class="status-text" id="status-sd">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         8. LoadingBarMulti
+         Four labelled bars filling at different speeds with scanline shimmer.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-multibar">
+      <div class="block-header">
+        <h3>8 · LoadingBarMulti</h3>
+        <span class="block-meta">4 bars · glitch: true · ~3 s</span>
+      </div>
+      <div class="demo-stage demo-stage--tall" id="demo-multibar"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-mb-start">Start</button>
+        <button class="btn" id="btn-mb-stop">Stop</button>
+        <button class="btn" id="btn-mb-destroy">Destroy</button>
+        <span class="status-text" id="status-mb">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       8. LoadingBarMulti
-       Four labelled bars filling at different speeds with scanline shimmer.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-multibar">
-    <div class="block-header">
-      <h2>8 · LoadingBarMulti</h2>
-      <span class="block-meta">4 bars · glitch: true · ~3 s</span>
-    </div>
-    <div class="demo-stage demo-stage--tall" id="demo-multibar"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-mb-start">Start</button>
-      <button class="btn" id="btn-mb-stop">Stop</button>
-      <button class="btn" id="btn-mb-destroy">Destroy</button>
-      <span class="status-text" id="status-mb">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         9. DataTransmission
+         Horizontal light-pulse packets streaming across the stage.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-datatx">
+      <div class="block-header">
+        <h3>9 · DataTransmission</h3>
+        <span class="block-meta">direction: horizontal · 20 packets · ~2.5 s</span>
+      </div>
+      <div class="demo-stage" id="demo-datatx"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-dt-start">Start</button>
+        <button class="btn" id="btn-dt-stop">Stop</button>
+        <button class="btn" id="btn-dt-destroy">Destroy</button>
+        <span class="status-text" id="status-dt">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       9. DataTransmission
-       Horizontal light-pulse packets streaming across the stage.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-datatx">
-    <div class="block-header">
-      <h2>9 · DataTransmission</h2>
-      <span class="block-meta">direction: horizontal · 20 packets · ~2.5 s</span>
-    </div>
-    <div class="demo-stage" id="demo-datatx"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-dt-start">Start</button>
-      <button class="btn" id="btn-dt-stop">Stop</button>
-      <button class="btn" id="btn-dt-destroy">Destroy</button>
-      <span class="status-text" id="status-dt">idle</span>
-    </div>
-  </div>
+    <!-- ════════════════════════════════════════════════════════════════════
+         10. TerminalPrompt
+         Character-by-character typewriter of command strings.
+         ════════════════════════════════════════════════════════════════════ -->
+    <section class="example-group" id="sec-terminal-prompt">
+      <div class="block-header">
+        <h3>10 · TerminalPrompt</h3>
+        <span class="block-meta">4 commands · typingSpeed: 50 ms/char</span>
+      </div>
+      <div class="demo-stage demo-stage--tall" id="demo-terminal-prompt"></div>
+      <div class="block-controls">
+        <button class="btn" id="btn-tp-start">Start</button>
+        <button class="btn" id="btn-tp-stop">Stop</button>
+        <button class="btn" id="btn-tp-destroy">Destroy</button>
+        <span class="status-text" id="status-tp">idle</span>
+      </div>
+    </section>
 
-  <!-- ════════════════════════════════════════════════════════════════════
-       10. TerminalPrompt
-       Character-by-character typewriter of command strings.
-       ════════════════════════════════════════════════════════════════════ -->
-  <div class="block-section" id="sec-terminal-prompt">
-    <div class="block-header">
-      <h2>10 · TerminalPrompt</h2>
-      <span class="block-meta">4 commands · typingSpeed: 50 ms/char</span>
-    </div>
-    <div class="demo-stage demo-stage--tall" id="demo-terminal-prompt"></div>
-    <div class="block-controls">
-      <button class="btn" id="btn-tp-start">Start</button>
-      <button class="btn" id="btn-tp-stop">Stop</button>
-      <button class="btn" id="btn-tp-destroy">Destroy</button>
-      <span class="status-text" id="status-tp">idle</span>
-    </div>
   </div>
 
   <script type="module">

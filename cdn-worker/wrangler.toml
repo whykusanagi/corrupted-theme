@@ -1,0 +1,17 @@
+name = "corrupted-theme-cdn"
+main = "index.js"
+compatibility_date = "2026-05-17"
+
+# Routes bound to BOTH first-party CDN domains
+routes = [
+  { pattern = "cdn.whykusanagi.xyz/corrupted-theme/@latest/*", zone_name = "whykusanagi.xyz" },
+  { pattern = "cdn.nikkers.cc/corrupted-theme/@latest/*",      zone_name = "nikkers.cc" },
+]
+
+# KV namespace for the @latest pointer (ID populated in T2)
+kv_namespaces = [
+  { binding = "CDN_KV", id = "REPLACE_WITH_KV_NAMESPACE_ID_IN_T2" }
+]
+
+[observability]
+enabled = true

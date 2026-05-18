@@ -1621,7 +1621,506 @@ bg.destroy();  // stop + remove canvas + remove listeners; instance not reusable
 
 ---
 
-**Last Updated:** 2026-05-17
-**Version:** 2.2
+---
+
+## New 0.2.0 Components (Plan #6)
+
+The following components were added in `0.2.0` as part of the base-components plan. All are importable via the package exports listed in `package.json`.
+
+---
+
+### Toast
+
+**Module:** `@whykusanagi/corrupted-theme/toast`
+**CSS:** `@whykusanagi/corrupted-theme/toast-css`
+**Source:** `src/lib/toast.js` + `src/css/toast.css`
+**Type:** Singleton (named export `Toast`)
+**Since:** 0.2.0
+
+Auto-mounts a DOM container on first use. Queues toasts with enter/exit transitions. Import the CSS separately.
+
+```js
+import { Toast } from '@whykusanagi/corrupted-theme/toast';
+
+Toast.show('Saved');
+Toast.success('Submitted!', { duration: 3000 });
+Toast.error('Upload failed');
+Toast.info('Loading…');
+```
+
+| Method | Options | Description |
+|--------|---------|-------------|
+| `show(message, opts)` | `{ duration: 2000 }` | Default (neutral) variant |
+| `success(message, opts)` | `{ duration: 2000 }` | Green success variant |
+| `error(message, opts)` | `{ duration: 2000 }` | Red error variant |
+| `info(message, opts)` | `{ duration: 2000 }` | Blue info variant |
+
+---
+
+### ClockWidget
+
+**Module:** `@whykusanagi/corrupted-theme/clock-widget`
+**Source:** `src/lib/clock-widget.js`
+**Type:** Class
+**Since:** 0.2.0
+
+Renders date + time + timezone label, rotating through a list of IANA timezone strings on a configurable interval. Delegates all timers to `TimerRegistry`. Applies `aria-live="polite"` on `start()`.
+
+```js
+import { ClockWidget } from '@whykusanagi/corrupted-theme/clock-widget';
+
+const widget = new ClockWidget(document.getElementById('clock'), {
+  timezones: ['America/Los_Angeles', 'America/New_York', 'Europe/London'],
+  cycleMs:   10000,
+  format:    '12h',
+  showDate:  true,
+});
+widget.start();
+widget.stop();    // pause without destroying
+widget.destroy(); // full cleanup
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `timezones` | string[] | `['America/Los_Angeles']` | IANA timezone names |
+| `cycleMs` | number | `10000` | ms between timezone rotations |
+| `format` | `'12h'` \| `'24h'` | `'12h'` | Time format |
+| `showDate` | boolean | `true` | Render the date line |
+
+---
+
+### EventBar
+
+**Module:** `@whykusanagi/corrupted-theme/event-bar`
+**Source:** `src/lib/event-bar.js`
+**Type:** Class
+**Since:** 0.2.0
+
+Horizontal status rows with label + content + optional icon. Designed for stream overlays and "recent event" dashboards. Supports live updates via `update()`.
+
+```js
+import { EventBar } from '@whykusanagi/corrupted-theme/event-bar';
+
+const eb = new EventBar(document.getElementById('events'), {
+  items: [
+    { label: 'Latest Follow', content: '@user1', icon: '★' },
+    { label: 'Latest Sub',    content: '@user2', icon: '♥' },
+  ],
+});
+
+eb.update([{ label: 'Latest Tip', content: '$10.00', icon: '✦' }]);
+eb.destroy();
+```
+
+Each item: `{ label: string, content: string, icon?: string }`.
+
+CSS classes applied: `.event-bar`, `.event-bar__row`, `.event-bar__icon`, `.event-bar__label`, `.event-bar__content`.
+
+---
+
+### LogoBanner
+
+**Module:** `@whykusanagi/corrupted-theme/logo-banner`
+**Source:** `src/lib/logo-banner.js`
+**Type:** Class
+**Since:** 0.2.0
+
+Positioned logo with optional subtitle and reveal animation. Accepts arbitrary `src` — not hardcoded to any brand. Five position presets, three size presets, three animation modes.
+
+```js
+import { LogoBanner } from '@whykusanagi/corrupted-theme/logo-banner';
+
+const banner = new LogoBanner(document.getElementById('logo'), {
+  src:      '/assets/logo.png',
+  subtitle: 'CORRUPTED STREAM',
+  size:     'normal',
+  position: 'top-right',
+  animation:'fade',
+});
+banner.show();
+banner.hide();
+banner.update({ position: 'center' });
+banner.destroy();
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `src` | string | `''` | Image src (empty = subtitle only) |
+| `subtitle` | string | `''` | Subtitle text |
+| `showSubtitle` | boolean | `true` | Render subtitle element |
+| `size` | `'small'`\|`'normal'`\|`'large'` | `'normal'` | Dimensions preset |
+| `animation` | `'fade'`\|`'slide'`\|`'none'` | `'fade'` | Reveal animation |
+| `position` | `'top-left'`\|`'top-right'`\|`'top-center'`\|`'center'`\|`'bottom-left'`\|`'bottom-right'` | `'top-right'` | Absolute position |
+| `zIndex` | number | `250` | CSS z-index |
+
+---
+
+### Lightbox (standalone)
+
+**Module:** `@whykusanagi/corrupted-theme/lightbox`
+**Source:** `src/lib/lightbox.js`
+**Type:** Class
+**Since:** 0.2.0 (also re-exported from `gallery.js` for backward compat)
+
+Fullscreen image viewer with prev/next navigation, keyboard (Escape / ←→), and touch-swipe support. Extracted from `gallery.js` so consumers who want only the viewer don't need the full gallery system.
+
+**Note:** `Lightbox` is also re-exported from `@whykusanagi/corrupted-theme/gallery` — existing gallery users do not need to change their imports.
+
+```js
+import { Lightbox } from '@whykusanagi/corrupted-theme/lightbox';
+
+const lb = new Lightbox(null, {
+  onOpen:  (img, index) => console.log('opened', index),
+  onClose: () => console.log('closed'),
+});
+
+lb.setImages([
+  { src: 'a.jpg', alt: 'Image A', caption: 'Caption A', isNsfw: false },
+]);
+lb.open(0);
+lb.close();
+lb.destroy();
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `lightboxId` | string | `'corrupted-lightbox-N'` | DOM id for the lightbox element |
+| `onOpen` | function | `null` | Called with `(imageData, index)` on open |
+| `onClose` | function | `null` | Called with no args on close |
+| `enableKeyboard` | boolean | `true` | Keyboard navigation |
+
+---
+
+### NsfwReveal
+
+**Module:** `@whykusanagi/corrupted-theme/nsfw-reveal`
+**Source:** `src/lib/nsfw-reveal.js`
+**Type:** Class
+**Since:** 0.2.0
+
+Wraps any element with a CSS blur filter + click overlay. First click removes the blur. The target element's parent must have `position: relative` (or similar) for the absolute overlay to stack correctly.
+
+```js
+import { NsfwReveal } from '@whykusanagi/corrupted-theme/nsfw-reveal';
+
+const nr = new NsfwReveal(document.getElementById('img'), {
+  warning: 'NSFW — click to reveal',
+  blurPx:  20,
+});
+nr.reveal();   // programmatic reveal
+nr.destroy();  // restore original state
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `warning` | string | `'NSFW — click to reveal'` | Overlay label text |
+| `blurPx` | number | `20` | Blur radius in px |
+
+---
+
+### PngExport
+
+**Module:** `@whykusanagi/corrupted-theme/png-export`
+**Source:** `src/lib/png-export.js`
+**Type:** Pure function (`exportElementAsPng`)
+**Since:** 0.2.0
+
+> **IMPORTANT — OPTIONAL PEER DEPENDENCY**
+> `png-export` dynamically imports `html2canvas` at call time. If `html2canvas` is not installed the function throws with a clear message. Install before using:
+> ```
+> npm install html2canvas
+> ```
+
+Captures a DOM element as a PNG and triggers a file download. Waits for `document.fonts.ready` before rendering so screenshots match what the user sees.
+
+```js
+import { exportElementAsPng } from '@whykusanagi/corrupted-theme/png-export';
+
+await exportElementAsPng(document.getElementById('card'), {
+  filename:        'my-card.png',
+  scale:           2,          // 1 = 1:1, 2 = retina (default)
+  backgroundColor: '#000000',  // null = transparent (default)
+});
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `filename` | string | `'export.png'` | Download filename |
+| `scale` | number | `2` | Render scale |
+| `backgroundColor` | string \| null | `null` | Background fill; null = transparent |
+
+---
+
+### WebSocketManager
+
+**Module:** `@whykusanagi/corrupted-theme/websocket-manager`
+**Source:** `src/core/websocket-manager.js`
+**Type:** Class
+**Since:** 0.2.0
+
+Auto-reconnecting WebSocket wrapper with exponential backoff, event-ID deduplication, ACK support, and page-visibility auto-disconnect. Adapted from `celeste-tts-bot/obs/shared/websocket-manager.js`.
+
+**Note:** Pass `autoConnect: false` to prevent connection on construction — useful for test environments or deferred setup.
+
+```js
+import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager';
+
+const ws = new WebSocketManager({
+  url:           'wss://your-server.example.com/ws',
+  autoConnect:   false,  // connect only when ws.connect() is called
+  trackEvents:   true,   // deduplicate by message.event_id
+  enableAck:     true,   // auto-ACK messages with requires_ack
+});
+
+ws.on((msg) => console.log(msg));
+ws.connect();
+ws.send({ type: 'ping' });
+ws.disconnect();
+ws.destroy();
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `url` | string | `''` | WebSocket URL (required) |
+| `clientId` | string | `null` | Sent as `{ type: 'register', client_id }` on connect |
+| `maxAttempts` | number | `10` | Max reconnect attempts |
+| `baseDelay` | number | `2000` | Base reconnect delay in ms |
+| `maxDelay` | number | `30000` | Maximum reconnect delay cap in ms |
+| `useExponentialBackoff` | boolean | `true` | Exponential growth: 2s, 4s, 8s, 16s, capped at 30s |
+| `autoReconnect` | boolean | `true` | Reconnect on unexpected close |
+| `trackEvents` | boolean | `false` | Deduplicate by `message.event_id` |
+| `enableAck` | boolean | `false` | Auto-send ACK for `requires_ack` messages |
+| `handleVisibilityChange` | boolean | `true` | Disconnect when page is hidden |
+| `autoConnect` | boolean | `true` | Connect immediately on construction |
+
+Methods: `connect()`, `disconnect()`, `send(msg)`, `on(handler)`, `off(handler)`, `onMessage(handler)`, `offMessage(handler)`, `getStatus()`, `isConnected()`, `destroy()`.
+
+---
+
+### TimerRegistry
+
+**Module:** `@whykusanagi/corrupted-theme/corruption-manager` (internal; also used directly in lib components)
+**Source:** `src/core/timer-registry.js`
+**Type:** Class
+**Since:** 0.1.x (merged with TimerManager API in 0.2.0)
+
+Centralized timer tracking for component lifecycle cleanup. Wraps `setTimeout`, `setInterval`, and `requestAnimationFrame` so all pending async work can be cancelled in a single `clearAll()` call.
+
+**0.2.0 additions (merged from `celeste-tts-bot` `TimerManager`):**
+- `destroyed` flag: guards new timers after `destroy()`, suppresses callbacks
+- `getCount()`: returns `{ timers, intervals, total }` breakdown
+- `destroy()`: calls `clearAll()` then sets `destroyed = true`
+
+```js
+import { TimerRegistry } from '@whykusanagi/corrupted-theme/corruption-manager';
+// or import directly for internal use:
+// import { TimerRegistry } from '@whykusanagi/corrupted-theme/src/core/timer-registry.js';
+
+const timers = new TimerRegistry();
+timers.setTimeout(() => { /* … */ }, 1000);
+timers.setInterval(() => { /* … */ }, 500);
+timers.requestAnimationFrame((ts) => { /* … */ });
+
+timers.getCount();  // { timers: 1, intervals: 1, total: 2 }
+timers.clearAll();  // cancels all pending
+timers.destroy();   // clearAll + marks instance destroyed
+```
+
+---
+
+### random-utils
+
+**Module:** `@whykusanagi/corrupted-theme/random-utils`
+**Source:** `src/core/random-utils.js`
+**Type:** Pure function module
+**Since:** 0.2.0
+
+Centralized random selection and variance helpers. All functions are pure — no side effects, no DOM dependency. Ported from `celeste-tts-bot/obs/shared/random-utils.js`.
+
+```js
+import {
+  randomPick, randomInt, randomFloat,
+  randomVariance, shuffle, randomSample,
+} from '@whykusanagi/corrupted-theme/random-utils';
+
+randomPick(['a','b','c']);         // 'b'  (random element)
+randomInt(1, 100);                 // 42   (inclusive)
+randomFloat(0, 1);                 // 0.618…
+randomVariance(50, 0.2);           // 50 ± 20%
+shuffle(['a','b','c']);            // mutates in place, returns same array
+randomSample(['a','b','c','d'], 2);// ['c','a']  (no replacement)
+```
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `randomPick` | `(array) → element` | Random element from array |
+| `randomInt` | `(min, max) → number` | Random integer, inclusive |
+| `randomFloat` | `(min, max) → number` | Random float |
+| `randomVariance` | `(base, variance=0.2) → number` | base ± variance % |
+| `shuffle` | `(array) → array` | Fisher-Yates in-place shuffle |
+| `randomSample` | `(array, count) → array` | N elements without replacement |
+
+---
+
+### time-utils
+
+**Module:** `@whykusanagi/corrupted-theme/time-utils`
+**Source:** `src/core/time-utils.js`
+**Type:** Pure function module
+**Since:** 0.2.0
+
+Date/time formatting helpers. All functions are pure — no side effects, no DOM dependency. Ported from `celeste-tts-bot/obs/shared/time-utils.js`. Used internally by `ClockWidget`.
+
+**Note:** `formatDuration` accepts **seconds**, not milliseconds.
+
+```js
+import {
+  formatTime24h, formatTime12h, formatDate,
+  formatDateTime, timeAgo, formatDuration, parseTimestamp,
+} from '@whykusanagi/corrupted-theme/time-utils';
+
+formatTime24h();           // "14:32"
+formatTime12h();           // "02:32 PM"
+formatDate();              // "May 18, 2026"
+formatDateTime();          // "May 18, 2026 14:32"
+timeAgo(new Date(Date.now() - 300_000));  // "5m ago"
+formatDuration(3661);      // "1h 1m 1s"
+parseTimestamp('2026-05-18T14:32:00Z');   // Date object
+```
+
+---
+
+### clipboard-helpers
+
+**Module:** `@whykusanagi/corrupted-theme/clipboard-helpers`
+**Source:** `src/core/clipboard-helpers.js`
+**Type:** Pure function module (async)
+**Since:** 0.2.0
+
+Clipboard utilities. Guards against missing `navigator.clipboard` for SSR/Node compat. Replaces the repeated 5-line clipboard pattern in examples.
+
+```js
+import { copyWithFeedback } from '@whykusanagi/corrupted-theme/clipboard-helpers';
+
+const btn = document.getElementById('copy-btn');
+const ok  = await copyWithFeedback(btn, 'text to copy', {
+  successLabel: 'COPIED!',
+  durationMs:   1200,
+});
+// Button label temporarily changes to "COPIED!" then reverts
+```
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `successLabel` | string | `'COPIED'` | Label shown after successful copy |
+| `durationMs` | number | `1200` | Duration of success label in ms |
+
+Returns `Promise<boolean>` — `true` if copy succeeded.
+
+---
+
+### url-state
+
+**Module:** `@whykusanagi/corrupted-theme/url-state`
+**Source:** `src/core/url-state.js`
+**Type:** Pure function module
+**Since:** 0.2.0
+
+Round-trips HTML form state through `URLSearchParams` to produce "share this view" links. Handles text inputs, checkboxes, and radio buttons. Guards against missing DOM globals for Node compat.
+
+```js
+import {
+  serializeFormToParams,
+  applyParamsToForm,
+  buildShareUrl,
+} from '@whykusanagi/corrupted-theme/url-state';
+
+const form = document.getElementById('settings-form');
+
+// Serialize form → URL
+const url = buildShareUrl(form, 'https://example.com/embed');
+// → "https://example.com/embed?username=alice&dark=1&sounds=1"
+
+// Apply URL params back to form
+const params = new URLSearchParams(window.location.search);
+applyParamsToForm(form, params);
+```
+
+| Function | Signature | Description |
+|----------|-----------|-------------|
+| `serializeFormToParams` | `(formEl) → URLSearchParams` | Serialize all named fields |
+| `applyParamsToForm` | `(formEl, params) → void` | Apply params back to form fields |
+| `buildShareUrl` | `(formEl, baseUrl?) → string` | Full absolute URL with form state |
+
+---
+
+### seamless-background.css
+
+**Module:** `@whykusanagi/corrupted-theme/seamless-background`
+**Source:** `src/css/seamless-background.css`
+**Type:** CSS-only utility
+**Since:** 0.2.0
+
+Multi-layer parallax tiled background with depth opacity, blur, and brightness filters. Ported from celeste-tts-bot's overlay background system.
+
+**Without `.seamless-bg-host` on a parent element, this file has no effect — safe to import even if not currently using.**
+
+```html
+<head>
+  <link rel="stylesheet" href="node_modules/@whykusanagi/corrupted-theme/dist/seamless-background.css">
+</head>
+<body class="seamless-bg-host" style="--seamless-background-image: url('/path/to/tile.png');">
+  <div class="seamless-background seamless-background-mid"></div>
+  <!-- your content -->
+</body>
+```
+
+**CSS variables**
+
+| Variable | Default | Purpose |
+|---|---|---|
+| `--seamless-background-image` | `url('./pattern.png')` | Tile image URL |
+
+**Layer classes** (apply to `.seamless-background` elements)
+
+| Class | Opacity | Filter | Speed |
+|---|---|---|---|
+| `.seamless-background-base` | 0.15 | blur(2px) brightness(0.7) | 120s |
+| `.seamless-background-mid` | 0.25 | blur(1px) brightness(0.8) | 90s |
+| `.seamless-background-front` | 0.35 | brightness(0.9) | 60s |
+
+**Context-specific presets**
+
+| Class | Use Case |
+|---|---|
+| `.gaming-seamless` | Sidebar area only (clip-path, overlay blend) |
+| `.break-seamless` | Full-screen break overlay (very subtle) |
+| `.ending-seamless` | Ending overlay (slow, moderate visibility) |
+
+**Modifier classes**
+
+| Class | Effect |
+|---|---|
+| `.seamless-static` | Disables scroll animation |
+| `.seamless-reverse` | Reverses scroll direction |
+| `.seamless-fast` | 30s animation duration |
+| `.seamless-slow` | 240s animation duration |
+| `.seamless-frozen` | Pauses animation |
+| `.seamless-large` | 768px tile size |
+| `.seamless-small` | 384px tile size |
+| `.seamless-tiny` | 256px tile size |
+| `.seamless-multiply` | multiply blend mode |
+| `.seamless-screen` | screen blend mode |
+| `.seamless-overlay` | overlay blend mode |
+| `.seamless-sidebar-only` | Mask to right 22.4% of viewport |
+| `.seamless-game-area` | Mask to left 77.6% (game capture area) |
+| `.seamless-parallax` | Enable parallax perspective on container |
+| `.seamless-vignette` | Fixed radial vignette overlay (z-index 16) |
+| `.seamless-tint-purple` | Diagonal purple/magenta tint overlay (z-index 17) |
+
+---
+
+**Last Updated:** 2026-05-18
+**Version:** 2.3
 **Status:** Complete and Production Ready
 

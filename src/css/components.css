@@ -2359,3 +2359,105 @@ nav.navbar {
   align-items: center;
   justify-content: center;
 }
+
+/* ========== EVENT BAR (0.2.0) ========== */
+
+.event-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.event-bar__row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--glass, rgba(26, 10, 46, 0.6));
+  border: 1px solid var(--border, rgba(217, 79, 144, 0.3));
+  border-radius: var(--radius-md, 6px);
+}
+
+.event-bar__icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.event-bar__label {
+  color: var(--text-secondary, #aaa);
+  font-size: 0.9rem;
+  font-family: var(--font-mono, 'Courier New', monospace);
+  flex-shrink: 0;
+}
+
+.event-bar__content {
+  color: var(--text-primary, #fff);
+  font-family: var(--font-mono, 'Courier New', monospace);
+  margin-left: auto;
+  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ========== LOGO BANNER (0.2.0) ========== */
+
+.logo-banner {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Size presets — width/height set inline by JS; these handle internal layout */
+.logo-banner--small  { gap: 0.5rem; }
+.logo-banner--normal { gap: 0.75rem; }
+.logo-banner--large  { gap: 1rem; }
+
+.logo-banner__img {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.logo-banner__subtitle {
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  color: var(--corrupted-magenta2, #d94f90);
+  text-shadow: 0 0 8px rgba(217, 79, 144, 0.6);
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+/* Animation modifier — JS controls opacity via style; transition is set here */
+.logo-banner--fade  { transition: opacity 0.5s ease; }
+.logo-banner--slide { transition: opacity 0.5s ease, transform 0.5s ease; }
+
+/* ========== CLOCK WIDGET (0.2.0) ========== */
+
+.clock-widget__time {
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 2rem;
+  color: var(--corrupted-cyan, #00ffff);
+  text-shadow: 0 0 8px rgba(0, 255, 255, 0.6), 0 0 15px rgba(0, 255, 255, 0.3);
+  line-height: 1.1;
+}
+
+.clock-widget__date {
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 0.85rem;
+  color: var(--text-secondary, #aaa);
+  letter-spacing: 1px;
+}
+
+.clock-widget__timezone {
+  font-family: var(--font-mono, 'Courier New', monospace);
+  font-size: 0.75rem;
+  color: var(--corrupted-magenta2, #d94f90);
+  text-shadow: 0 0 6px rgba(217, 79, 144, 0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}

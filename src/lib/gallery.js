@@ -41,6 +41,10 @@
 
 import { TimerRegistry } from '../core/timer-registry.js';
 import { EventTracker } from '../core/event-tracker.js';
+import { Lightbox } from './lightbox.js';
+
+// Re-export for consumers that import Lightbox through the gallery entry point
+export { Lightbox };
 
 // ============================================================================
 // CONFIGURATION

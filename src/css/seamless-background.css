@@ -1,0 +1,225 @@
+/* seamless-background.css — Multi-layer parallax tiled background
+ *
+ * USAGE: Add the class .seamless-bg-host to your <body> (or wrapping
+ * element) to enable the background. The CSS variable
+ * --seamless-background-image controls the tile image URL.
+ *
+ * Without .seamless-bg-host, this file has no effect — safe to import.
+ *
+ * Adapted from celeste-tts-bot/obs/seamless-background.css
+ */
+
+/* ===== HOST ELEMENT BACKGROUND ===== */
+/* Apply .seamless-bg-host to <body> (or any wrapping element) to opt in */
+.seamless-bg-host {
+    background: #000;
+}
+
+/* ===== BASE SEAMLESS BACKGROUND LAYER ===== */
+.seamless-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent; /* Ensure no white background */
+    background-image: var(--seamless-background-image, url('./pattern.png'));
+    background-repeat: repeat;
+    background-size: 512px 512px; /* Adjust tile size as needed */
+    z-index: 15; /* Above sidebar (10), below border (1000) */
+    pointer-events: none;
+
+    /* Add subtle animation for depth */
+    animation: seamlessScroll 120s linear infinite;
+}
+
+/* Slow scrolling animation for dynamic feel */
+@keyframes seamlessScroll {
+    0% {
+        background-position: 0px 0px;
+    }
+    100% {
+        background-position: 512px 512px; /* Match background-size */
+    }
+}
+
+/* ===== DEPTH LAYERS ===== */
+
+/* Layer 1: Base pattern (subtle, far back) */
+.seamless-background-base {
+    opacity: 0.15; /* Very subtle */
+    filter: blur(2px) brightness(0.7);
+}
+
+/* Layer 2: Mid-depth pattern (more visible) */
+.seamless-background-mid {
+    opacity: 0.25;
+    filter: blur(1px) brightness(0.8);
+    animation-duration: 90s; /* Slightly faster */
+}
+
+/* Layer 3: Foreground pattern (most visible) */
+.seamless-background-front {
+    opacity: 0.35;
+    filter: brightness(0.9);
+    animation-duration: 60s; /* Fastest */
+}
+
+/* ===== OVERLAY-SPECIFIC BACKGROUNDS ===== */
+
+/* Gaming overlay - subtle background behind sidebar */
+.gaming-seamless {
+    opacity: 0.30; /* More visible */
+    filter: blur(1px) brightness(1.0);
+    /* Only show in sidebar area */
+    clip-path: polygon(77.6% 0%, 100% 0%, 100% 100%, 77.6% 100%);
+    mix-blend-mode: overlay; /* Blend naturally with sidebar */
+}
+
+/* Break overlay - subtle full-screen background (video is main content) */
+.break-seamless {
+    opacity: 0.12; /* Very subtle - video is primary */
+    filter: blur(3px) brightness(0.5);
+    animation-duration: 90s;
+    mix-blend-mode: overlay; /* Blend with video background */
+}
+
+/* Ending overlay - moderate full-screen background (chroma video is main) */
+.ending-seamless {
+    opacity: 0.30; /* Balanced - visible but not overwhelming */
+    filter: blur(2px) brightness(0.7); /* Subtle visibility */
+    animation-duration: 180s; /* Very slow */
+    mix-blend-mode: overlay; /* Blend with black background and video */
+}
+
+/* ===== VIGNETTE OVERLAY (adds depth) ===== */
+.seamless-vignette {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(
+        ellipse at center,
+        transparent 0%,
+        transparent 40%,
+        rgba(10, 10, 10, 0.3) 70%,
+        rgba(10, 10, 10, 0.6) 100%
+    );
+    z-index: 16; /* Just above seamless background */
+    pointer-events: none;
+}
+
+/* ===== COLOR TINT OVERLAY (match corrupted theme) ===== */
+.seamless-tint-purple {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(139, 92, 246, 0.1) 0%,
+        transparent 50%,
+        rgba(217, 79, 144, 0.1) 100%
+    );
+    z-index: 17;
+    pointer-events: none;
+    mix-blend-mode: overlay; /* Blend with background */
+}
+
+/* ===== PARALLAX DEPTH EFFECT ===== */
+/* Add this class to container for parallax scrolling */
+.seamless-parallax {
+    transform-style: preserve-3d;
+    perspective: 1000px;
+}
+
+.seamless-parallax .seamless-background {
+    transform: translateZ(-10px) scale(1.1);
+}
+
+/* ===== UTILITY CLASSES ===== */
+
+/* Static (no animation) */
+.seamless-static {
+    animation: none !important;
+}
+
+/* Reverse scroll direction */
+.seamless-reverse {
+    animation-direction: reverse;
+}
+
+/* Faster scroll */
+.seamless-fast {
+    animation-duration: 30s !important;
+}
+
+/* Slower scroll */
+.seamless-slow {
+    animation-duration: 240s !important;
+}
+
+/* Freeze background (pause animation) */
+.seamless-frozen {
+    animation-play-state: paused !important;
+}
+
+/* ===== RESPONSIVE TILE SIZES ===== */
+
+/* Larger tiles for less visual noise */
+.seamless-large {
+    background-size: 768px 768px;
+}
+
+/* Smaller tiles for more detail */
+.seamless-small {
+    background-size: 384px 384px;
+}
+
+/* Very small tiles for texture */
+.seamless-tiny {
+    background-size: 256px 256px;
+}
+
+/* ===== BLEND MODES FOR DEPTH ===== */
+
+.seamless-multiply {
+    mix-blend-mode: multiply;
+}
+
+.seamless-screen {
+    mix-blend-mode: screen;
+}
+
+.seamless-overlay {
+    mix-blend-mode: overlay;
+}
+
+/* ===== SIDEBAR-ONLY BACKGROUND (for gaming layout) ===== */
+.seamless-sidebar-only {
+    /* Mask to only show in right sidebar (430px width) */
+    mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        transparent 77.6%,
+        black 77.6%,
+        black 100%
+    );
+    -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0%,
+        transparent 77.6%,
+        black 77.6%,
+        black 100%
+    );
+}
+
+/* ===== GAME AREA BACKGROUND (optional subtle pattern) ===== */
+.seamless-game-area {
+    opacity: 0.08; /* Very subtle behind game capture */
+    filter: blur(4px) brightness(0.5);
+    /* Clip to game area only (left side, 1490px) */
+    clip-path: polygon(0% 0%, 77.6% 0%, 77.6% 100%, 0% 100%);
+}

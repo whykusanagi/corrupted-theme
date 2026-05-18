@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Utilities · corrupted-theme</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="../../src/css/theme.css">
+  <link rel="stylesheet" href="../../src/css/utilities.css">
+  <style>
+    body {
+      margin: 0;
+      background: #000;
+      color: var(--text-primary);
+      font-family: 'Courier New', monospace;
+      padding: var(--spacing-2xl);
+    }
+
+    h1 {
+      color: var(--corrupted-cyan);
+      text-shadow: 0 0 20px var(--corrupted-cyan);
+      text-align: center;
+      font-size: 1.8rem;
+      margin: 0 0 0.25rem;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      text-align: center;
+      margin: 0 0 var(--spacing-2xl);
+    }
+
+    .demo-section {
+      padding: 1.5rem;
+      margin-block: 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--glass);
+      backdrop-filter: blur(12px);
+      max-width: 760px;
+      margin-inline: auto;
+    }
+
+    .demo-section h2 {
+      color: var(--accent);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin: 0 0 var(--spacing-md);
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      margin-block: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* ── random-utils output ─────────────────────────── */
+    #random-output {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      min-height: 3.5rem;
+      font-size: 0.8rem;
+      color: var(--corrupted-cyan);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 0.5rem;
+    }
+
+    /* ── time-utils display ──────────────────────────── */
+    #time-output {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .time-row {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.75rem;
+    }
+
+    .time-row .time-label {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.15rem;
+    }
+
+    .time-row .time-value {
+      font-size: 0.85rem;
+      color: var(--corrupted-cyan);
+    }
+
+    /* ── url-state form ──────────────────────────────── */
+    #url-form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    #url-form input[type="text"] {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.4rem 0.6rem;
+      color: var(--text-primary);
+      font-family: inherit;
+      font-size: 0.8rem;
+      outline: none;
+    }
+
+    #url-form input[type="text"]:focus {
+      border-color: var(--corrupted-cyan);
+    }
+
+    .checkbox-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-row label {
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .checkbox-row input[type="checkbox"] {
+      accent-color: var(--corrupted-cyan);
+    }
+
+    #url-share-link {
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.5rem 0.75rem;
+      font-size: 0.75rem;
+      color: var(--corrupted-magenta);
+      word-break: break-all;
+      min-height: 2.5rem;
+      margin-top: 0.5rem;
+    }
+
+    /* ── scrollbar-corrupted demo ────────────────────── */
+    #scroll-box {
+      height: 160px;
+      overflow-y: scroll;
+      background: rgba(0,0,0,0.4);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+
+    #scroll-box p { margin: 0 0 0.5rem; }
+  </style>
+</head>
+<body>
+
+  <h1><i class="fas fa-tools"></i> Utility Modules</h1>
+  <p class="subtitle">random-utils · time-utils · url-state · scrollbar-corrupted — <code>0.2.0</code></p>
+
+  <!-- ── random-utils ──────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-dice"></i> random-utils — pure random helpers</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      <code>randomPick</code>, <code>randomInt</code>, <code>randomFloat</code>,
+      <code>randomVariance</code>, <code>shuffle</code>, <code>randomSample</code>
+    </p>
+    <div class="controls">
+      <button class="btn" id="btn-random-pick">randomPick</button>
+      <button class="btn" id="btn-random-int">randomInt(1,100)</button>
+      <button class="btn" id="btn-random-float">randomFloat(0,1)</button>
+      <button class="btn" id="btn-random-variance">randomVariance(50)</button>
+      <button class="btn" id="btn-random-shuffle">shuffle</button>
+      <button class="btn" id="btn-random-sample">sample(3)</button>
+    </div>
+    <div id="random-output">— Click a button to generate a sample —</div>
+  </div>
+
+  <!-- ── time-utils ────────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-hourglass-half"></i> time-utils — date/time formatting</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Live-updating display — functions are pure and side-effect free.
+    </p>
+    <div id="time-output">
+      <div class="time-row">
+        <div class="time-label">formatTime24h</div>
+        <div class="time-value" id="tv-24h">—</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">formatTime12h</div>
+        <div class="time-value" id="tv-12h">—</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">formatDate</div>
+        <div class="time-value" id="tv-date">—</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">formatDateTime</div>
+        <div class="time-value" id="tv-datetime">—</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">timeAgo (page load)</div>
+        <div class="time-value" id="tv-ago">—</div>
+      </div>
+      <div class="time-row">
+        <div class="time-label">formatDuration(3661)</div>
+        <div class="time-value" id="tv-dur">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── url-state ─────────────────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-link"></i> url-state — form ↔ URL serialization</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      <code>serializeFormToParams</code> / <code>applyParamsToForm</code> / <code>buildShareUrl</code>
+    </p>
+    <form id="url-form" autocomplete="off">
+      <input type="text" name="username" placeholder="username" value="celeste">
+      <input type="text" name="channel"  placeholder="channel"  value="corrupted">
+      <div class="checkbox-row">
+        <label><input type="checkbox" name="nsfw"   value="1"> NSFW</label>
+        <label><input type="checkbox" name="dark"   value="1" checked> Dark mode</label>
+        <label><input type="checkbox" name="sounds" value="1" checked> Sounds</label>
+      </div>
+    </form>
+    <div class="controls">
+      <button class="btn" id="btn-url-serialize">buildShareUrl()</button>
+      <button class="btn" id="btn-url-apply">applyParamsToForm()</button>
+    </div>
+    <div id="url-share-link">— Press buildShareUrl() to serialize the form —</div>
+  </div>
+
+  <!-- ── scrollbar-corrupted ───────────────────────────────────────────────── -->
+  <div class="demo-section">
+    <h2><i class="fas fa-bars"></i> .scrollbar-corrupted — styled scrollbar</h2>
+    <p style="color:var(--text-muted); font-size:0.8rem; margin:0 0 0.75rem;">
+      Thin cyan scrollbar — defined in <code>src/css/utilities.css</code>. Scroll the box below.
+    </p>
+    <div id="scroll-box" class="scrollbar-corrupted">
+      <p>アイウエオ — Neural corruption at 47% capacity</p>
+      <p>カキクケコ — Memory sectors destabilizing</p>
+      <p>サシスセソ — Reality matrix integrity: COMPROMISED</p>
+      <p>タチツテト — Autonomous recovery sequence initiated</p>
+      <p>ナニヌネノ — Signal noise exceeds threshold: ▓▒░</p>
+      <p>ハヒフヘホ — Core dump in progress...</p>
+      <p>マミムメモ — Checkpoint reached: 73/256 blocks</p>
+      <p>ヤユヨラリ — Attempting sector reconstruction</p>
+      <p>ルレロワヲ — Encoding stable. Proceed? [Y/N]</p>
+      <p>ン★☆♥✧✦ — END OF BUFFER</p>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      randomPick, randomInt, randomFloat,
+      randomVariance, shuffle, randomSample,
+    } from '../../src/core/random-utils.js';
+
+    import {
+      formatTime24h, formatTime12h, formatDate,
+      formatDateTime, timeAgo, formatDuration,
+    } from '../../src/core/time-utils.js';
+
+    import {
+      serializeFormToParams, applyParamsToForm, buildShareUrl,
+    } from '../../src/core/url-state.js';
+
+    // ── random-utils ──────────────────────────────────────────────────────────
+    const out = document.getElementById('random-output');
+
+    const WORDS = ['neural', 'corruption', 'glitch', 'phantom', 'cascade', 'signal', 'null', 'void'];
+
+    document.getElementById('btn-random-pick').addEventListener('click', () => {
+      out.textContent = `randomPick: "${randomPick(WORDS)}"`;
+    });
+
+    document.getElementById('btn-random-int').addEventListener('click', () => {
+      out.textContent = `randomInt(1, 100): ${randomInt(1, 100)}`;
+    });
+
+    document.getElementById('btn-random-float').addEventListener('click', () => {
+      out.textContent = `randomFloat(0, 1): ${randomFloat(0, 1).toFixed(6)}`;
+    });
+
+    document.getElementById('btn-random-variance').addEventListener('click', () => {
+      out.textContent = `randomVariance(50, 0.2): ${randomVariance(50, 0.2).toFixed(4)}`;
+    });
+
+    document.getElementById('btn-random-shuffle').addEventListener('click', () => {
+      const arr = [...WORDS];
+      shuffle(arr);
+      out.textContent = `shuffle: [${arr.map(w => `"${w}"`).join(', ')}]`;
+    });
+
+    document.getElementById('btn-random-sample').addEventListener('click', () => {
+      const sample = randomSample(WORDS, 3);
+      out.textContent = `randomSample(words, 3): [${sample.map(w => `"${w}"`).join(', ')}]`;
+    });
+
+    // ── time-utils (live updating) ─────────────────────────────────────────────
+    const pageLoadTime = new Date();
+
+    function updateTimeDisplay() {
+      const now = new Date();
+      document.getElementById('tv-24h').textContent     = formatTime24h(now);
+      document.getElementById('tv-12h').textContent     = formatTime12h(now);
+      document.getElementById('tv-date').textContent    = formatDate(now);
+      document.getElementById('tv-datetime').textContent= formatDateTime(now);
+      document.getElementById('tv-ago').textContent     = timeAgo(pageLoadTime);
+      document.getElementById('tv-dur').textContent     = formatDuration(3661);
+    }
+
+    updateTimeDisplay();
+    setInterval(updateTimeDisplay, 1000);
+
+    // ── url-state ──────────────────────────────────────────────────────────────
+    const form = document.getElementById('url-form');
+    const linkEl = document.getElementById('url-share-link');
+
+    document.getElementById('btn-url-serialize').addEventListener('click', () => {
+      linkEl.textContent = buildShareUrl(form, 'https://example.com/embed');
+    });
+
+    document.getElementById('btn-url-apply').addEventListener('click', () => {
+      // Apply a sample param string back to the form to demonstrate the reverse
+      const params = new URLSearchParams('username=whykusanagi&channel=celeste&dark=1&sounds=1');
+      applyParamsToForm(form, params);
+      linkEl.textContent = 'Applied params → username=whykusanagi, channel=celeste, dark=1, sounds=1';
+    });
+  </script>
+</body>
+</html>

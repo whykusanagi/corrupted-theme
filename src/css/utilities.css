@@ -237,3 +237,28 @@
   .hidden-print { display: none !important; }
   .visible-print { display: block !important; }
 }
+
+/* ========== SCROLLBAR (0.2.0) ========== */
+/* Apply to any scrollable container for a cyberpunk-themed scrollbar */
+.scrollbar-corrupted {
+  scrollbar-width: thin;
+  scrollbar-color: var(--corrupted-purple, #8b5cf6) transparent;
+}
+
+.scrollbar-corrupted::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-corrupted::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-corrupted::-webkit-scrollbar-thumb {
+  background: var(--corrupted-purple, #8b5cf6);
+  border-radius: 3px;
+}
+
+.scrollbar-corrupted::-webkit-scrollbar-thumb:hover {
+  background: var(--corrupted-magenta2, #d94f90);
+}

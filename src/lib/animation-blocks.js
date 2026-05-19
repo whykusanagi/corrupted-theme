@@ -524,7 +524,10 @@ export class TerminalBoot {
    * @param {HTMLElement|null} container
    * @param {Object}   [options]
    * @param {number}   [options.duration=3000]
-   * @param {string[]} [options.lines]    — array of boot log lines
+   * @param {string[]} [options.lines]    — array of boot log lines.
+   *   ⚠️ SECURITY: rendered as raw HTML via innerHTML. Pass static/author-
+   *   controlled content only. If lines could contain user input, escape
+   *   HTML entities (`&`, `<`, `>`, `"`) before passing.
    * @param {string}   [options.color='#00ffff']
    * @param {string}   [options.fontSize='16px']
    */
@@ -961,7 +964,10 @@ export class SystemDiagnostic {
    * @param {HTMLElement|null} container
    * @param {Object}   [options]
    * @param {number}   [options.duration=3000]
-   * @param {string[]} [options.lines]
+   * @param {string[]} [options.lines]    — array of diagnostic log lines.
+   *   ⚠️ SECURITY: rendered as raw HTML via innerHTML. Pass static/author-
+   *   controlled content only. If lines could contain user input, escape
+   *   HTML entities (`&`, `<`, `>`, `"`) before passing.
    * @param {string}   [options.color='#00ff00']
    * @param {string}   [options.position='left']   — 'left'|'right'|'center'
    * @param {string}   [options.fontSize='16px']

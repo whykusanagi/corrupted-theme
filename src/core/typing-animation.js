@@ -40,8 +40,8 @@
  * @see corruption-phrases.js - Phrase library with SFW/NSFW split
  */
 
-import phrases from '../data/phrases.json' with { type: 'json' };
-import charsets from '../data/charsets.json' with { type: 'json' };
+import phrases from '../data/phrases.data.js';
+import charsets from '../data/charsets.data.js';
 
 // ---------------------------------------------------------------------------
 // Module-level phrase cache — computed once at import time, never re-spread.

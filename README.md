@@ -81,7 +81,7 @@ npm install @whykusanagi/corrupted-theme
 ```html
 <!-- Pinned version (recommended for production) -->
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.2.1/dist/theme.min.css">
 
 <!-- Floating @latest (use only for sites you control and update together) -->
 <link rel="stylesheet"
@@ -105,9 +105,9 @@ Both domains serve the same content. Use the domain that matches your site's roo
 **Pinned version** (production-safe — breaking changes never auto-propagate):
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.2.1/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.2.1/dist/corrupted-text.min.js"></script>
 ```
 
 **Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):

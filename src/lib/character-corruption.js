@@ -18,7 +18,7 @@
  * @see docs/brand/TRANSLATION_FAILURE_AESTHETIC.md
  */
 
-import phrasesData from '../data/phrases.json' with { type: 'json' };
+import phrasesData from '../data/phrases.data.js';
 
 /**
  * Intensity constants matching CLI implementation

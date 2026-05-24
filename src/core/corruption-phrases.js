@@ -14,7 +14,7 @@
  * @see docs/CROSS_LANGUAGE_CONTRACT.md — how non-JS consumers read this JSON
  */
 
-import phrases from '../data/phrases.json' with { type: 'json' };
+import phrases from '../data/phrases.data.js';
 
 /**
  * Deterministically flatten a language bundle (e.g., phrases.sfw) to a flat

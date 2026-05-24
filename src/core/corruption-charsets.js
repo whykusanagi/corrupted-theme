@@ -17,7 +17,7 @@
  * @module corruption-charsets
  */
 
-import charsets from '../data/charsets.json' with { type: 'json' };
+import charsets from '../data/charsets.data.js';
 
 export const CorruptionCharsets = {
   // Named sets (read-through to canonical JSON)

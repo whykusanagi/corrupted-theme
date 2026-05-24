@@ -9,6 +9,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.2.1] - 2026-05-23
+
+> **Bundle-fix patch.** Restores foundational class styling (`.card`, `.btn`, `.glass-container*`, etc.) on CDN consumers and fixes a silent browser-compat regression in five JS modules. No source API changes — drop-in replacement for 0.2.0.
+
+### Fixed
+
+- **`dist/theme.min.css` now bundles all partials.** 0.2.0 shipped a build that preserved `@import './variables.css'` etc. verbatim, so CDN consumers of `dist/theme.min.css` got an effectively empty stylesheet (all of `glassmorphism`, `components`, `utilities`, `typography`, `extensions` 404'd). Added `postcss-import` to the postcss pipeline so dist is a real single-file bundle (3.9 kB → 79.5 kB). Symptom: `.card` lost its glassmorphism on `@latest` even though the source CSS was unchanged.
+- **`toast.css` and `seamless-background.css` are now reachable from the main bundle.** They shipped in 0.2.0 only as deep-import endpoints; anyone using `<div class="corrupted-toast">` or `.seamless-bg-host` after loading the main stylesheet got unstyled markup. Both are now `@import`ed by `src/css/theme.css`.
+- **JSON imports replaced with codegen ES modules.** Five JS modules used `import x from '../data/foo.json' with { type: 'json' }`, which only parses in Chromium 123+. Safari and Firefox raised SyntaxError on `<script type="module">` loads. Affected: `corruption-charsets.js`, `corruption-phrases.js`, `typing-animation.js`, `corruption-loading.js`, `character-corruption.js`. The canonical JSON in `src/data/` stays the source of truth; a build step (`scripts/inline-data.js`, wired via `prebuild`/`pretest`/`prepublishOnly`) emits sibling `*.data.js` modules that re-export the parsed JSON via plain `export default`. Cross-language consumers (Go CLI, etc.) continue to read the JSON files unchanged.
+
+### Added
+
+- `npm run data:generate` — regenerates `src/data/*.data.js` from canonical JSON. Runs automatically before `build`, `test`, and `publish`.
+- `prepublishOnly` script — guarantees codegen + build + tests pass before any `npm publish` attempt.
+
+### Internal
+
+- Added `postcss-import@^16.1.1` to devDependencies.
+- `src/data/charsets.data.js`, `colors.data.js`, `phrases.data.js` are committed generated artifacts; do not hand-edit (header comment notes this).
+
+---
+
 ## [0.2.0] - 2026-05-18
 
 > **Significant release.** Reframes corrupted-theme as a durable cross-project foundation. Canonical JSON source of truth, CDN distribution, 14 new base components, drift reconvergence with downstream sites, and a `.container` redesign that is a breaking change.

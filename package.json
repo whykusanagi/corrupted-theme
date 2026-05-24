@@ -1,6 +1,6 @@
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "A dark, glassmorphic design system with pink/purple accents. Perfect for creating modern, visually striking web applications.",
   "main": "src/css/theme.css",
@@ -105,9 +105,12 @@
     "cssnano": "^7.1.9",
     "postcss": "^8.5.14",
     "postcss-cli": "^11.0.1",
+    "postcss-import": "^16.1.1",
     "rollup": "^4.60.4"
   },
   "scripts": {
+    "data:generate": "node scripts/inline-data.js",
+    "prebuild": "npm run data:generate",
     "build": "postcss src/css/theme.css -o dist/theme.min.css",
     "build:umd": "rollup -c rollup.config.js",
     "watch": "postcss --watch src/css/theme.css -o dist/theme.min.css",
@@ -115,9 +118,11 @@
     "dev:static": "node scripts/static-server.js",
     "start": "npm run dev:static",
     "validate-data": "node scripts/validate-data.js",
+    "pretest": "npm run data:generate",
     "test": "node --test --test-reporter=spec 'tests/**/*.test.js'",
     "publish-cdn": "bash scripts/publish-to-cdn.sh",
-    "generate-sri": "bash scripts/generate-sri.sh"
+    "generate-sri": "bash scripts/generate-sri.sh",
+    "prepublishOnly": "npm run data:generate && npm run build && npm test"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

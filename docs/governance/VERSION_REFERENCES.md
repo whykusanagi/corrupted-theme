@@ -31,6 +31,7 @@
 | 14 | `docs/governance/VERSION_REFERENCES.md` *(this file)* | line 5 | `**Current Version**: X.Y.Z` |
 | 15 | `docs/governance/VERSION_MANAGEMENT.md` | lines 107, 444 | `Current Celeste version: X.Y.Z` |
 | 16 | `docs/platforms/NPM_PACKAGE.md` | lines 34, 83, 667, 675–676 (table), 695, 853 | CDN link, install example, semver example, version table (add new row at top), footer |
+| 17 | `docs/CDN_CONSUMPTION.md` | search for `@X.Y.Z/dist/` | Pinned-version install examples (3 occurrences as of 0.2.1) |
 
 ---
 

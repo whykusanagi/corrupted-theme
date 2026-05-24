@@ -10,8 +10,8 @@
  * <script src="corruption-loading.js"></script>
  */
 
-import phrasesData from '../data/phrases.json' with { type: 'json' };
-import charsetsData from '../data/charsets.json' with { type: 'json' };
+import phrasesData from '../data/phrases.data.js';
+import charsetsData from '../data/charsets.data.js';
 
 (function() {
   'use strict';

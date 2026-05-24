@@ -28,6 +28,14 @@
 /* ========== EXTENSION COMPONENTS ========== */
 @import './extensions.css';
 
+/* ========== TOAST NOTIFICATIONS (0.2.1+) ========== */
+/* Paired with src/lib/toast.js — required for Toast widget visibility. */
+@import './toast.css';
+
+/* ========== SEAMLESS BACKGROUND (0.2.1+) ========== */
+/* No-op unless .seamless-bg-host class is applied to body or wrapper. */
+@import './seamless-background.css';
+
 /* ========== CONTAINER (structural-only — 0.2.0+) ========== */
 /*
  * .container is intentionally minimal: max-width + horizontal centering.

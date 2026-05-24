@@ -24,9 +24,9 @@ third-party warnings.
 
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.2.1/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.2.1/dist/corrupted-text.min.js"></script>
 ```
 
 **Pro:** Breaking changes never auto-propagate. **Con:** Manual version
@@ -52,7 +52,7 @@ For production hardening, add SRI hashes:
 
 ```html
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.2.0/dist/corrupted-text.min.js"
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.2.1/dist/corrupted-text.min.js"
         integrity="sha384-<paste-hash-here>"
         crossorigin="anonymous"></script>
 ```

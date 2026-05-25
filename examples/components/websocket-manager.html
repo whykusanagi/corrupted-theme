@@ -297,7 +297,15 @@ ws.destroy();  <span class="comment">// cleanup all listeners, prevent reconnect
       const now = new Date().toLocaleTimeString('en-US', { hour12: false });
       const entry = document.createElement('div');
       entry.className = 'log-entry';
-      entry.innerHTML = `<span class="log-ts">[${now}]</span><span class="log-${type}">${text}</span>`;
+      // Build child spans with textContent so incoming WS messages
+      // can't inject markup into the page log.
+      const tsSpan = document.createElement('span');
+      tsSpan.className = 'log-ts';
+      tsSpan.textContent = `[${now}]`;
+      const msgSpan = document.createElement('span');
+      msgSpan.className = `log-${type}`;
+      msgSpan.textContent = text;
+      entry.append(tsSpan, msgSpan);
       logEl.appendChild(entry);
       logEl.scrollTop = logEl.scrollHeight;
     }

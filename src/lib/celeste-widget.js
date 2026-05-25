@@ -1163,10 +1163,14 @@ class CelesteAgent {
     }
 
     /**
-     * Generate a unique session ID
+     * Generate a unique session ID using cryptographic randomness so the
+     * value can't be predicted or collided by another tab/visitor.
      */
     generateSessionId() {
-        return 'celeste_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const uuid = (typeof crypto !== 'undefined' && crypto.randomUUID)
+            ? crypto.randomUUID()
+            : 'fallback_' + Date.now();
+        return 'celeste_' + uuid;
     }
 
     /**

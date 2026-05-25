@@ -9,9 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.2.1] - 2026-05-23
+## [0.2.1] - 2026-05-25
 
-> **Bundle-fix patch.** Restores foundational class styling (`.card`, `.btn`, `.glass-container*`, etc.) on CDN consumers and fixes a silent browser-compat regression in five JS modules. No source API changes — drop-in replacement for 0.2.0.
+> **Bundle-fix + hardening patch.** Restores foundational class styling (`.card`, `.btn`, `.glass-container*`, etc.) on CDN consumers, fixes a silent browser-compat regression in five JS modules, and addresses CodeQL findings in shipped sources. No source API changes — drop-in replacement for 0.2.0.
 
 ### Fixed
 
@@ -24,10 +24,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `npm run data:generate` — regenerates `src/data/*.data.js` from canonical JSON. Runs automatically before `build`, `test`, and `publish`.
 - `prepublishOnly` script — guarantees codegen + build + tests pass before any `npm publish` attempt.
 
+### Security
+
+- **`celeste-widget.js` session IDs now use `crypto.randomUUID()`** instead of `Math.random().toString(36)`. The session ID isn't an auth token (backend validates credentials server-side), but the upgrade removes a predictable-token surface and silences the `js/insecure-randomness` CodeQL warning. Backward-compatible: callers see the same string-typed `sessionId` field.
+- **Example pages hardened.** `examples/components/websocket-manager.html` now builds log entries with `textContent` instead of `innerHTML` so incoming WebSocket frames can't inject markup. `examples/components/png-export.html` pins its CDN-loaded `html2canvas` with an SRI `integrity` hash, matching the guidance in `docs/CDN_CONSUMPTION.md`. Both close CodeQL findings (`js/xss-through-dom`, `js/functionality-from-untrusted-source`).
+
 ### Internal
 
 - Added `postcss-import@^16.1.1` to devDependencies.
 - `src/data/charsets.data.js`, `colors.data.js`, `phrases.data.js` are committed generated artifacts; do not hand-edit (header comment notes this).
+- CI workflow (`.github/workflows/checks.yml`) now declares least-privilege `permissions: contents: read`.
+- Enabled GitHub secret scanning, secret-scanning push protection, Dependabot security updates, and CodeQL default setup (JS/TS + GitHub Actions). One CodeQL finding (`js/tainted-format-string` in `countdown-widget.js`) dismissed as false-positive — JS template literals aren't printf-style format strings.
 
 ---
 

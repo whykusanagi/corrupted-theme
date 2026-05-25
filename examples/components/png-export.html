@@ -239,9 +239,12 @@ await exportElementAsPng(el, {
 
   <!--
     Load html2canvas from CDN so the demo works without a local npm install.
+    SRI hash pinned so a compromised CDN can't substitute a tampered build.
     In a real project: npm install html2canvas  (then it loads via dynamic import)
   -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+          integrity="sha384-ZZ1pncU3bQe8y31yfZdMFdSpttDoPmOZg2wguVK9almUodir1PghgT0eY7Mrty8H"
+          crossorigin="anonymous"></script>
   <script type="module">
     import { exportElementAsPng } from '../../src/lib/png-export.js';
 

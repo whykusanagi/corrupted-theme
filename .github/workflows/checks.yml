@@ -11,6 +11,10 @@ jobs:
   checks:
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    # Minimum scope needed: checkout reads repo contents, no other API calls.
+    # Closes CodeQL actions/missing-workflow-permissions warning.
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 

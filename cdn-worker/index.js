@@ -8,6 +8,28 @@
 
 const LATEST_PREFIX = /^\/corrupted-theme\/@latest\/(.*)$/;
 
+// Enforce correct Content-Type by file extension. R2 objects uploaded via
+// `wrangler r2 object put` carry NO content-type, which makes a <link rel=
+// stylesheet> refuse the CSS in standards mode. Rather than trust whatever
+// (possibly missing) type the upstream object has, the @latest Worker is the
+// single choke point where every consumer request flows — so we set the type
+// here and the whole class of bug can never resurface through @latest.
+const CONTENT_TYPES = {
+  css: 'text/css; charset=utf-8',
+  js: 'text/javascript; charset=utf-8',
+  mjs: 'text/javascript; charset=utf-8',
+  json: 'application/json; charset=utf-8',
+  map: 'application/json; charset=utf-8',
+  svg: 'image/svg+xml',
+  png: 'image/png',
+  woff2: 'font/woff2',
+};
+
+function contentTypeFor(path) {
+  const ext = path.split('.').pop().toLowerCase();
+  return CONTENT_TYPES[ext] || null;
+}
+
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
@@ -43,6 +65,13 @@ export default {
     // paths keep R2's immutable cache.
     const response = new Response(upstream.body, upstream);
     response.headers.set('Cache-Control', 'public, max-age=300, must-revalidate');
+
+    // Force the correct Content-Type by extension, overriding any missing or
+    // generic (text/plain) type the upstream object may carry.
+    const contentType = contentTypeFor(subPath);
+    if (contentType) {
+      response.headers.set('Content-Type', contentType);
+    }
     return response;
   },
 };

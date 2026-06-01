@@ -16,6 +16,40 @@ set -euo pipefail
 VERSION=$(node -p "require('./package.json').version")
 BUCKET="${CT_CDN_BUCKET:-whykusanagi}"
 
+# Versioned paths are content-addressed and never mutate → cache forever.
+CACHE_IMMUTABLE="public, max-age=31536000, immutable"
+
+# Map file extension -> Content-Type. `wrangler r2 object put` sets NO type by
+# default, which makes a <link rel=stylesheet> refuse the CSS in standards mode.
+# Keep this table in sync with cdn-worker/index.js (which enforces the same
+# types on @latest); this covers the direct @<version>/ paths.
+content_type_for() {
+  case "${1##*.}" in
+    css)    echo "text/css; charset=utf-8" ;;
+    js|mjs) echo "text/javascript; charset=utf-8" ;;
+    json)   echo "application/json; charset=utf-8" ;;
+    map)    echo "application/json; charset=utf-8" ;;
+    svg)    echo "image/svg+xml" ;;
+    png)    echo "image/png" ;;
+    woff2)  echo "font/woff2" ;;
+    *)      echo "" ;;
+  esac
+}
+
+# Upload one file to an R2 key with the correct Content-Type + immutable cache.
+# Note: wrangler r2 object put REQUIRES --remote (defaults to local simulator).
+put_object() {
+  local key="$1" file="$2" ct
+  ct="$(content_type_for "$file")"
+  local args=( "${BUCKET}/${key}" --file "${file}" --remote --cache-control "${CACHE_IMMUTABLE}" )
+  if [[ -n "$ct" ]]; then
+    args+=( --content-type "$ct" )
+  else
+    echo "  WARN: no Content-Type mapping for ${file} — uploading without one" >&2
+  fi
+  npx wrangler r2 object put "${args[@]}" > /dev/null
+}
+
 if [[ ! -d "./dist" ]]; then
   echo "ERROR: ./dist does not exist. Run \`npm run build\` first." >&2
   exit 1
@@ -27,13 +61,11 @@ if [[ ! -d "./src/data" ]]; then
 fi
 
 echo "Uploading dist/ to ${BUCKET}/corrupted-theme/@${VERSION}/dist/ ..."
-# Upload each file individually with the correct R2 key.
-# Note: wrangler r2 object put REQUIRES --remote flag (defaults to local R2 simulator).
 find ./dist -type f | while read -r f; do
   rel="${f#./dist/}"
   key="corrupted-theme/@${VERSION}/dist/${rel}"
   echo "  -> ${key}"
-  npx wrangler r2 object put "${BUCKET}/${key}" --file "${f}" --remote > /dev/null
+  put_object "${key}" "${f}"
 done
 
 echo ""
@@ -42,7 +74,7 @@ find ./src/data -type f -name "*.json" | while read -r f; do
   rel="${f#./src/data/}"
   key="corrupted-theme/@${VERSION}/data/${rel}"
   echo "  -> ${key}"
-  npx wrangler r2 object put "${BUCKET}/${key}" --file "${f}" --remote > /dev/null
+  put_object "${key}" "${f}"
 done
 
 echo ""

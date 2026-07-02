@@ -7,7 +7,9 @@
  * Run: npm run build:umd
  *
  * Outputs:
- *   dist/timer-registry.global.js  → window.TimerRegistry
+ *   dist/timer-registry.global.js     → window.TimerRegistry    ({ TimerRegistry })
+ *   dist/toast.global.js              → window.Toast            ({ Toast })
+ *   dist/clipboard-helpers.global.js  → window.ClipboardHelpers ({ copyWithFeedback })
  */
 
 export default [
@@ -22,6 +24,22 @@ export default [
       // Use: const { TimerRegistry } = window.TimerRegistry;
     },
   },
-  // Future UMD targets go here, e.g.:
-  // { input: 'src/core/event-tracker.js', output: { file: 'dist/event-tracker.global.js', format: 'iife', name: 'EventTracker' } },
+  {
+    input: 'src/lib/toast.js',
+    output: {
+      file: 'dist/toast.global.js',
+      format: 'iife',
+      name: 'Toast',
+      // Use: const { Toast } = window.Toast;  (Toast.show/success/error/info)
+    },
+  },
+  {
+    input: 'src/core/clipboard-helpers.js',
+    output: {
+      file: 'dist/clipboard-helpers.global.js',
+      format: 'iife',
+      name: 'ClipboardHelpers',
+      // Use: const { copyWithFeedback } = window.ClipboardHelpers;
+    },
+  },
 ];

@@ -102,11 +102,11 @@
   },
   "devDependencies": {
     "ajv": "^8.20.0",
-    "cssnano": "^7.1.9",
-    "postcss": "^8.5.14",
+    "cssnano": "^8.0.2",
+    "postcss": "^8.5.16",
     "postcss-cli": "^11.0.1",
     "postcss-import": "^16.1.1",
-    "rollup": "^4.60.4"
+    "rollup": "^4.62.2"
   },
   "scripts": {
     "data:generate": "node scripts/inline-data.js",

@@ -29,6 +29,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`celeste-widget.js` session IDs now use `crypto.randomUUID()`** instead of `Math.random().toString(36)`. The session ID isn't an auth token (backend validates credentials server-side), but the upgrade removes a predictable-token surface and silences the `js/insecure-randomness` CodeQL warning. Backward-compatible: callers see the same string-typed `sessionId` field.
 - **Example pages hardened.** `examples/components/websocket-manager.html` now builds log entries with `textContent` instead of `innerHTML` so incoming WebSocket frames can't inject markup. `examples/components/png-export.html` pins its CDN-loaded `html2canvas` with an SRI `integrity` hash, matching the guidance in `docs/CDN_CONSUMPTION.md`. Both close CodeQL findings (`js/xss-through-dom`, `js/functionality-from-untrusted-source`).
 
+### CDN dist objects added post-release (2026-05-31 / 2026-07-02)
+
+Browser-global (IIFE) builds published to `@0.2.1/dist/` (+ `@latest`) for no-build
+CDN consumers. Toast styles are already included in `theme.min.css` (`theme.css`
+@imports `toast.css` since this release) — no extra stylesheet link needed.
+
+| File | Exposes | SRI `integrity` |
+|---|---|---|
+| `dist/toast.global.js` | `window.Toast` → `{ Toast: { show, success, error, info } }` | `sha384-E6pgdAS3p1sh+1jLBw3pUw07jUbpNPFFHo0o+D/CWY7yqSDB7T51x/Zr2dTJmpI4` |
+| `dist/clipboard-helpers.global.js` | `window.ClipboardHelpers` → `{ copyWithFeedback }` | `sha384-UuSlpAWcN5KD5lAax35jyrpHK8Napkyph12QjqPdUgtDoUOiw9fnluFSSTih2f3M` |
+| `dist/corrupted-text.global.js` | `window.CorruptedText` + `.corrupted-multilang` auto-scan | `sha384-bqSoNlkNdxHXdCQK9u5r1T0AdxckV/Dme1PbZiIUenfYiUtkDKBeoQEG1Lrs2HY6` |
+| `dist/nikke-utilities.css` | nikke utility classes (second `<link>`, not bundled in theme.min.css) | `sha384-dxF1Y2qQTqxNRq1OIO+kiY6OzW4XORs5xEqDnywJYmnRSssdhb/2Sx2ijTxhja/G` |
+
 ### Internal
 
 - Added `postcss-import@^16.1.1` to devDependencies.

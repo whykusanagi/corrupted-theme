@@ -1,7 +1,7 @@
 // tests/core/random-utils.test.js
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
-import { randomPick, randomInt, randomFloat, randomVariance, shuffle, randomSample } from '../../src/core/random-utils.js';
+import { randomPick, randomInt, randomFloat, randomVariance, shuffle, randomSample, seededRandom } from '../../src/core/random-utils.js';
 
 test('randomPick returns element from array', () => {
   const arr = ['a', 'b', 'c'];
@@ -79,4 +79,25 @@ test('randomSample with count = array length returns all elements', () => {
   const out = randomSample(arr, 3);
   assert.equal(out.length, 3);
   for (const x of arr) assert.ok(out.includes(x));
+});
+
+// --- seededRandom (mulberry32) — 0.3.0 ---
+
+test('seededRandom is deterministic for equal seeds', () => {
+  const a = seededRandom(1234);
+  const b = seededRandom(1234);
+  const seqA = [a(), a(), a()];
+  const seqB = [b(), b(), b()];
+  assert.deepEqual(seqA, seqB);
+  for (const v of seqA) assert.ok(v >= 0 && v < 1, `out of range: ${v}`);
+});
+
+test('seededRandom diverges across seeds', () => {
+  assert.notEqual(seededRandom(1)(), seededRandom(2)());
+});
+
+test('seededRandom coerces seed to uint32 (frame-index friendly)', () => {
+  // negative and float seeds must not throw and must be deterministic
+  assert.equal(seededRandom(-1)(), seededRandom(-1)());
+  assert.equal(seededRandom(0)(), seededRandom(0)());
 });

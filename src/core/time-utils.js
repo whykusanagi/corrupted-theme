@@ -112,6 +112,31 @@ export function parseTimestamp(timestamp) {
   return new Date(timestamp);
 }
 
+/**
+ * Freeze every CSS animation under a root at an absolute time.
+ * Pauses each animated element and seeks it via negative animation-delay;
+ * each animation resolves to its own phase (t mod duration), so one call
+ * correctly seeks a 60s ring, a 40s ring, and a 3.2s pulse alike. Combine
+ * with seededRandom() to render CSS-animated components to video frames
+ * deterministically (recipe: docs/RENDER_TO_VIDEO.md).
+ *
+ * Ported from spatial_videos/pipeline/iconography_bg/scene.js.
+ *
+ * @param {Element|Document} root - Container whose descendants get frozen
+ * @param {number} timeSeconds - Absolute animation time to seek to (>= 0)
+ * @throws {Error} If timeSeconds is negative
+ */
+export function seekAnimations(root, timeSeconds) {
+  if (timeSeconds < 0) {
+    throw new Error('seekAnimations: timeSeconds must be >= 0');
+  }
+  for (const el of root.querySelectorAll('*')) {
+    if (!el.style) continue;
+    el.style.animationPlayState = 'paused';
+    el.style.animationDelay = `${-timeSeconds}s`;
+  }
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { formatTime24h, formatTime12h, formatDate, formatDateTime, timeAgo, formatDuration, parseTimestamp };
+  module.exports = { formatTime24h, formatTime12h, formatDate, formatDateTime, timeAgo, formatDuration, parseTimestamp, seekAnimations };
 }

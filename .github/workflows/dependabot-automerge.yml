@@ -8,7 +8,7 @@ jobs:
     if: github.actor == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
-      - uses: dependabot/fetch-metadata@v2
+      - uses: dependabot/fetch-metadata@v3
         id: meta
       # Majors stay for hand review; auto-merge waits on required checks (checks.yml)
       - if: steps.meta.outputs.update-type != 'version-update:semver-major'

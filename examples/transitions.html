@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Canvas Transitions — corrupted-theme</title>
+<!--
+  Full-viewport canvas scene transitions, absorbed 0.3.0 from the canonical
+  celeste-tts-bot obs/transitions library (single canonical home is now this
+  package): GeometricMorpher, NeuralDeserializer, SpectrumTerminal — all
+  composing AbyssalCableSystem + CRTEffects + animation-blocks internally.
+  API: new X(container); x.play({ duration, nsfw, customText }, onDone); x.stop().
+  NSFW vocabulary is opt-in (nsfw: false default) via core/terminal-vocab.js.
+  Serve the repo root (npm run dev:static) and open /examples/transitions.html
+-->
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text); overflow: hidden; }
+  #stage { position: relative; width: 100vw; height: 100vh;
+    background: radial-gradient(ellipse at 50% 60%, rgba(139, 92, 246, 0.2), transparent 60%), var(--bg-secondary); }
+  .controls { position: fixed; top: 16px; left: 16px; z-index: 200; display: flex; flex-direction: column; gap: 8px; }
+  .controls button:disabled { opacity: 0.4; }
+  .hint { position: fixed; bottom: 16px; left: 16px; z-index: 200; font-family: 'Courier New', monospace; color: var(--text-muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div class="controls">
+  <button class="btn" data-t="morpher">GeometricMorpher (6s)</button>
+  <button class="btn" data-t="neural">NeuralDeserializer (6s)</button>
+  <button class="btn" data-t="spectrum">SpectrumTerminal (6s)</button>
+</div>
+<div class="hint">transitions run full-viewport for ~6s then clean up — SFW vocab (nsfw: false default)</div>
+
+<script type="module">
+  import { GeometricMorpher } from '../src/lib/geometric-morpher.js';
+  import { NeuralDeserializer } from '../src/lib/neural-deserializer.js';
+  import { SpectrumTerminal } from '../src/lib/spectrum-terminal.js';
+
+  const stage = document.getElementById('stage');
+  const instances = {
+    morpher: new GeometricMorpher(stage),
+    neural: new NeuralDeserializer(stage),
+    spectrum: new SpectrumTerminal(stage),
+  };
+
+  const buttons = document.querySelectorAll('[data-t]');
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => (b.disabled = true));
+      instances[btn.dataset.t].play({ duration: 6000 }, () => {
+        buttons.forEach(b => (b.disabled = false));
+      });
+    });
+  });
+</script>
+</body>
+</html>

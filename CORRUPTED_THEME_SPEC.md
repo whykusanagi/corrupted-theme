@@ -395,6 +395,31 @@ Final:   Neural corruption detected...        - Fully decoded (stable white)
 
 ---
 
+### Pattern 4: Staggered Grid Corruption
+
+Corruption ripples across a grid of elements outward from an origin point
+(center, a corner, an element index, or [x, y] coordinates). Each element
+runs a short character-decode burst whose START TIME is delayed
+proportionally to its grid distance from the origin (the "wave").
+
+- **Direction:** chaos → order. The wavefront corrupts; behind it, elements
+  settle to stable cyan (#00ffff). The grid always ends fully readable.
+- **Color ramp by corruption age:** purple (#8b5cf6) at the wavefront →
+  magenta (#ff00ff) mid-decay → cyan (#00ffff) settled.
+- **Charsets:** standard registry sets only (katakana primary; blocks for
+  heavy corruption). Via CorruptionCharsets — never inline.
+- **Use for:** navigation menus, gallery/tile grids, dashboard panels,
+  stream "starting soon" tile walls.
+- **Accessibility:** wave delay ≥ 40ms between neighbors; per-element
+  flicker ≥ 100ms/frame; total settle ≤ 4s; max 12 elements animating
+  simultaneously (performance budget); static fallback = render final state.
+
+**Reference implementation:** `GlitchStaggerGrid`
+(`@whykusanagi/corrupted-theme/glitch-stagger-grid`, 0.3.0). Design
+reference: anime.js v4 grid `stagger` (MIT) — API model only, no dependency.
+
+---
+
 ## Content Classification: SFW vs NSFW
 
 **⚠️ DEFINITIVE REFERENCE:** See `CORRUPTION_BUFFER_IMPLEMENTATIONS.md` for complete implementation details across all projects.

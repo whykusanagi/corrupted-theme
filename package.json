@@ -62,6 +62,8 @@
     "./spectrum-terminal": "./src/lib/spectrum-terminal.js",
     "./transitions": "./src/lib/transitions/index.js",
     "./scroll-decode": "./src/lib/scroll-decode.js",
+    "./corrupted-timeline": "./src/lib/corrupted-timeline.js",
+    "./corruption-easings": "./src/core/corruption-easings.js",
     "./seamless-background": "./src/css/seamless-background.css",
     "./data/phrases.json": "./src/data/phrases.json",
     "./data/charsets.json": "./src/data/charsets.json",

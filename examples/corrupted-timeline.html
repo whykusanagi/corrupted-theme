@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CorruptedTimeline — corrupted-theme</title>
+<!--
+  CorruptedTimeline: OBS-style scene transition composed from existing
+  animation blocks on one orchestrated timeline (anime.js createTimeline
+  model — API reference only, zero deps):
+    TerminalBoot → ScanlineSweep at '+=200' → label 'reveal'
+    → GlitchPulse at 'reveal' → TitleDecoder at 'reveal' (parallel)
+  Play/Stop demonstrate lifecycle; run order is completion-driven.
+-->
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text); overflow: hidden; }
+  #stage { position: relative; width: 100vw; height: 100vh;
+    background: radial-gradient(ellipse at 50% 40%, rgba(217, 79, 144, 0.15), transparent 60%), var(--bg-secondary); }
+  .controls { position: fixed; top: 16px; left: 16px; z-index: 300; display: flex; gap: 8px; }
+  #status { position: fixed; bottom: 16px; left: 16px; z-index: 300;
+    font-family: 'Courier New', monospace; color: var(--text-muted); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div class="controls">
+  <button class="btn" id="play">Play scene</button>
+  <button class="btn" id="stop">Stop</button>
+</div>
+<div id="status">idle — easings: var(--ease-glitch-snap) & friends now in variables.css</div>
+
+<script type="module">
+  import { CorruptedTimeline } from '../src/lib/corrupted-timeline.js';
+  import { TerminalBoot, ScanlineSweep, GlitchPulse, TitleDecoder } from '../src/lib/animation-blocks.js';
+
+  const stage = document.getElementById('stage');
+  const status = document.getElementById('status');
+  let tl = null;
+
+  document.getElementById('play').addEventListener('click', () => {
+    if (tl) tl.destroy();
+    status.textContent = 'playing: boot → sweep(+200ms) → [reveal] pulse + title decode';
+    tl = new CorruptedTimeline({ onComplete: () => { status.textContent = 'scene complete — stable readable endpoint'; } });
+    tl.add(new TerminalBoot(stage, { duration: 2000 }))
+      .add(new ScanlineSweep(stage, { duration: 1200 }), '+=200')
+      .label('reveal')
+      .add(new GlitchPulse(stage, { duration: 900 }), 'reveal')
+      .add(new TitleDecoder(stage, { finalText: 'SCENE::ONLINE', duration: 1800 }), 'reveal')
+      .play();
+  });
+
+  document.getElementById('stop').addEventListener('click', () => {
+    if (tl) { tl.stop(); status.textContent = 'stopped'; }
+  });
+</script>
+</body>
+</html>

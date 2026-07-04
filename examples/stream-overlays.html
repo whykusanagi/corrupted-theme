@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stream Overlay Suite — corrupted-theme</title>
+<!--
+  Stream overlay suite demo: ChromaticPulse, BinaryParticles, GlitchTitleCard,
+  TerminalTakeover, StreamTicker. One page, one toggle per effect (consolidated
+  example convention). Every component supports:
+    - live mode:  .start() (rAF-driven)
+    - export mode: .renderFrame(frameIdx, fps) — deterministic with a seed
+      (see docs/RENDER_TO_VIDEO.md)
+  Spec: CORRUPTED_THEME_SPEC.md (colors/charsets); sprint spec doc for API contracts.
+  No build step required — serve the repo root (npm run dev:static) and open
+  /examples/stream-overlays.html
+-->
+<link rel="stylesheet" href="../src/css/theme.css">
+<link rel="stylesheet" href="../src/css/stream-overlays.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; }
+  .controls { position: fixed; top: 16px; left: 16px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+  .controls button { min-width: 220px; text-align: left; }
+  .controls button.active { border-color: #00ffff; color: #00ffff; }
+  /* The "stream scene" the overlays decorate */
+  #stage {
+    position: relative; width: 100vw; height: 100vh; overflow: hidden;
+    background:
+      radial-gradient(ellipse at 30% 70%, rgba(139, 92, 246, 0.25), transparent 60%),
+      radial-gradient(ellipse at 70% 30%, rgba(217, 79, 144, 0.2), transparent 55%),
+      var(--bg-secondary);
+  }
+  #pulse-target {
+    position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%);
+    font-size: 64px; font-weight: bold; color: #00ffff; white-space: nowrap;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="pulse-target">CORRUPTED::THEME</div>
+</div>
+<div class="controls">
+  <button class="btn" data-fx="ticker">StreamTicker (ambient)</button>
+  <button class="btn" data-fx="particles">BinaryParticles</button>
+  <button class="btn" data-fx="pulse">ChromaticPulse (title)</button>
+  <button class="btn" data-fx="intro">GlitchTitleCard intro</button>
+  <button class="btn" data-fx="outro">GlitchTitleCard outro</button>
+  <button class="btn" data-fx="takeover">TerminalTakeover</button>
+</div>
+
+<script type="module">
+  import { ChromaticPulse } from '../src/lib/chromatic-pulse.js';
+  import { BinaryParticles } from '../src/lib/binary-particles.js';
+  import { GlitchTitleCard } from '../src/lib/glitch-title-card.js';
+  import { TerminalTakeover } from '../src/lib/terminal-takeover.js';
+  import { StreamTicker } from '../src/lib/stream-ticker.js';
+
+  const stage = document.getElementById('stage');
+  const pulseTarget = document.getElementById('pulse-target');
+
+  // Persistent effects toggle on/off; one-shot cards replay per click.
+  // All seeded here so reloads look identical — drop `seed` for live variety.
+  const persistent = {
+    ticker: new StreamTicker(stage, { logoText: 'corrupted-theme', label: 'DEMO', seed: 7 }),
+    particles: new BinaryParticles(stage, { count: 24, charset: 'mixed', seed: 7 }),
+    pulse: new ChromaticPulse(pulseTarget, { interval: [800, 2200], seed: 7 }),
+  };
+  const running = new Set();
+
+  const oneShot = {
+    intro: (btn) => {
+      const card = new GlitchTitleCard(stage, { text: 'ABYSS ONLINE', mode: 'intro', duration: 2500 });
+      card.start(() => setTimeout(() => { card.stop(); flash(btn, false); }, 900));
+    },
+    outro: (btn) => {
+      const card = new GlitchTitleCard(stage, { text: 'STREAM ENDED', mode: 'outro', duration: 2500, seed: 7 });
+      card.start(() => setTimeout(() => { card.stop(); flash(btn, false); }, 900));
+      card.renderProgress(0); // outro shows immediately
+    },
+    takeover: (btn) => new TerminalTakeover(stage, { title: 'SIGNAL LOST', duration: 2000, seed: 7 })
+      .start(() => flash(btn, false)),
+  };
+
+  function flash(btn, on) { btn.classList.toggle('active', on); }
+
+  document.querySelectorAll('[data-fx]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const fx = btn.dataset.fx;
+      if (persistent[fx]) {
+        if (running.has(fx)) { persistent[fx].stop(); running.delete(fx); flash(btn, false); }
+        else { persistent[fx].start(); running.add(fx); flash(btn, true); }
+      } else {
+        flash(btn, true);
+        oneShot[fx](btn);
+      }
+    });
+  });
+</script>
+</body>
+</html>

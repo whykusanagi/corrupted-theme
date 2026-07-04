@@ -1,0 +1,121 @@
+/* stream-overlays.css — styles for the stream-overlay suite
+ * (ChromaticPulse, BinaryParticles, GlitchTitleCard, TerminalTakeover, StreamTicker)
+ *
+ * Ported from spatial_videos/pipeline/overlay/scene.html; colors use the
+ * canonical corruption palette (spec: CORRUPTED_THEME_SPEC.md) + theme tokens.
+ * Class names are `.corrupted-`-prefixed to avoid colliding with consumer CSS.
+ */
+
+/* --- StreamTicker: corner logo + scrolling strip --- */
+
+.corrupted-corner-logo {
+  position: absolute;
+  top: 32px;
+  right: 32px;
+  color: #ffffff;
+  font-family: 'Courier New', monospace;
+  font-size: 36px;
+  font-weight: bold;
+  text-align: right;
+  pointer-events: none;
+}
+
+.corrupted-corner-logo .logo-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  margin-left: auto;
+  margin-bottom: 8px;
+  display: block;
+}
+
+.corrupted-corner-logo .logo-text {
+  text-shadow: 0 0 10px var(--accent), 0 0 20px #8b5cf6, 0 0 30px #ff00ff;
+}
+
+.corrupted-corner-logo .logo-label {
+  font-size: 24px;
+  color: #ff00ff;
+  margin-top: 6px;
+  text-shadow: 0 0 8px var(--accent);
+  letter-spacing: 4px;
+}
+
+.corrupted-ticker {
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  width: 100%;
+  color: #d94f90aa;
+  font-family: 'Courier New', monospace;
+  font-size: 18px;
+  white-space: nowrap;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+/* --- TerminalTakeover / GlitchTitleCard: full-viewport card --- */
+
+.corrupted-takeover {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  color: #ff00ff;
+  font-family: 'Courier New', monospace;
+  font-size: 32px;
+  padding: 60px;
+  line-height: 1.6;
+  text-shadow: 0 0 8px #ff00ff, 0 0 18px #8b5cf6;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.corrupted-title-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: clamp(40px, 10vw, 120px);
+  padding: 0;
+}
+
+.corrupted-title-card .title-sub {
+  font-size: clamp(16px, 2.5vw, 32px);
+  margin-top: 0.6em;
+}
+
+/* --- BinaryParticles: rising token field --- */
+
+.corrupted-flow-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.corrupted-flow-particle {
+  position: absolute;
+  font-family: 'Courier New', monospace;
+  font-weight: 600;
+  text-shadow: 0 0 6px currentColor;
+  white-space: pre;
+  pointer-events: none;
+}
+
+/* --- Chromatic ghost-split utility classes ---
+ * Pair with corrupted-text / DecryptReveal output for the decoder-with-
+ * chromatic-aberration look (source: scene.js drawFlicker ghosts). */
+
+.corrupted-ghost-cyan,
+.corrupted-ghost-magenta {
+  position: absolute;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.corrupted-ghost-cyan { color: #00ffff; opacity: 0.7; }
+.corrupted-ghost-magenta { color: #ff00ff; opacity: 0.7; }

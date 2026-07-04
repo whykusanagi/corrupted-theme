@@ -85,7 +85,8 @@ function serveFileContent(filePath, res) {
 
     res.writeHead(200, {
       'Content-Type': mimeType,
-      'Cache-Control': 'public, max-age=3600'
+      // Dev server: never cache — stale example pages masked a fixed bug (2026-07-04)
+      'Cache-Control': 'no-cache'
     });
     res.end(data);
   });

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CorruptedMandala — corrupted-theme</title>
+<!--
+  CorruptedMandala: procedural SVG sacred-geometry background.
+  - Rotating phrase rings (60s cw / 40s ccw), phase-staggered star pulses,
+    mandorla halo, ornamental frame with labels. Zero image assets.
+  - THE PACKAGE IS THE ONLY HOME FOR THIS VISUAL (0.3.0 sprint rule):
+    downstream projects import it from the package/CDN, never re-vendor.
+  - "Freeze at t" demonstrates deterministic frame-locking via
+    seekAnimations() — the render-to-video path (docs/RENDER_TO_VIDEO.md).
+  Spec: sprint spec doc (API contract); CORRUPTED_THEME_SPEC.md (colors).
+-->
+<link rel="stylesheet" href="../src/css/theme.css">
+<link rel="stylesheet" href="../src/css/corrupted-mandala.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text); overflow: hidden; }
+  #stage { position: relative; width: 100vw; height: 100vh; background: var(--bg-secondary); }
+  .controls { position: fixed; top: 16px; left: 16px; z-index: 100; display: flex; flex-direction: column; gap: 8px; max-width: 260px; }
+  .controls label { font-family: 'Courier New', monospace; font-size: 0.8rem; color: var(--text-secondary); }
+  .controls button.active { border-color: #00ffff; color: #00ffff; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <svg id="mandala-svg"></svg>
+</div>
+<div class="controls">
+  <button class="btn active" id="preset-default">Default (mandorla, medium)</button>
+  <button class="btn" id="preset-dense">Dense circle (high stars, 2× spin)</button>
+  <label>Freeze at t (seekAnimations) — drag to scrub, blank to resume
+    <input type="range" id="scrub" min="0" max="60" step="0.25" style="width: 100%">
+  </label>
+  <button class="btn" id="resume">Resume live</button>
+</div>
+
+<script type="module">
+  import { CorruptedMandala } from '../src/lib/corrupted-mandala.js';
+  import { seekAnimations } from '../src/core/time-utils.js';
+
+  const svg = document.getElementById('mandala-svg');
+  const stage = document.getElementById('stage');
+  let mandala = null;
+
+  const PRESETS = {
+    default: { seed: 7 },
+    dense: { seed: 7, mandorla: false, starDensity: 'high', rotationSpeed: 2, labelTop: 'DENSE.MODE', labelBottom: 'STARS.HIGH' },
+  };
+
+  function build(preset, btn) {
+    if (mandala) mandala.destroy();
+    // destroy() detaches; re-query is unnecessary — same svg node is reused
+    mandala = new CorruptedMandala(svg, PRESETS[preset]);
+    mandala.init().resize(stage.clientWidth, stage.clientHeight).setActive(true);
+    document.querySelectorAll('.controls button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  document.getElementById('preset-default').addEventListener('click', (e) => build('default', e.target));
+  document.getElementById('preset-dense').addEventListener('click', (e) => build('dense', e.target));
+
+  document.getElementById('scrub').addEventListener('input', (e) => {
+    seekAnimations(svg, parseFloat(e.target.value));
+  });
+  document.getElementById('resume').addEventListener('click', () => {
+    for (const el of svg.querySelectorAll('*')) {
+      if (!el.style) continue;
+      el.style.animationPlayState = '';
+      el.style.animationDelay = '';
+      delete el.__ctBaseDelay;
+    }
+  });
+
+  window.addEventListener('resize', () => mandala && mandala.resize(stage.clientWidth, stage.clientHeight));
+  build('default', document.getElementById('preset-default'));
+</script>
+</body>
+</html>

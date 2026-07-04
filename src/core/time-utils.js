@@ -132,8 +132,16 @@ export function seekAnimations(root, timeSeconds) {
   }
   for (const el of root.querySelectorAll('*')) {
     if (!el.style) continue;
+    // Preserve authored (stylesheet) delays so phase-staggered animations —
+    // e.g. CorruptedMandala's star pulses — keep their stagger when seeked.
+    // Base delay is captured once per element (repeat seeks stay correct).
+    if (el.__ctBaseDelay === undefined) {
+      el.__ctBaseDelay = (typeof getComputedStyle === 'function')
+        ? (parseFloat(getComputedStyle(el).animationDelay) || 0)
+        : 0;
+    }
     el.style.animationPlayState = 'paused';
-    el.style.animationDelay = `${-timeSeconds}s`;
+    el.style.animationDelay = `${el.__ctBaseDelay - timeSeconds}s`;
   }
 }
 

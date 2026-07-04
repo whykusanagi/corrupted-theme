@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ScrollDecode — corrupted-theme</title>
+<!--
+  ScrollDecode: text decodes as it scrolls into view (anime.js v4 onScroll
+  model — API reference only, zero deps). Three modes down one long page:
+  default (decode once), rearm (re-corrupt on exit), progress (decode bound
+  to scroll position — scrub up/down). prefers-reduced-motion renders final
+  text immediately. Spec: CORRUPTED_THEME_SPEC.md Pattern 1.
+-->
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; }
+  .spacer { height: 90vh; display: grid; place-items: center; color: var(--text-muted); }
+  section { min-height: 60vh; display: grid; place-items: center; padding: 0 10vw; }
+  .decode-line { font-size: clamp(28px, 5vw, 64px); font-weight: bold; color: #00ffff;
+    text-shadow: 0 0 12px rgba(0, 255, 255, 0.4); white-space: pre-wrap; text-align: center; }
+  .mode-tag { position: fixed; top: 16px; left: 16px; color: var(--text-muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="mode-tag">scroll down — default → rearm → progress</div>
+<div class="spacer">▼ scroll ▼</div>
+
+<section><h2 class="decode-line" id="d1">THE SIGNAL FINDS YOU</h2></section>
+<div class="spacer">▼ (this one re-corrupts when it leaves view) ▼</div>
+<section><h2 class="decode-line" id="d2">NOTHING STAYS DECODED</h2></section>
+<div class="spacer">▼ (this one scrubs with the scroll position) ▼</div>
+<section><h2 class="decode-line" id="d3">SCROLL IS THE TIMELINE</h2></section>
+<div class="spacer">— end of transmission —</div>
+
+<script type="module">
+  import { ScrollDecode } from '../src/lib/scroll-decode.js';
+  new ScrollDecode(document.getElementById('d1')).start();
+  new ScrollDecode(document.getElementById('d2'), { rearm: true }).start();
+  new ScrollDecode(document.getElementById('d3'), { progress: true }).start();
+</script>
+</body>
+</html>

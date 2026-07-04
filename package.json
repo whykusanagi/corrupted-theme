@@ -53,6 +53,8 @@
     "./terminal-takeover": "./src/lib/terminal-takeover.js",
     "./stream-ticker": "./src/lib/stream-ticker.js",
     "./stream-overlays-css": "./src/css/stream-overlays.css",
+    "./corrupted-mandala": "./src/lib/corrupted-mandala.js",
+    "./corrupted-mandala-css": "./src/css/corrupted-mandala.css",
     "./seamless-background": "./src/css/seamless-background.css",
     "./data/phrases.json": "./src/data/phrases.json",
     "./data/charsets.json": "./src/data/charsets.json",

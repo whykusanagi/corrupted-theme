@@ -96,3 +96,11 @@ test('seekAnimations tolerates empty roots and rejects negative time', () => {
   assert.doesNotThrow(() => seekAnimations({ querySelectorAll: () => [] }, 0));
   assert.throws(() => seekAnimations({ querySelectorAll: () => [] }, -1), /seekAnimations/);
 });
+
+test('seekAnimations repeat seeks do not compound', () => {
+  const el = { style: {} };
+  const root = { querySelectorAll: () => [el] };
+  seekAnimations(root, 1);
+  seekAnimations(root, 3);
+  assert.equal(el.style.animationDelay, '-3s');
+});

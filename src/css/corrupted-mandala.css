@@ -1,0 +1,80 @@
+/* corrupted-mandala.css — animations + layout for CorruptedMandala
+ *
+ * Ported from spatial_videos/pipeline/iconography_bg/assets/iconography-mode.css.
+ * App-specific rules (thumbnail-container, logo positioning, fit-circle clip)
+ * intentionally NOT ported — they belong to the consuming app, not the package.
+ *
+ * Rotation speed: set --mandala-speed on the <svg> (done by the component
+ * from options.rotationSpeed); durations divide by it.
+ */
+
+.corrupted-mandala {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  display: none;
+}
+
+.corrupted-mandala.active {
+  display: block;
+}
+
+.corrupted-mandala-hidden {
+  display: none !important;
+}
+
+/* ── Ring text rotation ──
+ * Each rotating group gets its transform-origin inline (center depends on
+ * canvas size). Durations: 60s cw / 40s ccw at speed 1 (source values). */
+@keyframes corrupted-mandala-spin-cw  { to { transform: rotate(360deg); } }
+@keyframes corrupted-mandala-spin-ccw { to { transform: rotate(-360deg); } }
+
+.corrupted-mandala-ring-cw {
+  animation: corrupted-mandala-spin-cw calc(60s / var(--mandala-speed, 1)) linear infinite;
+}
+.corrupted-mandala-ring-ccw {
+  animation: corrupted-mandala-spin-ccw calc(40s / var(--mandala-speed, 1)) linear infinite;
+}
+
+/* ── Star pulse ──
+ * The <path> scales around its local (0,0) — the star's visual center,
+ * because each star sits in <g transform="translate(x,y)">. */
+@keyframes corrupted-mandala-star-pulse {
+  0%   { opacity: 0.30; transform: scale(0.35); }
+  50%  { opacity: 1.00; transform: scale(1.00); }
+  100% { opacity: 0.30; transform: scale(0.35); }
+}
+
+.corrupted-mandala-star {
+  animation: corrupted-mandala-star-pulse 3.2s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+/* Stagger phases — 10 buckets, evenly spaced over the 3.2s cycle.
+ * seekAnimations() preserves these authored delays when frame-locking. */
+.corrupted-mandala-star.ph0 { animation-delay: 0s; }
+.corrupted-mandala-star.ph1 { animation-delay: 0.32s; }
+.corrupted-mandala-star.ph2 { animation-delay: 0.64s; }
+.corrupted-mandala-star.ph3 { animation-delay: 0.96s; }
+.corrupted-mandala-star.ph4 { animation-delay: 1.28s; }
+.corrupted-mandala-star.ph5 { animation-delay: 1.6s; }
+.corrupted-mandala-star.ph6 { animation-delay: 1.92s; }
+.corrupted-mandala-star.ph7 { animation-delay: 2.24s; }
+.corrupted-mandala-star.ph8 { animation-delay: 2.56s; }
+.corrupted-mandala-star.ph9 { animation-delay: 2.88s; }
+
+/* Reduced motion: freeze rings and show stars at full presence */
+@media (prefers-reduced-motion: reduce) {
+  .corrupted-mandala-ring-cw,
+  .corrupted-mandala-ring-ccw {
+    animation: none;
+  }
+  .corrupted-mandala-star {
+    animation: none;
+    opacity: 1;
+  }
+}

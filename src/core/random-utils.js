@@ -80,6 +80,31 @@ export function randomSample(array, count) {
   return shuffle([...array]).slice(0, count);
 }
 
+/**
+ * Create a deterministic pseudo-random generator (mulberry32).
+ * Same seed → same sequence, across runs and engines. Seed a generator
+ * with a frame index to make any animation renderable to video with
+ * identical output per frame.
+ *
+ * Ported from spatial_videos/pipeline/overlay/phrases.js (mulberry32).
+ *
+ * @param {number} seed - Any number; coerced to uint32
+ * @returns {() => number} Generator returning floats in [0, 1)
+ *
+ * @example
+ * const rng = seededRandom(frameIdx);
+ * const phrase = phrases[Math.floor(rng() * phrases.length)];
+ */
+export function seededRandom(seed) {
+  let a = seed >>> 0;
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { randomPick, randomInt, randomFloat, randomVariance, shuffle, randomSample };
+  module.exports = { randomPick, randomInt, randomFloat, randomVariance, shuffle, randomSample, seededRandom };
 }

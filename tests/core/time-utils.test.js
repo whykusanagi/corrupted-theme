@@ -1,7 +1,7 @@
 // tests/core/time-utils.test.js
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
-import { formatTime24h, formatTime12h, formatDate, formatDateTime, timeAgo, formatDuration, parseTimestamp } from '../../src/core/time-utils.js';
+import { formatTime24h, formatTime12h, formatDate, formatDateTime, timeAgo, formatDuration, parseTimestamp, seekAnimations } from '../../src/core/time-utils.js';
 
 test('formatTime24h produces HH:MM', () => {
   const d = new Date(2026, 4, 16, 14, 30);
@@ -78,4 +78,21 @@ test('parseTimestamp parses ISO string to Date', () => {
   const d = parseTimestamp('2026-05-16T14:30:00.000Z');
   assert.ok(d instanceof Date);
   assert.equal(d.getUTCFullYear(), 2026);
+});
+
+// --- seekAnimations — 0.3.0 ---
+
+test('seekAnimations pauses and phase-locks every animated element', () => {
+  const els = [{ style: {} }, { style: {} }];
+  const root = { querySelectorAll: (sel) => (sel === '*' ? els : []) };
+  seekAnimations(root, 2.5);
+  for (const el of els) {
+    assert.equal(el.style.animationPlayState, 'paused');
+    assert.equal(el.style.animationDelay, '-2.5s');
+  }
+});
+
+test('seekAnimations tolerates empty roots and rejects negative time', () => {
+  assert.doesNotThrow(() => seekAnimations({ querySelectorAll: () => [] }, 0));
+  assert.throws(() => seekAnimations({ querySelectorAll: () => [] }, -1), /seekAnimations/);
 });

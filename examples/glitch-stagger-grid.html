@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GlitchStaggerGrid — corrupted-theme</title>
+<!--
+  GlitchStaggerGrid: CORRUPTED_THEME_SPEC.md Pattern 4 — corruption ripples
+  across a tile grid from an origin (center / corner / clicked tile). Each
+  tile decodes purple → magenta → settled cyan; grid always ends readable.
+  anime.js v4 grid stagger is the API model only (zero deps).
+-->
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Courier New', monospace;
+    min-height: 100vh; display: grid; place-items: center; }
+  .controls { position: fixed; top: 16px; left: 16px; display: flex; flex-direction: column; gap: 8px; z-index: 10; }
+  #wall { display: grid; grid-template-columns: repeat(4, 160px); gap: 12px; }
+  #wall > div { padding: 18px 8px; text-align: center; font-weight: bold; letter-spacing: 1px;
+    border: 1px solid var(--border); border-radius: var(--radius-md); background: var(--glass);
+    color: #00ffff; }
+  .hint { position: fixed; bottom: 16px; left: 16px; color: var(--text-muted); font-size: 0.8rem; }
+</style>
+</head>
+<body>
+<div class="controls">
+  <button class="btn" data-origin="center">Ripple from center</button>
+  <button class="btn" data-origin="corner">Ripple from corner</button>
+</div>
+<div id="wall"></div>
+<div class="hint">click any tile to ripple from it · purple → magenta → cyan · always ends readable</div>
+
+<script type="module">
+  import { GlitchStaggerGrid } from '../src/lib/glitch-stagger-grid.js';
+
+  const wall = document.getElementById('wall');
+  const LABELS = ['SIGNAL', 'DECODE', 'UPLINK', 'MEMORY', 'CIPHER', 'DAEMON', 'KERNEL', 'SOCKET',
+                  'BUFFER', 'PACKET', 'THREAD', 'MUTEX', 'VECTOR', 'SHADER', 'RASTER', 'PARITY'];
+  LABELS.forEach((label, i) => {
+    const tile = document.createElement('div');
+    tile.textContent = label;
+    tile.addEventListener('click', () => ripple(i));
+    wall.appendChild(tile);
+  });
+
+  let grid = null;
+  function ripple(origin) {
+    if (grid) grid.destroy();
+    grid = new GlitchStaggerGrid(wall, { origin, wave: 90 });
+    grid.play(() => console.log('[stagger] settled'));
+  }
+  document.querySelector('[data-origin="center"]').addEventListener('click', () => ripple('center'));
+  document.querySelector('[data-origin="corner"]').addEventListener('click', () => ripple(0));
+</script>
+</body>
+</html>

@@ -1724,3 +1724,19 @@ if (typeof module !== 'undefined' && module.exports) {
     playStaggered,
   };
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+   0.3.0 ABSORPTION — additional blocks re-exported from internal modules
+   (single import surface stays this file; implementations split by
+   provenance for reviewability: _blocks-advanced.js = 7 classes from
+   anime-blocks-advanced.js, _blocks-anime.js = 10 classes from
+   anime-blocks.js + anime-blocks-extended.js, celeste-tts-bot canonical)
+   ───────────────────────────────────────────────────────────────────────── */
+export {
+  TypingTextReveal, CircularDotsIndicator, RectangularWipe,
+  ChromaticAberrationGlitch, RotatingDiamond, GridOverlay, WaveformOscilloscope,
+} from './_blocks-advanced.js';
+export {
+  ParticleGrid, HeartPulse, ShatterGrid, WaveRipple, SpiralVortex,
+  CircularProgress, RadialBurst, DataStream, HexagonGrid, CorruptionWave,
+} from './_blocks-anime.js';

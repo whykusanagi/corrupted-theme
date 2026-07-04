@@ -29,13 +29,19 @@
   <button class="btn" data-t="morpher">GeometricMorpher (6s)</button>
   <button class="btn" data-t="neural">NeuralDeserializer (6s)</button>
   <button class="btn" data-t="spectrum">SpectrumTerminal (6s)</button>
+  <label style="color: var(--text-secondary); font-family: 'Courier New', monospace; font-size: 0.8rem;">
+    composite:
+    <select id="composite" class="btn" style="width: 100%"></select>
+  </label>
+  <button class="btn" id="play-composite">Play composite</button>
 </div>
-<div class="hint">transitions run full-viewport for ~6s then clean up — SFW vocab (nsfw: false default)</div>
+<div class="hint">transitions run full-viewport then clean up — SFW vocab (nsfw: false default)</div>
 
 <script type="module">
   import { GeometricMorpher } from '../src/lib/geometric-morpher.js';
   import { NeuralDeserializer } from '../src/lib/neural-deserializer.js';
   import { SpectrumTerminal } from '../src/lib/spectrum-terminal.js';
+  import * as Composites from '../src/lib/transitions/index.js';
 
   const stage = document.getElementById('stage');
   const instances = {
@@ -43,6 +49,23 @@
     neural: new NeuralDeserializer(stage),
     spectrum: new SpectrumTerminal(stage),
   };
+
+  // Composite dropdown — one instance per class, created lazily
+  const select = document.getElementById('composite');
+  for (const name of Object.keys(Composites)) {
+    const opt = document.createElement('option');
+    opt.value = name;
+    opt.textContent = name;
+    select.appendChild(opt);
+  }
+  const compositeInstances = {};
+  document.getElementById('play-composite').addEventListener('click', () => {
+    const name = select.value;
+    compositeInstances[name] ??= new Composites[name](stage);
+    const buttonsAll = document.querySelectorAll('button');
+    buttonsAll.forEach(b => (b.disabled = true));
+    compositeInstances[name].play({}, () => buttonsAll.forEach(b => (b.disabled = false)));
+  });
 
   const buttons = document.querySelectorAll('[data-t]');
   buttons.forEach((btn) => {

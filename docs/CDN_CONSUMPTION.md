@@ -152,14 +152,20 @@ exports, so npm and CDN import paths stay symmetrical):
 </script>
 ```
 
-**Agent surface** (for LLM sessions building against the design system):
+`<script type="module">` imports are CORS-mode requests, unlike classic
+`<script>`/`<link>` tags. Keep module imports same-origin (the same rule as
+JSON fetching above), or install the npm package. Pages opened from
+`file://` cannot import CDN modules at all; run a local server or use the
+npm package during development.
+
+**Agent surface**, for LLM sessions building against the design system:
 
 | URL | What it is |
 |---|---|
-| `@latest/dist/manifest.json` | Machine-readable component map: every export → import path, CDN URL, constructor option schemas, composition hints |
-| `@latest/dist/llms.txt` | Dense text surface: package conventions + one line per export |
+| `@latest/dist/manifest.json` | Component map: every export with its import path, CDN URL, constructor option schema, and composition hints |
+| `@latest/dist/llms.txt` | Package conventions and one line per export, sized for a prompt |
 
-**Browser-global (IIFE) builds** for no-build sites — SRI hashes in CHANGELOG.md:
+**Browser-global (IIFE) builds** for no-build sites. SRI hashes live in CHANGELOG.md:
 
 | File | Exposes |
 |---|---|
@@ -168,6 +174,6 @@ exports, so npm and CDN import paths stay symmetrical):
 | `dist/toast.global.js` | `window.Toast` → `{ Toast: { show, success, error, info } }` |
 | `dist/clipboard-helpers.global.js` | `window.ClipboardHelpers` → `{ copyWithFeedback }` |
 
-The live demo site (`corrupted.whykusanagi.xyz`) auto-deploys from `main` and
-serves the same `src/` tree at HEAD — use it for previews, never for
-production pinning (it moves with every merge).
+The demo site (`corrupted.whykusanagi.xyz`) deploys from `main` and serves
+the same `src/` tree at HEAD. Use it for previews. Pin production to a
+versioned CDN path, because the demo site changes with every merge.

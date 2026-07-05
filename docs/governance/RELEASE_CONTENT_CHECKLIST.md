@@ -1,14 +1,14 @@
 # Release Content Checklist
 
-**Purpose**: Everything beyond version *numbers* that must be updated when a
-release adds/changes components. Version-string locations live in
-[VERSION_REFERENCES.md](VERSION_REFERENCES.md) — run that first; this file
-covers *content*. Born from the 0.3.0 release, where version sync alone left
-the README, demo site, and CDN docs describing the previous release.
+**Purpose**: Everything beyond version numbers that you update when a
+release adds or changes components. Version-string locations live in
+[VERSION_REFERENCES.md](VERSION_REFERENCES.md); run that first, then this
+file. We wrote this checklist during the 0.3.0 release after version sync
+alone left the README, demo site, and CDN docs describing 0.2.x.
 
 **Deploy model reminder**: `corrupted.whykusanagi.xyz` auto-deploys `main` on
 every merge (the "Workers Builds: corrupted-theme" check). Merging content
-updates IS updating the demo site — verify live after merge.
+updates IS updating the demo site: verify live after merge.
 
 ---
 
@@ -31,18 +31,18 @@ updates IS updating the demo site — verify live after merge.
 | 8 | `index.html` (root landing) | Category card for the new release; "X.Y.Z Examples" quick-links section |
 | 9 | `examples/index.html` | Same two updates (card + quick-links) |
 | 10 | `examples/animations.html` | One DEMOS entry per new animation example page |
-| 11 | Per-component example page | Every new component ships one (repo rule §15) — standalone, commented, spec-linked |
-| 12 | After merge | Verify live: version badge, new links resolve on `corrupted.whykusanagi.xyz` (note: host serves extensionless redirects — `/examples/animations` ≡ `.html`) |
+| 11 | Per-component example page | Every new component ships one (repo rule §15): standalone, commented, spec-linked |
+| 12 | After merge | Verify live: version badge, new links resolve on `corrupted.whykusanagi.xyz` (the host redirects `.html` to extensionless paths) |
 
 ## C. CDN artifacts (at `npm run publish-cdn`)
 
 | # | Artifact | Check |
 |---|---|---|
 | 13 | `dist/theme.min.css` + UMD globals | Built fresh (`npm run build && npm run build:umd`) |
-| 14 | `dist/manifest.json` + `dist/llms.txt` | Regenerated (`npm run manifest:generate`) — version stamp matches release |
+| 14 | `dist/manifest.json` + `dist/llms.txt` | Regenerated (`npm run manifest:generate`); version stamp matches release |
 | 15 | `src/{css,lib,core,data}` module tree | Published (0.3.0+; manifest cdnUrls point here) |
-| 16 | MIME coverage | New file *extensions* need entries in BOTH `scripts/publish-to-cdn.sh` `content_type_for()` AND `cdn-worker/index.js` `CONTENT_TYPES` |
-| 17 | SRI | `npm run generate-sri` → paste table into CHANGELOG release section |
+| 16 | MIME coverage | A new file extension needs entries in both `scripts/publish-to-cdn.sh` (`content_type_for()`) and `cdn-worker/index.js` (`CONTENT_TYPES`) |
+| 17 | SRI | Run `npm run generate-sri` and paste the table into the CHANGELOG release section |
 | 18 | Verify | Cache-busted `curl -I` on `cdn.whykusanagi.xyz` AND `cdn.nikkers.cc`: 200 + correct content-type for one file of each new type |
 
 ## D. Downstream (after publish)

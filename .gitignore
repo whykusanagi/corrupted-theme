@@ -45,3 +45,6 @@ celeste_widget_pack/
 
 # Internal planning docs (store locally in ~/.claude/projects/.../memory/plans/ instead)
 docs/plans/
+
+# Local AI session data (never commit)
+.claude/

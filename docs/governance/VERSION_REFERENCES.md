@@ -2,6 +2,11 @@
 
 **Purpose**: Canonical list of every file containing a version number. Update all of these when releasing a new version.
 
+> **Version numbers are only half the release.** Content updates (README
+> feature tables, demo-site navigation, CDN docs, publish-script coverage,
+> downstream notifications) live in
+> [RELEASE_CONTENT_CHECKLIST.md](RELEASE_CONTENT_CHECKLIST.md) — run both.
+
 **Current Version**: 0.3.0
 
 ---

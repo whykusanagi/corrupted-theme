@@ -138,3 +138,36 @@ Behind the scenes:
 
 There is no CDN-side authentication; the bucket and Worker are public
 read-only.
+
+## ESM Modules, Agent Surface & Global Builds (0.3.0+)
+
+As of 0.3.0 the CDN also serves the full ESM module tree (mirrors package.json
+exports, so npm and CDN import paths stay symmetrical):
+
+```html
+<script type="module">
+  import { ScrollDecode } from
+    'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.0/src/lib/scroll-decode.js';
+  new ScrollDecode(document.querySelector('h1')).start();
+</script>
+```
+
+**Agent surface** (for LLM sessions building against the design system):
+
+| URL | What it is |
+|---|---|
+| `@latest/dist/manifest.json` | Machine-readable component map: every export → import path, CDN URL, constructor option schemas, composition hints |
+| `@latest/dist/llms.txt` | Dense text surface: package conventions + one line per export |
+
+**Browser-global (IIFE) builds** for no-build sites — SRI hashes in CHANGELOG.md:
+
+| File | Exposes |
+|---|---|
+| `dist/corrupted-text.global.js` | `window.CorruptedText` + `.corrupted-multilang` auto-scan |
+| `dist/timer-registry.global.js` | `window.TimerRegistry` |
+| `dist/toast.global.js` | `window.Toast` → `{ Toast: { show, success, error, info } }` |
+| `dist/clipboard-helpers.global.js` | `window.ClipboardHelpers` → `{ copyWithFeedback }` |
+
+The live demo site (`corrupted.whykusanagi.xyz`) auto-deploys from `main` and
+serves the same `src/` tree at HEAD — use it for previews, never for
+production pinning (it moves with every merge).

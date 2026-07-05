@@ -228,13 +228,27 @@ undefined. If you see that pair of errors, switch the tag to
 ```
 
 **npm scripts**
-- `npm run build` – compiles `dist/theme.min.css`
-- `npm run watch` – rebuilds on change (dev use)
-- `npm run dev:static` – serves `/examples` (port 8000)
-- `npm run dev:proxy` – Celeste proxy (port 5000)
-- `npm run validate-data` – AJV schema validation for `src/data/*.json` (0.2.0)
-- `npm run generate-sri` – generate SRI hashes for CDN consumers (0.2.0)
-- `npm run publish-cdn` – upload `dist/` + `src/data/` to R2, bump `@latest` pointer (0.2.0)
+
+Build and test:
+- `npm run build` – compiles `dist/theme.min.css` (runs `data:generate` first via `prebuild`)
+- `npm run build:umd` – compiles the UMD browser-global builds (`dist/*.global.js`)
+- `npm run watch` – rebuilds the CSS bundle on change (dev use)
+- `npm test` – runs the full node test suite (`tests/**/*.test.js`); regenerates data modules first
+
+Development servers:
+- `npm run dev:static` – serves the repo root incl. `/examples` (port 8000); `npm start` is an alias
+- `npm run dev:proxy` – Celeste proxy for the widget demo (port 5000)
+
+Generated artifacts (never hand-edit their outputs):
+- `npm run data:generate` – inlines `src/data/*.json` into importable `src/data/*.data.js` modules
+- `npm run manifest:generate` – emits `dist/manifest.json` + `dist/llms.txt` and refreshes the generated block in `docs/COMPONENTS_REFERENCE.md`
+- `npm run nav:sync` – stamps the canonical navbar (defined in `scripts/sync-nav.js`) into every site page; the nav drift test fails CI if a page is hand-edited instead
+- `npm run validate-data` – AJV schema validation for `src/data/*.json`
+
+Release:
+- `npm run generate-sri` – SRI hashes for CDN consumers (published in `CHANGELOG.md`)
+- `npm run publish-cdn` – uploads `dist/`, `src/{css,lib,core,data}`, `manifest.json` + `llms.txt` to R2 with correct MIME types and bumps the `@latest` pointer
+- `prepublishOnly` (automatic on `npm publish`) – regenerates data + CSS + manifest, then runs the test suite
 
 ## Container Layout (0.2.0 Breaking Change)
 
@@ -1411,14 +1425,19 @@ These guidelines keep contributions aligned with enterprise frameworks:
 
 ## Development Workflow
 ```bash
-npm install           # install dependencies
-npm run build         # compile CSS bundle
-npm run watch         # dev rebuild loop
-npm run dev:static    # serve /examples on :8000
-npm run dev:proxy     # optional Celeste proxy on :5000
-npm run validate-data # AJV schema validation for src/data/*.json
-npm run generate-sri  # generate SRI hashes for CDN consumers
-npm run publish-cdn   # upload dist/ + src/data/ to R2, bump @latest pointer
+npm install              # install dependencies
+npm run build            # compile CSS bundle (regenerates data modules first)
+npm run build:umd        # compile dist/*.global.js browser-global builds
+npm run watch            # dev rebuild loop
+npm test                 # node test suite (tests/**/*.test.js)
+npm run dev:static       # serve repo root incl. /examples on :8000 (alias: npm start)
+npm run dev:proxy        # optional Celeste proxy on :5000
+npm run data:generate    # inline src/data/*.json into src/data/*.data.js modules
+npm run manifest:generate # emit dist/manifest.json + dist/llms.txt, refresh COMPONENTS_REFERENCE
+npm run nav:sync         # stamp the canonical navbar into every site page (never hand-edit navs)
+npm run validate-data    # AJV schema validation for src/data/*.json
+npm run generate-sri     # SRI hashes for CDN consumers (goes into CHANGELOG.md)
+npm run publish-cdn      # upload dist/ + src tree + agent surface to R2, bump @latest pointer
 
 # Docker showcase
 docker build -t corrupted-theme:latest .

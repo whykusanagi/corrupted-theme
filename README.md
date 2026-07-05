@@ -118,6 +118,23 @@ Both domains serve the same content. Use the domain that matches your site's roo
 
 For production hardening, add SRI hashes (published in `CHANGELOG.md` for each release; regenerate with `npm run generate-sri`). See [docs/CDN_CONSUMPTION.md](docs/CDN_CONSUMPTION.md) for the same-origin rule, CSP guidance, CORS allowlist, and JSON data fetching.
 
+Live demo site (auto-deployed from `main`): **https://corrupted.whykusanagi.xyz** — browse every animation at [/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
+
+## What's New in 0.3.0
+
+The drift-killer release: every glitch/animation library previously copy-pasted across the whykusanagi ecosystem now has one canonical home here, plus anime.js-v4-inspired orchestration (design reference only — zero runtime dependencies).
+
+| Area | Exports |
+|---|---|
+| Stream overlay suite | `ChromaticPulse`, `BinaryParticles`, `GlitchTitleCard`, `TerminalTakeover`, `StreamTicker` (+ `stream-overlays-css`) — live rAF **and** deterministic `renderFrame(frameIdx, fps)` + `seed` modes |
+| Procedural background | `CorruptedMandala` — SVG sacred-geometry rings/stars/frame; this visual lives **only** in this package |
+| Canvas transitions | `AbyssalCableSystem`, `GeometricMorpher`, `NeuralDeserializer`, `SpectrumTerminal` + 12 composites via `transitions` barrel |
+| Animation blocks | 17 new classes re-exported from `animation-blocks` (TypingTextReveal, ChromaticAberrationGlitch, ShatterGrid, DataStream, …) |
+| Orchestration | `ScrollDecode` (viewport/scroll-scrub decode), `CorruptedTimeline` (scene sequencing with labels), `GlitchStaggerGrid` (spec **Pattern 4**), `corruption-easings` (`--ease-*` tokens) |
+| Vocabulary | `terminal-vocab` — terminal pools + charset generators, SFW/NSFW split (`nsfw: false` everywhere; `lewdMode` deprecated) |
+| Render-to-video | `seededRandom` + `seekAnimations` — byte-identical frames; recipe in [docs/RENDER_TO_VIDEO.md](docs/RENDER_TO_VIDEO.md) |
+| Agent surface | `manifest.json` + `llms.txt` on the CDN (`@latest/dist/`) — machine-readable component map so LLM sessions build on-brand from one fetch |
+
 ## Project Architecture
 ```
 .

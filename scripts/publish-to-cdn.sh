@@ -28,6 +28,7 @@ content_type_for() {
     css)    echo "text/css; charset=utf-8" ;;
     js|mjs) echo "text/javascript; charset=utf-8" ;;
     json)   echo "application/json; charset=utf-8" ;;
+    txt)    echo "text/plain; charset=utf-8" ;;
     map)    echo "application/json; charset=utf-8" ;;
     svg)    echo "image/svg+xml" ;;
     png)    echo "image/png" ;;
@@ -73,6 +74,18 @@ echo "Uploading src/data/ to ${BUCKET}/corrupted-theme/@${VERSION}/data/ ..."
 find ./src/data -type f -name "*.json" | while read -r f; do
   rel="${f#./src/data/}"
   key="corrupted-theme/@${VERSION}/data/${rel}"
+  echo "  -> ${key}"
+  put_object "${key}" "${f}"
+done
+
+# ESM module tree — manifest.json cdnUrls and no-build consumers import
+# @<ver>/src/{css,lib,core,data}/... directly (0.3.0+; matches package.json
+# exports so npm and CDN paths stay symmetrical).
+echo ""
+echo "Uploading src/ modules to ${BUCKET}/corrupted-theme/@${VERSION}/src/ ..."
+find ./src/css ./src/lib ./src/core ./src/data -type f \( -name "*.js" -o -name "*.css" -o -name "*.json" \) | while read -r f; do
+  rel="${f#./src/}"
+  key="corrupted-theme/@${VERSION}/src/${rel}"
   echo "  -> ${key}"
   put_object "${key}" "${f}"
 done

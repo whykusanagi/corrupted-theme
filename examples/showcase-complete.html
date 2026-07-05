@@ -8,7 +8,9 @@
   <link rel="stylesheet" href="../src/css/theme.css">
   <link rel="stylesheet" href="../src/css/nikke-utilities.css">
   <script src="../src/lib/corrupted-text.js"></script>
-  <script src="../src/lib/corruption-loading.js"></script>
+  <!-- ES module (imports the canonical data layer); registers
+       window.showCorruptionLoading / window.CorruptionLoading itself -->
+  <script type="module" src="../src/lib/corruption-loading.js"></script>
   <style>
     body {
       background: var(--bg);

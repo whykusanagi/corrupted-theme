@@ -34,7 +34,6 @@ export const NAV = [
       { label: 'Navigation', icon: 'fa-bars', target: 'examples/showcase-complete.html#navigation' },
       { label: 'API Docs', icon: 'fa-code', target: 'examples/showcase-complete.html#api-docs' },
       { label: '0.3.0 New', icon: 'fa-wave-square', target: 'examples/showcase-complete.html#v030-components' },
-      { label: '0.2.0 New', icon: 'fa-layer-group', target: 'examples/showcase-complete.html#v020-components' },
     ],
   },
   {

@@ -134,7 +134,6 @@
             <a href="showcase-complete.html#navigation" class="active"><i class="fas fa-bars"></i> Navigation</a>
             <a href="showcase-complete.html#api-docs" class="active"><i class="fas fa-code"></i> API Docs</a>
             <a href="showcase-complete.html#v030-components" class="active"><i class="fas fa-wave-square"></i> 0.3.0 New</a>
-            <a href="showcase-complete.html#v020-components" class="active"><i class="fas fa-layer-group"></i> 0.2.0 New</a>
           </div>
         </li>
         <li class="has-submenu">
@@ -1753,109 +1752,6 @@ const theme = {
           <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-border-all"></i> Glitch Stagger Grid</h4>
           <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
             Spec Pattern 4: corruption ripples across a tile grid from center, a corner, or a clicked tile, and always ends readable.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-      </div>
-    </section>
-
-    <!-- 0.2.0 New Components Section -->
-    <section class="showcase-section" id="v020-components">
-      <h2><i class="fas fa-layer-group"></i> 0.2.0 New Components</h2>
-      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
-        Standalone demo pages for all new components added in the 0.2.0 release. Each page is
-        self-contained and fully documented.
-      </p>
-
-      <div class="showcase-grid">
-        <!-- Animation Blocks -->
-        <a href="animation-blocks/index.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-film"></i> Animation Blocks</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            10 terminal-style animation classes: TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot,
-            GlitchPulse, ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission, TerminalPrompt.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-
-        <!-- CRT Effects -->
-        <a href="advanced/crt-effects.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-tv"></i> CRT Effects</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            Full CRT post-processing layer with scanlines, vignette, phosphor glow, and
-            <code>.glitch-word</code> / <code>.glitch-kanji</code> keyframe utilities.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-
-        <!-- Decrypt Reveal -->
-        <a href="advanced/decrypt-reveal.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-key"></i> Decrypt Reveal</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            Fixed-length decryption animation. Text is shown at final length scrambled with
-            charset characters, then progressively resolves left-to-right. Use for password
-            reveals, terminal boot sequences, and code decryption effects.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-
-        <!-- Phrase Cycle -->
-        <a href="advanced/phrase-cycle.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-history"></i> Phrase Cycle</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            Discrete phrase-state cycling. Replaces the entire element's text with phrase A, then B,
-            etc., then settles on finalText. Useful for loading screens, boot sequences, and
-            "decrypting" preambles. <code>loop: true</code> cycles forever.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-
-        <!-- Particles Background -->
-        <a href="advanced/particles-background.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-atom"></i> Particles Background</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            Canvas 2D floating Japanese phrase background with 3 depth layers, hover repel,
-            click burst, phrase flickering, and connection lines. <code>includeLewd: false</code> by default.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-
-        <!-- Widgets Showcase -->
-        <a href="components/showcase.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-th-large"></i> Widgets Showcase</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            Toast notifications (singleton), ClockWidget, NsfwReveal overlay, event-bar,
-            logo-banner, and other reusable widget components.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-
-        <!-- Utilities -->
-        <a href="components/utilities.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-tools"></i> Utilities</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            random-utils, time-utils, clipboard-helpers, url-state, and seamless-bg CSS utilities.
-            Modular helpers for common tasks with zero external dependencies.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-
-        <!-- PNG Export -->
-        <a href="components/png-export.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-file-image"></i> PNG Export</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            html2canvas-backed PNG snapshot utility. Export any DOM element as a high-quality PNG
-            with one function call. Peer dependency on html2canvas.
-          </p>
-          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
-        </a>
-
-        <!-- WebSocket Manager -->
-        <a href="components/websocket-manager.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
-          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-plug"></i> WebSocket Manager</h4>
-          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
-            Reconnecting WebSocket wrapper with exponential backoff, event bus, and
-            typed message dispatching. Fully self-contained, no runtime dependencies.
           </p>
           <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
         </a>

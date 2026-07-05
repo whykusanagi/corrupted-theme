@@ -48,3 +48,18 @@ docs/plans/
 
 # Local AI session data (never commit)
 .claude/
+
+# Internal docs + infra (owner rule 2026-07-05: anything with internal file
+# paths, infra IDs, or non-design content stays out of GitHub; files remain
+# on disk for local tooling/agents)
+CLAUDE.md
+CORRUPTION_BUFFER_IMPLEMENTATIONS.md
+docs/IMPLEMENTATION_NOTES.md
+docs/governance/
+docs/planning/
+docs/CAPABILITIES.md
+docs/PERSONALITY.md
+docs/LLM_PROVIDERS.md
+docs/ROUTING.md
+docs/IMPLEMENTATION_VALIDATION.md
+cdn-worker/

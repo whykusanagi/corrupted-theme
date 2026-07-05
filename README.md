@@ -225,7 +225,6 @@ undefined. If you see that pair of errors, switch the tag to
     ├── CDN_CONSUMPTION.md             # CDN setup, same-origin rule, SRI, CSP
     ├── CROSS_LANGUAGE_CONTRACT.md     # phrases/charsets JSON schema + Go embed guide
     ├── MIGRATION_CONTAINER_0.2.0.md   # .container breaking change migration guide
-    └── governance/                    # versioning, design governance, contribution guides
 ```
 
 **npm scripts**

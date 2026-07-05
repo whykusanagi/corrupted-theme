@@ -144,7 +144,14 @@ export function navPages() {
  * right after <body…> when a page has none (owner rule: the nav is
  * identical on every page). Later inline demo navbars are untouched.
  */
+const FA_LINK = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">';
+
 export function stampNav(source, pagePath) {
+  // Nav icons need Font Awesome — inject the same pinned stylesheet the
+  // rest of the site uses when a page lacks it (visual parity everywhere).
+  if (!source.includes('font-awesome')) {
+    source = source.replace(/(<link rel="stylesheet")/, `${FA_LINK}\n$1`);
+  }
   const start = source.indexOf('<nav class="navbar">');
   if (start === -1) {
     const bodyOpen = source.match(/<body[^>]*>/);

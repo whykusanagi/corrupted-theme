@@ -142,7 +142,8 @@
     "test": "node --test --test-reporter=spec 'tests/**/*.test.js'",
     "publish-cdn": "bash scripts/publish-to-cdn.sh",
     "generate-sri": "bash scripts/generate-sri.sh",
-    "prepublishOnly": "npm run data:generate && npm run build && npm run manifest:generate && npm test"
+    "prepublishOnly": "npm run data:generate && npm run build && npm run manifest:generate && npm test",
+    "nav:sync": "node scripts/sync-nav.js"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

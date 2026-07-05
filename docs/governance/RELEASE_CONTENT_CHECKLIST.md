@@ -29,6 +29,7 @@ updates IS updating the demo site: verify live after merge.
 | # | File | Update |
 |---|---|---|
 | 8 | `index.html` (root landing) | Category card for the new release; "X.Y.Z Examples" quick-links section |
+| 8b | Site navbar | Owned by `scripts/sync-nav.js` (single canonical definition, identical on every page). Add new pages to `NAV`, run `npm run nav:sync`; the nav-sync test fails CI on drift or hand-edits |
 | 9 | `examples/index.html` | Same two updates (card + quick-links) |
 | 10 | `examples/animations.html` | One DEMOS entry per new animation example page |
 | 11 | Per-component example page | Every new component ships one (repo rule §15): standalone, commented, spec-linked |

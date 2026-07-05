@@ -39,7 +39,7 @@ All examples in this package are deployed to **[corrupted.whykusanagi.xyz](https
 ```json
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Premium corrupted AI aesthetic with glassmorphism and translation-failure linguistics",
   "author": "Kusanagi <you@example.com>",
   "license": "MIT",
@@ -88,7 +88,7 @@ pnpm add @whykusanagi/corrupted-theme
 
 ```html
 <!-- Full theme (8.2KB gzipped) -->
-<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.2.1/dist/theme.css">
+<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.3.0/dist/theme.css">
 ```
 
 > **Preferred CDN**: Use the live-site CDN for zero-latency delivery and SRI-verified assets. See [`docs/CDN_CONSUMPTION.md`](../CDN_CONSUMPTION.md) for details.
@@ -674,7 +674,7 @@ The package follows [Semantic Versioning 2.0.0](https://semver.org/):
 ```
 MAJOR.MINOR.PATCH
 
-Example: 0.2.1
+Example: 0.3.0
          │ │ └─ Patch: Bug fixes (backward compatible)
          │ └─── Minor: New features (backward compatible)
          └───── Major: Breaking changes
@@ -684,7 +684,8 @@ Example: 0.2.1
 
 | Version | Date | Changes | Migration |
 |---------|------|---------|-----------|
-| **0.2.1** | 2026-05-23 | Bundle-fix patch: `dist/theme.min.css` now inlines all `@import`s (restores `.card` etc. on CDN); `toast.css` + `seamless-background.css` reachable from main bundle; JSON imports converted to codegen ES modules for Safari/Firefox compat | N/A — drop-in replacement |
+| **0.3.0** | 2026-07-05 | The drift-killer: absorbed the ecosystem's duplicated glitch libraries as single-canonical-home exports — stream overlay suite (5), CorruptedMandala, 4 canvas transitions + 12 composites, 17 anime-blocks classes, terminal-vocab (SFW/NSFW split); anime.js-derived ScrollDecode / CorruptedTimeline / GlitchStaggerGrid (spec Pattern 4) + corruption-easings tokens; deterministic render-to-video (seededRandom + seekAnimations); agent surface (manifest.json + llms.txt); dependabot CI | N/A — additive; `lewdMode` deprecated → `nsfw` |
+| 0.2.1 | 2026-05-23 | Bundle-fix patch: `dist/theme.min.css` now inlines all `@import`s (restores `.card` etc. on CDN); `toast.css` + `seamless-background.css` reachable from main bundle; JSON imports converted to codegen ES modules for Safari/Firefox compat | N/A — drop-in replacement |
 | 0.2.0 | 2026-05-18 | Canonical JSON data layer, CDN distribution, DecryptReveal, CRTEffects, animation-blocks (10 classes), 7 new widgets, 5 utility modules, glassmorphism CSS merge, UMD build, .container redesign | [Migration guide](../MIGRATION_CONTAINER_0.2.0.md) |
 | 0.1.9 | 2026-04-19 | CorruptedText dedup, TypingAnimation buffer redesign, NSFW page consolidation, layout fix, orphan docs removed, CI workflow | N/A |
 | 0.1.8 | 2026-03-01 | GLSL vortex, Canvas particles, new JS components | N/A |
@@ -703,10 +704,10 @@ npm list @whykusanagi/corrupted-theme
 npm update @whykusanagi/corrupted-theme
 
 # Update to latest minor version
-npm install @whykusanagi/corrupted-theme@^0.2.1
+npm install @whykusanagi/corrupted-theme@^0.3.0
 
 # Update to specific version
-npm install @whykusanagi/corrupted-theme@0.2.1
+npm install @whykusanagi/corrupted-theme@0.3.0
 
 # Update to latest (including major - may have breaking changes)
 npm install @whykusanagi/corrupted-theme@latest
@@ -845,6 +846,6 @@ import '@whykusanagi/corrupted-theme/src/css/components.css';
 
 **Last Updated**: 2025-12-13
 **Version**: 1.0.0
-**Package Version**: 0.2.1
+**Package Version**: 0.3.0
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Production Ready

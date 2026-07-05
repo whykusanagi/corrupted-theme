@@ -2272,7 +2272,7 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.2.1, 44 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.0, 44 JS exports)
 
 | Import | API | Purpose |
 |---|---|---|

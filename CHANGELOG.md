@@ -7,6 +7,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-07-05
+
+> **The drift-killer release.** Every glitch/animation library that had been copy-pasted across the whykusanagi ecosystem (celeste-tts-bot obs/transitions, site thumbnail-generator, youtube_poop, spatial_videos) now has exactly one canonical home: this package. Plus anime.js-v4-inspired orchestration components (zero dependencies) and a machine-readable agent surface. All additive — no breaking changes; `lewdMode` becomes a deprecated alias for `nsfw` (console.warn).
+
+### Added — absorbed components (single canonical home)
+
+- **Stream overlay suite** (from spatial_videos): `./chromatic-pulse` (ChromaticPulse), `./binary-particles` (BinaryParticles — continuous or beat-synced), `./glitch-title-card` (GlitchTitleCard intro/outro), `./terminal-takeover` (TerminalTakeover), `./stream-ticker` (StreamTicker) + `./stream-overlays-css`. Every component has a live rAF mode AND a deterministic `renderFrame(frameIdx, fps)` + `seed` mode for video export.
+- **`./corrupted-mandala`** (CorruptedMandala + `./corrupted-mandala-css`): procedural SVG sacred-geometry background — rotating phrase rings, phase-staggered star pulses, mandorla halo, ornamental frame. **This visual lives only here; downstream projects must import it, never re-vendor.**
+- **Canvas transitions** (from celeste-tts-bot canonical): `./abyssal-cables` (AbyssalCableSystem), `./geometric-morpher`, `./neural-deserializer`, `./spectrum-terminal`.
+- **anime-blocks absorption**: 17 new classes re-exported from `./animation-blocks` (TypingTextReveal, CircularDotsIndicator, RectangularWipe, ChromaticAberrationGlitch, RotatingDiamond, GridOverlay, WaveformOscilloscope, ParticleGrid, HeartPulse, ShatterGrid, WaveRipple, SpiralVortex, CircularProgress, RadialBurst, DataStream, HexagonGrid, CorruptionWave) + **12 composite transitions** via the `./transitions` barrel (GlitchCascade, RadialGlitch, GridCorruption, TerminalMatrix, WaveDecode, DiamondMorph, AffectionBurst, CombatShatter, ParticleCascade, SystemBoot, DataTransfer, DiagnosticScan).
+- **`./terminal-vocab`**: terminal-UI vocabulary + charset generators (generateHex/Katakana/Hiragana, corruption blocks, CODE_BLOCKS/TERMINAL_* pools). Every pool split SFW/NSFW; getters take `nsfw = false`.
+
+### Added — anime.js-derived components (design reference only, zero dependencies)
+
+- **`./scroll-decode`** (ScrollDecode): text decodes entering the viewport — once, re-arming on exit, or scrubbed by scroll position (`progress: true`).
+- **`./corrupted-timeline`** (CorruptedTimeline): scene orchestrator with absolute / `'+=N'` completion-driven / label offsets; drives every package animation contract. Built for OBS scene sequences.
+- **`./glitch-stagger-grid`** (GlitchStaggerGrid): spec **Pattern 4 — Staggered Grid Corruption** (new canonical pattern): ripple from center/index/[x,y], purple → magenta → cyan ramp, ≤4s settle, ≤12 concurrent, reduced-motion fallback.
+- **`./corruption-easings`**: EASINGS.{glitchSnap, decayEase, terminalStep} + STAGGER ripple helpers; mirrored as additive `--ease-*` CSS tokens in variables.css.
+
+### Added — deterministic render-to-video
+
+- `seededRandom(seed)` (mulberry32) in `./random-utils`; `seekAnimations(root, t)` in `./time-utils` (preserves authored `animation-delay` stagger; idempotent). Recipe: `docs/RENDER_TO_VIDEO.md`.
+
+### Added — agent surface & tooling
+
+- `npm run manifest:generate` emits `dist/manifest.json` (all 60 exports with JSDoc-parsed option schemas + `@composes` hints) and `dist/llms.txt` (dense LLM surface) — published on the CDN so any LLM session builds on-brand from one fetch. Auto-refreshes the reference table in `docs/COMPONENTS_REFERENCE.md`.
+- Browser-global builds `dist/toast.global.js` (`window.Toast`) and `dist/clipboard-helpers.global.js` (`window.ClipboardHelpers`) for no-build CDN consumers (SRI hashes in the 0.2.1 section table).
+- Dependabot (weekly, grouped, capped) + auto-merge workflow for green patch/minor updates; dev static-server now sends `Cache-Control: no-cache`.
+
+### Changed
+
+- **NSFW option canonicalized in absorbed code**: `lewdMode` → `nsfw` everywhere (deprecated alias accepted with a one-time console.warn). NeuralDeserializer's fork default of `lewdMode: true` is now `nsfw: false` — pass `nsfw: true` explicitly for 18+ vocabularies.
+- TypingTextReveal (absorbed): inline phrase pools replaced by the canonical corruption-phrases library; DOM built via `textContent` (XSS-safe).
+- Persona strings de-themed to options across all absorbed code (`labelTop`/`labelBottom`, `logoText`/`logoSrc`, `title`/`messages`; `celeste@abyss:~$` → `system@abyss:~$`).
+
+### Internal
+
+- Spec: CORRUPTED_THEME_SPEC.md gains Pattern 4 (Staggered Grid Corruption).
+- Test suite 166 → 207 (node --test; mock-timer scheduler tests, SFW-pool purity guards, determinism assertions).
+- devDependencies: rollup 4.62, postcss 8.5.16, cssnano 8.
+
+### SRI hashes for new CDN dist objects
+
+Added at CDN publish time — see the release notes / 0.2.1 table pattern. `dist/manifest.json` and `dist/llms.txt` are also published per-version + `@latest`.
+
 ---
 
 ## [0.2.1] - 2026-05-25

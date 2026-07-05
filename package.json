@@ -129,6 +129,7 @@
   },
   "scripts": {
     "data:generate": "node scripts/inline-data.js",
+    "manifest:generate": "node scripts/generate-manifest.js",
     "prebuild": "npm run data:generate",
     "build": "postcss src/css/theme.css -o dist/theme.min.css",
     "build:umd": "rollup -c rollup.config.js",
@@ -141,7 +142,7 @@
     "test": "node --test --test-reporter=spec 'tests/**/*.test.js'",
     "publish-cdn": "bash scripts/publish-to-cdn.sh",
     "generate-sri": "bash scripts/generate-sri.sh",
-    "prepublishOnly": "npm run data:generate && npm run build && npm test"
+    "prepublishOnly": "npm run data:generate && npm run build && npm run manifest:generate && npm test"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

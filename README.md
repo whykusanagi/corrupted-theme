@@ -151,11 +151,8 @@ Every file under `src/` is an ES module. Load one of two ways:
 
 A classic `<script src>` pointing at a `src/` file throws
 `Cannot use import statement outside a module` and leaves the class
-undefined. This broke two demo pages in the 0.3.0 review; CI now rejects
-the pattern. The incident log lives in
-[docs/IMPLEMENTATION_NOTES.md](docs/IMPLEMENTATION_NOTES.md), which also
-covers the demo-site editing rules (the navbar is script-owned via
-`npm run nav:sync`; never hand-edit it).
+undefined. If you see that pair of errors, switch the tag to
+`type="module"` or use the corresponding `dist/*.global.js` build.
 
 ## Project Architecture
 ```

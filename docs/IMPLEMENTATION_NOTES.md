@@ -1,10 +1,11 @@
 # Implementation Notes
 
-Rules that exist because something broke. Each entry records the incident,
-the root cause, the rule that prevents it, and the CI guard that enforces
-the rule. Read this before integrating the package or editing the demo
-site. The LLM surface (`dist/llms.txt`) carries the consumer-facing
-versions of these rules.
+**INTERNAL — not shipped in the npm package** (excluded from the `files`
+whitelist, like CORRUPTED_THEME_SPEC.md). Maintainer-facing incident log:
+each entry records what broke, the root cause, the rule that prevents it,
+and the CI guard that enforces the rule. Read this before editing the demo
+site or release process. Consumer-facing versions of the loading rules
+live in the README and the generated `dist/llms.txt`.
 
 ---
 

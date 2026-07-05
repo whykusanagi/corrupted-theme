@@ -133,6 +133,7 @@
             <a href="#nikke"><i class="fas fa-gamepad"></i> Nikke</a>
             <a href="#corrupted"><i class="fas fa-magic"></i> Corrupted</a>
             <a href="#backgrounds"><i class="fas fa-image"></i> Backgrounds</a>
+            <a href="#v030-components"><i class="fas fa-wave-square"></i> 0.3.0 New</a>
             <a href="#v020-components"><i class="fas fa-layer-group"></i> 0.2.0 New</a>
           </div>
         </li>
@@ -155,6 +156,13 @@
             <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
             <a href="advanced/phrase-cycle.html"><i class="fas fa-history"></i> Phrase Cycle</a>
             <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery (0.3.0)</a>
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="scroll-decode.html"><i class="fas fa-scroll"></i> Scroll Decode</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
           </div>
         </li>
         <li><a href="showcase-complete.html"><i class="fas fa-book"></i> Docs</a></li>
@@ -1672,6 +1680,67 @@ const theme = {
 &lt;!-- Screen reader only --&gt;
 &lt;span class="visually-hidden"&gt;For screen readers&lt;/span&gt;
         </div>
+      </div>
+    </section>
+
+    <!-- 0.3.0 New Components Section -->
+    <section class="showcase-section" id="v030-components">
+      <h2><i class="fas fa-wave-square"></i> 0.3.0 New Components</h2>
+      <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
+        Standalone demo pages for the components added in the 0.3.0 release. Each page is
+        self-contained and fully documented. The Animation Gallery collects all of them.
+      </p>
+
+      <div class="showcase-grid">
+        <a href="animations.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-th"></i> Animation Gallery</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            One page with every animation demo, 0.2.0 and 0.3.0. Load each inline or open its standalone page.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="stream-overlays.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-broadcast-tower"></i> Stream Overlay Suite</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            ChromaticPulse, BinaryParticles, GlitchTitleCard, TerminalTakeover, StreamTicker. Live rAF mode and deterministic renderFrame mode for video export.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="corrupted-mandala.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Procedural SVG background: rotating phrase rings, staggered star pulses, mandorla halo, ornamental frame. Includes a frame-scrub demo.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="transitions.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-random"></i> Canvas Transitions</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            GeometricMorpher, NeuralDeserializer, SpectrumTerminal, and the 12 composite transitions in one player.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="scroll-decode.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-scroll"></i> Scroll Decode</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Text decodes on viewport entry, re-arms on exit, or scrubs with scroll position.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="corrupted-timeline.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-stream"></i> Corrupted Timeline</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Sequence animation blocks into one scene with absolute, relative, and label offsets. Built for OBS scene transitions.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
+        <a href="glitch-stagger-grid.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-border-all"></i> Glitch Stagger Grid</h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            Spec Pattern 4: corruption ripples across a tile grid from center, a corner, or a clicked tile, and always ends readable.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
       </div>
     </section>
 

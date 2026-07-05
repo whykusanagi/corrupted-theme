@@ -47,6 +47,26 @@ CORRUPTION_BUFFER_IMPLEMENTATIONS.md
 docs/planning/
 
 # -----------------------------------------------------------------------------
+# Internal maintainer docs + governance process (owner rule 2026-07-05:
+# internal notes are never publicly served — consumer guidance lives in the
+# README and dist/llms.txt)
+# -----------------------------------------------------------------------------
+docs/IMPLEMENTATION_NOTES.md
+docs/governance/
+
+# -----------------------------------------------------------------------------
+# Internal tooling + CI tests + CDN worker source (not site content)
+# -----------------------------------------------------------------------------
+scripts/
+tests/
+cdn-worker/
+
+# -----------------------------------------------------------------------------
+# Local AI session data (untracked, listed defensively)
+# -----------------------------------------------------------------------------
+.claude/
+
+# -----------------------------------------------------------------------------
 # Lockfiles + package manifest (public can inspect via npmjs — no need to ship)
 # -----------------------------------------------------------------------------
 package-lock.json

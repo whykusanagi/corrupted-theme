@@ -2274,6 +2274,11 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
 Regenerate: `npm run manifest:generate` (v0.3.0, 44 JS exports)
 
+Container expectations: overlay-suite and block components position themselves
+absolutely inside their container, so give the container `position: relative`
+and a size. The full-viewport canvas transitions render `position: fixed` and
+ignore container geometry. Every option below is parsed from the source JSDoc.
+
 | Import | API | Purpose |
 |---|---|---|
 | `@whykusanagi/corrupted-theme/gallery` | initGallery, destroyGallery | gallery.js — Gallery System with Lightbox and NSFW Support |
@@ -2307,7 +2312,7 @@ Regenerate: `npm run manifest:generate` (v0.3.0, 44 JS exports)
 | `@whykusanagi/corrupted-theme/chromatic-pulse` | ChromaticPulse | ChromaticPulse — RGB-split chromatic-aberration pulse on any element. |
 | `@whykusanagi/corrupted-theme/binary-particles` | BinaryParticles | BinaryParticles — rising binary/hex/phrase token field. |
 | `@whykusanagi/corrupted-theme/glitch-title-card` | GlitchTitleCard | GlitchTitleCard — █▓▒░ buffer-fill intro/outro title cards. |
-| `@whykusanagi/corrupted-theme/terminal-takeover` | TerminalTakeover | TerminalTakeover — full-viewport "system corrupted" terminal card. |
+| `@whykusanagi/corrupted-theme/terminal-takeover` | TerminalTakeover | TerminalTakeover — container-filling "system corrupted" terminal card (size the container to the viewport for a full-screen takeover). |
 | `@whykusanagi/corrupted-theme/stream-ticker` | StreamTicker | StreamTicker — ambient corner logo + scrolling corruption ticker. |
 | `@whykusanagi/corrupted-theme/corrupted-mandala` | CorruptedMandala | CorruptedMandala — procedural SVG sacred-geometry background. |
 | `@whykusanagi/corrupted-theme/terminal-vocab` | generateHex, generateKatakana, generateHiragana, getRandomCharacter | Terminal vocabulary + charset generators for transition effects. |
@@ -2320,4 +2325,703 @@ Regenerate: `npm run manifest:generate` (v0.3.0, 44 JS exports)
 | `@whykusanagi/corrupted-theme/corrupted-timeline` | CorruptedTimeline | CorruptedTimeline — sequence animation blocks into one orchestrated scene. |
 | `@whykusanagi/corrupted-theme/glitch-stagger-grid` | GlitchStaggerGrid | GlitchStaggerGrid — Pattern 4: staggered grid corruption. |
 | `@whykusanagi/corrupted-theme/corruption-easings` | — | Corruption easing + stagger presets. |
+
+### `gallery`
+
+gallery.js — Gallery System with Lightbox and NSFW Support
+
+- npm: `import { initGallery } from '@whykusanagi/corrupted-theme/gallery'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/gallery.js`
+### `lightbox`
+
+lightbox.js — Standalone Lightbox for the Corrupted Theme
+
+- npm: `import { Lightbox } from '@whykusanagi/corrupted-theme/lightbox'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/lightbox.js`
+- Constructor: `new Lightbox(_unused, options = {})`
+- Methods: `setImages()`, `open()`, `close()`, `navigate()`, `destroy()`
+
+```js
+new Lightbox(containerEl).start();
+```
+### `countdown`
+
+countdown-widget.js — Event Countdown Widget with Configurable Shapes
+
+- npm: `import { initCountdown } from '@whykusanagi/corrupted-theme/countdown'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/countdown-widget.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `event` | `string` |  | Event name to load config from JSON |
+| `config` | `CountdownConfig` |  | Inline configuration |
+| `containerId` | `string` |  | Container element ID |
+| `configPath` | `string` |  | Path to config JSON files |
+| `assetBasePath` | `string` |  | Base path for assets |
+### `typing-animation`
+
+Typing Animation with Buffer Corruption
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/typing-animation'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/typing-animation.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number|null` | `null` | Total ms for one typing pass. When set, char interval = max(33, duration/length). Takes priority over typingSpeed. |
+| `typingSpeed` | `number` | `12` | Chars/sec; used only when duration is null. |
+| `bufferEnabled` | `boolean` | `true` | Show always-on buffer corruption phrase. Set false for a clean typewriter effect with no buffer. |
+| `bufferFlickerSpeed` | `number` | `100` | ms between buffer phrase swaps (independent of char-advance rate). |
+| `loop` | `boolean` | `false` | Automatically restart after loopDelay ms. |
+| `loopDelay` | `number` | `1500` | ms to hold settled text before restarting. |
+| `nsfw` | `boolean` | `false` | Enable NSFW phrases (explicit opt-in required) |
+| `onComplete` | `Function` | `null` | Callback when typing completes |
+| `glitchChance` | `number` |  | DEPRECATED. Ignored; buffer is always-on. Fires a one-time console.warn per page load. Use bufferEnabled: false to disable buffer. |
+### `corrupted-text`
+
+Corrupted Text Animation
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/corrupted-text'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-text.js`
+- Browser-only: touches `document` at import time (do not import in Node/SSR)
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `3000` | Total animation duration in milliseconds |
+| `cycleDelay` | `number` | `100` | Delay between character corruption steps (ms) |
+| `startDelay` | `number` | `0` | Initial delay before animation starts (ms) |
+| `loop` | `boolean` | `true` | Whether to loop through variants continuously |
+| `finalText` | `string|null` | `null` | Text to settle on after cycle (if loop=false) |
+### `corruption-loading`
+
+Corruption Loading Animation A dramatic loading screen with corrupted text, glyphs, and multi-language phrases
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/corruption-loading'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corruption-loading.js`
+### `character-corruption`
+
+Character-Level Japanese Corruption Matches Celeste CLI's CorruptTextJapanese() implementation
+
+- npm: `import { corruptTextJapanese } from '@whykusanagi/corrupted-theme/character-corruption'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/character-corruption.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `intensity` | `number` | `0.35` | Corruption intensity |
+| `interval` | `number` | `3000` | Re-corruption interval (0 = no repeat) |
+| `className` | `string` | `''` | Additional CSS classes |
+| `tag` | `string` | `'span'` | HTML tag to create |
+### `components-js`
+
+Component Helpers JavaScript utilities for interactive Bootstrap-equivalent components
+
+- npm: `import { initAccordions } from '@whykusanagi/corrupted-theme/components-js'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/components.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `type` | `string` | `'info'` | Toast type (success, warning, error, info) |
+| `duration` | `number` | `5000` | Auto-dismiss duration (0 = no auto-dismiss) |
+| `onClose` | `Function` |  | Callback when toast is closed |
+### `carousel`
+
+Carousel / Slideshow Component
+
+- npm: `import { initCarousel } from '@whykusanagi/corrupted-theme/carousel'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/carousel.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `autoplay` | `boolean` | `false` | Auto-advance slides |
+| `interval` | `number` | `5000` | Autoplay interval in ms |
+| `indicators` | `boolean` | `true` | Show dot indicators |
+| `controls` | `boolean` | `true` | Show prev/next controls |
+| `keyboard` | `boolean` | `true` | Enable keyboard navigation |
+| `touch` | `boolean` | `true` | Enable touch/swipe |
+| `pauseOnHover` | `boolean` | `true` | Pause autoplay on hover |
+### `corrupted-vortex`
+
+src/lib/corrupted-vortex.js
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/corrupted-vortex'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-vortex.js`
+### `corrupted-particles`
+
+src/lib/corrupted-particles.js
+
+- npm: `import { CorruptedParticles } from '@whykusanagi/corrupted-theme/corrupted-particles'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-particles.js`
+- Constructor: `new CorruptedParticles(canvas, options = {})`
+- Methods: `init()`, `start()`, `stop()`, `destroy()`
+
+```js
+new CorruptedParticles(containerEl).start();
+```
+### `corruption-charsets`
+
+CorruptionCharsets
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/corruption-charsets'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/corruption-charsets.js`
+### `decrypt-reveal`
+
+DecryptReveal
+
+- npm: `import { DecryptReveal } from '@whykusanagi/corrupted-theme/decrypt-reveal'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/decrypt-reveal.js`
+- Constructor: `new DecryptReveal(options = {})`
+- Methods: `decode()`, `stop()`, `start()`, `cleanup()`, `cleanupAll()`, `destroy()`, `getActiveCount()`, `isAnimating()`, `return()`
+
+```js
+new DecryptReveal({  }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `charset` | `string` |  | Default charset for decode operations. Overridable per-call. Defaults to CorruptionCharsets.standard. |
+### `crt-effects`
+
+src/lib/crt-effects.js
+
+- npm: `import { CRTEffects } from '@whykusanagi/corrupted-theme/crt-effects'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/crt-effects.js`
+- Constructor: `new CRTEffects(container, options = {})`
+- Methods: `start()`, `stop()`, `destroy()`, `createScanlines()`, `applyChromaticAberration()`, `startFlicker()`, `stopFlicker()`, `applyPixelDistortion()`, `applyCRTGlow()`, `addPhosphorTrail()`, `applyVignette()`, `animateRGBSplit()`, `screenShake()`, `cleanup()`
+
+```js
+new CRTEffects(containerEl, { autoStart: false, scanlines: true }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `autoStart` | `boolean` | `false` | call start() on construction |
+| `scanlines` | `boolean` | `true` | include scanline overlay |
+| `vignette` | `boolean` | `true` | include vignette overlay |
+| `vignetteIntensity` | `number` | `0.3` |  |
+| `flickerIntensity` | `number` | `0.05` |  |
+### `animation-blocks`
+
+Animation Building Blocks ========================= Ten modular animation components that compose into full transition scenes. Each block follows the package-canonical API:
+
+- npm: `import { TitleDecoder } from '@whykusanagi/corrupted-theme/animation-blocks'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/animation-blocks.js`
+
+**TitleDecoder** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `finalText` | `string` | `'SYSTEM READY'` | Target text |
+| `duration` | `number` | `2000` | ms |
+| `nsfw` | `boolean` | `false` | include NSFW chars |
+| `color` | `string` | `'#00ffff'` |  |
+
+**ProgressBar** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `2000` |  |
+| `height` | `number` | `4` | px |
+| `position` | `string` | `'bottom'` | 'top'|'bottom' |
+| `glitch` | `boolean` | `true` | / |
+
+**ScanlineSweep** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `1500` |  |
+| `sweeps` | `number` | `2` | number of vertical passes |
+
+**TerminalBoot** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `3000` |  |
+| `color` | `string` | `'#00ffff'` |  |
+
+**GlitchPulse** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `1000` |  |
+| `color` | `string` | `'#ff00ff'` | / |
+
+**ASCIIBorder** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `1500` |  |
+| `thickness` | `number` | `2` | unused in current impl (visual scale) |
+| `style` | `string` | `'double'` | 'single'|'double'|'heavy'|'rounded' |
+| `padding` | `number` | `20` |  |
+
+**SystemDiagnostic** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `3000` |  |
+| `color` | `string` | `'#00ff00'` |  |
+| `fontSize` | `string` | `'16px'` |  |
+| `showCursor` | `boolean` | `true` | / |
+
+**LoadingBarMulti** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `3000` |  |
+| `width` | `number` | `400` |  |
+| `position` | `string` | `'center'` | 'center'|'bottom'|'top' |
+| `showPercentage` | `boolean` | `true` |  |
+
+**DataTransmission** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `2500` |  |
+| `direction` | `string` | `'horizontal'` | 'horizontal'|'vertical' |
+| `packetCount` | `number` | `20` |  |
+| `showDataRate` | `boolean` | `true` | / |
+
+**TerminalPrompt** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `duration` | `number` | `2000` | max total ms (safety cap) |
+| `commands` | `string[]` |  | lines to type |
+| `color` | `string` | `'#00ff00'` |  |
+| `fontSize` | `string` | `'16px'` |  |
+### `corrupted-particles-background`
+
+src/lib/corrupted-particles-background.js
+
+- npm: `import { CorruptedParticlesBackground } from '@whykusanagi/corrupted-theme/corrupted-particles-background'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-particles-background.js`
+- Constructor: `new CorruptedParticlesBackground(options = {})`
+- Methods: `start()`, `stop()`, `destroy()`
+
+```js
+new CorruptedParticlesBackground({ targetSelector: '.glass-backdrop', nsfw: false }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `targetSelector` | `string` | `'.glass-backdrop'` | CSS selector for the element the canvas is inserted before. |
+| `nsfw` | `boolean` | `false` | Passed through as nsfw to CorruptedParticles. |
+| `count` | `number` | `25` | Particle count (default lower than CorruptedParticles default because the canvas sits behind blur). |
+| `speed` | `number` | `0.5` | Particle speed multiplier. |
+| `lineDistance` | `number` | `100` | Max distance for connection lines. |
+| `canvasId` | `string` | `'particles-bg'` | id attribute on the injected canvas. |
+### `random-utils`
+
+Random utility functions. Centralized random selection and variance helpers.
+
+- npm: `import { randomPick } from '@whykusanagi/corrupted-theme/random-utils'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/random-utils.js`
+### `time-utils`
+
+Time utility functions. Centralized date/time formatting helpers.
+
+- npm: `import { formatTime24h } from '@whykusanagi/corrupted-theme/time-utils'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/time-utils.js`
+### `clipboard-helpers`
+
+Clipboard helper utilities.
+
+- npm: `import { copyWithFeedback } from '@whykusanagi/corrupted-theme/clipboard-helpers'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/clipboard-helpers.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `successLabel` | `string` | `'COPIED'` | Label shown on the button after copy |
+| `durationMs` | `number` | `1200` | How long to show the success label (ms) |
+### `url-state`
+
+URL state serialization helpers.
+
+- npm: `import { serializeFormToParams } from '@whykusanagi/corrupted-theme/url-state'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/url-state.js`
+### `websocket-manager`
+
+WebSocketManager — auto-reconnecting WebSocket wrapper.
+
+- npm: `import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/websocket-manager.js`
+- Constructor: `new WebSocketManager(options = {})`
+- Methods: `connect()`, `disconnect()`, `send()`, `on()`, `off()`, `onMessage()`, `offMessage()`, `destroy()`, `getStatus()`, `isConnected()`
+
+```js
+new WebSocketManager({ maxAttempts: 10 }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `clientId` | `string` |  | Client identifier for auto-registration |
+| `maxAttempts` | `number` | `10` | Max reconnect attempts |
+| `baseDelay` | `number` | `2000` | Base reconnect delay (ms) |
+| `maxDelay` | `number` | `30000` | Maximum reconnect delay cap (ms) |
+| `useExponentialBackoff` | `boolean` | `true` |  |
+| `trackEvents` | `boolean` | `false` | Enable event-ID dedup |
+| `enableAck` | `boolean` | `false` | Send ACK for events with requires_ack |
+| `handleVisibilityChange` | `boolean` | `true` | Disconnect on page-hidden |
+| `autoConnect` | `boolean` | `true` | Connect immediately on construction |
+### `toast`
+
+Toast — singleton notification helper.
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/toast'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/toast.js`
+- Requires stylesheet: `./toast-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/toast.css`
+### `clock-widget`
+
+ClockWidget — cycling multi-timezone clock display.
+
+- npm: `import { ClockWidget } from '@whykusanagi/corrupted-theme/clock-widget'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/clock-widget.js`
+- Constructor: `new ClockWidget(element, options = {})`
+- Methods: `start()`, `stop()`, `destroy()`
+
+```js
+new ClockWidget(containerEl, { timezones: ['America/Los_Angeles', cycleMs: 10000 }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `timezones` | `string[]` | `['America/Los_Angeles'` | ] - IANA timezone names |
+| `cycleMs` | `number` | `10000` | ms between timezone rotations |
+| `format` | `'12h'|'24h'` | `'12h'` | Time format |
+| `showDate` | `boolean` | `true` | Whether to render the date line |
+### `event-bar`
+
+EventBar — horizontal status row with label + content + optional icon.
+
+- npm: `import { EventBar } from '@whykusanagi/corrupted-theme/event-bar'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/event-bar.js`
+- Constructor: `new EventBar(element, options = {})`
+- Methods: `update()`, `destroy()`
+
+```js
+new EventBar(containerEl).start();
+```
+### `logo-banner`
+
+LogoBanner — positioned logo with optional subtitle and reveal animation.
+
+- npm: `import { LogoBanner } from '@whykusanagi/corrupted-theme/logo-banner'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/logo-banner.js`
+- Constructor: `new LogoBanner(element, options = {})`
+- Methods: `show()`, `hide()`, `update()`, `destroy()`
+
+```js
+new LogoBanner(containerEl, { src: '', subtitle: '' }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `src` | `string` | `''` | Image src (empty = no image) |
+| `subtitle` | `string` | `''` | Subtitle text |
+| `showSubtitle` | `boolean` | `true` | Whether to render subtitle |
+| `size` | `'small'|'normal'|'large'` | `'normal'` |  |
+| `position` | `'top-left'|'top-right'|'top-center'|'center'|'bottom-left'|'bottom-right'` | `'top-right'` |  |
+### `png-export`
+
+Export a DOM element to a PNG file.
+
+- npm: `import { exportElementAsPng } from '@whykusanagi/corrupted-theme/png-export'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/png-export.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `filename` | `string` | `'export.png'` | Download filename |
+| `scale` | `number` | `2` | Render scale (1 = 1:1, 2 = retina) |
+| `backgroundColor` | `string|null` | `null` | Optional background fill (transparent if null) |
+### `nsfw-reveal`
+
+NsfwReveal — blur-until-clicked overlay.
+
+- npm: `import { NsfwReveal } from '@whykusanagi/corrupted-theme/nsfw-reveal'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/nsfw-reveal.js`
+- Constructor: `new NsfwReveal(target, options = {})`
+- Methods: `reveal()`, `destroy()`
+
+```js
+new NsfwReveal(containerEl, { warning: 'NSFW — click to reveal' }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `warning` | `string` | `'NSFW — click to reveal'` |  |
+### `phrase-cycle`
+
+PhraseCycle — discrete phrase-state cycling primitive.
+
+- npm: `import { PhraseCycle } from '@whykusanagi/corrupted-theme/phrase-cycle'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/phrase-cycle.js`
+- Constructor: `new PhraseCycle(element, options = {})`
+- Methods: `start()`, `stop()`, `destroy()`, `isRunning()`
+
+```js
+new PhraseCycle(containerEl, { phrases: [, interval: 200 }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `phrases` | `string[]` | `[` | ] - Ordered array of phrases to cycle through |
+| `interval` | `number` | `200` | ms between phrase swaps |
+| `duration` | `number|null` | `null` | Total ms before settling. null = phrases.length × interval (one full pass) |
+| `finalText` | `string|null` | `null` | Text written after cycle ends. null = leave last-shown phrase visible |
+| `loop` | `boolean` | `false` | If true, cycle forever; ignore duration + finalText |
+### `chromatic-pulse`
+
+ChromaticPulse — RGB-split chromatic-aberration pulse on any element.
+
+- npm: `import { ChromaticPulse } from '@whykusanagi/corrupted-theme/chromatic-pulse'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/chromatic-pulse.js`
+- Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
+- Constructor: `new ChromaticPulse(element, options = {})`
+- Methods: `start()`, `renderFrame()`, `stop()`, `destroy()`
+
+```js
+new ChromaticPulse(containerEl, { intensity: 1, interval: [2000,6000 }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `intensity` | `number` | `1` | Fringe offset multiplier (1 = up to 4px) |
+| `interval` | `number[]` | `[2000,6000` | ] - [min,max] ms between pulse starts (live mode) |
+| `pulseMs` | `number` | `150` | Duration of one pulse |
+| `seed` | `number|null` | `null` | Seed for deterministic cadence (null = Math.random) |
+### `binary-particles`
+
+BinaryParticles — rising binary/hex/phrase token field.
+
+- npm: `import { BinaryParticles } from '@whykusanagi/corrupted-theme/binary-particles'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/binary-particles.js`
+- Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
+- Constructor: `new BinaryParticles(container, options = {})`
+- Methods: `start()`, `renderFrame()`, `stop()`, `destroy()`
+
+```js
+new BinaryParticles(containerEl, { count: 24, charset: 'mixed' }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `count` | `number` | `24` | Particles alive at any moment |
+| `charset` | `'binary'|'hex'|'phrases'|'mixed'` | `'mixed'` | Token pool |
+| `speed` | `number` | `1` | Rise-speed multiplier |
+| `opacity` | `number` | `0.3` | Peak particle opacity |
+| `beats` | `number[]|null` | `null` | Beat times (s) for burst emission; null = continuous |
+| `nsfw` | `boolean` | `false` | Include NSFW phrases (opt-in) |
+| `seed` | `number|null` | `null` | Base seed (null = random per instance) |
+### `glitch-title-card`
+
+GlitchTitleCard — █▓▒░ buffer-fill intro/outro title cards.
+
+- npm: `import { GlitchTitleCard } from '@whykusanagi/corrupted-theme/glitch-title-card'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/glitch-title-card.js`
+- Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
+- Constructor: `new GlitchTitleCard(container, options = {})`
+- Methods: `start()`, `renderFrame()`, `renderProgress()`, `stop()`, `destroy()`
+
+```js
+new GlitchTitleCard(containerEl, { text: '', mode: 'intro' }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `text` | `string` | `''` | Title text |
+| `mode` | `'intro'|'outro'` | `'intro'` | Card behavior |
+| `duration` | `number` | `3000` | Reveal duration ms (intro) / hold ms before onComplete (outro) |
+| `subtitle` | `string|null` | `null` | Outro sub-line (null = seeded corruption phrase) |
+| `nsfw` | `boolean` | `false` | Include NSFW phrases in seeded subtitle (opt-in) |
+| `seed` | `number|null` | `null` | Seed for deterministic subtitle/buffer |
+### `terminal-takeover`
+
+TerminalTakeover — container-filling "system corrupted" terminal card (size the container to the viewport for a full-screen takeover).
+
+- npm: `import { TerminalTakeover } from '@whykusanagi/corrupted-theme/terminal-takeover'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/terminal-takeover.js`
+- Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
+- Constructor: `new TerminalTakeover(container, options = {})`
+- Methods: `start()`, `renderFrame()`, `stop()`, `destroy()`
+
+```js
+new TerminalTakeover(containerEl, { title: 'SIGNAL LOST', messages: null }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `title` | `string` | `'SIGNAL LOST'` | Banner line (de-themed default) |
+| `messages` | `string[]|null` | `null` | Fixed lines; null = seeded corruption phrases |
+| `lines` | `number` | `18` | Line count when messages is null |
+| `duration` | `number` | `4000` | ms visible before auto-clear |
+| `nsfw` | `boolean` | `false` | Include NSFW phrases (opt-in) |
+| `seed` | `number|null` | `null` | Seed for deterministic line picks |
+### `stream-ticker`
+
+StreamTicker — ambient corner logo + scrolling corruption ticker.
+
+- npm: `import { StreamTicker } from '@whykusanagi/corrupted-theme/stream-ticker'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/stream-ticker.js`
+- Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
+- Constructor: `new StreamTicker(container, options = {})`
+- Methods: `start()`, `renderFrame()`, `stop()`, `destroy()`
+
+```js
+new StreamTicker(containerEl, { logoText: '', logoSrc: null }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `logoText` | `string` | `''` | Corner badge text ('' = hidden) |
+| `logoSrc` | `string|null` | `null` | Corner logo image URL (null = none) |
+| `label` | `string` | `''` | Small label under the badge text |
+| `items` | `string[]|null` | `null` | Ticker items; null = seeded corruption phrases |
+| `speed` | `number` | `120` | Ticker scroll speed, px/s |
+| `nsfw` | `boolean` | `false` | Include NSFW phrases (opt-in) |
+| `seed` | `number|null` | `null` | Seed for deterministic phrase picks |
+### `corrupted-mandala`
+
+CorruptedMandala — procedural SVG sacred-geometry background.
+
+- npm: `import { CorruptedMandala } from '@whykusanagi/corrupted-theme/corrupted-mandala'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-mandala.js`
+- Requires stylesheet: `./corrupted-mandala-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/corrupted-mandala.css`
+- Constructor: `new CorruptedMandala(svgElement, options = {})`
+- Methods: `init()`, `setActive()`, `resize()`, `setLabels()`, `destroy()`
+
+```js
+new CorruptedMandala(containerEl, { labelTop: 'CORRUPTED', labelBottom: 'ARCHIVE.SYS' }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `labelTop` | `string` | `'CORRUPTED'` | Frame top label |
+| `labelBottom` | `string` | `'ARCHIVE.SYS'` | Frame bottom label |
+| `starDensity` | `'low'|'medium'|'high'` | `'medium'` | Star ring density |
+| `mandorla` | `boolean` | `true` | true = vesica-piscis halo, false = circle |
+| `ringPhrases` | `object|null` | `null` | {outer, middle, inner} phrase arrays; null = seeded picks from corruption-phrases |
+| `rotationSpeed` | `number` | `1` | Ring rotation multiplier (1 = 60s/40s cycles) |
+| `textScale` | `number` | `2.0` | Ring text size multiplier |
+| `elements` | `object` |  | Visibility: {frame, mandorla, arcs, rings, text, stars} |
+| `colors` | `object` |  | Override artwork tints (see DEFAULT_COLORS) |
+| `nsfw` | `boolean` | `false` | Include NSFW phrases in seeded picks (opt-in) |
+| `seed` | `number|null` | `null` | Seed for deterministic phrase picks |
+### `terminal-vocab`
+
+Terminal vocabulary + charset generators for transition effects.
+
+- npm: `import { generateHex } from '@whykusanagi/corrupted-theme/terminal-vocab'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/terminal-vocab.js`
+### `abyssal-cables`
+
+Abyssal Cables - Tentacle/Cable System for Neural Corruption Transitions
+
+- npm: `import { AbyssalCableSystem } from '@whykusanagi/corrupted-theme/abyssal-cables'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/abyssal-cables.js`
+- Constructor: `new AbyssalCableSystem(ctx, width, height)`
+
+```js
+new AbyssalCableSystem(containerEl).start();
+```
+### `geometric-morpher`
+
+Geometric Morpher Transition - ENHANCED WITH BUILDING BLOCKS
+
+- npm: `import { GeometricMorpher } from '@whykusanagi/corrupted-theme/geometric-morpher'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/geometric-morpher.js`
+- Constructor: `new GeometricMorpher(container)`
+
+```js
+new GeometricMorpher(containerEl).start();
+```
+### `neural-deserializer`
+
+Neural Deserializer Transition - ENHANCED
+
+- npm: `import { NeuralDeserializer } from '@whykusanagi/corrupted-theme/neural-deserializer'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/neural-deserializer.js`
+- Constructor: `new NeuralDeserializer(container)`
+
+```js
+new NeuralDeserializer(containerEl).start();
+```
+### `spectrum-terminal`
+
+Spectrum Terminal Transition - ENHANCED WITH BUILDING BLOCKS
+
+- npm: `import { SpectrumTerminal } from '@whykusanagi/corrupted-theme/spectrum-terminal'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/spectrum-terminal.js`
+- Constructor: `new SpectrumTerminal(container)`
+
+```js
+new SpectrumTerminal(containerEl).start();
+```
+### `transitions`
+
+Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks. Absorbed 0.3.0 from the canonical celeste-tts-bot obs/transitions library (single canonical home).
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/transitions'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/transitions/index.js`
+### `scroll-decode`
+
+ScrollDecode — text decodes as it scrolls into view.
+
+- npm: `import { ScrollDecode } from '@whykusanagi/corrupted-theme/scroll-decode'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/scroll-decode.js`
+- Constructor: `new ScrollDecode(element, options = {})`
+- Methods: `start()`, `stop()`, `destroy()`, `scramble()`, `viewportProgress()`
+
+```js
+new ScrollDecode(containerEl, { rearm: false, progress: false }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `rearm` | `boolean` | `false` | Re-corrupt on viewport exit, decode on re-entry |
+| `progress` | `boolean` | `false` | Bind decode fraction to scroll position (overrides rearm) |
+| `threshold` | `number` | `0.1` | IntersectionObserver threshold (trigger modes) |
+| `duration` | `number` | `2000` | Decode duration ms (trigger modes) |
+| `charset` | `string` |  | Charset (default CorruptionCharsets.standard) |
+### `corrupted-timeline`
+
+CorruptedTimeline — sequence animation blocks into one orchestrated scene.
+
+- npm: `import { CorruptedTimeline } from '@whykusanagi/corrupted-theme/corrupted-timeline'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-timeline.js`
+- Constructor: `new CorruptedTimeline(options = {})`
+- Methods: `add()`, `label()`, `play()`, `pause()`, `seek()`, `stop()`, `destroy()`
+
+```js
+new CorruptedTimeline({ autoplay: false, onComplete: null }).play();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `autoplay` | `boolean` | `false` | play() immediately on first add() |
+| `onComplete` | `Function|null` | `null` | Fires once every entry has completed |
+### `glitch-stagger-grid`
+
+GlitchStaggerGrid — Pattern 4: staggered grid corruption.
+
+- npm: `import { GlitchStaggerGrid } from '@whykusanagi/corrupted-theme/glitch-stagger-grid'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/glitch-stagger-grid.js`
+- Constructor: `new GlitchStaggerGrid(container, options = {})`
+- Methods: `play()`, `stop()`, `destroy()`, `computeDelays()`
+
+```js
+new GlitchStaggerGrid(containerEl, { selector: ':scope > *', origin: 'center' }).play();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `selector` | `string` | `':scope > *'` | Which children ripple |
+| `origin` | `'center'|number|number[]` | `'center'` | Ripple origin: 'center', an element index, or [x, y] px within the container |
+| `wave` | `number` | `80` | ms per grid-unit of distance (clamped ≥40) |
+| `charset` | `string` | `'standard'` | CorruptionCharsets set name |
+| `maxConcurrent` | `number` | `12` | Simultaneous bursts (spec cap) |
+### `corruption-easings`
+
+Corruption easing + stagger presets.
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/corruption-easings'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/corruption-easings.js`
 <!-- MANIFEST:END -->

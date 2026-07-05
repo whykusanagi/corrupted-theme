@@ -27,6 +27,17 @@ const CDN_BASE = 'https://cdn.whykusanagi.xyz/corrupted-theme/@latest';
 /** Exports that touch `document` at import time (0.1.x behavior kept for compat). */
 const BROWSER_ONLY = new Set(['./corrupted-text']);
 
+/** Component → stylesheet export it needs (blind-validation gap fix). */
+const REQUIRES_CSS = {
+  './chromatic-pulse': './stream-overlays-css',
+  './binary-particles': './stream-overlays-css',
+  './glitch-title-card': './stream-overlays-css',
+  './terminal-takeover': './stream-overlays-css',
+  './stream-ticker': './stream-overlays-css',
+  './corrupted-mandala': './corrupted-mandala-css',
+  './toast': './toast-css',
+};
+
 /**
  * Parse the leading JSDoc block + export surface of one module.
  * @param {string} source - File contents
@@ -58,20 +69,69 @@ export function parseModule(source) {
   const functions = [...source.matchAll(/^export (?:async )?function (\w+)/gm)].map((m) => m[1]);
   const constants = [...source.matchAll(/^export const (\w+)/gm)].map((m) => m[1]);
 
-  // Constructor options: every `@param {..} [options.x=default] - desc` in the file
-  const options = [...source.matchAll(
-    /@param\s+\{([^}]+)\}\s+\[options\.(\w+)(?:=([^\]]*))?\]\s*[-—]?\s*(.*)/g
-  )].map((m) => ({
+  // Options are attributed to the class whose region of the file they sit in,
+  // so multi-class bundles (animation-blocks: 27 classes) publish a per-class
+  // map instead of one flat pool (0.3.0 blind-validation gap fix).
+  const classMarks = [...source.matchAll(/^export class (\w+)/gm)]
+    .map((m) => ({ name: m[1], index: m.index }));
+  const regionFor = (index) => {
+    let owner;
+    for (const c of classMarks) if (c.index < index) owner = c.name;
+    return owner ?? null;
+  };
+
+  const optionRe = /@param\s+\{([^}]+)\}\s+\[options\.(\w+)(?:=([^\]]*))?\]\s*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
+  const cleanDesc = (raw) => {
+    const text = raw
+      .split('\n').map((l) => l.replace(/^\s*\*\s?/, '')).join(' ')
+      .replace(/\s+/g, ' ').trim();
+    // Drop spillover captures (leaked neighboring JSDoc rather than prose)
+    if (!text || text.startsWith('@') || text.startsWith('*/') || text.includes('@param')) return undefined;
+    return text;
+  };
+  const options = [...source.matchAll(optionRe)].map((m) => ({
     name: m[2],
     type: m[1].trim(),
     default: m[3] !== undefined ? m[3] : undefined,
-    description: m[4].trim() || undefined,
+    description: cleanDesc(m[4]),
+    owner: regionFor(m.index),
   }));
-  // De-dupe by option name (multi-class files repeat common options)
-  const seen = new Set();
-  const uniqueOptions = options.filter((o) => !seen.has(o.name) && seen.add(o.name));
 
-  return { description, version, classes, functions, constants, composes, options: uniqueOptions };
+  // Constructor signature per class — components differ (element+options vs
+  // options-only), and blind validation showed consumers cannot guess.
+  const constructors = {};
+  classMarks.forEach((c, i) => {
+    const slice = source.slice(c.index, classMarks[i + 1]?.index);
+    const sig = slice.match(/constructor\s*\(([^)]*)\)/)?.[1]?.replace(/\s+/g, ' ').trim();
+    if (sig !== undefined) constructors[c.name] = sig;
+  });
+
+  // Public method names per class (constructor and _private excluded) — so
+  // consumers see e.g. CorruptedTimeline's add/label/play/pause/seek surface.
+  const methods = {};
+  classMarks.forEach((c, i) => {
+    const slice = source.slice(c.index, classMarks[i + 1]?.index);
+    const names = [...slice.matchAll(/^  (?:static )?(?:async )?([a-zA-Z]\w*)\s*\(/gm)]
+      .map((m) => m[1])
+      .filter((n) => n !== 'constructor' && !['if', 'for', 'while', 'switch', 'catch'].includes(n));
+    if (names.length) methods[c.name] = [...new Set(names)];
+  });
+
+  if (classMarks.length > 1) {
+    const byClass = {};
+    for (const o of options) {
+      const key = o.owner ?? 'module';
+      (byClass[key] ??= []).push({ ...o, owner: undefined });
+    }
+    return { description, version, classes, functions, constants, composes,
+             options: [], classOptions: byClass, methods, constructors };
+  }
+  const seen = new Set();
+  const uniqueOptions = options
+    .map((o) => ({ ...o, owner: undefined }))
+    .filter((o) => !seen.has(o.name) && seen.add(o.name));
+  return { description, version, classes, functions, constants, composes,
+           options: uniqueOptions, methods, constructors };
 }
 
 /** Build the manifest object from package.json exports. */
@@ -98,7 +158,11 @@ export function buildManifest() {
         functions: parsed.functions.length ? parsed.functions : undefined,
         constants: parsed.constants.length ? parsed.constants : undefined,
         options: parsed.options.length ? parsed.options : undefined,
+        classOptions: parsed.classOptions,
+        methods: parsed.methods && Object.keys(parsed.methods).length ? parsed.methods : undefined,
+        constructors: parsed.constructors && Object.keys(parsed.constructors).length ? parsed.constructors : undefined,
         composes: parsed.composes.length ? parsed.composes : undefined,
+        requiresCss: REQUIRES_CSS[key],
         browserOnly: BROWSER_ONLY.has(key) || undefined,
       });
     }
@@ -112,7 +176,9 @@ export function buildManifest() {
     homepage: pkg.homepage,
     cdn: { base: CDN_BASE, hosts: ['cdn.whykusanagi.xyz', 'cdn.nikkers.cc'] },
     conventions: {
-      api: 'new Component(element, options) with start()/stop()/destroy(); transitions use play(options, onComplete)/stop(); animation blocks use play() → Promise',
+      api: 'new Component(element, options) with start()/stop()/destroy(); transitions use play(options, onComplete)/stop() where onComplete fires when the transition finishes; animation blocks use play() → Promise that resolves when the animation completes',
+      modules: 'Every JS export is an ES module — import from the cdnUrl with <script type="module">. Module imports are CORS-mode requests: keep them same-origin per docs/CDN_CONSUMPTION.md, or use the npm package. Browser-global IIFE builds exist only as dist/*.global.js (see CHANGELOG for the list + SRI)',
+      oneShots: 'One-shot overlay components (GlitchTitleCard, TerminalTakeover) accept start(onComplete); ambient components (StreamTicker, BinaryParticles, ChromaticPulse) run until stop()',
       nsfw: 'All NSFW content is opt-in via nsfw: false default (lewdMode is a deprecated alias)',
       colors: 'Canonical corruption palette only: #00ffff cyan (stable), #ff00ff magenta, #8b5cf6 purple, #d94f90 magenta2, #ff0000 red, #00ff00 green',
       determinism: 'Components exposing renderFrame(frameIdx, fps) + seed render byte-identical frames (see docs/RENDER_TO_VIDEO.md)',
@@ -144,14 +210,34 @@ export function renderLlmsTxt(manifest) {
       continue;
     }
     const api = [...(e.classes ?? []), ...(e.functions ?? []), ...(e.constants ?? [])].join(', ');
-    const opts = e.options?.length
-      ? ` options: ${e.options.map((o) => o.default !== undefined ? `${o.name}=${o.default}` : o.name).join(', ')}.`
+    const fmtOpts = (arr) => arr.map((o) => o.default !== undefined ? `${o.name}=${o.default}` : o.name);
+    let opts = '';
+    if (e.options?.length) {
+      opts = ` options: ${fmtOpts(e.options).join(', ')}.`;
+    } else if (e.classOptions) {
+      const parts = Object.entries(e.classOptions)
+        .filter(([k]) => k !== 'module')
+        .map(([cls, arr]) => {
+          const shown = fmtOpts(arr).slice(0, 6);
+          const extra = arr.length > 6 ? `, +${arr.length - 6} more` : '';
+          return `${cls}{${shown.join(', ')}${extra}}`;
+        });
+      if (parts.length) opts = ` options per class: ${parts.join(' · ')}.`;
+    }
+    const singleClass = e.classes?.length === 1 ? e.classes[0] : null;
+    const meth = singleClass && e.methods?.[singleClass]
+      ? ` methods: ${e.methods[singleClass].join('/')}.`
+      : '';
+    const cssEntry = e.requiresCss ? manifest.exports.find((x) => x.export === e.requiresCss) : null;
+    const css = e.requiresCss ? ` needs css: ${e.requiresCss} (${cssEntry?.cdnUrl ?? ''}).` : '';
+    const singleCtor = e.classes?.length === 1 && e.constructors?.[e.classes[0]] !== undefined
+      ? ` new ${e.classes[0]}(${e.constructors[e.classes[0]]}).`
       : '';
     const comp = e.composes?.length
       ? ` composes: ${e.composes.map((c) => c.target).join(', ')}.`
       : '';
     const flag = e.browserOnly ? ' [browser-only]' : '';
-    lines.push(`- ${e.export}${flag} → { ${api} }. ${e.description ?? ''}${opts}${comp}`);
+    lines.push(`- ${e.export}${flag} → { ${api} }.${singleCtor} ${e.description ?? ''}${opts}${meth}${css}${comp}`);
   }
   lines.push('', 'Every component settles to a stable readable final state (spec tenet).');
   return lines.join('\n') + '\n';
@@ -164,15 +250,63 @@ export function renderReferenceBlock(manifest) {
     const api = [...(e.classes ?? []), ...(e.functions ?? [])].slice(0, 4).join(', ') || '—';
     return `| \`${e.npmImport}\` | ${api} | ${(e.description ?? '').split('. ')[0]} |`;
   });
+
+  const optRows = (arr) => arr.map((o) =>
+    `| \`${o.name}\` | \`${o.type}\` | ${o.default !== undefined ? '\`' + o.default + '\`' : ''} | ${o.description ?? ''} |`);
+  const details = js.map((e) => {
+    const out = [`### \`${e.export.replace('./', '')}\``, ''];
+    if (e.description) out.push(e.description, '');
+    out.push(`- npm: \`import { ${(e.classes ?? e.functions ?? ['…'])[0]} } from '${e.npmImport}'\``);
+    out.push(`- CDN (ES module): \`${e.cdnUrl}\``);
+    if (e.requiresCss) {
+      const cssEntry = manifest.exports.find((x) => x.export === e.requiresCss);
+      out.push(`- Requires stylesheet: \`${e.requiresCss}\` → \`${cssEntry?.cdnUrl ?? ''}\``);
+    }
+    if (e.browserOnly) out.push('- Browser-only: touches \`document\` at import time (do not import in Node/SSR)');
+    const singleClass = e.classes?.length === 1 ? e.classes[0] : null;
+    if (singleClass && e.constructors?.[singleClass] !== undefined) {
+      out.push(`- Constructor: \`new ${singleClass}(${e.constructors[singleClass]})\``);
+    }
+    if (singleClass && e.methods?.[singleClass]) {
+      out.push(`- Methods: \`${e.methods[singleClass].join('()\`, \`')}()\``);
+    }
+    if (singleClass) {
+      const opts = (e.options ?? []).slice(0, 2)
+        .filter((o) => o.default !== undefined)
+        .map((o) => `${o.name}: ${o.default}`).join(', ');
+      const run = e.methods?.[singleClass]?.includes('play') ? 'play()' : 'start()';
+      const args = (e.constructors?.[singleClass] ?? '').startsWith('options')
+        ? `{ ${opts} }` : `containerEl${opts ? `, { ${opts} }` : ''}`;
+      out.push('', '```js', `new ${singleClass}(${args}).${run};`, '```');
+    }
+    if (e.options?.length) {
+      out.push('', '| Option | Type | Default | Description |', '|---|---|---|---|', ...optRows(e.options));
+    } else if (e.classOptions) {
+      for (const [cls, arr] of Object.entries(e.classOptions)) {
+        if (cls === 'module' || !arr.length) continue;
+        out.push('', `**${cls}** options${e.methods?.[cls] ? ` (methods: \`${e.methods[cls].join('()\`, \`')}()\`)` : ''}:`,
+          '', '| Option | Type | Default | Description |', '|---|---|---|---|', ...optRows(arr));
+      }
+    }
+    return out.join('\n');
+  });
+
   return [
     '## Machine-Readable Surface (auto-generated — do not edit by hand)',
     '',
     `Full manifest: \`${manifest.cdn.base}/dist/manifest.json\` · LLM surface: \`${manifest.cdn.base}/dist/llms.txt\``,
     `Regenerate: \`npm run manifest:generate\` (v${manifest.version}, ${js.length} JS exports)`,
     '',
+    'Container expectations: overlay-suite and block components position themselves',
+    'absolutely inside their container, so give the container \`position: relative\`',
+    'and a size. The full-viewport canvas transitions render \`position: fixed\` and',
+    'ignore container geometry. Every option below is parsed from the source JSDoc.',
+    '',
     '| Import | API | Purpose |',
     '|---|---|---|',
     ...rows,
+    '',
+    ...details,
   ].join('\n');
 }
 

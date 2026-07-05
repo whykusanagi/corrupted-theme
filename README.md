@@ -118,22 +118,22 @@ Both domains serve the same content. Use the domain that matches your site's roo
 
 For production hardening, add SRI hashes (published in `CHANGELOG.md` for each release; regenerate with `npm run generate-sri`). See [docs/CDN_CONSUMPTION.md](docs/CDN_CONSUMPTION.md) for the same-origin rule, CSP guidance, CORS allowlist, and JSON data fetching.
 
-Live demo site (auto-deployed from `main`): **https://corrupted.whykusanagi.xyz** — browse every animation at [/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
+Browse every animation on the demo site, which deploys from `main`: [corrupted.whykusanagi.xyz/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
 
 ## What's New in 0.3.0
 
-The drift-killer release: every glitch/animation library previously copy-pasted across the whykusanagi ecosystem now has one canonical home here, plus anime.js-v4-inspired orchestration (design reference only — zero runtime dependencies).
+0.3.0 absorbs the glitch libraries that were copy-pasted across celeste-tts-bot, site, youtube_poop, and spatial_videos. Each one now lives in this package and nowhere else. The release also adds three orchestration components modeled on anime.js v4 APIs, written with zero runtime dependencies.
 
 | Area | Exports |
 |---|---|
-| Stream overlay suite | `ChromaticPulse`, `BinaryParticles`, `GlitchTitleCard`, `TerminalTakeover`, `StreamTicker` (+ `stream-overlays-css`) — live rAF **and** deterministic `renderFrame(frameIdx, fps)` + `seed` modes |
-| Procedural background | `CorruptedMandala` — SVG sacred-geometry rings/stars/frame; this visual lives **only** in this package |
-| Canvas transitions | `AbyssalCableSystem`, `GeometricMorpher`, `NeuralDeserializer`, `SpectrumTerminal` + 12 composites via `transitions` barrel |
-| Animation blocks | 17 new classes re-exported from `animation-blocks` (TypingTextReveal, ChromaticAberrationGlitch, ShatterGrid, DataStream, …) |
-| Orchestration | `ScrollDecode` (viewport/scroll-scrub decode), `CorruptedTimeline` (scene sequencing with labels), `GlitchStaggerGrid` (spec **Pattern 4**), `corruption-easings` (`--ease-*` tokens) |
-| Vocabulary | `terminal-vocab` — terminal pools + charset generators, SFW/NSFW split (`nsfw: false` everywhere; `lewdMode` deprecated) |
-| Render-to-video | `seededRandom` + `seekAnimations` — byte-identical frames; recipe in [docs/RENDER_TO_VIDEO.md](docs/RENDER_TO_VIDEO.md) |
-| Agent surface | `manifest.json` + `llms.txt` on the CDN (`@latest/dist/`) — machine-readable component map so LLM sessions build on-brand from one fetch |
+| Stream overlay suite | `ChromaticPulse`, `BinaryParticles`, `GlitchTitleCard`, `TerminalTakeover`, `StreamTicker`, plus `stream-overlays-css`. Each runs live on rAF or renders exact frames via `renderFrame(frameIdx, fps)` with a `seed` |
+| Procedural background | `CorruptedMandala`: SVG rings, stars, and frame, generated at runtime. This visual ships here and may not be re-vendored |
+| Canvas transitions | `AbyssalCableSystem`, `GeometricMorpher`, `NeuralDeserializer`, `SpectrumTerminal`, and 12 composites via the `transitions` barrel |
+| Animation blocks | 17 classes added to `animation-blocks`: TypingTextReveal, ChromaticAberrationGlitch, ShatterGrid, DataStream, and 13 more |
+| Orchestration | `ScrollDecode` decodes text on viewport entry or scroll position. `CorruptedTimeline` sequences scenes with labels. `GlitchStaggerGrid` implements spec Pattern 4. `corruption-easings` adds `--ease-*` tokens |
+| Vocabulary | `terminal-vocab`: terminal pools and charset generators, split SFW/NSFW. `nsfw: false` is the default; `lewdMode` still works but warns |
+| Render-to-video | `seededRandom` and `seekAnimations` make frames byte-identical across runs. Recipe: [docs/RENDER_TO_VIDEO.md](docs/RENDER_TO_VIDEO.md) |
+| Agent surface | `manifest.json` and `llms.txt` at `@latest/dist/` on the CDN. One fetch gives an LLM session the full component map |
 
 ## Project Architecture
 ```
@@ -179,7 +179,7 @@ The drift-killer release: every glitch/animation library previously copy-pasted 
 │       ├── corruption-loading.js      # cinematic loading curtain
 │       ├── countdown-widget.js        # event countdown with shapes
 │       ├── crt-effects.js             # CRT post-processing layer (0.2.0)
-│       ├── event-bar.js               # scrolling event-ticker banner (0.2.0)
+│       ├── event-bar.js               # event status banner (0.2.0)
 │       ├── gallery.js                 # gallery grid with filtering + lightbox
 │       ├── lightbox.js                # standalone lightbox (extracted 0.2.0)
 │       ├── logo-banner.js             # animated logo/title banner (0.2.0)
@@ -710,7 +710,7 @@ import {
 
 await playSequence([
   new TitleDecoder(el, { text: 'CORRUPTED STREAM', nsfw: false }),
-  new ProgressBar(el,   { label: 'Loading...', duration: 2000 }),
+  new ProgressBar(el,   { duration: 2000, position: 'bottom' }),
   new TerminalBoot(el,  { lines: ['Initializing...', 'Ready.'] }),
 ]);
 ```
@@ -770,7 +770,7 @@ See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#clockwidget).
 
 #### EventBar
 
-Scrolling event-ticker banner with label + content + optional icon. Supports live `update()`.
+Static event status banner with label + content + optional icon rows. Supports live `update()`. It does not scroll; for a scrolling ticker use `StreamTicker`.
 
 ```js
 import { EventBar } from '@whykusanagi/corrupted-theme/event-bar';

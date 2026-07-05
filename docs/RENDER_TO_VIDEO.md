@@ -1,18 +1,18 @@
 # Rendering Theme Components to Video (Deterministic Frames)
 
-Any corrupted-theme component can be rendered to a video file by capturing it
-frame-by-frame in a headless browser. Two utilities make the output
-deterministic — the same frame index always produces identical pixels:
+Capture any corrupted-theme component frame-by-frame in a headless browser
+and you have a video. Two utilities make the output deterministic, meaning
+the same frame index always produces identical pixels:
 
 | Utility | Import | Purpose |
 |---|---|---|
 | `seededRandom(seed)` | `@whykusanagi/corrupted-theme/random-utils` | mulberry32 PRNG; seed with the frame index so randomized content (phrases, particles) repeats exactly per frame |
-| `seekAnimations(root, timeSeconds)` | `@whykusanagi/corrupted-theme/time-utils` | pauses every CSS animation under `root` and seeks it to an absolute time via negative `animation-delay` — each animation resolves to its own phase (`t % duration`) |
+| `seekAnimations(root, timeSeconds)` | `@whykusanagi/corrupted-theme/time-utils` | pauses every CSS animation under `root` and seeks it to an absolute time via negative `animation-delay`; each animation resolves to its own phase (`t % duration`) |
 
 ## Recipe
 
-Frame capture is driven by an external tool (Playwright, Puppeteer — **not** a
-package dependency). The page exposes a `renderFrame(i)` hook; the harness
+An external tool (Playwright or Puppeteer, never a package dependency)
+drives the capture. The page exposes a `renderFrame(i)` hook. The harness
 screenshots after each call and pipes the frames to FFmpeg.
 
 **Page side:**
@@ -26,8 +26,8 @@ screenshots after each call and pipes the frames to FFmpeg.
   const FPS = 60;
   const stage = document.getElementById('stage');
 
-  // Wait for web fonts before any capture — otherwise early frames render in a
-  // fallback font on some runs (flaky, non-deterministic text).
+  // Wait for web fonts before any capture. Otherwise early frames render in a
+  // fallback font on some runs, and the text becomes non-deterministic.
   await document.fonts.ready;
 
   window.renderFrame = (i) => {
@@ -52,7 +52,7 @@ for (let i = 0; i < totalFrames; i++) {
 
 - JS-driven canvas/DOM components in this package expose `renderFrame(frameIdx, fps)`
   + a `seed` option where deterministic export is supported (see each component's docs).
-- `seekAnimations` sets `animation-play-state: paused` inline — call
+- `seekAnimations` sets `animation-play-state: paused` inline; call
   `el.style.animationPlayState = ''` on all descendants to resume live playback.
 - Reference implementation of this pattern: the spatial_videos pipeline
   (Playwright static-server + screenshot-with-retry harness).

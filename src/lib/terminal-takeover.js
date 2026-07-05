@@ -1,5 +1,5 @@
 /**
- * TerminalTakeover — full-viewport "system corrupted" terminal card.
+ * TerminalTakeover — container-filling "system corrupted" terminal card (size the container to the viewport for a full-screen takeover).
  *
  * Dims the container and floods it with `> `-prefixed corruption lines plus
  * a title banner, then clears after `duration`. Use for beat drops, raid

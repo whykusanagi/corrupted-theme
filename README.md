@@ -135,6 +135,28 @@ Browse every animation on the demo site, which deploys from `main`: [corrupted.w
 | Render-to-video | `seededRandom` and `seekAnimations` make frames byte-identical across runs. Recipe: [docs/RENDER_TO_VIDEO.md](docs/RENDER_TO_VIDEO.md) |
 | Agent surface | `manifest.json` and `llms.txt` at `@latest/dist/` on the CDN. One fetch gives an LLM session the full component map |
 
+## Loading the JavaScript Correctly
+
+Every file under `src/` is an ES module. Load one of two ways:
+
+```html
+<!-- Module import (npm or CDN) -->
+<script type="module">
+  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.0/src/lib/scroll-decode.js';
+</script>
+
+<!-- Browser global for no-build sites (IIFE builds only; SRI in CHANGELOG.md) -->
+<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.0/dist/toast.global.js"></script>
+```
+
+A classic `<script src>` pointing at a `src/` file throws
+`Cannot use import statement outside a module` and leaves the class
+undefined. This broke two demo pages in the 0.3.0 review; CI now rejects
+the pattern. The incident log lives in
+[docs/IMPLEMENTATION_NOTES.md](docs/IMPLEMENTATION_NOTES.md), which also
+covers the demo-site editing rules (the navbar is script-owned via
+`npm run nav:sync`; never hand-edit it).
+
 ## Project Architecture
 ```
 .

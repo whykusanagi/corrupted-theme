@@ -178,6 +178,8 @@ export function buildManifest() {
     conventions: {
       api: 'new Component(element, options) with start()/stop()/destroy(); transitions use play(options, onComplete)/stop() where onComplete fires when the transition finishes; animation blocks use play() → Promise that resolves when the animation completes',
       modules: 'Every JS export is an ES module — import from the cdnUrl with <script type="module">. Module imports are CORS-mode requests: keep them same-origin per docs/CDN_CONSUMPTION.md, or use the npm package. Browser-global IIFE builds exist only as dist/*.global.js (see CHANGELOG for the list + SRI)',
+      scriptLoadingPitfall: 'NEVER load a src/ file with a classic <script src> tag — it throws "Cannot use import statement outside a module" and the class stays undefined (this broke two demo pages in the 0.3.0 review). Use <script type="module"> or a dist/*.global.js build; there is no third way',
+      repoMaintenance: 'When editing this repo: the demo-site navbar is generated from NAV in scripts/sync-nav.js (edit NAV, run npm run nav:sync — never hand-edit a page navbar); only the current release gets What\'s-New promo surfaces; incident log + rules in docs/IMPLEMENTATION_NOTES.md',
       oneShots: 'One-shot overlay components (GlitchTitleCard, TerminalTakeover) accept start(onComplete); ambient components (StreamTicker, BinaryParticles, ChromaticPulse) run until stop()',
       nsfw: 'All NSFW content is opt-in via nsfw: false default (lewdMode is a deprecated alias)',
       colors: 'Canonical corruption palette only: #00ffff cyan (stable), #ff00ff magenta, #8b5cf6 purple, #d94f90 magenta2, #ff0000 red, #00ff00 green',

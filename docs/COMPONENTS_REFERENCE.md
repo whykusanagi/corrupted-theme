@@ -2268,3 +2268,56 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 **Version:** 2.3
 **Status:** Complete and Production Ready
 
+<!-- MANIFEST:START -->
+## Machine-Readable Surface (auto-generated — do not edit by hand)
+
+Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
+Regenerate: `npm run manifest:generate` (v0.2.1, 44 JS exports)
+
+| Import | API | Purpose |
+|---|---|---|
+| `@whykusanagi/corrupted-theme/gallery` | initGallery, destroyGallery | gallery.js — Gallery System with Lightbox and NSFW Support |
+| `@whykusanagi/corrupted-theme/lightbox` | Lightbox | lightbox.js — Standalone Lightbox for the Corrupted Theme |
+| `@whykusanagi/corrupted-theme/countdown` | initCountdown, destroyCountdown | countdown-widget.js — Event Countdown Widget with Configurable Shapes |
+| `@whykusanagi/corrupted-theme/typing-animation` | — | Typing Animation with Buffer Corruption |
+| `@whykusanagi/corrupted-theme/corrupted-text` | — | Corrupted Text Animation |
+| `@whykusanagi/corrupted-theme/corruption-loading` | — | Corruption Loading Animation A dramatic loading screen with corrupted text, glyphs, and multi-language phrases |
+| `@whykusanagi/corrupted-theme/character-corruption` | corruptTextJapanese, corruptTextSemantic, initAutoCorruption, stopAutoCorruption | Character-Level Japanese Corruption Matches Celeste CLI's CorruptTextJapanese() implementation |
+| `@whykusanagi/corrupted-theme/components-js` | initAccordions, toggleCollapse, showCollapse, hideCollapse | Component Helpers JavaScript utilities for interactive Bootstrap-equivalent components |
+| `@whykusanagi/corrupted-theme/carousel` | initCarousel, destroyCarousel | Carousel / Slideshow Component |
+| `@whykusanagi/corrupted-theme/corrupted-vortex` | — | src/lib/corrupted-vortex.js |
+| `@whykusanagi/corrupted-theme/corrupted-particles` | CorruptedParticles | src/lib/corrupted-particles.js |
+| `@whykusanagi/corrupted-theme/corruption-charsets` | — | CorruptionCharsets |
+| `@whykusanagi/corrupted-theme/decrypt-reveal` | DecryptReveal, decodeText | DecryptReveal |
+| `@whykusanagi/corrupted-theme/crt-effects` | CRTEffects, injectCRTStyles, applyCRTGlow | src/lib/crt-effects.js |
+| `@whykusanagi/corrupted-theme/animation-blocks` | TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot | Animation Building Blocks ========================= Ten modular animation components that compose into full transition scenes |
+| `@whykusanagi/corrupted-theme/corrupted-particles-background` | CorruptedParticlesBackground | src/lib/corrupted-particles-background.js |
+| `@whykusanagi/corrupted-theme/random-utils` | randomPick, randomInt, randomFloat, randomVariance | Random utility functions |
+| `@whykusanagi/corrupted-theme/time-utils` | formatTime24h, formatTime12h, formatDate, formatDateTime | Time utility functions |
+| `@whykusanagi/corrupted-theme/clipboard-helpers` | copyWithFeedback | Clipboard helper utilities. |
+| `@whykusanagi/corrupted-theme/url-state` | serializeFormToParams, applyParamsToForm, buildShareUrl | URL state serialization helpers. |
+| `@whykusanagi/corrupted-theme/websocket-manager` | WebSocketManager | WebSocketManager — auto-reconnecting WebSocket wrapper. |
+| `@whykusanagi/corrupted-theme/toast` | — | Toast — singleton notification helper. |
+| `@whykusanagi/corrupted-theme/clock-widget` | ClockWidget | ClockWidget — cycling multi-timezone clock display. |
+| `@whykusanagi/corrupted-theme/event-bar` | EventBar | EventBar — horizontal status row with label + content + optional icon. |
+| `@whykusanagi/corrupted-theme/logo-banner` | LogoBanner | LogoBanner — positioned logo with optional subtitle and reveal animation. |
+| `@whykusanagi/corrupted-theme/png-export` | exportElementAsPng | Export a DOM element to a PNG file. |
+| `@whykusanagi/corrupted-theme/nsfw-reveal` | NsfwReveal | NsfwReveal — blur-until-clicked overlay. |
+| `@whykusanagi/corrupted-theme/phrase-cycle` | PhraseCycle | PhraseCycle — discrete phrase-state cycling primitive. |
+| `@whykusanagi/corrupted-theme/chromatic-pulse` | ChromaticPulse | ChromaticPulse — RGB-split chromatic-aberration pulse on any element. |
+| `@whykusanagi/corrupted-theme/binary-particles` | BinaryParticles | BinaryParticles — rising binary/hex/phrase token field. |
+| `@whykusanagi/corrupted-theme/glitch-title-card` | GlitchTitleCard | GlitchTitleCard — █▓▒░ buffer-fill intro/outro title cards. |
+| `@whykusanagi/corrupted-theme/terminal-takeover` | TerminalTakeover | TerminalTakeover — full-viewport "system corrupted" terminal card. |
+| `@whykusanagi/corrupted-theme/stream-ticker` | StreamTicker | StreamTicker — ambient corner logo + scrolling corruption ticker. |
+| `@whykusanagi/corrupted-theme/corrupted-mandala` | CorruptedMandala | CorruptedMandala — procedural SVG sacred-geometry background. |
+| `@whykusanagi/corrupted-theme/terminal-vocab` | generateHex, generateKatakana, generateHiragana, getRandomCharacter | Terminal vocabulary + charset generators for transition effects. |
+| `@whykusanagi/corrupted-theme/abyssal-cables` | AbyssalCableSystem | Abyssal Cables - Tentacle/Cable System for Neural Corruption Transitions |
+| `@whykusanagi/corrupted-theme/geometric-morpher` | GeometricMorpher | Geometric Morpher Transition - ENHANCED WITH BUILDING BLOCKS |
+| `@whykusanagi/corrupted-theme/neural-deserializer` | NeuralDeserializer | Neural Deserializer Transition - ENHANCED |
+| `@whykusanagi/corrupted-theme/spectrum-terminal` | SpectrumTerminal | Spectrum Terminal Transition - ENHANCED WITH BUILDING BLOCKS |
+| `@whykusanagi/corrupted-theme/transitions` | — | Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks |
+| `@whykusanagi/corrupted-theme/scroll-decode` | ScrollDecode | ScrollDecode — text decodes as it scrolls into view. |
+| `@whykusanagi/corrupted-theme/corrupted-timeline` | CorruptedTimeline | CorruptedTimeline — sequence animation blocks into one orchestrated scene. |
+| `@whykusanagi/corrupted-theme/glitch-stagger-grid` | GlitchStaggerGrid | GlitchStaggerGrid — Pattern 4: staggered grid corruption. |
+| `@whykusanagi/corrupted-theme/corruption-easings` | — | Corruption easing + stagger presets. |
+<!-- MANIFEST:END -->

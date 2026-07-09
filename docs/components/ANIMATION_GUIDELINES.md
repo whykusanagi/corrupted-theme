@@ -2,8 +2,8 @@
 
 > **Celeste Brand System** | Component Documentation
 > **Document**: Animation Guidelines
-> **Version**: 0.2.0
-> **Last Updated**: 2026-05-18
+> **Version**: 0.3.0
+> **Last Updated**: 2026-07-09
 
 ---
 
@@ -475,6 +475,24 @@ Multi-layer glitch effect for error states or brand moments:
 ```
 
 ---
+
+## Corruption Easing Tokens (0.3.0)
+
+0.3.0 adds named easing curves for glitch motion, available as CSS custom
+properties in `src/css/variables.css` and as the `EASINGS` map in
+`src/core/corruption-easings.js`:
+
+| Token | Value | Use for |
+|---|---|---|
+| `--ease-glitch-snap` | `cubic-bezier(0.7, 0, 0.2, 1.4)` | Hard snaps with overshoot (glitch pops, reveals) |
+| `--ease-decay` | `cubic-bezier(0.34, 1.56, 0.64, 1)` | Bouncy settle (elements landing after corruption) |
+| `--ease-terminal-step` | `steps(8, end)` | Quantized terminal-style motion |
+
+`STAGGER.rippleFromCenter` / `STAGGER.rippleFrom` (same module) compute
+distance-based delays for grid ripples with a 40ms floor. The 0.3.0
+animation components (ScrollDecode, CorruptedTimeline, GlitchStaggerGrid,
+stream overlay suite, canvas transitions) are documented in
+[`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md).
 
 ## CRT Effects & Advanced Glitch Keyframes (0.2.0)
 
@@ -951,7 +969,7 @@ Need animation?
 
 ---
 
-**Last Updated**: 2026-05-18
-**Version**: 0.2.0
+**Last Updated**: 2026-07-09
+**Version**: 0.3.0
 **Maintainer**: Celeste Brand System
-**Status**: ✅ Updated for 0.2.0 (CRT effects + glitch keyframes)
+**Status**: ✅ Updated for 0.3.0 (corruption easing tokens + component pointer)

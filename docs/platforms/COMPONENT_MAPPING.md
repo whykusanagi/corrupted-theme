@@ -5,6 +5,13 @@
 > **Version**: 0.2.0
 > **Last Updated**: 2026-05-18
 
+> **Scope note (0.3.0):** this mapping covers the component surface as of
+> 0.2.0. The 0.3.0 additions (stream overlays, canvas transitions,
+> ScrollDecode, CorruptedTimeline, GlitchStaggerGrid, CorruptedMandala) are
+> web-only and have no CLI equivalents yet — see
+> [`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md) for the full
+> current surface.
+
 ---
 
 ## Table of Contents

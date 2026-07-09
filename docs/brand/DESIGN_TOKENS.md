@@ -1,7 +1,7 @@
 # Celeste Brand System - Design Tokens
 
-**Version**: 0.2.0
-**Last Updated**: 2026-05-18
+**Version**: 0.3.0
+**Last Updated**: 2026-07-09
 **Token Format**: W3C Design Tokens Community Group (DTCG)
 **Status**: 🔴 **CRITICAL FOUNDATION DOCUMENT**
 
@@ -94,6 +94,12 @@ spacing.scale.xl                // Extra large (32px)
 animation.timing.fast           // 150ms
 animation.timing.normal         // 300ms
 animation.easing.default        // ease-in-out
+
+// 0.3.0 corruption easing tokens (CSS custom properties in variables.css,
+// mirrored as EASINGS in src/core/corruption-easings.js)
+--ease-glitch-snap              // cubic-bezier(0.7, 0, 0.2, 1.4) — hard snap w/ overshoot
+--ease-decay                    // cubic-bezier(0.34, 1.56, 0.64, 1) — bouncy settle
+--ease-terminal-step            // steps(8, end) — quantized terminal motion
 ```
 
 ---

@@ -136,3 +136,17 @@ test('TitleDecoder: lewdMode option is deprecated — nsfw shim fires once and o
   console.warn = origWarn;
   TitleDecoder._warnedLewdMode = false; // restore
 });
+
+test('GlitchPulse rejects markup-breaking color values (XSS hardening, 0.3.0)', () => {
+  const attacks = ['"><img src=x onerror=alert(1)>', 'red;</style><script>1</script>', "url('javascript:x')"];
+  for (const color of attacks) {
+    const gp = new GlitchPulse(null, { color });
+    assert.equal(gp.options.color, '#ff00ff', `attack survived sanitizer: ${color}`);
+    gp.destroy?.();
+  }
+  for (const color of ['#00ffff', 'rgb(255, 0, 255)', 'rgba(139, 92, 246, 0.5)', 'magenta']) {
+    const gp = new GlitchPulse(null, { color });
+    assert.equal(gp.options.color, color, `legit color rejected: ${color}`);
+    gp.destroy?.();
+  }
+});

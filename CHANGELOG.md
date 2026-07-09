@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.0] - 2026-07-05
+## [0.3.0] - 2026-07-09
 
 > This release absorbs the glitch libraries that were copy-pasted across the whykusanagi repos (celeste-tts-bot obs/transitions, site thumbnail-generator, youtube_poop, spatial_videos). Each one now has a single home: this package. The release also adds orchestration components modeled on anime.js v4 APIs (zero dependencies) and a machine-readable agent surface. Everything is additive. `lewdMode` becomes a deprecated alias for `nsfw` and logs a console.warn.
 
@@ -48,9 +48,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Test suite 166 → 207 (node --test; mock-timer scheduler tests, SFW-pool purity guards, determinism assertions).
 - devDependencies: rollup 4.62, postcss 8.5.16, cssnano 8.
 
-### SRI hashes for new CDN dist objects
+### SRI hashes for CDN dist objects (published 2026-07-09)
 
-Added at CDN publish time: see the release notes / 0.2.1 table pattern. `dist/manifest.json` and `dist/llms.txt` are also published per-version + `@latest`.
+Pin `@0.3.0` (never `@latest`) in production and add the matching `integrity` attribute:
+
+| File | SRI `integrity` |
+|---|---|
+| `dist/theme.min.css` | `sha384-09dUKj6tRy5MnkBu0SKlxr9OrybBI7f7YMjySOnY4t1yBHZ377Mwb1NMDktEv6Xd` |
+| `dist/corrupted-text.global.js` | `sha384-bqSoNlkNdxHXdCQK9u5r1T0AdxckV/Dme1PbZiIUenfYiUtkDKBeoQEG1Lrs2HY6` |
+| `dist/toast.global.js` | `sha384-E6pgdAS3p1sh+1jLBw3pUw07jUbpNPFFHo0o+D/CWY7yqSDB7T51x/Zr2dTJmpI4` |
+| `dist/clipboard-helpers.global.js` | `sha384-UuSlpAWcN5KD5lAax35jyrpHK8Napkyph12QjqPdUgtDoUOiw9fnluFSSTih2f3M` |
+| `dist/timer-registry.global.js` | `sha384-KEG+XQpvQzne1xE9Rdr1iTWHikjW6G0pcfqvwOTst1Ufn78lgbbzGhy9k5cERDCU` |
+| `dist/nikke-utilities.css` | `sha384-dxF1Y2qQTqxNRq1OIO+kiY6OzW4XORs5xEqDnywJYmnRSssdhb/2Sx2ijTxhja/G` |
+| `dist/manifest.json` | `sha384-/56zbAVRIvLxZMNIC4jJ53s++ugCUXfoejgB8A7SLRRfEvp55Ekwe7DBfrrOKpHF` |
+
+`dist/manifest.json` and `dist/llms.txt` (the agent surface) plus the full `src/{css,lib,core,data}` ES-module tree are published per-version and at `@latest`. SRI applies to version-pinned URLs only — `@latest` content changes by design.
 
 ---
 

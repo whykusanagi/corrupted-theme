@@ -2542,7 +2542,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `1000` |  |
-| `color` | `string` | `'#ff00ff'` | / |
+| `color` | `string` | `'#ff00ff'` | CSS color value; values outside the safe color charset fall back to the default (the string is interpolated into generated markup) |
 
 **ASCIIBorder** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 

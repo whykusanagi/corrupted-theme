@@ -110,7 +110,7 @@ function _hasDom() {
 function _applyLewdModeShim(Cls, opts) {
   if (opts.lewdMode !== undefined) {
     if (!Cls._warnedLewdMode) {
-      // eslint-disable-next-line no-console
+       
       console.warn(
         `${Cls.name}: 'lewdMode' is deprecated. Use 'nsfw' instead. Removed in 0.3.0.`
       );
@@ -596,9 +596,11 @@ export class TerminalBoot {
             }
             html += '<br>';
           }
+          // eslint-disable-next-line no-unsanitized/property -- options.lines is raw HTML by documented contract (⚠️ SECURITY JSDoc above; SECURITY.md trust boundary)
           this._element.innerHTML = html;
           this._rafId = _raf(animate);
         } else {
+          // eslint-disable-next-line no-unsanitized/property -- options.lines is raw HTML by documented contract (⚠️ SECURITY JSDoc above; SECURITY.md trust boundary)
           this._element.innerHTML = this.options.lines.join('<br>');
           this._timers.setTimeout(() => {
             if (this._resolve) {
@@ -709,6 +711,7 @@ export class GlitchPulse {
               const opacity = Math.random() * this.options.intensity;
               html += `<div style="position:absolute;top:${top}%;left:0;width:100%;height:${height}%;background:${this.options.color};opacity:${opacity};"></div>`;
             }
+            // eslint-disable-next-line no-unsanitized/property -- html is built only from Math.random numbers and options.color, which the constructor validates against a safe CSS-color charset
             this._element.innerHTML = html;
           } else {
             this._element.innerHTML = '';
@@ -1057,6 +1060,7 @@ export class SystemDiagnostic {
             const lineText = lines[this._lineElements.length];
             div.textContent = lineText;
             if (showCursor && this._lineElements.length === currentLineIndex) {
+              // eslint-disable-next-line no-unsanitized/property -- options.lines is raw HTML by documented contract (⚠️ SECURITY JSDoc above; SECURITY.md trust boundary)
               div.innerHTML = lineText + '<span style="animation: blink 0.8s infinite;">█</span>';
             }
             this._element.appendChild(div);

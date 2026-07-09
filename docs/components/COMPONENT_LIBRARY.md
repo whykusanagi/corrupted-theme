@@ -1,7 +1,7 @@
 # Celeste Brand System - Component Library
 
-**Version**: 0.2.0
-**Last Updated**: 2026-05-18
+**Version**: 0.3.0
+**Last Updated**: 2026-07-09
 **Status**: 🟠 **HIGH PRIORITY DOCUMENT**
 
 ---
@@ -35,11 +35,11 @@ This document provides a complete inventory of all Celeste design system compone
 | **Navigation** | 6 | 0 | Navbar, breadcrumbs, tabs |
 | **Feedback** | 5 | 2 | Alerts, loaders, notifications |
 | **Extensions** | 10 | 0 | Gallery, countdown, social links |
-| **JS Libraries (0.2.0)** | 19 | 0 | Animation blocks, CRT, widgets, utilities |
+| **JS Libraries** | 34 | 0 | Animation blocks, CRT, widgets, stream overlays, canvas transitions, scroll/timeline/grid orchestration (see COMPONENTS_REFERENCE) |
 
-**Total**: 75 web components + JS libs, 8 CLI patterns
+**Total**: 90 web components + JS libs, 8 CLI patterns
 
-> **0.2.0 JS libraries** are documented in full in [`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md). See the section below for a summary.
+> **JS libraries** are documented in full in [`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md). See the section below for a summary.
 
 ---
 

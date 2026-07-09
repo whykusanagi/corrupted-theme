@@ -649,7 +649,9 @@ export class GlitchPulse {
    * @param {Object} [options]
    * @param {number} [options.duration=1000]
    * @param {number} [options.intensity=0.5]  — max bar opacity
-   * @param {string} [options.color='#ff00ff']
+   * @param {string} [options.color='#ff00ff'] — CSS color value; values
+   *   outside the safe color charset fall back to the default (the string is
+   *   interpolated into generated markup)
    */
   constructor(container, options = {}) {
     _applyLewdModeShim(GlitchPulse, options);
@@ -658,7 +660,8 @@ export class GlitchPulse {
     this.options = {
       duration:  options.duration  || 1000,
       intensity: options.intensity || 0.5,
-      color:     options.color     || '#ff00ff',
+      color:     /^[#a-zA-Z0-9(),.%\s-]+$/.test(options.color || '')
+        ? options.color : '#ff00ff',
     };
 
     this._element   = null;
@@ -1604,8 +1607,12 @@ export class TerminalPrompt {
 
           const command     = commands[this._currentLine];
           const displayText = command.substring(0, this._currentChar + 1);
-          this._lineElements[this._currentLine].innerHTML =
-            displayText + '<span style="animation: blink 0.5s infinite;">█</span>';
+          const lineEl = this._lineElements[this._currentLine];
+          lineEl.textContent = displayText;
+          const cursor = document.createElement('span');
+          cursor.style.animation = 'blink 0.5s infinite';
+          cursor.textContent = '█';
+          lineEl.appendChild(cursor);
 
           this._currentChar++;
           this._lastCharTime = now;

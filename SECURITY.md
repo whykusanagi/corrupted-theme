@@ -33,7 +33,7 @@ Attack surface is therefore limited to: (1) DOM-based XSS if callers pass untrus
 
 | Threat | Mitigation | Status |
 |---|---|---|
-| **DOM-based XSS** in library components | All DOM writes use `createElement`/`textContent`/`appendChild`. Zero `innerHTML` in `src/lib/` or `src/core/` after the v0.1.7 hardening pass. | Enforced in code, preserved through v0.1.9 |
+| **DOM-based XSS** in library components | Caller-supplied strings are rendered via `textContent`/`createElement` or pass through `escapeHtml` before any `innerHTML` write; remaining `innerHTML` uses are static markup or element clearing (audited per-occurrence for 0.3.0). Two documented exceptions accept raw HTML by contract: `TerminalBoot.lines` and `SystemDiagnostic.lines` carry `⚠️ SECURITY` JSDoc warnings — never route untrusted text into them. | Audited through 0.3.0 |
 | **Clickjacking** of the live site | `X-Frame-Options: DENY` + CSP `frame-ancestors 'none'` | Enforced in Worker |
 | **MIME sniffing** attacks on static assets | `X-Content-Type-Options: nosniff` | Enforced in Worker |
 | **Protocol downgrade** on live site | `Strict-Transport-Security: max-age=31536000; includeSubDomains` + CF "Always use HTTPS" | Enforced in Worker + CF |
@@ -134,6 +134,8 @@ CI runs `npm install` + `npm run build` on every PR. `npm audit` is run locally 
 | 0.1.9 | Added `.github/workflows/checks.yml` with build + syntax check gating on PRs |
 | 0.1.9 | Added `.assetsignore` so `node_modules/`, internal specs, and dev-only files are never served on the live site |
 | 0.1.9 | Added `worker/index.js` + `wrangler.jsonc` with security headers on all live-site responses |
+| 0.2.0 | CDN distribution threat model (this document); `escapeHtml` on all interpolated `innerHTML` templates in widgets |
+| 0.3.0 | Per-occurrence `innerHTML` audit of `src/lib` + `src/core`; hardened `TerminalPrompt` (typed command text now rendered via `textContent` + cursor element) and `GlitchPulse` (`color` option validated against a safe CSS-color charset, regression-tested); documented the two raw-HTML-by-contract options (`TerminalBoot.lines`, `SystemDiagnostic.lines`) |
 
 ---
 
@@ -167,7 +169,7 @@ the threat surface introduced by CDN distribution.
 
 ### Consumer Recommendations
 
-- **Production sites:** pin a specific version (`@0.2.0`, not `@latest`). Add SRI hashes per `docs/CDN_CONSUMPTION.md`.
+- **Production sites:** pin a specific version (`@0.3.0`, not `@latest`). Add SRI hashes per `docs/CDN_CONSUMPTION.md`.
 - **Sites the maintainer controls and updates together:** `@latest` is acceptable.
 - **Don't pass user input to corrupted-theme APIs that build phrase pools.** The XSS-hardening in `src/**` assumes upstream-controlled content.
 - **CSP recommendation:** consumer sites should list `https://cdn.{matching-root-domain}` in `script-src` and `style-src` if they're loading from the CDN. Same-origin loads still benefit from explicit CSP.

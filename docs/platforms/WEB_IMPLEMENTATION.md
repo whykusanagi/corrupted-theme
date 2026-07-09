@@ -5,6 +5,11 @@
 > **Version**: 0.2.0
 > **Last Updated**: 2026-05-18
 
+> **Scope note (0.3.0):** this guide covers the patterns and components as
+> of 0.2.0; everything in it remains valid. The 0.3.0 animation components
+> are documented in
+> [`docs/COMPONENTS_REFERENCE.md`](../COMPONENTS_REFERENCE.md).
+
 ---
 
 ## Table of Contents

@@ -28,6 +28,9 @@ jobs:
       - name: Build CSS bundle
         run: npm run build
 
+      - name: Security lint (no-unsanitized innerHTML guard)
+        run: npm run lint:security
+
       - name: JS syntax check (all src/)
         run: |
           set -e

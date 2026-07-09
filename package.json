@@ -121,6 +121,8 @@
   "devDependencies": {
     "ajv": "^8.20.0",
     "cssnano": "^8.0.2",
+    "eslint": "^10.6.0",
+    "eslint-plugin-no-unsanitized": "^4.1.5",
     "postcss": "^8.5.16",
     "postcss-cli": "^11.0.1",
     "postcss-import": "^16.1.1",
@@ -142,7 +144,8 @@
     "publish-cdn": "bash scripts/publish-to-cdn.sh",
     "generate-sri": "bash scripts/generate-sri.sh",
     "prepublishOnly": "npm run data:generate && npm run build && npm run manifest:generate && npm test",
-    "nav:sync": "node scripts/sync-nav.js"
+    "nav:sync": "node scripts/sync-nav.js",
+    "lint:security": "eslint ."
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

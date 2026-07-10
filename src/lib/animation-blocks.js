@@ -1737,15 +1737,23 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   0.3.0 ABSORPTION — additional blocks re-exported from internal modules
+   0.3.0–0.3.1 ABSORPTION — additional blocks re-exported from internal modules
    (single import surface stays this file; implementations split by
-   provenance for reviewability: _blocks-advanced.js = 7 classes from
-   anime-blocks-advanced.js, _blocks-anime.js = 10 classes from
-   anime-blocks.js + anime-blocks-extended.js, celeste-tts-bot canonical)
+   provenance for reviewability: _blocks-advanced.js = full 16-class
+   anime-blocks-advanced.js set, _blocks-anime.js = 10 classes from
+   anime-blocks.js + anime-blocks-extended.js, celeste-tts-bot canonical).
+   0.3.1 completed the anime-blocks-advanced absorption: FloatingCardStack,
+   ImageGallerySlideshow, DataVisualizationDashboard, SegmentedProgressBar,
+   ModuleLoadingList, TacticalTerrainMap, OminousTemple, CorruptedTextOverlay
+   + CharacterFlowParticles (promoted from a downstream-only copy) — all NSFW
+   de-themed to nsfw:false opt-in so no consumer needs to vendor a copy.
    ───────────────────────────────────────────────────────────────────────── */
 export {
   TypingTextReveal, CircularDotsIndicator, RectangularWipe,
   ChromaticAberrationGlitch, RotatingDiamond, GridOverlay, WaveformOscilloscope,
+  FloatingCardStack, ImageGallerySlideshow, DataVisualizationDashboard,
+  SegmentedProgressBar, ModuleLoadingList, TacticalTerrainMap, OminousTemple,
+  CorruptedTextOverlay, CharacterFlowParticles,
 } from './_blocks-advanced.js';
 export {
   ParticleGrid, HeartPulse, ShatterGrid, WaveRipple, SpiralVortex,

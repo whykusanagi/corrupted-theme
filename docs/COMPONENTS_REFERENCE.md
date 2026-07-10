@@ -1721,6 +1721,177 @@ Character-by-character typewriter of command strings with a blinking block curso
 
 ---
 
+## Advanced blocks (absorbed from `anime-blocks-advanced.js`)
+
+**Module:** `@whykusanagi/corrupted-theme/animation-blocks` (same import surface as the ten blocks above)
+**Since:** 0.3.0 absorbed the first seven; **0.3.1 completed the set** with nine more, so the whole `anime-blocks-advanced.js` library now has one canonical home and consumers no longer vendor a copy.
+
+All advanced blocks share the block lifecycle contract: `new ClassName(container, options)`, then `play()` (alias `start()` where present), `stop()`, `destroy()`. These are **browser-only** (they read `window`/`canvas` at construct or play time). Every block that renders phrase text defaults to `nsfw: false` and pulls phrases from the canonical `corruption-phrases` library; `lewdMode` and `includeLewd` are deprecated aliases that map to `nsfw` with a one-time `console.warn`.
+
+**Import** (all blocks are named exports of the same module, over both npm and the CDN ES-module URL):
+
+```js
+// npm
+import { CorruptedTextOverlay, CharacterFlowParticles } from '@whykusanagi/corrupted-theme/animation-blocks';
+// CDN (ES module — named exports work identically)
+import { CorruptedTextOverlay, CharacterFlowParticles }
+  from 'https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/animation-blocks.js';
+// pin a version for reproducibility: swap @latest for @0.3.1
+```
+
+**Container contract:** `container` must be a **DOM `Element`** (not a selector string). Canvas/overlay blocks create their own `<canvas>`/wrapper positioned `absolute` inside it and size to it (or to explicit `width`/`height` where offered) — give the container `position: relative` and a size, and for `CorruptedTextOverlay`/`CharacterFlowParticles` overlaying existing content, make the container the positioned ancestor that overlaps what you want particles to emit from.
+
+| Class | Since | Renders | Purpose |
+|-------|-------|---------|---------|
+| `TypingTextReveal` | 0.3.0 | DOM | Typewriter reveal with optional phrase flicker |
+| `CircularDotsIndicator` | 0.3.0 | DOM | Loading dots |
+| `RectangularWipe` | 0.3.0 | DOM | Screen wipe transition |
+| `ChromaticAberrationGlitch` | 0.3.0 | DOM | RGB channel-split glitch |
+| `RotatingDiamond` | 0.3.0 | DOM | Spinning diamond accent |
+| `GridOverlay` | 0.3.0 | DOM | Wireframe grid pattern |
+| `WaveformOscilloscope` | 0.3.0 | Canvas | Audio-style waveform |
+| `FloatingCardStack` | **0.3.1** | DOM | Floating cards that decode corrupted labels |
+| `ImageGallerySlideshow` | **0.3.1** | DOM | Staggered image reveal with parallax |
+| `DataVisualizationDashboard` | **0.3.1** | Canvas | Terminal dashboard: chart + coordinate table |
+| `SegmentedProgressBar` | **0.3.1** | DOM | Segmented loading bar |
+| `ModuleLoadingList` | **0.3.1** | DOM | Boot-style module load list |
+| `TacticalTerrainMap` | **0.3.1** | Canvas | Rotating wireframe terrain with waypoints |
+| `OminousTemple` | **0.3.1** | Canvas | Cosmic-horror temple + tentacle text |
+| `CorruptedTextOverlay` | **0.3.1** | Canvas | Full-frame corruption overlay (phrases + kanji + glitch particles) |
+| `CharacterFlowParticles` | **0.3.1** | Canvas | Code/phrase particles flowing off a character's edges |
+
+### CorruptedTextOverlay
+
+Full-frame transparent corruption overlay: drifting phrase particles + large pulsing kanji + glitch specks. Primary consumer: thumbnail/overlay compositing.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nsfw` | boolean | `false` | Source phrases from the NSFW pool. `lewdMode`/`includeLewd` are deprecated aliases |
+| `intensity` | string | `'medium'` | `'low'`/`'medium'`/`'high'` — phrase-particle count (10/15/20). `lewdIntensity` is a deprecated alias |
+| `kanjiCount` | number | `8` | Number of large pulsing kanji |
+| `kanjiSymbols` | string[] | `['堕','闇','虚','滅','魔','壊','蝕','歪']` | Override the kanji glyph set |
+| `particleCount` | number | `80` | Small glitch-speck count |
+| `includeGrain` | boolean | `false` | Add film-grain noise pass |
+| `opacity` | number | *(unset)* | Canvas opacity; only applied when set |
+| `background` | string | `'#000000'` | Wrapper background; use `'transparent'` to overlay existing content |
+| `width` / `height` | number | `1920` / `1080` | Canvas pixel dimensions |
+
+Lifecycle: `play()`, `resize(width, height)` *(not present — resize via re-construct)*, `destroy()`.
+
+### CharacterFlowParticles
+
+Emits corrupted code/phrase particles that flow outward from a character element's body. Decoupled from any specific page in 0.3.1 — point it at your character element with `target`.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nsfw` | boolean | `false` | Source the deep-phrase tier from the NSFW pool. `lewdMode`/`includeLewd` deprecated aliases |
+| `density` | number | `50` | Particle density 0–100% |
+| `speed` | number | `50` | Particle speed 0–100% |
+| `enabled` | boolean | `true` | If `false`, `play()` is a no-op until `enable()` |
+| `glowColor` | string | `'purple'` | One of `purple`/`magenta`/`black`/`cyan`/`yellow`/`red` |
+| `target` | Element \| string | `null` | Character element (or CSS selector) whose edges emit particles. When absent, particles spawn from the container center |
+| `scaleWrapper` | Element \| string | `null` | Element (or selector) applying a CSS `scale()` transform, so bounds math stays correct |
+
+Canvas is sized from the passed `container`. Lifecycle: `play()`, `stop()`, `destroy()`, plus `enable()`/`disable()`, `setDensity()`, `setSpeed()`, `setGlowColor()`, `getState()`, and `updateCharacterBounds()` (call after the character element moves/changes).
+
+### FloatingCardStack
+
+Floating card elements whose labels decode from corruption to readable text.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nsfw` | boolean | `false` | NSFW phrase pool for label corruption. `lewdMode`/`includeLewd` deprecated aliases |
+| `cardCount` | number | — | Number of cards |
+| `cardWidth` / `cardHeight` | number | — | Card dimensions |
+| `images` | string[] | — | Optional image URLs for card faces |
+| `corruptedText` | boolean | — | Decode card labels from corruption |
+| `decodeDuration` | number | — | Label decode duration (ms) |
+| `tarotMode` | boolean | — | Tarot-style card presentation |
+| `randomSeed` | number | — | Seed for deterministic layout |
+| `color` | string | — | Accent color |
+
+### DataVisualizationDashboard
+
+Terminal-style dashboard: animated chart plus a coordinate data table.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nsfw` | boolean | `false` | NSFW pool for label corruption. `lewdMode`/`includeLewd` deprecated aliases |
+| `title` / `subtitle` | string | — | Header text |
+| `dataPoints` | number | — | Rows/points to plot |
+| `duration` | number | — | Animation duration (ms) |
+| `position` | string | — | Placement within container |
+
+### ModuleLoadingList
+
+Boot-sequence module list that streams in with corruption flicker.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nsfw` | boolean | `false` | NSFW pool for corruption flicker. `lewdMode`/`includeLewd` deprecated aliases |
+| `modules` | string[] | — | Module names to list |
+| `loadSpeed` | number | — | Ms between module reveals |
+| `color` / `highlightColor` | string | — | Text and active-row colors |
+| `fontSize` | string | — | CSS font-size |
+| `width` / `height` | number | — | List dimensions |
+| `position` | string | — | Placement within container |
+| `duration` | number | — | Total animation duration (ms) |
+
+### TacticalTerrainMap
+
+Rotating wireframe terrain grid with waypoints and a decoding title.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nsfw` | boolean | `false` | NSFW pool for the decoding title buffer. `lewdMode`/`includeLewd` deprecated aliases |
+| `title` / `subtitle` | string | — | Header text |
+| `gridWidth` / `gridDepth` | number | — | Terrain grid resolution |
+| `terrainScale` | number | — | Height scale |
+| `rotationSpeed` | number | — | Rotation rate |
+| `particleCount` | number | — | Floating particle count |
+| `showWaypoints` / `showCoordinates` | boolean | — | Toggle overlays |
+| `duration` | number | — | Animation duration (ms) |
+
+### OminousTemple
+
+Cosmic-horror temple backdrop with tentacle text and ritual markers.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `nsfw` | boolean | `false` | NSFW pool for corrupted-text particles. `lewdMode`/`includeLewd` deprecated aliases |
+| `templeSize` | number | — | Temple scale |
+| `showCorruptedText` | boolean | — | Toggle drifting phrase particles |
+| `showRitualMarkers` | boolean | — | Toggle ritual glyphs |
+| `duration` | number | — | Animation duration (ms) |
+
+### SegmentedProgressBar
+
+Segmented loading bar (no phrase content — SFW by construction).
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `segmentCount` | number | — | Number of segments |
+| `segmentGap` | number | — | Gap between segments (px) |
+| `showPercentage` | boolean | — | Show numeric percentage |
+| `width` / `height` | number | — | Bar dimensions |
+| `color` | string | — | Fill color |
+| `position` | string | — | Placement within container |
+| `duration` | number | — | Fill duration (ms) |
+
+### ImageGallerySlideshow
+
+Staggered image reveal with parallax (no phrase content — SFW by construction).
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `images` | string[] | — | Image URLs to show |
+| `imageWidth` / `imageHeight` | number | — | Per-image dimensions |
+| `layout` | string | — | Arrangement |
+| `staggerDelay` | number | — | Ms between image reveals |
+| `color` | string | — | Accent color |
+
+---
+
 ## CorruptedParticlesBackground
 
 **Module:** `@whykusanagi/corrupted-theme/corrupted-particles-background`
@@ -2272,7 +2443,7 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.3.0, 44 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.1, 44 JS exports)
 
 Container expectations: overlay-suite and block components position themselves
 absolutely inside their container, so give the container `position: relative`
@@ -2320,7 +2491,7 @@ ignore container geometry. Every option below is parsed from the source JSDoc.
 | `@whykusanagi/corrupted-theme/geometric-morpher` | GeometricMorpher | Geometric Morpher Transition - ENHANCED WITH BUILDING BLOCKS |
 | `@whykusanagi/corrupted-theme/neural-deserializer` | NeuralDeserializer | Neural Deserializer Transition - ENHANCED |
 | `@whykusanagi/corrupted-theme/spectrum-terminal` | SpectrumTerminal | Spectrum Terminal Transition - ENHANCED WITH BUILDING BLOCKS |
-| `@whykusanagi/corrupted-theme/transitions` | — | Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks |
+| `@whykusanagi/corrupted-theme/transitions` | GlitchCascade, RadialGlitch, GridCorruption, TerminalMatrix | Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks |
 | `@whykusanagi/corrupted-theme/scroll-decode` | ScrollDecode | ScrollDecode — text decodes as it scrolls into view. |
 | `@whykusanagi/corrupted-theme/corrupted-timeline` | CorruptedTimeline | CorruptedTimeline — sequence animation blocks into one orchestrated scene. |
 | `@whykusanagi/corrupted-theme/glitch-stagger-grid` | GlitchStaggerGrid | GlitchStaggerGrid — Pattern 4: staggered grid corruption. |
@@ -2588,6 +2759,33 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `commands` | `string[]` |  | lines to type |
 | `color` | `string` | `'#00ff00'` |  |
 | `fontSize` | `string` | `'16px'` |  |
+
+**CorruptedTextOverlay** options:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `nsfw` | `boolean` | `false` | Source phrases from the NSFW pool (lewdMode/includeLewd are deprecated aliases). |
+| `intensity` | `string` | `medium` | 'low'|'medium'|'high' — phrase-particle count 10/15/20 (lewdIntensity is a deprecated alias). |
+| `kanjiCount` | `number` | `8` | Number of large pulsing kanji. |
+| `kanjiSymbols` | `string[]` |  | Override the default (neutral) kanji glyph set. |
+| `particleCount` | `number` | `80` | Small glitch-speck count. |
+| `includeGrain` | `boolean` | `false` | Add a film-grain noise pass. |
+| `opacity` | `number` |  | Canvas opacity; only applied when set. |
+| `background` | `string` | `#000000` | Wrapper background; use 'transparent' to overlay existing content. |
+| `width` | `number` | `1920` | Canvas pixel width. |
+| `height` | `number` | `1080` | Canvas pixel height. |
+
+**CharacterFlowParticles** options:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `nsfw` | `boolean` | `false` | Source the deep-phrase tier from the NSFW pool (lewdMode/includeLewd are deprecated aliases). |
+| `density` | `number` | `50` | Particle density, 0–100%. |
+| `speed` | `number` | `50` | Particle speed, 0–100%. |
+| `enabled` | `boolean` | `true` | When false, play() is a no-op until enable(). |
+| `glowColor` | `string` | `purple` | One of purple|magenta|black|cyan|yellow|red. |
+| `target` | `HTMLElement|string` |  | Character element (or CSS selector) whose edges emit particles; spawns from container center when absent. |
+| `scaleWrapper` | `HTMLElement|string` |  | Element (or selector) applying a CSS scale() transform, so bounds math stays correct. |
 ### `corrupted-particles-background`
 
 src/lib/corrupted-particles-background.js
@@ -2959,7 +3157,7 @@ new SpectrumTerminal(containerEl).start();
 
 Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks. Absorbed 0.3.0 from the canonical celeste-tts-bot obs/transitions library (single canonical home).
 
-- npm: `import { … } from '@whykusanagi/corrupted-theme/transitions'`
+- npm: `import { GlitchCascade } from '@whykusanagi/corrupted-theme/transitions'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/transitions/index.js`
 ### `scroll-decode`
 

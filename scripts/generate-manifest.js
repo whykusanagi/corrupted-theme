@@ -17,7 +17,7 @@
  * @module scripts/generate-manifest
  */
 
-import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
 
@@ -161,8 +161,9 @@ export function buildManifest() {
       while ((rx = reExportRe.exec(source))) {
         const names = rx[1].split(',').map((s) => s.trim()).filter(Boolean);
         const childPath = path.resolve(path.dirname(targetPath), rx[2]);
-        if (!existsSync(childPath)) continue;
-        const child = parseModule(readFileSync(childPath, 'utf8'));
+        let childSrc;
+        try { childSrc = readFileSync(childPath, 'utf8'); } catch { continue; }
+        const child = parseModule(childSrc);
         const childOpts = child.classOptions
           || (child.classes?.length === 1 ? { [child.classes[0]]: child.options } : {});
         for (const name of names) {
@@ -346,8 +347,10 @@ function main() {
 
   // Refresh the marked block in COMPONENTS_REFERENCE.md (append markers if absent)
   const refPath = path.join(ROOT, 'docs/COMPONENTS_REFERENCE.md');
-  if (existsSync(refPath)) {
-    let ref = readFileSync(refPath, 'utf8');
+  // Read directly and handle absence via catch (no existsSync-then-read race).
+  let ref = null;
+  try { ref = readFileSync(refPath, 'utf8'); } catch { /* reference doc absent — skip refresh */ }
+  if (ref !== null) {
     const block = `${MARK_START}\n${renderReferenceBlock(manifest)}\n${MARK_END}`;
     ref = ref.includes(MARK_START)
       ? ref.replace(new RegExp(`${MARK_START}[\\s\\S]*?${MARK_END}`), block)

@@ -181,8 +181,14 @@ function resolveAssetPath(path) {
  * @returns {Promise<CountdownConfig>}
  */
 async function loadConfigFromJson(eventName) {
+  // Security: eventName is a filename segment interpolated into a fetch URL.
+  // Restrict it to a safe token (allowlist) so it cannot inject path traversal
+  // (`../`), an absolute path, or a scheme/host — preventing request forgery.
+  if (typeof eventName !== 'string' || !/^[A-Za-z0-9_-]+$/.test(eventName)) {
+    throw new Error(`[CountdownWidget] invalid event name: ${eventName}`);
+  }
   const url = `${WIDGET_OPTIONS.configPath}/${eventName}.json`;
-  
+
   try {
     const response = await fetch(url, { cache: 'no-store' });
     

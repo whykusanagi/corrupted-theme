@@ -81,7 +81,7 @@ npm install @whykusanagi/corrupted-theme
 ```html
 <!-- Pinned version (recommended for production) -->
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.0/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.1/dist/theme.min.css">
 
 <!-- Floating @latest (use only for sites you control and update together) -->
 <link rel="stylesheet"
@@ -105,9 +105,9 @@ Both domains serve the same content. Use the domain that matches your site's roo
 **Pinned version** (production-safe — breaking changes never auto-propagate):
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.0/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.1/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.0/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.1/dist/corrupted-text.min.js"></script>
 ```
 
 **Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):
@@ -122,7 +122,9 @@ Browse every animation on the demo site, which deploys from `main`: [corrupted.w
 
 ## What's New in 0.3.1
 
-0.3.0 adds a large library of animation, overlay, and transition components, plus three orchestration components modeled on anime.js v4 APIs, written with zero runtime dependencies.
+**0.3.1** completes the advanced animation-block set — nine more classes (`CorruptedTextOverlay`, `CharacterFlowParticles`, `DataVisualizationDashboard`, `OminousTemple`, `TacticalTerrainMap`, `FloatingCardStack`, `ModuleLoadingList`, `SegmentedProgressBar`, `ImageGallerySlideshow`), all defaulting to `nsfw: false`. See the [changelog](CHANGELOG.md) for the full list.
+
+It builds on the **0.3.0** library summarized below — a large set of animation, overlay, and transition components, plus zero-dependency orchestration helpers modeled on anime.js v4 APIs.
 
 | Area | Exports |
 |---|---|
@@ -146,7 +148,7 @@ Every file under `src/` is an ES module. Load one of two ways:
 </script>
 
 <!-- Browser global for no-build sites (IIFE builds only; SRI in CHANGELOG.md) -->
-<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.0/dist/toast.global.js"></script>
+<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.1/dist/toast.global.js"></script>
 ```
 
 A classic `<script src>` pointing at a `src/` file throws
@@ -404,11 +406,13 @@ The simplest approach — import everything in one line:
 ```
 
 ```css
-/* CSS */
+/* CSS — requires a bundler/PostCSS to resolve the bare specifier */
 @import '@whykusanagi/corrupted-theme';
 ```
 
-✅ **Recommended for most projects.** Includes all styles in the correct order automatically.
+✅ **Recommended for most projects.** `theme.min.css` includes **every** style in the correct order — Toast and seamless-background included — so you never need a separate `toast-css` link when using this file.
+
+> The `<link href="node_modules/…">` form works in a plain browser. The bare `@import '@whykusanagi/corrupted-theme'` form requires a CSS toolchain (PostCSS/bundler) to resolve the package name — use the `<link>` (or a CDN URL) if you have no build step.
 
 ### Method 2: Modular Imports (Advanced)
 
@@ -447,6 +451,8 @@ Import only the modules you need for smaller bundle sizes.
 - Always verify order by checking `src/css/theme.css` (shows canonical import structure)
 
 ### JavaScript Imports
+
+> **These imports use bare package specifiers** (`@whykusanagi/corrupted-theme/…`), which a **bundler** (Vite, webpack, esbuild, Rollup) or an [import map](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap) resolves. They do **not** work in a plain `<script type="module">` on their own. **No build step?** Load from the CDN instead — see [CDN Distribution](#cdn-distribution) for the browser-global (`dist/*.global.js`) and ESM (`@version/src/…`) URLs.
 
 ```js
 // Interactive components (modal, dropdown, tabs, collapse, accordion, toast)
@@ -780,7 +786,7 @@ Toast.error('Upload failed');
 Toast.info('Loading…');
 ```
 
-Import `@whykusanagi/corrupted-theme/toast-css` alongside (or include in your `theme.css` build). See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#toast).
+Toast styles are already in the single-file `theme.min.css` — nothing extra to load there. **Only** if you use modular imports (Method 2) do you need to add `@whykusanagi/corrupted-theme/toast-css`. See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#toast).
 
 #### ClockWidget
 

@@ -120,7 +120,7 @@ For production hardening, add SRI hashes (published in `CHANGELOG.md` for each r
 
 Browse every animation on the demo site, which deploys from `main`: [corrupted.whykusanagi.xyz/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
 
-## What's New in 0.3.0
+## What's New in 0.3.1
 
 0.3.0 absorbs the glitch libraries that were copy-pasted across celeste-tts-bot, site, youtube_poop, and spatial_videos. Each one now lives in this package and nowhere else. The release also adds three orchestration components modeled on anime.js v4 APIs, written with zero runtime dependencies.
 
@@ -142,7 +142,7 @@ Every file under `src/` is an ES module. Load one of two ways:
 ```html
 <!-- Module import (npm or CDN) -->
 <script type="module">
-  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.0/src/lib/scroll-decode.js';
+  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.1/src/lib/scroll-decode.js';
 </script>
 
 <!-- Browser global for no-build sites (IIFE builds only; SRI in CHANGELOG.md) -->

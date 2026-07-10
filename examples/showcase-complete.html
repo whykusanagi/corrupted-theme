@@ -135,7 +135,7 @@
             <a href="showcase-complete.html#components" class="active"><i class="fas fa-shapes"></i> Standard</a>
             <a href="showcase-complete.html#navigation" class="active"><i class="fas fa-bars"></i> Navigation</a>
             <a href="showcase-complete.html#api-docs" class="active"><i class="fas fa-code"></i> API Docs</a>
-            <a href="showcase-complete.html#v030-components" class="active"><i class="fas fa-wave-square"></i> 0.3.0 New</a>
+            <a href="showcase-complete.html#v030-components" class="active"><i class="fas fa-wave-square"></i> What's New</a>
           </div>
         </li>
         <li class="has-submenu">
@@ -165,6 +165,7 @@
             <a href="scroll-decode.html"><i class="fas fa-scroll"></i> Scroll Decode</a>
             <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
             <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="anime-blocks-advanced.html"><i class="fas fa-clapperboard"></i> Advanced Blocks (0.3.1)</a>
             <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
             <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
             <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
@@ -1701,13 +1702,21 @@ const theme = {
 
     <!-- 0.3.0 New Components Section -->
     <section class="showcase-section" id="v030-components">
-      <h2><i class="fas fa-wave-square"></i> 0.3.0 New Components</h2>
+      <h2><i class="fas fa-wave-square"></i> What's New</h2>
       <p style="color: var(--text-secondary); margin-bottom: var(--spacing-lg);">
-        Standalone demo pages for the components added in the 0.3.0 release. Each page is
-        self-contained and fully documented. The Animation Gallery collects all of them.
+        Standalone demo pages for the components added across recent releases. Each page is
+        self-contained and fully documented. <strong>0.3.1</strong> completed the
+        anime-blocks-advanced absorption — nine more classes with one canonical home.
       </p>
 
       <div class="showcase-grid">
+        <a href="anime-blocks-advanced.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
+          <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-clapperboard"></i> Advanced Blocks <span style="font-size:0.75rem; color: var(--accent-light);">0.3.1</span></h4>
+          <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
+            CorruptedTextOverlay, CharacterFlowParticles, DataVisualizationDashboard, OminousTemple, TacticalTerrainMap, FloatingCardStack, ModuleLoadingList, SegmentedProgressBar, ImageGallerySlideshow. All default to nsfw:false.
+          </p>
+          <span style="color: var(--accent-light); font-size: 0.85rem;">View demo <i class="fas fa-arrow-right"></i></span>
+        </a>
         <a href="animations.html" class="glass-card" style="padding: var(--spacing-lg); display: block; text-decoration: none; color: inherit;">
           <h4 style="color: var(--accent); margin-bottom: var(--spacing-sm);"><i class="fas fa-th"></i> Animation Gallery</h4>
           <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: var(--spacing-md);">
@@ -1787,7 +1796,7 @@ const theme = {
 
     <!-- Footer -->
     <footer style="text-align: center; padding: var(--spacing-2xl) var(--spacing-lg); margin-top: var(--spacing-2xl); border-top: 1px solid var(--border); color: var(--text-secondary);">
-      <p><strong>Corrupted Theme</strong> v0.3.0 • Built with <i class="fas fa-heart" style="color: var(--accent);"></i> by whykusanagi</p>
+      <p><strong>Corrupted Theme</strong> v0.3.1 • Built with <i class="fas fa-heart" style="color: var(--accent);"></i> by whykusanagi</p>
       <p style="font-size: 0.875rem; margin-top: var(--spacing-md);">
         <a href="https://github.com/whykusanagi/corrupted-theme#readme" class="link">Documentation</a> •
         <a href="#customization" class="link">Customization</a> •
@@ -2010,7 +2019,7 @@ const theme = {
 
     // Auto-show welcome message on page load
     setTimeout(() => {
-      toast.success('Welcome to Corrupted Theme v0.3.0!', 'Welcome', 5000);
+      toast.success('Welcome to Corrupted Theme v0.3.1!', 'Welcome', 5000);
     }, 1000);
   </script>
 </body>

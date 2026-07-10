@@ -147,7 +147,7 @@ exports, so npm and CDN import paths stay symmetrical):
 ```html
 <script type="module">
   import { ScrollDecode } from
-    'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.0/src/lib/scroll-decode.js';
+    'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.1/src/lib/scroll-decode.js';
   new ScrollDecode(document.querySelector('h1')).start();
 </script>
 ```

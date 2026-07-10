@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Advanced Animation Blocks (0.3.1) — corrupted-theme</title>
+<meta name="description" content="Live demos of the nine animation-blocks-advanced classes absorbed in corrupted-theme 0.3.1.">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  .wrap { max-width: 1100px; margin: 0 auto; padding: var(--spacing-lg); }
+  .note { color: var(--text-secondary); margin-bottom: var(--spacing-lg); }
+  .note code { color: var(--accent); }
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: var(--spacing-md); }
+  .card { padding: var(--spacing-md); }
+  .card h3 { color: var(--accent); margin: 0 0 var(--spacing-xs); font-size: 1rem; }
+  .card .tag { font-size: 0.7rem; color: var(--text-secondary); }
+  .card pre { margin: var(--spacing-xs) 0; padding: var(--spacing-xs) var(--spacing-sm); background: rgba(0,0,0,0.5);
+    border-left: 2px solid var(--accent); border-radius: 4px; font-size: 0.72rem; overflow-x: auto; color: var(--text-secondary); }
+  /* One-at-a-time full-viewport stage: these are background/overlay effects (position:fixed by design). */
+  #stage { position: fixed; inset: 0; z-index: 500; background: #000; display: none; }
+  #stage.on { display: block; }
+  #stagebar { position: fixed; top: 12px; right: 12px; z-index: 9001; display: none; gap: 8px; align-items: center; }
+  #stagebar.on { display: flex; }
+  #stagebar .label { background: rgba(0,0,0,0.7); color: var(--accent); padding: 6px 10px; border-radius: 6px; font-family: monospace; font-size: 0.8rem; }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="showcase-complete.html#components"><i class="fas fa-shapes"></i> Standard</a>
+            <a href="showcase-complete.html#navigation"><i class="fas fa-bars"></i> Navigation</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+            <a href="showcase-complete.html#v030-components"><i class="fas fa-wave-square"></i> What's New</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery (0.3.0)</a>
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="scroll-decode.html"><i class="fas fa-scroll"></i> Scroll Decode</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="anime-blocks-advanced.html" class="active"><i class="fas fa-clapperboard"></i> Advanced Blocks (0.3.1)</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
+            <a href="advanced/phrase-cycle.html"><i class="fas fa-history"></i> Phrase Cycle</a>
+            <a href="advanced/glsl-vortex.html"><i class="fas fa-hurricane"></i> GLSL Vortex</a>
+            <a href="advanced/particles-bg.html"><i class="fas fa-atom"></i> Particles BG</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+            <a href="nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+<div class="wrap">
+  <h1><i class="fas fa-clapperboard"></i> Advanced Animation Blocks</h1>
+  <p class="note">
+    The nine classes that completed the <code>anime-blocks-advanced.js</code> absorption in <strong>0.3.1</strong>,
+    live from <code>../src/lib/animation-blocks.js</code>. Most are full-viewport background/overlay effects, so
+    each runs one at a time — click <strong>Run</strong>. Every block defaults to <code>nsfw: false</code> and
+    pulls phrases from the canonical corruption library; opt into mature phrases with <code>nsfw: true</code>.
+    Full options: <a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md#advanced-blocks-absorbed-from-anime-blocks-advancedjs">COMPONENTS_REFERENCE</a>.
+  </p>
+  <div class="cards" id="cards"></div>
+</div>
+
+<div id="stage"></div>
+<div id="stagebar"><span class="label" id="stagelabel"></span><button class="btn" id="stopbtn"><i class="fas fa-stop"></i> Stop</button></div>
+
+<script type="module">
+  import {
+    FloatingCardStack, ImageGallerySlideshow, DataVisualizationDashboard,
+    SegmentedProgressBar, ModuleLoadingList, TacticalTerrainMap, OminousTemple,
+    CorruptedTextOverlay, CharacterFlowParticles,
+  } from '../src/lib/animation-blocks.js';
+
+  const DEMOS = [
+    ['CorruptedTextOverlay', "new CorruptedTextOverlay(el, { particleCount: 40, kanjiCount: 6 })",
+      (el) => new CorruptedTextOverlay(el, { particleCount: 40, kanjiCount: 6 })],
+    ['CharacterFlowParticles', "new CharacterFlowParticles(el, { density: 80, glowColor: 'cyan' })",
+      (el) => new CharacterFlowParticles(el, { density: 80, glowColor: 'cyan' })],
+    ['DataVisualizationDashboard', "new DataVisualizationDashboard(el, { title: 'NEURAL-TERM' })",
+      (el) => new DataVisualizationDashboard(el, { title: 'NEURAL-TERM' })],
+    ['OminousTemple', "new OminousTemple(el, { templeSize: 0.8 })",
+      (el) => new OminousTemple(el, { templeSize: 0.8 })],
+    ['TacticalTerrainMap', "new TacticalTerrainMap(el, { title: 'TERRAIN', showWaypoints: true })",
+      (el) => new TacticalTerrainMap(el, { title: 'TERRAIN', showWaypoints: true })],
+    ['FloatingCardStack', "new FloatingCardStack(el, { cardCount: 5, corruptedText: true })",
+      (el) => new FloatingCardStack(el, { cardCount: 5, corruptedText: true })],
+    ['ModuleLoadingList', "new ModuleLoadingList(el, { modules: ['core','render','net','audio','shader'] })",
+      (el) => new ModuleLoadingList(el, { modules: ['core','render','net','audio','shader'] })],
+    ['SegmentedProgressBar', "new SegmentedProgressBar(el, { segmentCount: 16, showPercentage: true })",
+      (el) => new SegmentedProgressBar(el, { segmentCount: 16, showPercentage: true })],
+    ['ImageGallerySlideshow', "new ImageGallerySlideshow(el, { images: ['a.png','b.png'] })",
+      (el) => new ImageGallerySlideshow(el, { images: [] })],
+  ];
+
+  const stage = document.getElementById('stage');
+  const bar = document.getElementById('stagebar');
+  const label = document.getElementById('stagelabel');
+  let current = null;
+
+  function stop() {
+    try { current?.destroy?.(); } catch (e) { /* already gone */ }
+    current = null;
+    stage.className = ''; bar.className = ''; stage.innerHTML = '';
+  }
+  document.getElementById('stopbtn').addEventListener('click', stop);
+
+  function run(name, factory) {
+    stop();
+    stage.className = 'on'; bar.className = 'on'; label.textContent = name;
+    try {
+      current = factory(stage);
+      label.textContent = `${name} — ${current.nsfw === undefined ? 'SFW' : ('nsfw=' + current.nsfw)}`;
+      const r = current.play?.(); if (r && r.catch) r.catch((e) => console.error(`[play ${name}]`, e));
+    } catch (e) {
+      label.textContent = `${name} — error`; console.error(`[ctor ${name}]`, e);
+    }
+  }
+
+  const cards = document.getElementById('cards');
+  for (const [name, snippet, factory] of DEMOS) {
+    const card = document.createElement('div');
+    card.className = 'glass-card card';
+    card.innerHTML = `<h3>${name}</h3><pre></pre><button class="btn"><i class="fas fa-play"></i> Run</button>`;
+    card.querySelector('pre').textContent = snippet;
+    card.querySelector('button').addEventListener('click', () => run(name, factory));
+    cards.appendChild(card);
+  }
+  addEventListener('keydown', (e) => { if (e.key === 'Escape') stop(); });
+</script>
+
+<footer style="text-align:center; padding: var(--spacing-lg); color: var(--text-secondary);">
+  <p>Advanced Animation Blocks • Corrupted Theme v0.3.1</p>
+</footer>
+</body>
+</html>

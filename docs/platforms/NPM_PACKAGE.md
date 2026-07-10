@@ -846,6 +846,6 @@ import '@whykusanagi/corrupted-theme/src/css/components.css';
 
 **Last Updated**: 2025-12-13
 **Version**: 1.0.0
-**Package Version**: 0.3.0
+**Package Version**: 0.3.1
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Production Ready

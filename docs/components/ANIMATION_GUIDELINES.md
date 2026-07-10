@@ -970,6 +970,6 @@ Need animation?
 ---
 
 **Last Updated**: 2026-07-09
-**Version**: 0.3.0
+**Version**: 0.3.1
 **Maintainer**: Celeste Brand System
 **Status**: ✅ Updated for 0.3.0 (corruption easing tokens + component pointer)

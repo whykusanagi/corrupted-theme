@@ -1,6 +1,6 @@
 # Celeste Brand System - Color System
 
-**Version**: 0.3.0
+**Version**: 0.3.1
 **Last Updated**: 2026-07-09
 **WCAG Compliance**: AA (4.5:1 minimum)
 **Status**: 🔴 **CRITICAL FOUNDATION DOCUMENT**

@@ -33,7 +33,7 @@ export const NAV = [
       { label: 'Standard', icon: 'fa-shapes', target: 'examples/showcase-complete.html#components' },
       { label: 'Navigation', icon: 'fa-bars', target: 'examples/showcase-complete.html#navigation' },
       { label: 'API Docs', icon: 'fa-code', target: 'examples/showcase-complete.html#api-docs' },
-      { label: '0.3.0 New', icon: 'fa-wave-square', target: 'examples/showcase-complete.html#v030-components' },
+      { label: "What's New", icon: 'fa-wave-square', target: 'examples/showcase-complete.html#v030-components' },
     ],
   },
   {
@@ -57,6 +57,7 @@ export const NAV = [
       { label: 'Scroll Decode', icon: 'fa-scroll', target: 'examples/scroll-decode.html' },
       { label: 'Corrupted Timeline', icon: 'fa-stream', target: 'examples/corrupted-timeline.html' },
       { label: 'Glitch Stagger Grid', icon: 'fa-border-all', target: 'examples/glitch-stagger-grid.html' },
+      { label: 'Advanced Blocks (0.3.1)', icon: 'fa-clapperboard', target: 'examples/anime-blocks-advanced.html' },
       { label: 'Animation Blocks', icon: 'fa-film', target: 'examples/animation-blocks/index.html' },
       { label: 'CRT Effects', icon: 'fa-tv', target: 'examples/advanced/crt-effects.html' },
       { label: 'Decrypt Reveal', icon: 'fa-key', target: 'examples/advanced/decrypt-reveal.html' },

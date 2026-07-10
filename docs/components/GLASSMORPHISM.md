@@ -1,6 +1,6 @@
 # Celeste Brand System - Glassmorphism
 
-**Version**: 0.3.0
+**Version**: 0.3.1
 **Last Updated**: 2026-07-09
 **Status**: 🟠 **HIGH PRIORITY DOCUMENT**
 

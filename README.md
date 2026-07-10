@@ -786,7 +786,7 @@ Toast.error('Upload failed');
 Toast.info('Loading…');
 ```
 
-Import `@whykusanagi/corrupted-theme/toast-css` alongside (or include in your `theme.css` build). See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#toast).
+Toast styles are already in the single-file `theme.min.css` — nothing extra to load there. **Only** if you use modular imports (Method 2) do you need to add `@whykusanagi/corrupted-theme/toast-css`. See [COMPONENTS_REFERENCE.md](docs/COMPONENTS_REFERENCE.md#toast).
 
 #### ClockWidget
 

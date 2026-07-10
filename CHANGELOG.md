@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.1] - 2026-07-10
+
+> Completes the `anime-blocks-advanced.js` absorption that 0.3.0 left partial. 0.3.0 pulled in only the 7 classes the composite transitions needed ("absorb on demand"); downstream consumers (the site thumbnail-generator) still imported the other classes from a vendored 5681-line copy, so those classes had no canonical home. This release absorbs the **full** set so no consumer needs to vendor a copy again. Everything is additive; all newly-absorbed NSFW content is de-themed to the `nsfw: false` opt-in contract (`lewdMode`/`includeLewd` are deprecated aliases that warn).
+
+### Added: completed anime-blocks-advanced absorption
+
+- **9 new classes** re-exported from `./animation-blocks` (single import surface): `FloatingCardStack`, `ImageGallerySlideshow`, `DataVisualizationDashboard`, `SegmentedProgressBar`, `ModuleLoadingList`, `TacticalTerrainMap`, `OminousTemple`, `CorruptedTextOverlay`, and `CharacterFlowParticles`. The `anime-blocks-advanced.js` set now has one home; consumers can delete their vendored copies.
+- `CharacterFlowParticles` was **promoted from a downstream-only copy** (it had no celeste-tts-bot origin) and **decoupled from site-specific DOM ids**: `target` (element or selector for character-edge detection), `scaleWrapper`, and canvas sizing from the passed `container` replace the former hardcoded `#celeste-image` / `#thumbnail-container` / `#preview-wrapper` lookups.
+
+### Changed
+
+- All newly-absorbed classes that carried inline NSFW phrase pools now source phrases from the canonical `corruption-phrases` library behind `nsfw: false` (default). `CorruptedTextOverlay` additionally drops suggestive kanji from its default glyph set (override via `kanjiSymbols`) and exposes `intensity` (with `lewdIntensity` as a deprecated alias) for particle count.
+
+### Security
+
+- Hardened every `innerHTML` write in the absorbed HTML-building classes with the repo's audited `escapeHtml` sanitizer (consumer-supplied text is now escaped), satisfying the `no-unsanitized` CI rule.
+
 ## [0.3.0] - 2026-07-09
 
 > This release absorbs the glitch libraries that were copy-pasted across the whykusanagi repos (celeste-tts-bot obs/transitions, site thumbnail-generator, youtube_poop, spatial_videos). Each one now has a single home: this package. The release also adds orchestration components modeled on anime.js v4 APIs (zero dependencies) and a machine-readable agent surface. Everything is additive. `lewdMode` becomes a deprecated alias for `nsfw` and logs a console.warn.

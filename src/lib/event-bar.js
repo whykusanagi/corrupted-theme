@@ -5,7 +5,6 @@
  * container element. Supports live updates via update(). Designed for
  * stream overlays, dashboards, or any "recent event" display.
  *
- * Ported from celeste-tts-bot/obs/break-overlay.html `.event-bar` markup.
  * Key additions vs. source HTML:
  *   - Class-based API with update() and destroy()
  *   - Optional icon span per row

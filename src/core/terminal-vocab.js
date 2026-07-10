@@ -1,15 +1,9 @@
 /**
  * Terminal vocabulary + charset generators for transition effects.
  *
- * Absorbed from celeste-tts-bot obs/transitions/corruption-phrases.js (the
- * "bespoke, no canonical equivalent" delta flagged in its own #218 re-base
- * header) — this package is now the canonical home; the celeste-tts-bot
- * shim gets deleted in the 0.3.0 realignment.
- *
- * De-themed on absorption: every pool is split into an SFW base + an NSFW
- * extension; all getters take `nsfw = false` (canonical opt-in name) and
- * only reach the NSFW entries when passed true. Persona strings neutralized
- * ("Celeste.exe" → "SYSTEM.exe").
+ * Every pool is split into an SFW base + an NSFW extension; all getters take
+ * `nsfw = false` (canonical opt-in name) and only reach the NSFW entries when
+ * passed true.
  *
  * TODO(cross-language contract): terminal pools could move into
  * src/data/phrases.json in a future pass — schema change, deferred.
@@ -189,7 +183,7 @@ export function getRandomCodeBlock(nsfw = false) {
   return pickFrom(CODE_BLOCKS, NSFW_CODE_BLOCKS, nsfw);
 }
 
-// Name kept verbatim from the source fork ("MenuIt") for drop-in porting.
+// Name kept verbatim ("MenuIt") for drop-in compatibility.
 export function getRandomMenuIt(nsfw = false) {
   return pickFrom(TERMINAL_MENU_ITEMS, NSFW_TERMINAL_MENU_ITEMS, nsfw);
 }

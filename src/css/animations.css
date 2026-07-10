@@ -648,7 +648,7 @@
   }
 }
 
-/* ========== CRT EFFECTS (0.2.0 — ported from celeste-tts-bot) ========== */
+/* ========== CRT EFFECTS (0.2.0) ========== */
 
 /* Horizontal scanline drift — used by .crt-scanlines overlay */
 @keyframes scanline-movement {

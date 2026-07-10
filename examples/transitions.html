@@ -5,10 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Canvas Transitions — corrupted-theme</title>
 <!--
-  Full-viewport canvas scene transitions, absorbed 0.3.0 from the canonical
-  celeste-tts-bot obs/transitions library (single canonical home is now this
-  package): GeometricMorpher, NeuralDeserializer, SpectrumTerminal — all
-  composing AbyssalCableSystem + CRTEffects + animation-blocks internally.
+  Full-viewport canvas scene transitions: GeometricMorpher, NeuralDeserializer,
+  SpectrumTerminal — all composing AbyssalCableSystem + CRTEffects +
+  animation-blocks internally.
   API: new X(container); x.play({ duration, nsfw, customText }, onDone); x.stop().
   NSFW vocabulary is opt-in (nsfw: false default) via core/terminal-vocab.js.
   Serve the repo root (npm run dev:static) and open /examples/transitions.html

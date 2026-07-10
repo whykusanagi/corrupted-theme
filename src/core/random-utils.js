@@ -2,7 +2,6 @@
  * Random utility functions.
  * Centralized random selection and variance helpers.
  *
- * Ported from celeste-tts-bot/obs/shared/random-utils.js.
  * All functions are pure (no side effects, no DOM dependency).
  *
  * @module core/random-utils
@@ -84,9 +83,7 @@ export function randomSample(array, count) {
  * Create a deterministic pseudo-random generator (mulberry32).
  * Same seed → same sequence, across runs and engines. Seed a generator
  * with a frame index to make any animation renderable to video with
- * identical output per frame.
- *
- * Ported from spatial_videos/pipeline/overlay/phrases.js (mulberry32).
+ * identical output per frame. mulberry32 PRNG.
  *
  * @param {number} seed - Any number; coerced to uint32
  * @returns {() => number} Generator returning floats in [0, 1)

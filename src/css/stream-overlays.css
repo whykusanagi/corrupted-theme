@@ -1,7 +1,7 @@
 /* stream-overlays.css — styles for the stream-overlay suite
  * (ChromaticPulse, BinaryParticles, GlitchTitleCard, TerminalTakeover, StreamTicker)
  *
- * Ported from spatial_videos/pipeline/overlay/scene.html; colors use the
+ * Colors use the
  * canonical corruption palette (spec: CORRUPTED_THEME_SPEC.md) + theme tokens.
  * Class names are `.corrupted-`-prefixed to avoid colliding with consumer CSS.
  */

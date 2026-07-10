@@ -207,8 +207,7 @@ export class DecryptReveal {
   }
 
   /**
-   * @deprecated Use stop() instead. Kept for source-compat with
-   * celeste-tts-bot consumers. Slated for removal in 0.3.x.
+   * @deprecated Use stop() instead. Slated for removal in 0.3.x.
    */
   cleanupAll() {
     return this.stop();

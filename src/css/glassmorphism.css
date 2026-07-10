@@ -216,11 +216,10 @@
   }
 }
 
-/* ========== 0.2.0: variants ported from celeste-tts-bot/obs/shared/glass-morphism.css ========== */
+/* ========== 0.2.0: glassmorphism variants ========== */
 /* Adds dark/subtle/gradient container variants, an animation helper,
    colour modifiers (cyan / purple / magenta), and a @supports fallback.
-   Resolves the 30+ duplicate glass-morphism instances flagged in the audit.
-   Source: celeste-tts-bot/obs/shared/glass-morphism.css (2026-01-23)       */
+   Resolves the 30+ duplicate glass-morphism instances flagged in the audit. */
 
 /* Dark variant — high-contrast, intense glow. Use for boss battles,
    critical alerts, primary focus elements. */

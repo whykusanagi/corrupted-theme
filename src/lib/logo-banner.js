@@ -4,7 +4,6 @@
  * Decoupled from WHYKUSANAGI branding — accepts arbitrary src + subtitle.
  * Supports five positions, three size presets, and three animation modes.
  *
- * Ported from celeste-tts-bot/obs/components/logo-component.js.
  * Key differences from source:
  *   - No hardcoded "WHYKUSANAGI" text or womb-tattoo asset path
  *   - No inline style injection — uses CSS classes (logo-banner--* BEM modifiers)

@@ -5,8 +5,7 @@
  * named access (katakana, hiragana, kanji, symbols, blocks) plus
  * computed convenience sets (standard, soft, intense, all).
  *
- * Ported from celeste-tts-bot/obs/shared/corruption-utils.js with the
- * data side moved to canonical JSON.
+ * The data side lives in canonical JSON.
  *
  * Computed set definitions:
  *   standard  = katakana + symbols  (matrix-style + decorative glitches)

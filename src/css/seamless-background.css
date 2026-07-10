@@ -5,8 +5,6 @@
  * --seamless-background-image controls the tile image URL.
  *
  * Without .seamless-bg-host, this file has no effect — safe to import.
- *
- * Adapted from celeste-tts-bot/obs/seamless-background.css
  */
 
 /* ===== HOST ELEMENT BACKGROUND ===== */

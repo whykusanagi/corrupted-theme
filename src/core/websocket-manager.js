@@ -4,8 +4,6 @@
  * Standardized connection handling with exponential-or-fixed backoff,
  * event-ID deduplication, ACK support, and page-visibility disconnect.
  *
- * Adapted from celeste-tts-bot/obs/shared/websocket-manager.js.
- *
  * @example
  *   import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager';
  *

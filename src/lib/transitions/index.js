@@ -1,7 +1,6 @@
 /**
  * Composite transitions barrel — 12 thin scene transitions composed from
- * animation-blocks building blocks. Absorbed 0.3.0 from the canonical
- * celeste-tts-bot obs/transitions library (single canonical home).
+ * animation-blocks building blocks. Added in 0.3.0.
  *
  * Shared contract: new X(container); x.play(options, onComplete); x.stop().
  * NSFW vocabulary opt-in via options.nsfw (default false).

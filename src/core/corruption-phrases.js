@@ -37,8 +37,7 @@ function flattenAll(bundle) {
 }
 
 /**
- * Raw canonical data — exposed for advanced consumers (celeste-tts-bot,
- * site fallback layers, downstream Go via go:embed).
+ * Raw canonical data — exposed for advanced consumers.
  */
 export const POOLS = phrases;
 
@@ -70,16 +69,13 @@ export function getRandomPhrase(nsfw = false) {
 
 /**
  * Pool selector — given a context word, pick the most appropriate pool.
- * Ported from celeste-cli's `containsAny(lowerWord, []string{...})` logic.
  *
  * @param {string} word - The user's context word
  * @returns {string} - One of: 'data', 'system', 'status', 'void', 'memory', 'glitch'
  */
 function selectPool(word) {
   const lw = String(word ?? '').toLowerCase();
-  // Keyword lists ported from celeste-cli corruptTextSimple switch
-  // (celeste-cli/cmd/celeste/commands/corruption.go:73-84).
-  // Two separate Go cases both map to dataCorruption, so they are merged here.
+  // Two separate keyword cases both map to data corruption, so they are merged here.
   // NOTE: "stat" was intentionally removed — it is a substring of "status"
   // and caused any word containing "stat" to route to data, making the status
   // pool unreachable. "statistic" and "metric" cover the intended data-stat case.

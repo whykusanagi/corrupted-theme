@@ -2,7 +2,6 @@
  * Time utility functions.
  * Centralized date/time formatting helpers.
  *
- * Ported from celeste-tts-bot/obs/shared/time-utils.js.
  * All functions are pure (no side effects, no DOM dependency).
  *
  * Note: formatDuration accepts seconds (not milliseconds).
@@ -119,8 +118,6 @@ export function parseTimestamp(timestamp) {
  * correctly seeks a 60s ring, a 40s ring, and a 3.2s pulse alike. Combine
  * with seededRandom() to render CSS-animated components to video frames
  * deterministically (recipe: docs/RENDER_TO_VIDEO.md).
- *
- * Ported from spatial_videos/pipeline/iconography_bg/scene.js.
  *
  * @param {Element|Document} root - Container whose descendants get frozen
  * @param {number} timeSeconds - Absolute animation time to seek to (>= 0)

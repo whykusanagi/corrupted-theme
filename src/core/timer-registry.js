@@ -4,7 +4,7 @@
  * Wraps setTimeout, setInterval, and requestAnimationFrame so that all
  * pending async work can be cancelled in a single clearAll() call.
  *
- * Merges the TimerManager API surface from celeste-tts-bot/obs/shared/timer-manager.js:
+ * Timer registry API surface:
  * - destroyed flag: guards new timers after destroy(), suppresses callbacks
  * - getCount(): returns { timers, intervals, total } breakdown
  * - destroy(): calls clearAll() then sets destroyed = true
@@ -114,7 +114,6 @@ export class TimerRegistry {
 
   /**
    * Get breakdown of pending timer counts.
-   * Mirrors TimerManager.getCount() for source compatibility.
    * @returns {{ timers: number, intervals: number, total: number }}
    */
   getCount() {

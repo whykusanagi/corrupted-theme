@@ -122,12 +122,12 @@ Browse every animation on the demo site, which deploys from `main`: [corrupted.w
 
 ## What's New in 0.3.1
 
-0.3.0 absorbs the glitch libraries that were copy-pasted across celeste-tts-bot, site, youtube_poop, and spatial_videos. Each one now lives in this package and nowhere else. The release also adds three orchestration components modeled on anime.js v4 APIs, written with zero runtime dependencies.
+0.3.0 adds a large library of animation, overlay, and transition components, plus three orchestration components modeled on anime.js v4 APIs, written with zero runtime dependencies.
 
 | Area | Exports |
 |---|---|
 | Stream overlay suite | `ChromaticPulse`, `BinaryParticles`, `GlitchTitleCard`, `TerminalTakeover`, `StreamTicker`, plus `stream-overlays-css`. Each runs live on rAF or renders exact frames via `renderFrame(frameIdx, fps)` with a `seed` |
-| Procedural background | `CorruptedMandala`: SVG rings, stars, and frame, generated at runtime. This visual ships here and may not be re-vendored |
+| Procedural background | `CorruptedMandala`: SVG rings, stars, and frame, generated at runtime. This visual is exclusive to this package |
 | Canvas transitions | `AbyssalCableSystem`, `GeometricMorpher`, `NeuralDeserializer`, `SpectrumTerminal`, and 12 composites via the `transitions` barrel |
 | Animation blocks | 17 classes added to `animation-blocks`: TypingTextReveal, ChromaticAberrationGlitch, ShatterGrid, DataStream, and 13 more |
 | Orchestration | `ScrollDecode` decodes text on viewport entry or scroll position. `CorruptedTimeline` sequences scenes with labels. `GlitchStaggerGrid` implements spec Pattern 4. `corruption-easings` adds `--ease-*` tokens |
@@ -272,7 +272,7 @@ See [docs/MIGRATION_CONTAINER_0.2.0.md](docs/MIGRATION_CONTAINER_0.2.0.md) for t
 
 ## Canonical Data (JSON Source of Truth)
 
-0.2.0 introduces a `src/data/` layer that all internal corruption modules (and downstream Go consumers via `go:embed`) read from instead of maintaining inline arrays:
+0.2.0 introduces a `src/data/` layer that all internal corruption modules (and other language runtimes via `go:embed` or equivalent) read from instead of maintaining inline arrays:
 
 | File | Contents |
 |------|----------|
@@ -461,7 +461,7 @@ import { initCorruptedText } from '@whykusanagi/corrupted-theme/corrupted-text';
 import { initGallery, destroyGallery } from '@whykusanagi/corrupted-theme/gallery';
 import { initCountdown } from '@whykusanagi/corrupted-theme/countdown';
 
-// 0.2.0 — Drift reconvergence (canonical corruption layer)
+// 0.2.0 — Canonical corruption layer
 import { CorruptionCharsets }  from '@whykusanagi/corrupted-theme/corruption-charsets';
 import { DecryptReveal, decodeText }
                                from '@whykusanagi/corrupted-theme/decrypt-reveal';
@@ -674,7 +674,7 @@ typing.start('Neural corruption detected... System Online');
 
 See `examples/basic/typing-animation.html` — it has a toggle switch at the top to opt into NSFW phrases (checkbox resets each page load per the explicit-opt-in spec).
 
-### Drift Reconvergence — Canonical Corruption Layer (0.2.0)
+### Canonical Corruption Layer (0.2.0)
 
 #### CorruptionCharsets
 

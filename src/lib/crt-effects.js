@@ -1,6 +1,5 @@
 // src/lib/crt-effects.js
 // CRT post-processing effects — scanlines, chromatic aberration, flicker, vignette, pixel distortion
-// Ported from celeste-tts-bot/obs/transitions/crt-effects.js
 // Part of @whykusanagi/corrupted-theme (0.2.0)
 //
 // API:

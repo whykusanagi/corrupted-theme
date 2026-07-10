@@ -1,19 +1,8 @@
 /**
- * Animation blocks — advanced subset (absorbed 0.3.0).
+ * Advanced animation-block classes.
  *
- * Classes extracted from the canonical celeste-tts-bot
- * obs/transitions/anime-blocks-advanced.js (15 classes, 193k) on demand:
- *   - 0.3.0: the 7 the composite transitions need.
- *   - 0.3.1: CorruptedTextOverlay (site thumbnail-generator consumer) +
- *     CharacterFlowParticles (promoted from the site's own copy — it has no
- *     celeste-tts-bot origin). Both de-themed to the nsfw:false opt-in contract
- *     and decoupled from site-specific DOM ids.
- * Still not absorbed (no consumer): FloatingCardStack, ImageGallerySlideshow,
- * DataVisualizationDashboard, SegmentedProgressBar, ModuleLoadingList,
- * TacticalTerrainMap, OminousTemple. Absorb on demand.
- *
- * Import from './animation-blocks.js' (re-exported there) — this file is an
- * internal implementation module.
+ * Import from './animation-blocks.js' (re-exported there); this is an internal
+ * implementation module.
  *
  * @module lib/_blocks-advanced
  * @license MIT
@@ -51,8 +40,8 @@ export class TypingTextReveal {
         this.position = options.position || 'center';
         this.fontSize = options.fontSize || '32px';
         this.useCorruption = options.useCorruption || false; // Enable Pattern 2: Phrase Flickering
-        // De-themed on absorption: inline phrase pools removed; canonical
-        // corruption-phrases behind nsfw:false (lewdMode = deprecated alias)
+        // Phrases come from the canonical corruption-phrases library behind
+        // nsfw:false (lewdMode is a deprecated alias for nsfw)
         this.nsfw = options.nsfw !== undefined ? options.nsfw
             : (options.lewdMode !== undefined
                 ? (console.warn('[TypingTextReveal] lewdMode is deprecated; use nsfw'), options.lewdMode)
@@ -122,7 +111,7 @@ export class TypingTextReveal {
                         currentIndex = targetIndex;
                     }
 
-                    // XSS-safe on absorption: spans built once, text set via
+                    // XSS-safe: spans built once, text set via
                     // textContent (caller text + phrases never parsed as HTML)
                     if (!this._revealSpan) {
                         this._revealSpan = document.createElement('span');
@@ -859,10 +848,9 @@ export class WaveformOscilloscope {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   0.3.1 ABSORPTION — remaining anime-blocks-advanced.js classes.
-   Full canonical set now has one home so consumers stop vendoring copies.
-   All NSFW pools de-themed to getRandomPhrase(nsfw:false); CharacterFlowParticles
-   decoupled from site DOM ids (target/scaleWrapper/container options).
+   Additional animation-block classes.
+   NSFW pools are opt-in via getRandomPhrase(nsfw:false); CharacterFlowParticles
+   emits from configurable targets (target/scaleWrapper/container options).
    ───────────────────────────────────────────────────────────────────────── */
 
 /**
@@ -4840,7 +4828,7 @@ export class CorruptedTextOverlay {
  * BLOCK: CHARACTER FLOW PARTICLES
  * ================================
  * Corrupted code particles that flow off character edges
- * Usage: Thumbnail generator visual effect
+ * Usage: character/portrait overlay effect
  */
 export class CharacterFlowParticles {
     /**
@@ -4870,7 +4858,7 @@ export class CharacterFlowParticles {
               ? (console.warn('[CharacterFlowParticles] lewdMode/includeLewd is deprecated; use nsfw'), (options.lewdMode ?? options.includeLewd))
               : false);
 
-        // Optional targets (decoupled from any specific site DOM)
+        // Optional targets: character-bounds element and scale wrapper
         this.target = options.target || null;              // Element or CSS selector for character bounds
         this.scaleWrapper = options.scaleWrapper || null;  // Element or CSS selector applying a CSS scale transform
 

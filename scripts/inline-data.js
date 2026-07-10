@@ -19,19 +19,21 @@
 // Canonical source remains src/data/*.json — non-JS consumers (Go CLI, etc.)
 // keep reading the JSON files unchanged.
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
 import { join, basename, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const DATA_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data');
 
-const entries = readdirSync(DATA_DIR);
+// withFileTypes gives the file/dir type from the single readdir syscall, so we
+// never stat-then-read the same path (avoids a file-system race, CodeQL js/file-system-race).
+const entries = readdirSync(DATA_DIR, { withFileTypes: true });
 let generated = 0;
 
-for (const entry of entries) {
-  if (!entry.endsWith('.json')) continue;
+for (const dirent of entries) {
+  if (!dirent.isFile() || !dirent.name.endsWith('.json')) continue;
+  const entry = dirent.name;
   const fullPath = join(DATA_DIR, entry);
-  if (!statSync(fullPath).isFile()) continue;
 
   const outName = basename(entry, '.json') + '.data.js';
   const outPath = join(DATA_DIR, outName);

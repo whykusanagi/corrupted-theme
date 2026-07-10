@@ -28,6 +28,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`CountdownWidget`**: the `eventName` used to build the config-fetch URL is now validated against a strict allowlist (`^[A-Za-z0-9_-]+$`) before the request, preventing path traversal and request forgery. **Behavior note:** event names containing `.`, `/`, or other characters now throw — use hyphen/underscore slugs.
 - Resolved all open code-scanning findings: file-system races in build-time scripts (no runtime/shipped impact) and pinned CI actions to commit SHAs. No open CodeQL, Dependabot, or secret-scanning alerts remain.
 
+### Subresource Integrity (SRI)
+
+For pinned CDN `<link>` / `<script>` tags. Regenerate with `npm run generate-sri`.
+
+| Artifact | `integrity` |
+|---|---|
+| `dist/theme.min.css` | `sha384-09dUKj6tRy5MnkBu0SKlxr9OrybBI7f7YMjySOnY4t1yBHZ377Mwb1NMDktEv6Xd` |
+| `dist/toast.global.js` | `sha384-E6pgdAS3p1sh+1jLBw3pUw07jUbpNPFFHo0o+D/CWY7yqSDB7T51x/Zr2dTJmpI4` |
+| `dist/clipboard-helpers.global.js` | `sha384-UuSlpAWcN5KD5lAax35jyrpHK8Napkyph12QjqPdUgtDoUOiw9fnluFSSTih2f3M` |
+| `dist/timer-registry.global.js` | `sha384-IiU5Z1bTQXBlf9+GN1QAGf9iYAZAJk/LPo2wDktaxKEqZ6H507QZ+EKe9TUzGh+G` |
+| `dist/corrupted-text.global.js` | `sha384-bqSoNlkNdxHXdCQK9u5r1T0AdxckV/Dme1PbZiIUenfYiUtkDKBeoQEG1Lrs2HY6` |
+| `dist/nikke-utilities.css` | `sha384-dxF1Y2qQTqxNRq1OIO+kiY6OzW4XORs5xEqDnywJYmnRSssdhb/2Sx2ijTxhja/G` |
+| `dist/manifest.json` | `sha384-zBD+jqDIYPK7ek2ZqErj8cknZMWEehStPv5VpRGA0JvodcOsyd7+ifItG8VFUbXc` |
+
 ## [0.3.0] - 2026-07-09
 
 > Adds a large set of animation, overlay, and transition components, plus orchestration helpers modeled on anime.js v4 APIs (zero dependencies) and a machine-readable agent surface. Everything is additive. `lewdMode` becomes a deprecated alias for `nsfw` and logs a console.warn.

@@ -15,14 +15,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **9 new classes** re-exported from `./animation-blocks` (single import surface): `FloatingCardStack`, `ImageGallerySlideshow`, `DataVisualizationDashboard`, `SegmentedProgressBar`, `ModuleLoadingList`, `TacticalTerrainMap`, `OminousTemple`, `CorruptedTextOverlay`, and `CharacterFlowParticles`.
 - `CharacterFlowParticles` targets any character element via the `target` option (element or selector for character-edge detection), with `scaleWrapper` for scaled layouts and canvas sizing from the passed `container`.
+- New example page `examples/anime-blocks-advanced.html`: a Run/Stop selector that demos each of the nine classes live (most are full-viewport effects), reporting each one's resolved `nsfw` value.
 
 ### Changed
 
 - All classes that carry NSFW phrase pools source phrases from the `corruption-phrases` library behind `nsfw: false` (default). `CorruptedTextOverlay` additionally drops suggestive kanji from its default glyph set (override via `kanjiSymbols`) and exposes `intensity` (with `lewdIntensity` as a deprecated alias) for particle count.
+- The machine-readable agent surface (`dist/manifest.json` + `dist/llms.txt`) now enumerates every `animation-blocks` class — the generator follows the re-export barrels — including per-class constructor options for the newly-added components.
 
 ### Security
 
 - Hardened every `innerHTML` write in the HTML-building classes with the repo's audited `escapeHtml` sanitizer (consumer-supplied text is now escaped), satisfying the `no-unsanitized` CI rule.
+- **`CountdownWidget`**: the `eventName` used to build the config-fetch URL is now validated against a strict allowlist (`^[A-Za-z0-9_-]+$`) before the request, preventing path traversal and request forgery. **Behavior note:** event names containing `.`, `/`, or other characters now throw — use hyphen/underscore slugs.
+- Resolved all open code-scanning findings: file-system races in build-time scripts (no runtime/shipped impact) and pinned CI actions to commit SHAs. No open CodeQL, Dependabot, or secret-scanning alerts remain.
 
 ## [0.3.0] - 2026-07-09
 

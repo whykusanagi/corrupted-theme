@@ -1499,7 +1499,7 @@ spinner.destroy(); // teardown + release element reference; not reusable after d
 **Source:** `src/lib/crt-effects.js`
 **Since:** 0.2.0
 
-CRT post-processing layer — scanlines, vignette, chromatic aberration, opacity flicker, pixel distortion, phosphor trail, RGB split animation, and screen shake. Ported from `celeste-tts-bot/obs/transitions/crt-effects.js`.
+CRT post-processing layer — scanlines, vignette, chromatic aberration, opacity flicker, pixel distortion, phosphor trail, RGB split animation, and screen shake.
 
 ```js
 import { CRTEffects, applyCRTGlow, injectCRTStyles } from '@whykusanagi/corrupted-theme/crt-effects';
@@ -1579,7 +1579,7 @@ import {
 
 const block = new ClassName(containerElement, options);
 await block.start();   // returns Promise<void> that resolves when animation completes
-block.play();          // alias for start() — backward compat with celeste-tts-bot
+block.play();          // alias for start()
 block.stop();          // cancel in-progress animation; leaves DOM in place
 block.destroy();       // cancel + remove all DOM nodes created by this block
 ```
@@ -1721,10 +1721,10 @@ Character-by-character typewriter of command strings with a blinking block curso
 
 ---
 
-## Advanced blocks (absorbed from `anime-blocks-advanced.js`)
+## Advanced animation blocks
 
 **Module:** `@whykusanagi/corrupted-theme/animation-blocks` (same import surface as the ten blocks above)
-**Since:** 0.3.0 absorbed the first seven; **0.3.1 completed the set** with nine more, so the whole `anime-blocks-advanced.js` library now has one canonical home and consumers no longer vendor a copy.
+**Since:** Added across 0.3.0–0.3.1. Available from the same `animation-blocks` import surface.
 
 All advanced blocks share the block lifecycle contract: `new ClassName(container, options)`, then `play()` (alias `start()` where present), `stop()`, `destroy()`. These are **browser-only** (they read `window`/`canvas` at construct or play time). Every block that renders phrase text defaults to `nsfw: false` and pulls phrases from the canonical `corruption-phrases` library; `lewdMode` and `includeLewd` are deprecated aliases that map to `nsfw` with a one-time `console.warn`.
 
@@ -2173,7 +2173,7 @@ await exportElementAsPng(document.getElementById('card'), {
 **Type:** Class
 **Since:** 0.2.0
 
-Auto-reconnecting WebSocket wrapper with exponential backoff, event-ID deduplication, ACK support, and page-visibility auto-disconnect. Adapted from `celeste-tts-bot/obs/shared/websocket-manager.js`.
+Auto-reconnecting WebSocket wrapper with exponential backoff, event-ID deduplication, ACK support, and page-visibility auto-disconnect.
 
 **Note:** Pass `autoConnect: false` to prevent connection on construction — useful for test environments or deferred setup.
 
@@ -2221,7 +2221,7 @@ Methods: `connect()`, `disconnect()`, `send(msg)`, `on(handler)`, `off(handler)`
 
 Centralized timer tracking for component lifecycle cleanup. Wraps `setTimeout`, `setInterval`, and `requestAnimationFrame` so all pending async work can be cancelled in a single `clearAll()` call.
 
-**0.2.0 additions (merged from `celeste-tts-bot` `TimerManager`):**
+**0.2.0 additions:**
 - `destroyed` flag: guards new timers after `destroy()`, suppresses callbacks
 - `getCount()`: returns `{ timers, intervals, total }` breakdown
 - `destroy()`: calls `clearAll()` then sets `destroyed = true`
@@ -2250,7 +2250,7 @@ timers.destroy();   // clearAll + marks instance destroyed
 **Type:** Pure function module
 **Since:** 0.2.0
 
-Centralized random selection and variance helpers. All functions are pure — no side effects, no DOM dependency. Ported from `celeste-tts-bot/obs/shared/random-utils.js`.
+Centralized random selection and variance helpers. All functions are pure — no side effects, no DOM dependency.
 
 ```js
 import {
@@ -2284,7 +2284,7 @@ randomSample(['a','b','c','d'], 2);// ['c','a']  (no replacement)
 **Type:** Pure function module
 **Since:** 0.2.0
 
-Date/time formatting helpers. All functions are pure — no side effects, no DOM dependency. Ported from `celeste-tts-bot/obs/shared/time-utils.js`. Used internally by `ClockWidget`.
+Date/time formatting helpers. All functions are pure — no side effects, no DOM dependency. Used internally by `ClockWidget`.
 
 **Note:** `formatDuration` accepts **seconds**, not milliseconds.
 
@@ -2376,7 +2376,7 @@ applyParamsToForm(form, params);
 **Type:** CSS-only utility
 **Since:** 0.2.0
 
-Multi-layer parallax tiled background with depth opacity, blur, and brightness filters. Ported from celeste-tts-bot's overlay background system.
+Multi-layer parallax tiled background with depth opacity, blur, and brightness filters.
 
 **Without `.seamless-bg-host` on a parent element, this file has no effect — safe to import even if not currently using.**
 
@@ -3047,7 +3047,7 @@ new TerminalTakeover(containerEl, { title: 'SIGNAL LOST', messages: null }).star
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `title` | `string` | `'SIGNAL LOST'` | Banner line (de-themed default) |
+| `title` | `string` | `'SIGNAL LOST'` | Banner line |
 | `messages` | `string[]|null` | `null` | Fixed lines; null = seeded corruption phrases |
 | `lines` | `number` | `18` | Line count when messages is null |
 | `duration` | `number` | `4000` | ms visible before auto-clear |
@@ -3155,7 +3155,7 @@ new SpectrumTerminal(containerEl).start();
 ```
 ### `transitions`
 
-Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks. Absorbed 0.3.0 from the canonical celeste-tts-bot obs/transitions library (single canonical home).
+Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks. Added in 0.3.0.
 
 - npm: `import { GlitchCascade } from '@whykusanagi/corrupted-theme/transitions'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/transitions/index.js`

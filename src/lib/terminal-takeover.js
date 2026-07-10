@@ -5,8 +5,7 @@
  * a title banner, then clears after `duration`. Use for beat drops, raid
  * alerts, scene-change punctuation.
  *
- * Absorbed from spatial_videos/pipeline/overlay/scene.js (drawTakeover) —
- * single canonical home is this package. Lines are built with textContent
+ * Full-screen terminal takeover overlay. Lines are built with textContent
  * (never innerHTML) so caller-supplied messages cannot inject markup.
  *
  * @example Beat-drop takeover
@@ -29,7 +28,7 @@ import { pickSeededPhrase } from './_overlay-shared.js';
  * @class TerminalTakeover
  * @param {Element|null} container - Positioned container (card fills it)
  * @param {object} [options={}]
- * @param {string}   [options.title='SIGNAL LOST'] - Banner line (de-themed default)
+ * @param {string}   [options.title='SIGNAL LOST'] - Banner line
  * @param {string[]|null} [options.messages=null]  - Fixed lines; null = seeded corruption phrases
  * @param {number}   [options.lines=18]            - Line count when messages is null
  * @param {number}   [options.duration=4000]       - ms visible before auto-clear

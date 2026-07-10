@@ -9,31 +9,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.3.1] - 2026-07-10
 
-> Completes the `anime-blocks-advanced.js` absorption that 0.3.0 left partial. 0.3.0 pulled in only the 7 classes the composite transitions needed ("absorb on demand"); downstream consumers (the site thumbnail-generator) still imported the other classes from a vendored 5681-line copy, so those classes had no canonical home. This release absorbs the **full** set so no consumer needs to vendor a copy again. Everything is additive; all newly-absorbed NSFW content is de-themed to the `nsfw: false` opt-in contract (`lewdMode`/`includeLewd` are deprecated aliases that warn).
+> Adds nine advanced animation-block classes, completing the advanced-blocks set. Everything is additive; every block defaults to `nsfw: false` (`lewdMode`/`includeLewd` are deprecated aliases that warn).
 
-### Added: completed anime-blocks-advanced absorption
+### Added: advanced animation blocks
 
-- **9 new classes** re-exported from `./animation-blocks` (single import surface): `FloatingCardStack`, `ImageGallerySlideshow`, `DataVisualizationDashboard`, `SegmentedProgressBar`, `ModuleLoadingList`, `TacticalTerrainMap`, `OminousTemple`, `CorruptedTextOverlay`, and `CharacterFlowParticles`. The `anime-blocks-advanced.js` set now has one home; consumers can delete their vendored copies.
-- `CharacterFlowParticles` was **promoted from a downstream-only copy** (it had no celeste-tts-bot origin) and **decoupled from site-specific DOM ids**: `target` (element or selector for character-edge detection), `scaleWrapper`, and canvas sizing from the passed `container` replace the former hardcoded `#celeste-image` / `#thumbnail-container` / `#preview-wrapper` lookups.
+- **9 new classes** re-exported from `./animation-blocks` (single import surface): `FloatingCardStack`, `ImageGallerySlideshow`, `DataVisualizationDashboard`, `SegmentedProgressBar`, `ModuleLoadingList`, `TacticalTerrainMap`, `OminousTemple`, `CorruptedTextOverlay`, and `CharacterFlowParticles`.
+- `CharacterFlowParticles` targets any character element via the `target` option (element or selector for character-edge detection), with `scaleWrapper` for scaled layouts and canvas sizing from the passed `container`.
 
 ### Changed
 
-- All newly-absorbed classes that carried inline NSFW phrase pools now source phrases from the canonical `corruption-phrases` library behind `nsfw: false` (default). `CorruptedTextOverlay` additionally drops suggestive kanji from its default glyph set (override via `kanjiSymbols`) and exposes `intensity` (with `lewdIntensity` as a deprecated alias) for particle count.
+- All classes that carry NSFW phrase pools source phrases from the `corruption-phrases` library behind `nsfw: false` (default). `CorruptedTextOverlay` additionally drops suggestive kanji from its default glyph set (override via `kanjiSymbols`) and exposes `intensity` (with `lewdIntensity` as a deprecated alias) for particle count.
 
 ### Security
 
-- Hardened every `innerHTML` write in the absorbed HTML-building classes with the repo's audited `escapeHtml` sanitizer (consumer-supplied text is now escaped), satisfying the `no-unsanitized` CI rule.
+- Hardened every `innerHTML` write in the HTML-building classes with the repo's audited `escapeHtml` sanitizer (consumer-supplied text is now escaped), satisfying the `no-unsanitized` CI rule.
 
 ## [0.3.0] - 2026-07-09
 
-> This release absorbs the glitch libraries that were copy-pasted across the whykusanagi repos (celeste-tts-bot obs/transitions, site thumbnail-generator, youtube_poop, spatial_videos). Each one now has a single home: this package. The release also adds orchestration components modeled on anime.js v4 APIs (zero dependencies) and a machine-readable agent surface. Everything is additive. `lewdMode` becomes a deprecated alias for `nsfw` and logs a console.warn.
+> Adds a large set of animation, overlay, and transition components, plus orchestration helpers modeled on anime.js v4 APIs (zero dependencies) and a machine-readable agent surface. Everything is additive. `lewdMode` becomes a deprecated alias for `nsfw` and logs a console.warn.
 
-### Added: absorbed components (single canonical home)
+### Added: new components
 
-- **Stream overlay suite** (from spatial_videos): `./chromatic-pulse` (ChromaticPulse), `./binary-particles` (BinaryParticles: continuous or beat-synced), `./glitch-title-card` (GlitchTitleCard intro/outro), `./terminal-takeover` (TerminalTakeover), `./stream-ticker` (StreamTicker) + `./stream-overlays-css`. Every component has a live rAF mode AND a deterministic `renderFrame(frameIdx, fps)` + `seed` mode for video export.
-- **`./corrupted-mandala`** (CorruptedMandala + `./corrupted-mandala-css`): procedural SVG sacred-geometry background: rotating phrase rings, phase-staggered star pulses, mandorla halo, ornamental frame. **This visual lives only here; downstream projects must import it, never re-vendor.**
-- **Canvas transitions** (from celeste-tts-bot canonical): `./abyssal-cables` (AbyssalCableSystem), `./geometric-morpher`, `./neural-deserializer`, `./spectrum-terminal`.
-- **anime-blocks absorption**: 17 new classes re-exported from `./animation-blocks` (TypingTextReveal, CircularDotsIndicator, RectangularWipe, ChromaticAberrationGlitch, RotatingDiamond, GridOverlay, WaveformOscilloscope, ParticleGrid, HeartPulse, ShatterGrid, WaveRipple, SpiralVortex, CircularProgress, RadialBurst, DataStream, HexagonGrid, CorruptionWave) + **12 composite transitions** via the `./transitions` barrel (GlitchCascade, RadialGlitch, GridCorruption, TerminalMatrix, WaveDecode, DiamondMorph, AffectionBurst, CombatShatter, ParticleCascade, SystemBoot, DataTransfer, DiagnosticScan).
+- **Stream overlay suite:** `./chromatic-pulse` (ChromaticPulse), `./binary-particles` (BinaryParticles: continuous or beat-synced), `./glitch-title-card` (GlitchTitleCard intro/outro), `./terminal-takeover` (TerminalTakeover), `./stream-ticker` (StreamTicker) + `./stream-overlays-css`. Every component has a live rAF mode AND a deterministic `renderFrame(frameIdx, fps)` + `seed` mode for video export.
+- **`./corrupted-mandala`** (CorruptedMandala + `./corrupted-mandala-css`): procedural SVG sacred-geometry background: rotating phrase rings, phase-staggered star pulses, mandorla halo, ornamental frame.
+- **Canvas transitions:** `./abyssal-cables` (AbyssalCableSystem), `./geometric-morpher`, `./neural-deserializer`, `./spectrum-terminal`.
+- **Animation blocks:** 17 new classes re-exported from `./animation-blocks` (TypingTextReveal, CircularDotsIndicator, RectangularWipe, ChromaticAberrationGlitch, RotatingDiamond, GridOverlay, WaveformOscilloscope, ParticleGrid, HeartPulse, ShatterGrid, WaveRipple, SpiralVortex, CircularProgress, RadialBurst, DataStream, HexagonGrid, CorruptionWave) + **12 composite transitions** via the `./transitions` barrel (GlitchCascade, RadialGlitch, GridCorruption, TerminalMatrix, WaveDecode, DiamondMorph, AffectionBurst, CombatShatter, ParticleCascade, SystemBoot, DataTransfer, DiagnosticScan).
 - **`./terminal-vocab`**: terminal-UI vocabulary + charset generators (generateHex/Katakana/Hiragana, corruption blocks, CODE_BLOCKS/TERMINAL_* pools). Every pool split SFW/NSFW; getters take `nsfw = false`.
 
 ### Added: anime.js-derived components (design reference only, zero dependencies)
@@ -55,9 +55,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **NSFW option canonicalized in absorbed code**: `lewdMode` → `nsfw` everywhere (deprecated alias accepted with a one-time console.warn). NeuralDeserializer's fork default of `lewdMode: true` is now `nsfw: false`: pass `nsfw: true` explicitly for 18+ vocabularies.
-- TypingTextReveal (absorbed): inline phrase pools replaced by the canonical corruption-phrases library; DOM built via `textContent` (XSS-safe).
-- Persona strings de-themed to options across all absorbed code (`labelTop`/`labelBottom`, `logoText`/`logoSrc`, `title`/`messages`; `celeste@abyss:~$` → `system@abyss:~$`).
+- **NSFW option canonicalized**: `lewdMode` → `nsfw` everywhere (deprecated alias accepted with a one-time console.warn). NeuralDeserializer defaults to `nsfw: false`: pass `nsfw: true` explicitly for 18+ vocabularies.
+- TypingTextReveal: phrase pools sourced from the `corruption-phrases` library; DOM built via `textContent` (XSS-safe).
+- Persona strings exposed as options across all components (`labelTop`/`labelBottom`, `logoText`/`logoSrc`, `title`/`messages`; the terminal prompt defaults to `system@abyss:~$`).
 
 ### Internal
 
@@ -127,7 +127,7 @@ CDN consumers. Toast styles are already included in `theme.min.css` (`theme.css`
 
 ## [0.2.0] - 2026-05-18
 
-> **Significant release.** Reframes corrupted-theme as a durable cross-project foundation. Canonical JSON source of truth, CDN distribution, 14 new base components, drift reconvergence with downstream sites, and a `.container` redesign that is a breaking change.
+> **Significant release.** Reframes corrupted-theme as a durable foundation. Canonical JSON source of truth, CDN distribution, 14 new base components, and a `.container` redesign that is a breaking change.
 
 ### Added — New base components (sub-project #6)
 
@@ -156,7 +156,7 @@ CDN consumers. Toast styles are already included in `theme.min.css` (`theme.css`
 - UMD/global build: `dist/timer-registry.global.js` (consumable from IIFE contexts without a bundler).
 - `TimerManager` API merged additively into existing `timer-registry.js`.
 
-### Added — Drift reconvergence with celeste-tts-bot (sub-project #2)
+### Added — Corruption animation components (sub-project #2)
 
 - **`CorruptionCharsets`** — named registry backed by `src/data/charsets.json` (standard/soft/intense/all computed sets).
 - **`DecryptReveal`** — fixed-length decryption animation (`@whykusanagi/corrupted-theme/decrypt-reveal`). Renamed from CorruptionManager during 0.2.0 development to distinguish from TypingAnimation's streaming-typed pattern. Provides `.decode(element, finalText, opts)` for the chaos-buffer → resolved-text effect.

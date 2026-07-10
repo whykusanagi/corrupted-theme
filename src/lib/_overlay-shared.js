@@ -2,10 +2,8 @@
  * Shared internals for the stream-overlay suite (chromatic-pulse,
  * binary-particles, glitch-title-card, terminal-takeover, stream-ticker).
  *
- * Private module — not exported from package.json. Ported from
- * spatial_videos/pipeline/overlay/scene.js with phrase pools re-routed
- * through the canonical corruption-phrases library (de-theming contract:
- * NSFW only via nsfw:true opt-in).
+ * Private module — not exported from package.json. Shared helpers for
+ * the overlay effects, sourcing phrases from the canonical pools.
  *
  * @module lib/_overlay-shared
  */

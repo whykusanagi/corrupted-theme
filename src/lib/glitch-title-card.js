@@ -5,8 +5,7 @@
  * buffer, settling on the full readable text (chaos → order, spec tenet 1).
  * `outro`: the title appears with a corruption sub-phrase beneath it.
  *
- * Absorbed from spatial_videos/pipeline/overlay/scene.js
- * (drawIntro / drawOutro) — single canonical home is this package.
+ * Intro/outro title-card overlay with block-buffer character decoding.
  *
  * @example Stream intro card
  *   import { GlitchTitleCard } from '@whykusanagi/corrupted-theme/glitch-title-card';

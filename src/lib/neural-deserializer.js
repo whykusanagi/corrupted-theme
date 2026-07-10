@@ -44,7 +44,7 @@ export class NeuralDeserializer {
 
         this.isPlaying = true;
         const duration = options.duration || 8000;
-        // Default flipped to false on absorption (canonical nsfw opt-in; fork shipped lewdMode:true)
+        // Default is nsfw:false (opt in with nsfw:true)
         const nsfw = options.nsfw !== undefined ? options.nsfw
             : (options.lewdMode !== undefined
                 ? (console.warn('[NeuralDeserializer] lewdMode is deprecated; use nsfw'), options.lewdMode)

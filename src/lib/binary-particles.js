@@ -6,10 +6,8 @@
  * is a pure function of (frame index, particle index, seed), so live
  * playback and deterministic video export share one code path.
  *
- * Absorbed from spatial_videos/pipeline/overlay/scene.js
- * (renderBeatParticles) — single canonical home is this package. The
- * source's beat-sync model generalizes to continuous emission; pass
- * `beats` (seconds) to keep beat-synced bursts.
+ * Rising binary/hex/phrase token field. Supports continuous emission or
+ * beat-synced bursts; pass `beats` (seconds) to keep beat-synced bursts.
  *
  * @example Ambient field
  *   import { BinaryParticles } from '@whykusanagi/corrupted-theme/binary-particles';

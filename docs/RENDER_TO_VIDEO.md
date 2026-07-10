@@ -54,5 +54,5 @@ for (let i = 0; i < totalFrames; i++) {
   + a `seed` option where deterministic export is supported (see each component's docs).
 - `seekAnimations` sets `animation-play-state: paused` inline; call
   `el.style.animationPlayState = ''` on all descendants to resume live playback.
-- Reference implementation of this pattern: the spatial_videos pipeline
-  (Playwright static-server + screenshot-with-retry harness).
+- This pattern pairs well with a Playwright static-server + screenshot-with-retry
+  harness for frame capture.

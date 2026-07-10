@@ -1,6 +1,6 @@
 # Celeste Brand System - Design Tokens
 
-**Version**: 0.3.0
+**Version**: 0.3.1
 **Last Updated**: 2026-07-09
 **Token Format**: W3C Design Tokens Community Group (DTCG)
 **Status**: 🔴 **CRITICAL FOUNDATION DOCUMENT**

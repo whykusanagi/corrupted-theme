@@ -1,8 +1,5 @@
 /**
- * Animation blocks — anime.js-study subset (absorbed 0.3.0).
- *
- * All 10 classes from the canonical celeste-tts-bot
- * obs/transitions/anime-blocks.js + anime-blocks-extended.js:
+ * Animation blocks — anime.js-study subset. Ten classes:
  * ParticleGrid, HeartPulse, ShatterGrid, WaveRipple, SpiralVortex,
  * CircularProgress, RadialBurst, DataStream, HexagonGrid, CorruptionWave.
  *

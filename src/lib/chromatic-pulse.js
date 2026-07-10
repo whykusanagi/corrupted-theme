@@ -5,8 +5,7 @@
  * text-shadow, ramping in and out on a triangle wave (peak mid-pulse).
  * Static between pulses; motion indicates instability (spec tenet 3).
  *
- * Absorbed from spatial_videos/pipeline/overlay/scene.js (drawChromatic) —
- * single canonical home is this package.
+ * RGB-split chromatic-aberration pulse overlay for any text element.
  *
  * @example Live (random cadence)
  *   import { ChromaticPulse } from '@whykusanagi/corrupted-theme/chromatic-pulse';

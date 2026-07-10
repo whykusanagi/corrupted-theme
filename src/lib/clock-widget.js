@@ -4,7 +4,6 @@
  * Renders a date + time + timezone label, rotating through a configurable
  * list of IANA timezone strings on a configurable interval.
  *
- * Ported from celeste-tts-bot/obs/break-overlay.html ClockDisplay class.
  * Key differences from source:
  *   - Uses IANA timezone names with Intl.DateTimeFormat (source used manual
  *     UTC offset objects). This is more correct across DST boundaries.

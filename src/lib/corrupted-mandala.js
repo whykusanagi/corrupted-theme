@@ -6,11 +6,8 @@
  * phrase text, phase-staggered pulsing stars, and an ornamental frame with
  * top/bottom labels. Everything is generated — no image assets.
  *
- * Absorbed from spatial_videos/pipeline/iconography_bg/assets/
- * iconography-mode.js. THE PACKAGE IS THE ONLY HOME FOR THIS VISUAL —
- * downstream projects must import it, never re-vendor it. De-themed:
- * persona label defaults and the incantations.json fetch are replaced by
- * options + the canonical corruption-phrases library.
+ * Procedural SVG sacred-geometry / mandala background. Label defaults come
+ * from options and phrase text from the canonical corruption-phrases library.
  *
  * The artwork tints (#ff82d9 / #b08aff / #7ef0ff — accent-light family) are
  * part of this visual's identity and intentionally not remapped to the

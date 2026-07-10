@@ -5,9 +5,8 @@
  * logo image with a pulsing glow, text, and label) and a bottom ticker strip
  * scrolling corruption phrases. Runs indefinitely until stop().
  *
- * Absorbed from spatial_videos/pipeline/overlay/scene.js
- * (drawAmbientLayers) — single canonical home is this package. De-themed:
- * no built-in branding; pass logoText / logoSrc / label options.
+ * Scrolling ticker / ambient overlay layer. No built-in branding; pass
+ * logoText / logoSrc / label options.
  *
  * @example Branded stream overlay
  *   import { StreamTicker } from '@whykusanagi/corrupted-theme/stream-ticker';

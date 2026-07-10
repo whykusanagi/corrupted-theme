@@ -10,16 +10,14 @@
  *   instance.destroy() → full cleanup: cancel timers + remove DOM nodes
  *
  * Additionally, `play()` is available on every class as an async alias for
- * `start()` — kept for compatibility with celeste-tts-bot consumers that
- * call `await block.play()`.
+ * `start()` for callers that `await block.play()`.
  *
- * Merged from celeste-tts-bot:
- *   obs/transitions/animation-blocks.js (TitleDecoder, ProgressBar,
- *     ScanlineSweep, TerminalBoot, GlitchPulse)
- *   obs/transitions/terminal-blocks.js (ASCIIBorder, SystemDiagnostic,
- *     LoadingBarMulti, DataTransmission, TerminalPrompt)
+ * Building blocks:
+ *   TitleDecoder, ProgressBar, ScanlineSweep, TerminalBoot, GlitchPulse
+ *   ASCIIBorder, SystemDiagnostic, LoadingBarMulti, DataTransmission,
+ *     TerminalPrompt
  *
- * Adaptations:
+ * Notes:
  *   - `lewdMode` option deprecated in favour of `nsfw` (one-time warn shim)
  *   - All charsets sourced from CorruptionCharsets (canonical JSON)
  *   - All timers tracked via TimerRegistry (clearAll() on stop/destroy)
@@ -252,7 +250,7 @@ export class TitleDecoder {
     });
   }
 
-  /** Alias: backward compat with celeste-tts-bot `await block.play()`. */
+  /** Alias for start(). */
   play() { return this.start(); }
 
   /** Cancel in-progress animation. Does not remove DOM nodes. */
@@ -1737,16 +1735,8 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 /* ─────────────────────────────────────────────────────────────────────────
-   0.3.0–0.3.1 ABSORPTION — additional blocks re-exported from internal modules
-   (single import surface stays this file; implementations split by
-   provenance for reviewability: _blocks-advanced.js = full 16-class
-   anime-blocks-advanced.js set, _blocks-anime.js = 10 classes from
-   anime-blocks.js + anime-blocks-extended.js, celeste-tts-bot canonical).
-   0.3.1 completed the anime-blocks-advanced absorption: FloatingCardStack,
-   ImageGallerySlideshow, DataVisualizationDashboard, SegmentedProgressBar,
-   ModuleLoadingList, TacticalTerrainMap, OminousTemple, CorruptedTextOverlay
-   + CharacterFlowParticles (promoted from a downstream-only copy) — all NSFW
-   de-themed to nsfw:false opt-in so no consumer needs to vendor a copy.
+   Additional animation-block classes re-exported from internal implementation
+   modules to keep a single import surface.
    ───────────────────────────────────────────────────────────────────────── */
 export {
   TypingTextReveal, CircularDotsIndicator, RectangularWipe,

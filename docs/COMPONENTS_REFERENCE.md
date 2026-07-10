@@ -2491,7 +2491,7 @@ ignore container geometry. Every option below is parsed from the source JSDoc.
 | `@whykusanagi/corrupted-theme/geometric-morpher` | GeometricMorpher | Geometric Morpher Transition - ENHANCED WITH BUILDING BLOCKS |
 | `@whykusanagi/corrupted-theme/neural-deserializer` | NeuralDeserializer | Neural Deserializer Transition - ENHANCED |
 | `@whykusanagi/corrupted-theme/spectrum-terminal` | SpectrumTerminal | Spectrum Terminal Transition - ENHANCED WITH BUILDING BLOCKS |
-| `@whykusanagi/corrupted-theme/transitions` | — | Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks |
+| `@whykusanagi/corrupted-theme/transitions` | GlitchCascade, RadialGlitch, GridCorruption, TerminalMatrix | Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks |
 | `@whykusanagi/corrupted-theme/scroll-decode` | ScrollDecode | ScrollDecode — text decodes as it scrolls into view. |
 | `@whykusanagi/corrupted-theme/corrupted-timeline` | CorruptedTimeline | CorruptedTimeline — sequence animation blocks into one orchestrated scene. |
 | `@whykusanagi/corrupted-theme/glitch-stagger-grid` | GlitchStaggerGrid | GlitchStaggerGrid — Pattern 4: staggered grid corruption. |
@@ -2759,6 +2759,33 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `commands` | `string[]` |  | lines to type |
 | `color` | `string` | `'#00ff00'` |  |
 | `fontSize` | `string` | `'16px'` |  |
+
+**CorruptedTextOverlay** options:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `nsfw` | `boolean` | `false` | Source phrases from the NSFW pool (lewdMode/includeLewd are deprecated aliases). |
+| `intensity` | `string` | `medium` | 'low'|'medium'|'high' — phrase-particle count 10/15/20 (lewdIntensity is a deprecated alias). |
+| `kanjiCount` | `number` | `8` | Number of large pulsing kanji. |
+| `kanjiSymbols` | `string[]` |  | Override the default (neutral) kanji glyph set. |
+| `particleCount` | `number` | `80` | Small glitch-speck count. |
+| `includeGrain` | `boolean` | `false` | Add a film-grain noise pass. |
+| `opacity` | `number` |  | Canvas opacity; only applied when set. |
+| `background` | `string` | `#000000` | Wrapper background; use 'transparent' to overlay existing content. |
+| `width` | `number` | `1920` | Canvas pixel width. |
+| `height` | `number` | `1080` | Canvas pixel height. |
+
+**CharacterFlowParticles** options:
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `nsfw` | `boolean` | `false` | Source the deep-phrase tier from the NSFW pool (lewdMode/includeLewd are deprecated aliases). |
+| `density` | `number` | `50` | Particle density, 0–100%. |
+| `speed` | `number` | `50` | Particle speed, 0–100%. |
+| `enabled` | `boolean` | `true` | When false, play() is a no-op until enable(). |
+| `glowColor` | `string` | `purple` | One of purple|magenta|black|cyan|yellow|red. |
+| `target` | `HTMLElement|string` |  | Character element (or CSS selector) whose edges emit particles; spawns from container center when absent. |
+| `scaleWrapper` | `HTMLElement|string` |  | Element (or selector) applying a CSS scale() transform, so bounds math stays correct. |
 ### `corrupted-particles-background`
 
 src/lib/corrupted-particles-background.js
@@ -3130,7 +3157,7 @@ new SpectrumTerminal(containerEl).start();
 
 Composite transitions barrel — 12 thin scene transitions composed from animation-blocks building blocks. Absorbed 0.3.0 from the canonical celeste-tts-bot obs/transitions library (single canonical home).
 
-- npm: `import { … } from '@whykusanagi/corrupted-theme/transitions'`
+- npm: `import { GlitchCascade } from '@whykusanagi/corrupted-theme/transitions'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/transitions/index.js`
 ### `scroll-decode`
 

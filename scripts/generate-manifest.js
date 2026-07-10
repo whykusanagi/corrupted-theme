@@ -150,7 +150,29 @@ export function buildManifest() {
       npmImport: key === '.' ? pkg.name : `${pkg.name}/${key.replace(/^\.\//, '')}`,
     };
     if (type === 'js') {
-      const parsed = parseModule(readFileSync(path.join(ROOT, target), 'utf8'));
+      const targetPath = path.join(ROOT, target);
+      const source = readFileSync(targetPath, 'utf8');
+      const parsed = parseModule(source);
+      // Follow `export { A, B } from './internal.js'` barrels (e.g.
+      // animation-blocks re-exports its classes from _blocks-advanced.js /
+      // _blocks-anime.js) so re-exported classes reach the agent surface too.
+      const reExportRe = /export\s*\{([^}]+)\}\s*from\s*['"](\.[^'"]+)['"]/g;
+      let rx;
+      while ((rx = reExportRe.exec(source))) {
+        const names = rx[1].split(',').map((s) => s.trim()).filter(Boolean);
+        const childPath = path.resolve(path.dirname(targetPath), rx[2]);
+        if (!existsSync(childPath)) continue;
+        const child = parseModule(readFileSync(childPath, 'utf8'));
+        const childOpts = child.classOptions
+          || (child.classes?.length === 1 ? { [child.classes[0]]: child.options } : {});
+        for (const name of names) {
+          if (!child.classes?.includes(name)) continue; // classes only, skip helper fns
+          (parsed.classes ??= []).push(name);
+          if (child.methods?.[name]) (parsed.methods ??= {})[name] = child.methods[name];
+          if (child.constructors?.[name]) (parsed.constructors ??= {})[name] = child.constructors[name];
+          if (childOpts[name]?.length) (parsed.classOptions ??= {})[name] = childOpts[name];
+        }
+      }
       Object.assign(entry, {
         description: parsed.description || undefined,
         version: parsed.version || undefined,

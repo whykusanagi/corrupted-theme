@@ -4456,6 +4456,20 @@ export class OminousTemple {
  * overlay.play();
  */
 export class CorruptedTextOverlay {
+    /**
+     * @param {HTMLElement} container - Positioned element the overlay mounts into.
+     * @param {object} [options]
+     * @param {boolean} [options.nsfw=false] - Source phrases from the NSFW pool (lewdMode/includeLewd are deprecated aliases).
+     * @param {string} [options.intensity=medium] - 'low'|'medium'|'high' — phrase-particle count 10/15/20 (lewdIntensity is a deprecated alias).
+     * @param {number} [options.kanjiCount=8] - Number of large pulsing kanji.
+     * @param {string[]} [options.kanjiSymbols] - Override the default (neutral) kanji glyph set.
+     * @param {number} [options.particleCount=80] - Small glitch-speck count.
+     * @param {boolean} [options.includeGrain=false] - Add a film-grain noise pass.
+     * @param {number} [options.opacity] - Canvas opacity; only applied when set.
+     * @param {string} [options.background=#000000] - Wrapper background; use 'transparent' to overlay existing content.
+     * @param {number} [options.width=1920] - Canvas pixel width.
+     * @param {number} [options.height=1080] - Canvas pixel height.
+     */
     constructor(container, options = {}) {
         this.container = container;
         this.nsfw = options.nsfw !== undefined ? options.nsfw
@@ -4829,6 +4843,17 @@ export class CorruptedTextOverlay {
  * Usage: Thumbnail generator visual effect
  */
 export class CharacterFlowParticles {
+    /**
+     * @param {HTMLElement} container - Required. Element the particle canvas mounts into and is sized from.
+     * @param {object} [options]
+     * @param {boolean} [options.nsfw=false] - Source the deep-phrase tier from the NSFW pool (lewdMode/includeLewd are deprecated aliases).
+     * @param {number} [options.density=50] - Particle density, 0–100%.
+     * @param {number} [options.speed=50] - Particle speed, 0–100%.
+     * @param {boolean} [options.enabled=true] - When false, play() is a no-op until enable().
+     * @param {string} [options.glowColor=purple] - One of purple|magenta|black|cyan|yellow|red.
+     * @param {HTMLElement|string} [options.target] - Character element (or CSS selector) whose edges emit particles; spawns from container center when absent.
+     * @param {HTMLElement|string} [options.scaleWrapper] - Element (or selector) applying a CSS scale() transform, so bounds math stays correct.
+     */
     constructor(container, options = {}) {
         if (!container) {
             throw new Error('CharacterFlowParticles: container element required');

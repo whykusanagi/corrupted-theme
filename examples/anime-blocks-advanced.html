@@ -117,6 +117,11 @@
     CorruptedTextOverlay, CharacterFlowParticles,
   } from '../src/lib/animation-blocks.js';
 
+  // Standard demo image for every image-consuming component on this page.
+  // REQUIREMENT: always use this shipped, same-origin asset — never an external
+  // URL (hotlink/CORS-protected hosts fail as direct browser <img> sources).
+  const BRAND_IMG = 'assets/celeste-avatar.png';
+
   const DEMOS = [
     ['CorruptedTextOverlay', "new CorruptedTextOverlay(el, { particleCount: 40, kanjiCount: 6 })",
       (el) => new CorruptedTextOverlay(el, { particleCount: 40, kanjiCount: 6 })],
@@ -128,14 +133,14 @@
       (el) => new OminousTemple(el, { templeSize: 0.8 })],
     ['TacticalTerrainMap', "new TacticalTerrainMap(el, { title: 'TERRAIN', showWaypoints: true })",
       (el) => new TacticalTerrainMap(el, { title: 'TERRAIN', showWaypoints: true })],
-    ['FloatingCardStack', "new FloatingCardStack(el, { cardCount: 5, corruptedText: true })",
-      (el) => new FloatingCardStack(el, { cardCount: 5, corruptedText: true })],
+    ['FloatingCardStack', "new FloatingCardStack(el, { images: [{ image, name: 'CELESTE' }, …×5], corruptedText: true })",
+      (el) => new FloatingCardStack(el, { images: Array.from({ length: 5 }, () => ({ image: BRAND_IMG, name: 'CELESTE' })), corruptedText: true })],
     ['ModuleLoadingList', "new ModuleLoadingList(el, { modules: ['core','render','net','audio','shader'] })",
       (el) => new ModuleLoadingList(el, { modules: ['core','render','net','audio','shader'] })],
     ['SegmentedProgressBar', "new SegmentedProgressBar(el, { segmentCount: 16, showPercentage: true })",
       (el) => new SegmentedProgressBar(el, { segmentCount: 16, showPercentage: true })],
-    ['ImageGallerySlideshow', "new ImageGallerySlideshow(el, { images: ['a.png','b.png'] })",
-      (el) => new ImageGallerySlideshow(el, { images: [] })],
+    ['ImageGallerySlideshow', "new ImageGallerySlideshow(el, { images: [img, img, img, img], layout: 'grid' })",
+      (el) => new ImageGallerySlideshow(el, { images: Array(4).fill(BRAND_IMG), layout: 'grid', imageWidth: 220, imageHeight: 300 })],
   ];
 
   const stage = document.getElementById('stage');

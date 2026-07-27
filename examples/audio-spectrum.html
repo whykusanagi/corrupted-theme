@@ -12,9 +12,14 @@
 
   Theme colours carry the bars; cyan marks only the peak band.
 
-  Privacy: this page generates its own tone with an OscillatorNode. The
-  component never opens a microphone — obtaining a MediaStream is always the
-  caller's explicit decision.
+  The source here is a short voice clip shipped with the package, played
+  through an <audio> element — the same path most callers use. That exercises
+  reconnectDestination: createMediaElementSource reroutes the element's output
+  into the graph, and without the reconnect you would see bars but hear
+  nothing.
+
+  Privacy: the component never opens a microphone. Obtaining a MediaStream is
+  always the caller's explicit decision.
 -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="../src/css/theme.css">
@@ -124,11 +129,19 @@
   <div class="panel">
     <h3>Playback</h3>
     <div class="row">
-      <button class="btn" id="play">Play tone</button>
-      <button class="btn secondary" id="stop">Stop</button>
+      <button class="btn" id="play">Play</button>
+      <button class="btn secondary" id="stop">Pause</button>
     </div>
-    <p>Browsers start an AudioContext suspended, so playback has to begin from
-       a user gesture — that is what this button is for.</p>
+    <div>
+      <label class="k" for="vol" style="font-size:.7rem;color:var(--text-muted);
+        text-transform:uppercase;letter-spacing:.06em">volume <span id="volv">60%</span></label>
+      <input type="range" id="vol" min="0" max="1" step="0.05" value="0.6"
+             style="width:100%;accent-color:#ff00ff;background:transparent">
+    </div>
+    <p>A spoken count up and back down, looped — clean syllable pulses make
+       the band response easy to read. Browsers start an AudioContext
+       suspended, so playback has to begin from a user gesture; that is what
+       Play is for.</p>
 
     <h3>Style</h3>
     <div class="row" id="styles"></div>
@@ -151,7 +164,7 @@
   </div>
 </div>
 
-<p class="hint">a sweeping tone drives the analyser · cyan marks the peak band · the component never opens a microphone</p>
+<p class="hint">a looped voice clip drives the analyser · cyan marks the peak band · the component never opens a microphone</p>
 
 <script type="module">
   import { AudioSpectrum } from '../src/lib/audio-spectrum.js';
@@ -159,25 +172,16 @@
 
   const canvas = document.getElementById('spectrum');
 
-  // A self-contained source so the page needs no audio file and no microphone.
-  const ac = new (window.AudioContext || window.webkitAudioContext)();
-  const osc = ac.createOscillator();
-  const gain = ac.createGain();
-  osc.type = 'sawtooth';
-  osc.frequency.value = 220;
-  gain.gain.value = 0;               // silent until Play
-  osc.connect(gain);
-  osc.start();
+  // A shipped, same-origin clip. Same-origin matters: a cross-origin file
+  // without CORS headers would taint the graph and the analyser would read
+  // silence.
+  const audio = new Audio('assets/voice-line.mp3');
+  audio.loop = true;   // a count up and back down, so the bars keep moving
+  audio.preload = 'metadata';
+  audio.volume = 0.6;
 
-  const spectrum = new AudioSpectrum(canvas, { source: gain, bands: 56 });
+  const spectrum = new AudioSpectrum(canvas, { source: audio, bands: 56 });
   spectrum.start();
-
-  // Sweep the tone so the spectrum has something to show.
-  let t = 0;
-  setInterval(() => {
-    t += 0.05;
-    osc.frequency.setTargetAtTime(180 + Math.abs(Math.sin(t)) * 900, ac.currentTime, 0.08);
-  }, 100);
 
   const METERS = [
     ['bass', '#ffffff'], ['mid', '#d94f90'], ['treble', '#ff00ff'], ['rms', '#8b5cf6'],
@@ -208,7 +212,9 @@
       vals[key].textContent = l[key].toFixed(2);
     }
     smoothed = smoothRms(smoothed, l.rms);
-    weight = approach(weight, mouthTarget(smoothed, 0.35));
+    // Ceiling tuned to this clip: at 0.35 the envelope pinned near 1 and
+    // showed no range. LIPSYNC.RMS_CEILING (0.06) is tuned for quiet TTS.
+    weight = approach(weight, mouthTarget(smoothed, 0.55));
     fillWeight.style.width = `${Math.round(weight * 100)}%`;
     vWeight.textContent = weight.toFixed(2);
     requestAnimationFrame(tick);
@@ -216,12 +222,16 @@
   requestAnimationFrame(tick);
 
   document.getElementById('play').addEventListener('click', async () => {
-    await spectrum.resume();
-    if (ac.state === 'suspended') await ac.resume();
-    gain.gain.setTargetAtTime(0.12, ac.currentTime, 0.05);
+    await spectrum.resume();      // graph is built lazily; this also unsuspends
+    await audio.play();
   });
-  document.getElementById('stop').addEventListener('click', () => {
-    gain.gain.setTargetAtTime(0, ac.currentTime, 0.05);
+  document.getElementById('stop').addEventListener('click', () => audio.pause());
+
+  const vol = document.getElementById('vol');
+  const volv = document.getElementById('volv');
+  vol.addEventListener('input', e => {
+    audio.volume = Number(e.target.value);
+    volv.textContent = `${Math.round(audio.volume * 100)}%`;
   });
 
   const styleHost = document.getElementById('styles');
@@ -237,7 +247,7 @@
     styleHost.appendChild(b);
   }
 
-  addEventListener('pagehide', () => { spectrum.destroy(); ac.close(); });
+  addEventListener('pagehide', () => { audio.pause(); spectrum.destroy(); });
 </script>
 </body>
 </html>

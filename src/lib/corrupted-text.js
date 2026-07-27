@@ -281,20 +281,26 @@ function initCorruptedText() {
   });
 }
 
-// Auto-initialize on DOM ready
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initCorruptedText);
-} else {
-  initCorruptedText();
+// Auto-initialize on DOM ready. Guarded so importing the module in Node or
+// during SSR does not throw — the class and initialiser are still exported and
+// usable; only the automatic sweep needs a document.
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCorruptedText);
+  } else {
+    initCorruptedText();
+  }
+}
+
+export { CorruptedText, initCorruptedText };
+
+// Also published as globals for pages still loading this as a classic script.
+if (typeof window !== 'undefined') {
+  window.CorruptedText = CorruptedText;
+  window.initCorruptedText = initCorruptedText;
 }
 
 // Export for both ES6 modules and CommonJS
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { CorruptedText, initCorruptedText };
-}
-
-// Export for ES6 modules
-if (typeof exports !== 'undefined') {
-  exports.CorruptedText = CorruptedText;
-  exports.initCorruptedText = initCorruptedText;
 }

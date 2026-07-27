@@ -58,6 +58,7 @@ export const NAV = [
       { label: 'Corrupted Timeline', icon: 'fa-stream', target: 'examples/corrupted-timeline.html' },
       { label: 'Glitch Stagger Grid', icon: 'fa-border-all', target: 'examples/glitch-stagger-grid.html' },
       { label: 'Advanced Blocks (0.3.1)', icon: 'fa-clapperboard', target: 'examples/anime-blocks-advanced.html' },
+      { label: 'Corrupted Globe', icon: 'fa-globe', target: 'examples/corrupted-globe.html' },
       { label: 'Animation Blocks', icon: 'fa-film', target: 'examples/animation-blocks/index.html' },
       { label: 'CRT Effects', icon: 'fa-tv', target: 'examples/advanced/crt-effects.html' },
       { label: 'Decrypt Reveal', icon: 'fa-key', target: 'examples/advanced/decrypt-reveal.html' },

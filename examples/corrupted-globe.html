@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CorruptedGlobe — corrupted-theme</title>
+<!--
+  CorruptedGlobe: orthographic wireframe globe with great-circle arcs.
+  Arcs slerp between lat/lon pairs and lift off the surface in 3D, so limb
+  occlusion stays correct as they cross the edge. Weight drives both arc
+  width and the palette ramp: cyan (low) -> magenta2 (mid) -> magenta (high),
+  per CORRUPTED_THEME_SPEC.md "Color = State".
+
+  Canvas 2D, zero dependencies, no map data — the sphere is a graticule.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Courier New', monospace; min-height: 100vh; }
+  .stage { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(240px, 1fr);
+    gap: 24px; max-width: 1180px; margin: 96px auto 0; padding: 0 24px; align-items: start; }
+  .globe-card { position: relative; aspect-ratio: 1 / 0.86; min-height: 380px;
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--glass); overflow: hidden; }
+  #globe { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+  #globe:active { cursor: grabbing; }
+  .hud { position: absolute; top: 14px; left: 14px; pointer-events: none; }
+  .hud .v { font-size: 1.3rem; font-weight: bold; color: #00ffff;
+    text-shadow: 0 0 12px rgba(0,255,255,.5); }
+  .hud .k { font-size: .72rem; color: var(--text-muted); }
+  .legend { position: absolute; bottom: 14px; left: 14px; display: flex; flex-wrap: wrap;
+    gap: .7rem; font-size: .66rem; color: var(--text-muted); pointer-events: none; }
+  .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    margin-right: .3rem; vertical-align: middle; }
+  .panel { display: flex; flex-direction: column; gap: 10px; }
+  .panel h3 { margin: 0 0 4px; font-size: .95rem; color: #00ffff; }
+  .panel p { margin: 0; font-size: .78rem; color: var(--text-muted); line-height: 1.5; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .hint { max-width: 1180px; margin: 20px auto 60px; padding: 0 24px;
+    color: var(--text-muted); font-size: .8rem; }
+  @media (max-width: 860px) { .stage { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="showcase-complete.html#components"><i class="fas fa-shapes"></i> Standard</a>
+            <a href="showcase-complete.html#navigation"><i class="fas fa-bars"></i> Navigation</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+            <a href="showcase-complete.html#v030-components"><i class="fas fa-wave-square"></i> What's New</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery (0.3.0)</a>
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="scroll-decode.html"><i class="fas fa-scroll"></i> Scroll Decode</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="anime-blocks-advanced.html"><i class="fas fa-clapperboard"></i> Advanced Blocks (0.3.1)</a>
+            <a href="corrupted-globe.html" class="active"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
+            <a href="advanced/phrase-cycle.html"><i class="fas fa-history"></i> Phrase Cycle</a>
+            <a href="advanced/glsl-vortex.html"><i class="fas fa-hurricane"></i> GLSL Vortex</a>
+            <a href="advanced/particles-bg.html"><i class="fas fa-atom"></i> Particles BG</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+            <a href="nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+<div class="stage">
+  <div class="globe-card">
+    <canvas id="globe" aria-label="Rotating globe with arcs converging on an origin location"></canvas>
+    <div class="hud">
+      <div class="v" id="hud-count">0</div>
+      <div class="k" id="hud-last">drag to rotate</div>
+    </div>
+    <div class="legend">
+      <span><i style="background:#00ff00"></i>origin</span>
+      <span><i style="background:#00ffff"></i>low</span>
+      <span><i style="background:#d94f90"></i>mid</span>
+      <span><i style="background:#ff00ff"></i>high</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Arc traffic</h3>
+    <p>Every arc travels a true great circle and converges on the origin
+       marker. Weight sets both line width and ramp colour.</p>
+    <div class="row">
+      <button class="btn" id="burst">Fire burst</button>
+      <button class="btn" id="toggle">Pause spin</button>
+    </div>
+    <h3 style="margin-top:14px">Reduced motion</h3>
+    <p>With <code>prefers-reduced-motion: reduce</code> the globe paints one
+       settled, readable frame instead of animating — a stable end state,
+       not no output.</p>
+  </div>
+</div>
+
+<p class="hint">drag the globe to rotate · arcs slerp along great circles and lift in 3D, so they stay visible across the limb · zero dependencies, no map data</p>
+
+<script type="module">
+  import { CorruptedGlobe } from '../src/lib/corrupted-globe.js';
+
+  // A handful of origins, roughly spread so arcs cross the limb often —
+  // that is the case the two-part visibility test exists for.
+  const SOURCES = [
+    { name: 'LON', lat: 51.51, lon:  -0.13 },
+    { name: 'TYO', lat: 35.68, lon: 139.69 },
+    { name: 'SAO', lat: -23.55, lon: -46.63 },
+    { name: 'JNB', lat: -26.20, lon:  28.05 },
+    { name: 'SYD', lat: -33.87, lon: 151.21 },
+    { name: 'FRA', lat: 50.11, lon:   8.68 },
+    { name: 'SIN', lat:  1.35, lon: 103.82 },
+    { name: 'LAX', lat: 34.05, lon:-118.24 },
+  ];
+
+  const globe = new CorruptedGlobe(document.getElementById('globe'), {
+    origin: { lat: 37.77, lon: -122.42 },
+    points: SOURCES.map(s => ({ lat: s.lat, lon: s.lon, weight: 0.4 })),
+  });
+  globe.start();
+
+  const hudCount = document.getElementById('hud-count');
+  const hudLast  = document.getElementById('hud-last');
+  let fired = 0;
+
+  function fireOne() {
+    const s = SOURCES[Math.floor(Math.random() * SOURCES.length)];
+    const weight = Math.random();
+    globe.fire({ lat: s.lat, lon: s.lon }, { weight });
+    fired++;
+    hudCount.textContent = fired;
+    hudLast.textContent = `${s.name} · weight ${weight.toFixed(2)}`;
+  }
+
+  const timer = setInterval(fireOne, 700);
+  document.getElementById('burst').addEventListener('click', () => {
+    for (let i = 0; i < 5; i++) setTimeout(fireOne, i * 90);
+  });
+
+  const toggle = document.getElementById('toggle');
+  toggle.addEventListener('click', () => {
+    globe.options.spin = globe.options.spin ? 0 : 0.0009;
+    toggle.textContent = globe.options.spin ? 'Pause spin' : 'Resume spin';
+  });
+
+  addEventListener('pagehide', () => { clearInterval(timer); globe.destroy(); });
+</script>
+</body>
+</html>

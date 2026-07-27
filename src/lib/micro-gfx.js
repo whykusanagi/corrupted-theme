@@ -40,6 +40,11 @@
 
 import { CorruptionCharsets } from '../core/corruption-charsets.js';
 import { seededRandom } from '../core/random-utils.js';
+import {
+  TERMINAL_HEADERS, NSFW_TERMINAL_HEADERS,
+  TERMINAL_STATUS, NSFW_TERMINAL_STATUS,
+  HEX_CHARS,
+} from '../core/terminal-vocab.js';
 
 const NS = 'http://www.w3.org/2000/svg';
 
@@ -64,7 +69,48 @@ const THEMES = {
   void:    { bg: '#000000', ink: '#d94f90', structure: '#8b5cf6', accent: '#ff00ff', highlight: '#ff0000' },
 };
 
-const PRIMITIVES = ['barcode', 'dotMatrix', 'gaugeStack', 'histogram', 'coordReadout', 'dimension'];
+/**
+ * Paper polarity inverts the FIELD, not the palette. Magenta and violet still
+ * carry structure and accent; cyan stays accent-only. This is deliberately not
+ * the print-industrial cream-and-black it borrows its grammar from — a
+ * corrupted artifact on pale stock still reads as corrupted.
+ */
+const PAPER_FIELDS = ['#f5f1f8', '#e8e4f0', '#efe9f2'];
+const PAPER_INK = '#1a1430';
+
+const POLARITY_POOL = ['dark', 'dark', 'dark', 'paper'];
+
+/**
+ * Resolve polarity while consuming a FIXED number of rng draws.
+ *
+ * Branching on the option here would desync the stream, so the same seed
+ * would produce a different composition in each polarity. Polarity is meant
+ * to be an independent axis — the same poster in a different colourway — so
+ * both draws always happen and the unused one is discarded.
+ */
+function resolvePolarity(theme, requested, rng) {
+  const seeded = pick(rng, POLARITY_POOL);
+  const field = pick(rng, PAPER_FIELDS);
+  const polarity = requested === 'paper' || requested === 'dark' ? requested : seeded;
+  return {
+    polarity,
+    theme: polarity === 'paper' ? { ...theme, bg: field, ink: PAPER_INK } : theme,
+  };
+}
+
+/**
+ * Generic system-unit names for module headers. Deliberately impersonal: the
+ * package ships no persona strings.
+ */
+const UNITS = [
+  'NEURAL DIV', 'ARCHIVE UNIT', 'BUFFER LAB', 'DECODE WORKS', 'SIGNAL DIV',
+  'CORE SYS', 'MEMORY BANK', 'PARITY OFFICE', 'VECTOR UNIT', 'CIPHER DIV',
+];
+const MARKS = ['✳', '✦', '◈', '⊕', '☰', '◇'];
+const PILL_KEYS = ['REV', 'BUILD', 'VER', 'LOT', 'SEQ'];
+
+const PRIMITIVES = ['barcode', 'dotMatrix', 'gaugeStack', 'histogram',
+  'coordReadout', 'dimension', 'sparkline', 'keyValue', 'qr'];
 
 const MONO = "'Courier New', Courier, monospace";
 
@@ -92,6 +138,7 @@ export const MicroGfx = {
    * @param {number|null} [options.seed=null] - null picks one; the seed used is returned
    * @param {'card'|'banner'|'poster'|'portrait'|'square'|{w:number,h:number}} [options.format='card']
    * @param {'magenta'|'violet'|'mono'|'void'|object} [options.theme='magenta']
+   * @param {'dark'|'paper'} [options.polarity] - omit to let the seed choose
    * @param {object}  [options.layers] - base, halftone, rails, scanlines, glyphs
    * @param {string[]} [options.primitives] - which instrument primitives to place
    * @param {number}  [options.density=0.5] - 0..1, how much of the frame primitives fill
@@ -114,9 +161,10 @@ export const MicroGfx = {
       ? { w: Math.max(1, options.format.w | 0), h: Math.max(1, options.format.h | 0) }
       : (FORMATS[options.format] || FORMATS.card);
 
-    const theme = typeof options.theme === 'object' && options.theme
+    const baseTheme = typeof options.theme === 'object' && options.theme
       ? { ...THEMES.magenta, ...options.theme }
       : (THEMES[options.theme] || THEMES.magenta);
+    const { polarity, theme } = resolvePolarity(baseTheme, options.polarity, rng);
 
     // Unspecified layers are chosen by the seed. Explicit options still win,
     // so a caller can pin a look and still roll the details.
@@ -154,7 +202,7 @@ export const MicroGfx = {
     const ink = el('g', degrade.warp > 0 ? { filter: 'url(#mgfx-warp)' } : {}, svg);
     const g = degrade.erode > 0 ? el('g', { filter: 'url(#mgfx-erode)' }, ink) : ink;
 
-    const ctx = { rng, w: fmt.w, h: fmt.h, theme, density };
+    const ctx = { rng, w: fmt.w, h: fmt.h, theme, density, nsfw: options.nsfw === true };
     if (layers.base && layers.base !== 'flat') drawBase(g, ctx, layers.base);
     if (layers.halftone) drawHalftone(g, ctx);
     if (layers.glyphs) drawGlyphs(g, ctx, options.nsfw === true);
@@ -175,6 +223,8 @@ export const MicroGfx = {
       seed,
       width: fmt.w,
       height: fmt.h,
+      polarity,
+      archetype: ctx.archetype,
     };
   },
 
@@ -463,6 +513,169 @@ const DRAW = {
   },
 };
 
+
+/* ── New body primitives ────────────────────────────────────────────────── */
+
+Object.assign(DRAW, {
+  /** Line chart with a dashed envelope — the reference's most frequent body. */
+  sparkline(g, { rng, theme }, b) {
+    const n = 22;
+    const pts = [];
+    let v = 0.5;
+    for (let i = 0; i < n; i++) {
+      v = Math.min(0.95, Math.max(0.05, v + (rng() - 0.5) * 0.42));
+      pts.push([b.x + (i / (n - 1)) * b.w, b.y + b.h - v * b.h]);
+    }
+    el('polyline', {
+      points: pts.map(p => `${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(' '),
+      fill: 'none', stroke: theme.ink, 'stroke-width': 1.4,
+    }, g);
+    // dashed envelope above and below
+    for (const off of [-b.h * 0.22, b.h * 0.22]) {
+      el('polyline', {
+        points: pts.map(p => `${p[0].toFixed(1)},${(p[1] + off).toFixed(1)}`).join(' '),
+        fill: 'none', stroke: theme.structure, 'stroke-width': 0.7,
+        'stroke-dasharray': '3 4', opacity: 0.7,
+      }, g);
+    }
+  },
+
+  /** Label/value rows. Values come from the theme's own status vocabulary. */
+  keyValue(g, { rng, theme, nsfw }, b) {
+    const pool = nsfw ? [...TERMINAL_STATUS, ...NSFW_TERMINAL_STATUS] : TERMINAL_STATUS;
+    const rows = Math.max(2, Math.min(4, Math.floor(b.h / 15)));
+    for (let i = 0; i < rows; i++) {
+      const raw = pick(rng, pool);
+      const [k, v] = raw.includes(':') ? raw.split(':') : [raw, ''];
+      const y = b.y + 11 + i * 14;
+      el('text', {
+        x: b.x, y: y.toFixed(1), 'font-family': MONO, 'font-size': 10,
+        fill: theme.structure,
+      }, g, k.trim().toUpperCase());
+      if (v) {
+        el('text', {
+          x: (b.x + b.w).toFixed(1), y: y.toFixed(1), 'font-family': MONO,
+          'font-size': 10, fill: theme.ink, 'text-anchor': 'end',
+        }, g, v.trim());
+      }
+    }
+  },
+
+  /** Block matrix. Not a real encoder — a plausible machine-readable mark. */
+  qr(g, { rng, theme }, b) {
+    const n = 11;
+    const side = Math.min(b.w, b.h);
+    const cell = side / n;
+    const finder = (cx, cy) => {
+      el('rect', { x: b.x + cx * cell, y: b.y + cy * cell, width: cell * 3, height: cell * 3,
+        fill: 'none', stroke: theme.ink, 'stroke-width': cell * 0.5 }, g);
+    };
+    for (let i = 0; i < n; i++) {
+      for (let j = 0; j < n; j++) {
+        const inFinder = (i < 4 && j < 4) || (i > n - 5 && j < 4) || (i < 4 && j > n - 5);
+        if (inFinder || rng() > 0.5) continue;
+        el('rect', {
+          x: (b.x + i * cell).toFixed(1), y: (b.y + j * cell).toFixed(1),
+          width: cell.toFixed(1), height: cell.toFixed(1), fill: theme.ink,
+        }, g);
+      }
+    }
+    finder(0, 0); finder(n - 3, 0); finder(0, n - 3);
+  },
+});
+
+/* ── Module grammar ─────────────────────────────────────────────────────── */
+
+function hex(rng, n) {
+  let out = '';
+  for (let i = 0; i < n; i++) out += HEX_CHARS[Math.floor(rng() * HEX_CHARS.length)];
+  return out;
+}
+
+/** Wide-tracked caps, the way the reference sets its status lines. */
+function statusLine(g, ctx, x, y, w, textStr) {
+  const { theme } = ctx;
+  const size = Math.max(7, Math.min(10, w / 26));
+  el('text', {
+    x, y, 'font-family': MONO, 'font-size': size.toFixed(1),
+    'letter-spacing': (size * 0.42).toFixed(1), fill: theme.structure,
+  }, g, textStr.toUpperCase().slice(0, 30));
+}
+
+/**
+ * Draw one labelled module.
+ *
+ * The anatomy — mark + unit + pill, status line, big display, body primitive,
+ * footer meta — is what makes a composition read as a spec sheet rather than
+ * scattered decoration. Every string is placed via el(…, text), i.e.
+ * textContent, so this adds no injection surface.
+ */
+function drawModule(parent, ctx, box, bodyName) {
+  const { rng, theme, nsfw } = ctx;
+  const g = el('g', {}, parent);
+  const framed = rng() < 0.42;
+  const pad = framed ? 10 : 0;
+
+  if (framed) {
+    el('rect', {
+      x: box.x - pad, y: box.y - pad,
+      width: box.w + pad * 2, height: box.h + pad * 2,
+      fill: 'none', stroke: theme.structure, 'stroke-width': 1, opacity: 0.8,
+    }, g);
+  }
+
+  let y = box.y + 9;
+  const x = box.x;
+
+  // header: mark + unit + right-aligned pill
+  el('text', { x, y, 'font-family': MONO, 'font-size': 9, fill: theme.accent },
+    g, `${pick(rng, MARKS)} ${pick(rng, UNITS)}`);
+  if (box.w > 150 && rng() < 0.75) {
+    const label = `${pick(rng, PILL_KEYS)} ${Math.floor(rng() * 99)}`;
+    const pw = label.length * 5.4 + 8;
+    el('rect', {
+      x: (x + box.w - pw).toFixed(1), y: (y - 7).toFixed(1),
+      width: pw.toFixed(1), height: 10, rx: 2,
+      fill: 'none', stroke: theme.structure, 'stroke-width': 0.8,
+    }, g);
+    el('text', {
+      x: (x + box.w - pw / 2).toFixed(1), y: (y + 1).toFixed(1),
+      'font-family': MONO, 'font-size': 7, fill: theme.structure, 'text-anchor': 'middle',
+    }, g, label);
+  }
+  y += 14;
+
+  // status line, from the theme's own vocabulary
+  const headers = nsfw ? [...TERMINAL_HEADERS, ...NSFW_TERMINAL_HEADERS] : TERMINAL_HEADERS;
+  statusLine(g, ctx, x, y, box.w, pick(rng, headers));
+  y += 16;
+
+  // big display: hex code, katakana, or a numeral
+  const kind = rng();
+  const display = kind < 0.4 ? `0X${hex(rng, 2)}`
+    : kind < 0.7 ? String(Math.floor(rng() * 999)).padStart(3, '0')
+    : CorruptionCharsets.katakana[Math.floor(rng() * CorruptionCharsets.katakana.length)]
+      + CorruptionCharsets.katakana[Math.floor(rng() * CorruptionCharsets.katakana.length)];
+  const dsize = Math.max(16, Math.min(34, box.w / 6));
+  el('text', {
+    x, y: (y + dsize * 0.75).toFixed(1), 'font-family': MONO,
+    'font-size': dsize.toFixed(0), 'font-weight': 'bold', fill: theme.ink,
+  }, g, display);
+  y += dsize + 8;
+
+  // body primitive, in whatever height is left
+  const bodyH = box.y + box.h - y - 12;
+  if (bodyH > 12 && DRAW[bodyName]) {
+    DRAW[bodyName](g, ctx, { x, y, w: box.w, h: bodyH });
+  }
+
+  // footer meta
+  el('text', {
+    x, y: (box.y + box.h).toFixed(1), 'font-family': MONO, 'font-size': 7.5,
+    fill: theme.structure, opacity: 0.9,
+  }, g, `${pick(rng, ['ID', 'REF', 'SN', 'CODE'])} ${hex(rng, 4)}-${Math.floor(rng() * 99)}`);
+}
+
 /** Fisher-Yates with the seeded rng, so the primitive order varies per seed. */
 function shuffled(rng, arr) {
   const a = [...arr];
@@ -481,10 +694,28 @@ function shuffled(rng, arr) {
  * would be far more code to place a handful of rectangles, and the archetypes
  * are what give the output its instrument-panel character anyway.
  */
-const ARCHETYPES = ['columnLeft', 'columnRight', 'split', 'band'];
+const ARCHETYPES = ['columnLeft', 'columnRight', 'split', 'band', 'wall', 'wall'];
 
-function slotsFor(kind, { w, h }, m, count) {
+function slotsFor(kind, { w, h }, m, count, rng) {
   const out = [];
+  if (kind === 'wall') {
+    // Tile modules edge to edge across the whole frame. The reference's most
+    // striking composition, and the only one that fills rather than insets.
+    const cols = w > h ? 3 + Math.floor(rng() * 2) : 2 + Math.floor(rng() * 2);
+    const gap = 18;
+    // Reserve a header band so the title block does not land on top of the
+    // first row of modules. The reference does the same thing.
+    const top = m + 62;
+    const cw = (w - m * 2 - gap * (cols - 1)) / cols;
+    const rows = Math.max(2, Math.floor((h - top - m) / 150));
+    const ch = (h - top - m - gap * (rows - 1)) / rows;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        out.push({ x: m + c * (cw + gap), y: top + r * (ch + gap), w: cw, h: ch });
+      }
+    }
+    return out;
+  }
   if (kind === 'band') {
     const bandY = h * (0.42 + (count % 3) * 0.06);
     const bw = (w - m * 2) / count;
@@ -534,10 +765,14 @@ function drawPrimitives(parent, ctx, chosen) {
   const count = min + Math.floor(rng() * (max - min + 1));
 
   const kind = pick(rng, ARCHETYPES);
-  const boxes = slotsFor(kind, { w, h }, m, count);
+  const boxes = slotsFor(kind, { w, h }, m, count, rng);
 
+  // Modules where there is room for the full anatomy; bare primitives where
+  // the slot is too short for a header, display and footer to read.
   boxes.forEach((box, i) => {
-    DRAW[order[i % order.length]](g, ctx, box);
+    const name = order[i % order.length];
+    if (box.h >= 110) drawModule(g, ctx, box, name);
+    else DRAW[name](g, ctx, box);
   });
 
   ctx.archetype = kind;

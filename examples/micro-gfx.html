@@ -139,6 +139,11 @@
     <h3>Theme</h3>
     <div class="row" id="themes"></div>
 
+    <h3>Polarity</h3>
+    <div class="row" id="polarities"></div>
+    <p>Paper inverts the field, not the palette — magenta and violet still
+       carry structure, cyan is still accent-only.</p>
+
     <h3>Degradation</h3>
     <div>
       <label class="f" for="warp">warp <span id="warpv">0.20</span></label>
@@ -171,6 +176,7 @@
     seed: 20260727,
     format: 'card',
     theme: 'magenta',
+    polarity: 'seeded',
     degrade: { warp: 0.2, erode: 0, grain: 0.06 },
   };
 
@@ -184,6 +190,7 @@
       seed: state.seed,
       format: state.format,
       theme: state.theme,
+      polarity: state.polarity === 'seeded' ? undefined : state.polarity,
       degrade: state.degrade,
       text: {
         eyebrow: 'CORRUPTED // INSTRUMENT SERIES',
@@ -195,7 +202,8 @@
     MicroGfx.mount(art, current);
     state.seed = current.seed;
     seedin.value = current.seed;
-    seedout.textContent = `seed ${current.seed} · ${current.width}×${current.height}`;
+    seedout.textContent =
+      `seed ${current.seed} · ${current.archetype} · ${current.polarity} · ${current.width}×${current.height}`;
   }
 
   // Buttons for each format and theme, built from what the module exposes.
@@ -216,6 +224,7 @@
   }
   chips('formats', Object.keys(MicroGfx.formats), 'format');
   chips('themes', MicroGfx.themes, 'theme');
+  chips('polarities', ['seeded', 'dark', 'paper'], 'polarity');
 
   for (const k of ['warp', 'erode', 'grain']) {
     const input = document.getElementById(k);

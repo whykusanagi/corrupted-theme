@@ -1,6 +1,6 @@
 # Corrupted Theme Specification
 
-**Version:** 1.1
+**Version:** 1.2
 **Author:** whykusanagi
 **Status:** Production
 **License:** MIT (for contribution to corrupted-theme package)
@@ -417,6 +417,52 @@ proportionally to its grid distance from the origin (the "wave").
 **Reference implementation:** `GlitchStaggerGrid`
 (`@whykusanagi/corrupted-theme/glitch-stagger-grid`, 0.3.0). Design
 reference: anime.js v4 grid `stagger` (MIT) — API model only, no dependency.
+
+---
+
+### Pattern 5: Static Material Degradation
+
+Corruption rendered as damage to the *surface* rather than as motion over
+time. The artifact is a single frame — a poster, card, banner or export —
+that reads as a recovered document from a degrading system. Patterns 1-4 all
+animate chaos → order; Pattern 5 is the first non-temporal pattern, freezing
+one moment mid-decay.
+
+- **Direction:** order → chaos, then stopped. The composition underneath is
+  legible instrument-panel structure — readouts, gauges, serial lines,
+  dimension marks. Degradation is applied on top and must never obscure the
+  primary readout.
+- **Three degradation layers**, applied in this order, each independently
+  dialable 0 → 1:
+  1. **Warp** — `feTurbulence type="fractalNoise"` feeding
+     `feDisplacementMap`. Bends geometry, as if the substrate buckled.
+  2. **Erode** — `feTurbulence` + a high-contrast `feColorMatrix` alpha ramp
+     + `feComposite operator="in"`. Eats away ink coverage.
+  3. **Grain** — `feTurbulence` at high `baseFrequency`, low alpha,
+     `stitchTiles="stitch"`. Sensor noise over everything.
+- **Determinism:** every degradation layer derives its filter seed from the
+  composition seed, so the same seed always produces the identical artifact.
+  This is non-negotiable — a poster you cannot regenerate is not a design
+  system output.
+- **Color = state**, as everywhere else in this spec: cyan (#00ffff) carries
+  the readable, settled readout; purple (#8b5cf6) and magenta (#ff00ff)
+  carry structure and accents; red (#ff0000) is reserved for genuine alarm
+  states and must not be used decoratively.
+- **Charsets:** standard registry sets via `CorruptionCharsets` — never
+  inline. Katakana primary; blocks for heavy corruption.
+- **Use for:** thumbnails, stream cards, social banners, poster exports,
+  portfolio backgrounds — any single-frame surface.
+- **Accessibility:** no animation, so no flicker limit applies. Instead:
+  primary text holds ≥ 4.5:1 contrast against its local background *after*
+  degradation is applied; `erode` is capped so no glyph loses more than ~30%
+  coverage; and `degrade: 0` must produce a fully clean, legible artifact.
+  Degradation is an effect, never a load-bearing part of the composition.
+
+**Reference implementation:** `MicroGfx`
+(`@whykusanagi/corrupted-theme/micro-gfx`, 0.3.2). Degradation uses SVG
+filter primitives from the W3C Filter Effects spec — `feTurbulence`,
+`feDisplacementMap`, `feColorMatrix`, `feComposite` — so the whole pattern is
+declarative, with no dependency and no per-pixel JavaScript.
 
 ---
 
@@ -837,6 +883,23 @@ corrupted.start();
 ---
 
 ## Version History
+
+- **1.2** (2026-07-27): Static corruption
+  - Added **Pattern 5: Static Material Degradation** — the first
+    non-temporal pattern. Corruption as damage to the surface (warp /
+    erode / grain via SVG filter primitives) rather than motion over time.
+    Seed-deterministic by requirement.
+  - Retroactively noted: **Pattern 4: Staggered Grid Corruption** shipped in
+    package 0.3.0 without a version-history entry here.
+  - **Known inconsistency, unresolved:** the 1.1 entry below records a
+    BREAKING change of stable/decoded text from cyan (#00ffff) to white
+    (#ffffff), with cyan "relegated to rare accent use only". That change
+    never reached the implementation. `CLAUDE.md` §7 documents cyan as
+    "Primary text, decoded/stable", Pattern 4 settles elements to cyan, and
+    the shipped components follow suit. Patterns 4 and 5 are written to the
+    de facto convention (cyan = stable). Either the 1.1 entry or the
+    codebase needs to move; this note exists so the next reader does not
+    assume the doc is authoritative here.
 
 - **1.1** (2026-01-15): Content classification normalization & terminology clarification
   - **BREAKING**: Changed from 3-type to 2-class system (SFW/NSFW)

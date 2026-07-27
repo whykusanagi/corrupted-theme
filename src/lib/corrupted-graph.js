@@ -41,6 +41,9 @@ const EDGE_COLOR = 'rgba(139,92,246,0.30)';
 const EDGE_DIM   = 'rgba(139,92,246,0.05)';
 const DIM_NODE   = 'rgba(120,110,140,0.16)';
 const HIGHLIGHT  = '#00ffff';
+/* A lit edge is a cable: violet halo + magenta core, both theme colours. */
+const CABLE_GLOW = '#8b5cf6';
+const CABLE_CORE = '#ff00ff';
 
 /**
  * Capture the pointer, tolerating ids the browser does not consider active.
@@ -78,7 +81,7 @@ function hashId(str) {
  * @param {'none'|'hover'|'always'} [options.labels='hover']
  * @param {boolean} [options.labelDecode=true] - decode labels out of corruption on hover
  * @param {number} [options.idleGlitch=0.02] - per-frame chance a glyph re-rolls
- * @param {object} [options.interactive] - pan, zoom, hover, select
+ * @param {object} [options.interactive] - pan, zoom, hover, select, drag
  * @param {number|{top:number,right:number,bottom:number,left:number}} [options.padding=26] - inset from the canvas edge
  * @param {number} [options.maxNodes=2000] - hard cap; excess is dropped with a warning
  * @param {number} [options.maxEdges=8000] - hard cap; excess is dropped with a warning
@@ -116,7 +119,7 @@ export class CorruptedGraph {
       labels:     options.labels ?? 'hover',
       labelDecode: options.labelDecode ?? true,
       idleGlitch: options.idleGlitch ?? 0.02,
-      interactive: { pan: true, zoom: true, hover: true, select: true, ...(options.interactive || {}) },
+      interactive: { pan: true, zoom: true, hover: true, select: true, drag: true, ...(options.interactive || {}) },
       zoomRange:  options.zoomRange ?? [0.2, 8],
       padding:    options.padding ?? 26,
       maxNodes:   options.maxNodes ?? 2000,
@@ -134,6 +137,8 @@ export class CorruptedGraph {
     this._selected = null;
     this._view = { k: 1, x: 0, y: 0 };
     this._decode = null;          // { node, t } — label decode progress
+    this._alpha = 0;              // simulation temperature; > alphaMin means live
+    this._dragNode = null;
 
     this._raf = null;
     this._last = 0;
@@ -257,9 +262,9 @@ export class CorruptedGraph {
    */
   layout() {
     if (!this.nodes.length) return this;
-    if (this.options.layout === 'fixed') this._normalise();
-    else if (this.options.layout === 'bipartite') this._layoutBipartite();
-    else this._layoutForce();
+    if (this.options.layout === 'bipartite') this._layoutBipartite();
+    else if (this.options.layout === 'fixed') this._alpha = 0;
+    else { this._seedForce(); this._settle(); }
     return this;
   }
 
@@ -329,9 +334,9 @@ export class CorruptedGraph {
   focus(id) {
     const n = this.nodes.find(x => x.id === String(id));
     if (!n) return this;
-    const e = this._extent();
-    this._view.x = this._cssW / 2 - (e.x + n.x * e.w * this._view.k);
-    this._view.y = this._cssH / 2 - (e.y + n.y * e.h * this._view.k);
+    const e = this._extent(), b = this._bounds();
+    this._view.x = this._cssW / 2 - (e.x + ((n.x - b.x0) / b.w) * e.w * this._view.k);
+    this._view.y = this._cssH / 2 - (e.y + ((n.y - b.y0) / b.h) * e.h * this._view.k);
     this._selected = n;
     return this;
   }
@@ -357,59 +362,84 @@ export class CorruptedGraph {
   /* ── Layout ──────────────────────────────────────────────────────────── */
 
   /**
-   * Spring/repulsion integrator run to convergence.
+   * Seed the force layout on a circle and heat it up.
    *
-   * ponytail: O(n²) repulsion, bounded by maxNodes (2000 → ~2M pair
-   * computations per tick, which settles in well under a second and only runs
-   * on setData, not per frame). Swap in Barnes-Hut only if that cap ever rises.
+   * Deterministic, and it avoids the degenerate all-at-origin start where
+   * every repulsion vector is zero.
    */
-  _layoutForce() {
-    const { charge, linkDistance, linkStrength, gravity, damping, alphaMin, maxTicks } = this.options.force;
+  _seedForce() {
     const N = this.nodes;
     const rng = seededRandom(N.length * 7919);
-
-    // Seed on a circle — deterministic, and avoids the degenerate all-at-origin
-    // start where every repulsion vector is zero.
     N.forEach((n, i) => {
       const a = (i / N.length) * TAU;
       n.x = Math.cos(a) * 100 + (rng() - 0.5) * 8;
       n.y = Math.sin(a) * 100 + (rng() - 0.5) * 8;
       n.vx = n.vy = 0;
     });
+    this._alpha = 1;
+  }
 
-    let alpha = 1;
-    for (let tick = 0; tick < maxTicks && alpha > alphaMin; tick++) {
-      for (let i = 0; i < N.length; i++) {
-        for (let j = i + 1; j < N.length; j++) {
-          const a = N[i], b = N[j];
-          let dx = b.x - a.x, dy = b.y - a.y;
-          let d2 = dx * dx + dy * dy;
-          if (d2 < 0.01) { dx = 0.1; dy = 0.1; d2 = 0.02; }
-          const f = (charge * alpha) / d2;
-          const d = Math.sqrt(d2);
-          const fx = (dx / d) * f, fy = (dy / d) * f;
-          a.vx -= fx; a.vy -= fy;
-          b.vx += fx; b.vy += fy;
-        }
-      }
-      for (const e of this.edges) {
-        const a = N[e.a], b = N[e.b];
-        const dx = b.x - a.x, dy = b.y - a.y;
-        const d = Math.hypot(dx, dy) || 0.01;
-        const f = ((d - linkDistance) * linkStrength * alpha) / d;
-        const fx = dx * f, fy = dy * f;
+  /**
+   * One integration step: repulsion between every pair, springs along edges,
+   * gravity toward the centre, then damped Euler.
+   *
+   * ponytail: O(n²) repulsion, bounded by maxNodes. Swap in Barnes-Hut only
+   * if that cap ever rises.
+   */
+  _tick() {
+    const { charge, linkDistance, linkStrength, gravity, damping } = this.options.force;
+    const N = this.nodes;
+    const alpha = this._alpha;
+
+    // Repulsion. `charge` is negative, so the force vector already points from
+    // a toward b — adding it to `a` pushes a AWAY. Flipping these two signs is
+    // what turned every pair into an attractor and collapsed the graph.
+    for (let i = 0; i < N.length; i++) {
+      for (let j = i + 1; j < N.length; j++) {
+        const a = N[i], b = N[j];
+        let dx = b.x - a.x, dy = b.y - a.y;
+        let d2 = dx * dx + dy * dy;
+        if (d2 < 0.01) { dx = 0.1; dy = 0.1; d2 = 0.02; }
+        const d = Math.sqrt(d2);
+        const f = (charge * alpha) / d2;
+        const fx = (dx / d) * f, fy = (dy / d) * f;
         a.vx += fx; a.vy += fy;
         b.vx -= fx; b.vy -= fy;
       }
-      for (const n of N) {
-        n.vx -= n.x * gravity * alpha;
-        n.vy -= n.y * gravity * alpha;
-        n.x += (n.vx *= damping);
-        n.y += (n.vy *= damping);
-      }
-      alpha *= 0.985;
     }
-    this._normalise();
+
+    // Springs pull linked nodes toward linkDistance from either side.
+    for (const e of this.edges) {
+      const a = N[e.a], b = N[e.b];
+      const dx = b.x - a.x, dy = b.y - a.y;
+      const d = Math.hypot(dx, dy) || 0.01;
+      const f = ((d - linkDistance) * linkStrength * alpha) / d;
+      const fx = dx * f, fy = dy * f;
+      a.vx += fx; a.vy += fy;
+      b.vx -= fx; b.vy -= fy;
+    }
+
+    for (const n of N) {
+      if (n.pinned) { n.vx = n.vy = 0; continue; }  // dragged node leads, not follows
+      n.vx -= n.x * gravity * alpha;
+      n.vy -= n.y * gravity * alpha;
+      n.x += (n.vx *= damping);
+      n.y += (n.vy *= damping);
+    }
+    this._alpha *= 0.985;
+  }
+
+  /** Run the simulation to convergence. Used headless and under reduced motion. */
+  _settle() {
+    const { alphaMin, maxTicks } = this.options.force;
+    for (let t = 0; t < maxTicks && this._alpha > alphaMin; t++) this._tick();
+  }
+
+  /** Reheat so the graph responds to an interaction. */
+  reheat(alpha = 0.4) {
+    this._alpha = Math.max(this._alpha, alpha);
+    if (!this._running) { this._settle(); this._draw(); }
+    return this;
   }
 
   /** Two fixed columns: leftTypes on the left, everything else on the right. */
@@ -430,20 +460,26 @@ export class CorruptedGraph {
         n.vx = n.vy = 0;
       });
     });
-    // Already in [0,1]; skip _normalise so an empty column can't collapse it.
+    this._alpha = 0;   // fixed columns: nothing to simulate
   }
 
-  /** Map whatever the layout produced into [0,1] on both axes. */
-  _normalise() {
-    const N = this.nodes;
-    const xs = N.map(n => n.x), ys = N.map(n => n.y);
-    const x0 = Math.min(...xs), x1 = Math.max(...xs);
-    const y0 = Math.min(...ys), y1 = Math.max(...ys);
-    const w = x1 - x0 || 1, h = y1 - y0 || 1;
-    for (const n of N) {
-      n.x = (n.x - x0) / w;
-      n.y = (n.y - y0) / h;
+  /**
+   * Current extent of the layout, for mapping into the canvas.
+   *
+   * Positions live in layout space and are normalised at projection time, not
+   * baked in — otherwise a live simulation would keep re-normalising itself
+   * and every node would appear pinned to the frame edges.
+   */
+  _bounds() {
+    let x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    for (const n of this.nodes) {
+      if (n.x < x0) x0 = n.x;
+      if (n.x > x1) x1 = n.x;
+      if (n.y < y0) y0 = n.y;
+      if (n.y > y1) y1 = n.y;
     }
+    if (!Number.isFinite(x0)) return { x0: 0, y0: 0, w: 1, h: 1 };
+    return { x0, y0, w: (x1 - x0) || 1, h: (y1 - y0) || 1 };
   }
 
   /* ── Internals ───────────────────────────────────────────────────────── */
@@ -502,9 +538,13 @@ export class CorruptedGraph {
     if (!this._running) this._draw();
   }
 
-  /** Advance idle glitch and label decode. Layout is already settled. */
+  /** Advance the simulation, idle glitch and label decode. */
   _step(dt) {
     const { idleGlitch } = this.options;
+    // Several ticks per frame so the graph organises quickly but visibly.
+    if (this._alpha > this.options.force.alphaMin) {
+      for (let i = 0; i < 3; i++) this._tick();
+    }
     if (idleGlitch > 0) {
       for (const n of this.nodes) {
         if (Math.random() < idleGlitch * (dt / 16.7)) n.glyph = this._glyphFor((n.seed + Date.now()) >>> 0);
@@ -518,10 +558,10 @@ export class CorruptedGraph {
   _visible(n) { return !this._filter || this._filter(n); }
 
   _project() {
-    const e = this._extent(), v = this._view;
+    const e = this._extent(), v = this._view, b = this._bounds();
     for (const n of this.nodes) {
-      n.sx = e.x + n.x * e.w * v.k + v.x;
-      n.sy = e.y + n.y * e.h * v.k + v.y;
+      n.sx = e.x + ((n.x - b.x0) / b.w) * e.w * v.k + v.x;
+      n.sy = e.y + ((n.y - b.y0) / b.h) * e.h * v.k + v.y;
     }
   }
 
@@ -532,26 +572,21 @@ export class CorruptedGraph {
     g.clearRect(0, 0, this._cssW, this._cssH);
     const dimming = !!this._filter;
 
-    // edges
+    // Edges. The active node's edges are drawn last, as lit cables, so they
+    // sit above the mesh instead of being buried in it.
+    const active = this._selected || this._hover;
+    const hot = [];
     g.lineWidth = 0.5;
     for (const e of this.edges) {
       const a = this.nodes[e.a], b = this.nodes[e.b];
+      if (active && (a === active || b === active)) { hot.push({ a, b }); continue; }
       const lit = !dimming || this._visible(a) || this._visible(b);
       g.strokeStyle = lit ? EDGE_COLOR : EDGE_DIM;
       g.beginPath();
-      g.moveTo(a.sx, a.sy);
-      if (this.options.edgeStyle === 'cable') {
-        // Sag toward the heavier end, jittered per edge pair so parallel runs
-        // don't overlap into a single thick line.
-        const mx = (a.sx + b.sx) / 2, my = (a.sy + b.sy) / 2;
-        const sag = Math.hypot(b.sx - a.sx, b.sy - a.sy) * 0.12;
-        const j = ((a.seed ^ b.seed) % 100) / 100 - 0.5;
-        g.quadraticCurveTo(mx + j * sag, my + sag, b.sx, b.sy);
-      } else {
-        g.lineTo(b.sx, b.sy);
-      }
+      this._edgePath(a, b);
       g.stroke();
     }
+    for (const { a, b } of hot) this._drawCable(a, b);
 
     // nodes — low-degree first so hubs land on top
     const order = [...this.nodes].sort((p, q) => p.degree - q.degree);
@@ -582,6 +617,43 @@ export class CorruptedGraph {
     }
 
     this._drawLabels();
+  }
+
+  /** Shared path so lit and unlit edges trace identical geometry. */
+  _edgePath(a, b) {
+    const g = this.ctx;
+    g.moveTo(a.sx, a.sy);
+    if (this.options.edgeStyle !== 'cable') { g.lineTo(b.sx, b.sy); return; }
+    // Sag toward the heavier end, jittered per edge pair so parallel runs
+    // don't overlap into a single thick line.
+    const mx = (a.sx + b.sx) / 2, my = (a.sy + b.sy) / 2;
+    const sag = Math.hypot(b.sx - a.sx, b.sy - a.sy) * 0.12;
+    const j = ((a.seed ^ b.seed) % 100) / 100 - 0.5;
+    g.quadraticCurveTo(mx + j * sag, my + sag, b.sx, b.sy);
+  }
+
+  /**
+   * An edge attached to the active node, drawn as a lit abyssal cable: a wide
+   * translucent violet halo, then a bright magenta core with a shadow glow.
+   * Two passes is what reads as a cable rather than a thicker line.
+   */
+  _drawCable(a, b) {
+    const g = this.ctx;
+    g.beginPath(); this._edgePath(a, b);
+    g.strokeStyle = CABLE_GLOW;
+    g.lineWidth = 6;
+    g.globalAlpha = 0.35;
+    g.stroke();
+
+    g.globalAlpha = 1;
+    g.beginPath(); this._edgePath(a, b);
+    g.strokeStyle = CABLE_CORE;
+    g.lineWidth = 1.6;
+    g.shadowColor = CABLE_CORE;
+    g.shadowBlur = 10;
+    g.stroke();
+    g.shadowBlur = 0;
+    g.lineWidth = 0.5;
   }
 
   _drawLabels() {
@@ -623,9 +695,15 @@ export class CorruptedGraph {
 
   _onPointerDown(e) {
     const p = this._local(e);
-    const hit = this.options.interactive.select ? this.nodeAt(p.x, p.y) : null;
+    const hit = (this.options.interactive.select || this.options.interactive.drag)
+      ? this.nodeAt(p.x, p.y) : null;
     if (hit) {
       this._selected = hit;
+      if (this.options.interactive.drag && this.options.layout === 'force') {
+        this._dragNode = hit;
+        hit.pinned = true;
+        capturePointer(this.canvas, e.pointerId);
+      }
       if (this.options.onSelect) this.options.onSelect(hit.data);
     } else {
       if (this._selected && this.options.onSelect) this.options.onSelect(null);
@@ -639,6 +717,18 @@ export class CorruptedGraph {
   }
 
   _onPointerMove(e) {
+    if (this._dragNode) {
+      // Move the node in layout space so the simulation reacts to it.
+      const p = this._local(e);
+      const ext = this._extent(), b = this._bounds();
+      const k = this._view.k || 1;
+      this._dragNode.x = b.x0 + ((p.x - this._view.x - ext.x) / (ext.w * k)) * b.w;
+      this._dragNode.y = b.y0 + ((p.y - this._view.y - ext.y) / (ext.h * k)) * b.h;
+      this._dragNode.vx = this._dragNode.vy = 0;
+      this._alpha = Math.max(this._alpha, 0.3);
+      if (!this._running) { this._settle(); this._draw(); }
+      return;
+    }
     if (this._pan) {
       this._view.x += e.clientX - this._pan.x;
       this._view.y += e.clientY - this._pan.y;
@@ -657,7 +747,14 @@ export class CorruptedGraph {
     }
   }
 
-  _onPointerUp() { this._pan = null; }
+  _onPointerUp() {
+    this._pan = null;
+    if (this._dragNode) {
+      this._dragNode.pinned = false;
+      this._dragNode = null;
+      this.reheat(0.3);   // let the graph re-settle around the moved node
+    }
+  }
 
   _onWheel(e) {
     e.preventDefault();

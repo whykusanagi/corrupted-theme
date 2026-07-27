@@ -102,12 +102,91 @@ test('degree is counted from surviving edges', () => {
   assert.equal(g.nodes.find(n => n.id === 'a').degree, 1);
 });
 
-test('force layout settles every node into [0,1] on both axes', () => {
+test('force layout settles every node to a finite position', () => {
   const g = new CorruptedGraph(null, ring(24));
   for (const n of g.nodes) {
     assert.ok(Number.isFinite(n.x) && Number.isFinite(n.y), `${n.id} has finite position`);
-    assert.ok(n.x >= 0 && n.x <= 1, `${n.id}.x in range: ${n.x}`);
-    assert.ok(n.y >= 0 && n.y <= 1, `${n.id}.y in range: ${n.y}`);
+  }
+});
+
+test('repulsion pushes unconnected nodes APART (sign regression)', () => {
+  // The original sign was inverted, so every pair attracted and the graph
+  // collapsed to a point. Normalising positions in place hid it, because the
+  // residue always got stretched back across the frame.
+  const g = new CorruptedGraph(null, { nodes: [{ id: 'a' }, { id: 'b' }], edges: [] });
+  Object.assign(g.nodes[0], { x: 0, y: 0, vx: 0, vy: 0 });
+  Object.assign(g.nodes[1], { x: 5, y: 0, vx: 0, vy: 0 });
+  g._alpha = 1;
+  const gap = () => Math.hypot(g.nodes[1].x - g.nodes[0].x, g.nodes[1].y - g.nodes[0].y);
+  const before = gap();
+  for (let i = 0; i < 20; i++) g._tick();
+  assert.ok(gap() > before, `expected repulsion, got ${before} -> ${gap()}`);
+});
+
+test('springs pull an over-stretched edge back toward linkDistance', () => {
+  const g = new CorruptedGraph(null, {
+    nodes: [{ id: 'a' }, { id: 'b' }],
+    edges: [{ source: 'a', target: 'b' }],
+    force: { charge: 0, gravity: 0, linkDistance: 40 },   // isolate the spring
+  });
+  Object.assign(g.nodes[0], { x: 0, y: 0, vx: 0, vy: 0 });
+  Object.assign(g.nodes[1], { x: 400, y: 0, vx: 0, vy: 0 });
+  g._alpha = 1;
+  const gap = () => Math.abs(g.nodes[1].x - g.nodes[0].x);
+  const before = gap();
+  for (let i = 0; i < 30; i++) g._tick();
+  assert.ok(gap() < before, `expected contraction, got ${before} -> ${gap()}`);
+});
+
+test('gravity pulls a drifting node back toward the centre', () => {
+  const g = new CorruptedGraph(null, {
+    nodes: [{ id: 'a' }],
+    force: { charge: 0, gravity: 0.05 },
+  });
+  Object.assign(g.nodes[0], { x: 500, y: 0, vx: 0, vy: 0 });
+  g._alpha = 1;
+  for (let i = 0; i < 30; i++) g._tick();
+  assert.ok(g.nodes[0].x < 500, `expected inward pull, got ${g.nodes[0].x}`);
+});
+
+test('a pinned node leads the simulation instead of following it', () => {
+  const g = new CorruptedGraph(null, ring(6));
+  const n = g.nodes[0];
+  n.pinned = true;
+  const [px, py] = [n.x, n.y];
+  g._alpha = 1;
+  for (let i = 0; i < 10; i++) g._tick();
+  assert.equal(n.x, px, 'pinned node does not move under force');
+  assert.equal(n.y, py);
+});
+
+test('reheat() re-runs the simulation so neighbours react to a moved node', () => {
+  const g = new CorruptedGraph(null, ring(8));
+  assert.ok(g._alpha <= g.options.force.alphaMin, 'layout leaves the graph settled');
+
+  const before = g.nodes.map(n => [n.x, n.y]);
+  g.nodes[0].x += 300;            // yank one node, as a drag would
+  g.reheat(0.5);
+
+  const moved = g.nodes.slice(1).filter((n, i) =>
+    Math.hypot(n.x - before[i + 1][0], n.y - before[i + 1][1]) > 0.5);
+  assert.ok(moved.length > 0, 'other nodes respond to the displaced node');
+  assert.ok(g._alpha <= g.options.force.alphaMin, 'and it re-settles when headless');
+});
+
+test('force layout reaches equilibrium at linkDistance', () => {
+  // The sharpest evidence that repulsion and springs are both live and
+  // balanced: every spoke of a hub settles on linkDistance. Under the old
+  // inverted-repulsion bug these collapsed toward zero.
+  const g = new CorruptedGraph(null, {
+    nodes: [{ id: 'hub' }, { id: 'a' }, { id: 'b' }, { id: 'c' }, { id: 'd' }],
+    edges: ['a', 'b', 'c', 'd'].map(t => ({ source: 'hub', target: t })),
+    force: { linkDistance: 40 },
+  });
+  const hub = g.nodes.find(n => n.id === 'hub');
+  for (const leaf of g.nodes.filter(n => n !== hub)) {
+    const d = Math.hypot(leaf.x - hub.x, leaf.y - hub.y);
+    assert.ok(Math.abs(d - 40) < 6, `spoke ${leaf.id} settled at ${d.toFixed(1)}, expected ~40`);
   }
 });
 
@@ -168,13 +247,23 @@ test('a single-node column is centred rather than dividing by zero', () => {
   assert.ok(Number.isFinite(solo.y));
 });
 
-test('layout: fixed honours supplied coordinates, normalised', () => {
+test('layout: fixed keeps supplied coordinates in layout space', () => {
   const g = new CorruptedGraph(null, {
     layout: 'fixed',
     nodes: [{ id: 'a', x: 10, y: 100 }, { id: 'b', x: 30, y: 300 }],
   });
-  assert.deepEqual([g.nodes[0].x, g.nodes[0].y], [0, 0]);
-  assert.deepEqual([g.nodes[1].x, g.nodes[1].y], [1, 1]);
+  assert.deepEqual([g.nodes[0].x, g.nodes[0].y], [10, 100]);
+  assert.deepEqual([g.nodes[1].x, g.nodes[1].y], [30, 300]);
+  // Normalisation happens at projection time, so the extent maps to 0..1.
+  const b = g._bounds();
+  assert.deepEqual([b.x0, b.w, b.y0, b.h], [10, 20, 100, 200]);
+});
+
+test('bounds survive a degenerate single-node graph', () => {
+  const g = new CorruptedGraph(null, { layout: 'fixed', nodes: [{ id: 'only', x: 7, y: 7 }] });
+  const b = g._bounds();
+  assert.equal(b.w, 1, 'zero width falls back to 1 rather than dividing by zero');
+  assert.equal(b.h, 1);
 });
 
 test('node type colours come from the theme palette, never the cyan accent', () => {

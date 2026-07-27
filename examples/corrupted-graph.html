@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CorruptedGraph — corrupted-theme</title>
+<!--
+  CorruptedGraph: nodes and edges in the corrupted aesthetic.
+
+  Nodes render as katakana glyphs rather than dots; edges sag like cables;
+  hovering decodes a label out of corruption. Theme colours (white, magenta,
+  violet) carry the graph — cyan appears only as the highlight ring on the
+  node under the pointer, which is what the palette reserves accents for.
+
+  Layout is computed in-package: a spring/repulsion integrator for general
+  graphs, fixed columns for bipartite ones. Zero dependencies.
+
+  NOTE: the detail panel below is built by THIS PAGE, not by the component.
+  CorruptedGraph renders to canvas and never produces markup, so untrusted
+  node metadata cannot become HTML inside it.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Courier New', monospace; min-height: 100vh; }
+  .stage { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+    gap: 24px; max-width: 1240px; margin: 96px auto 0; padding: 0 24px; align-items: start; }
+  .graph-card { position: relative; height: 560px; overflow: hidden;
+    border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--glass); }
+  #graph { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
+  #graph:active { cursor: grabbing; }
+  .hud { position: absolute; top: 14px; left: 14px; pointer-events: none;
+    font-size: .72rem; color: var(--text); background: rgba(10,5,20,.72);
+    padding: .3rem .6rem; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+  .legend { position: absolute; bottom: 14px; left: 14px; display: flex; flex-wrap: wrap;
+    gap: .6rem; font-size: .65rem; color: var(--text-muted); pointer-events: none; }
+  .legend i { display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+    margin-right: .3rem; vertical-align: middle; }
+  .panel { display: flex; flex-direction: column; gap: 12px; }
+  .panel h3 { margin: 0 0 4px; font-size: .95rem; color: #ff00ff; }
+  .panel p { margin: 0; font-size: .78rem; color: var(--text-muted); line-height: 1.5; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .dossier { border: 1px solid var(--border); border-radius: var(--radius-md);
+    padding: 10px 12px; min-height: 96px; font-size: .74rem; }
+  .dossier .k { color: var(--text-muted); text-transform: uppercase;
+    font-size: .6rem; letter-spacing: .06em; }
+  .dossier .v { color: #ffffff; word-break: break-word; margin-bottom: 6px; }
+  .hint { max-width: 1240px; margin: 20px auto 60px; padding: 0 24px;
+    color: var(--text-muted); font-size: .8rem; }
+  @media (max-width: 900px) { .stage { grid-template-columns: 1fr; } .graph-card { height: 420px; } }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="showcase-complete.html#components"><i class="fas fa-shapes"></i> Standard</a>
+            <a href="showcase-complete.html#navigation"><i class="fas fa-bars"></i> Navigation</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+            <a href="showcase-complete.html#v030-components"><i class="fas fa-wave-square"></i> What's New</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery (0.3.0)</a>
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="scroll-decode.html"><i class="fas fa-scroll"></i> Scroll Decode</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="anime-blocks-advanced.html"><i class="fas fa-clapperboard"></i> Advanced Blocks (0.3.1)</a>
+            <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="corrupted-graph.html" class="active"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
+            <a href="advanced/phrase-cycle.html"><i class="fas fa-history"></i> Phrase Cycle</a>
+            <a href="advanced/glsl-vortex.html"><i class="fas fa-hurricane"></i> GLSL Vortex</a>
+            <a href="advanced/particles-bg.html"><i class="fas fa-atom"></i> Particles BG</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+            <a href="nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+<div class="stage">
+  <div class="graph-card">
+    <canvas id="graph" aria-label="Node and edge graph of accounts and the attributes they share"></canvas>
+    <div class="hud" id="hud">—</div>
+    <div class="legend">
+      <span><i style="background:#ffffff"></i>account</span>
+      <span><i style="background:#ff00ff"></i>ip</span>
+      <span><i style="background:#8b5cf6"></i>device</span>
+      <span><i style="background:#d94f90"></i>email</span>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h3>Layout</h3>
+    <div class="row">
+      <button class="btn" data-layout="bipartite">Bipartite</button>
+      <button class="btn secondary" data-layout="force">Force</button>
+    </div>
+    <p>Bipartite fixes accounts in the left column and shared attributes in
+       the right, each sorted by degree. Force runs a spring/repulsion
+       integrator to convergence.</p>
+
+    <h3 style="margin-top:8px">Search</h3>
+    <input class="glass-input" id="q" placeholder="filter by id or type…" autocomplete="off">
+    <p>Non-matching nodes and their edges dim rather than disappear, so the
+       shape of the graph stays legible.</p>
+
+    <h3 style="margin-top:8px">Selection</h3>
+    <div class="dossier" id="dossier"><span class="k">click a node</span></div>
+  </div>
+</div>
+
+<p class="hint">drag to pan · scroll to zoom · hover to decode a label · glyphs are stable per node id, so the same data always draws the same graph</p>
+
+<script type="module">
+  import { CorruptedGraph } from '../src/lib/corrupted-graph.js';
+
+  // A small shared-infrastructure graph: accounts on one side, the artefacts
+  // they have in common on the other. Two accounts sharing an IP and a device
+  // is the shape this layout exists to make obvious.
+  const ACCOUNTS = ['acct_4471', 'acct_9012', 'acct_2288', 'acct_7734', 'acct_1105'];
+  const ATTRS = [
+    { id: '203.0.113.44', type: 'ip' },
+    { id: '198.51.100.7', type: 'ip' },
+    { id: '192.0.2.19', type: 'ip' },
+    { id: 'dev:a91f4c', type: 'device' },
+    { id: 'dev:77b210', type: 'device' },
+    { id: 'mx:proton', type: 'email' },
+    { id: 'mx:tutanota', type: 'email' },
+  ];
+  const LINKS = [
+    ['acct_4471', '203.0.113.44'], ['acct_4471', 'dev:a91f4c'], ['acct_4471', 'mx:proton'],
+    ['acct_9012', '203.0.113.44'], ['acct_9012', 'dev:a91f4c'], ['acct_9012', 'mx:proton'],
+    ['acct_2288', '203.0.113.44'], ['acct_2288', 'dev:77b210'],
+    ['acct_7734', '198.51.100.7'], ['acct_7734', 'mx:tutanota'],
+    ['acct_1105', '192.0.2.19'],   ['acct_1105', 'dev:77b210'],
+  ];
+
+  const nodes = [
+    ...ACCOUNTS.map(id => ({ id, type: 'account', firstSeen: '2026-06-14' })),
+    ...ATTRS.map(a => ({ ...a, firstSeen: '2026-06-14' })),
+  ];
+  const edges = LINKS.map(([source, target]) => ({ source, target }));
+
+  const hud = document.getElementById('hud');
+  const dossier = document.getElementById('dossier');
+
+  const graph = new CorruptedGraph(document.getElementById('graph'), {
+    nodes, edges,
+    layout: 'bipartite',
+    bipartite: { leftTypes: ['account'], gap: 0.62 },
+    // Leave room for the HUD overlay so no node hides behind it.
+    padding: { top: 54, right: 90, bottom: 44, left: 60 },
+    nodeColors: { account: '#ffffff', ip: '#ff00ff', device: '#8b5cf6', email: '#d94f90' },
+    onHover: n => { hud.textContent = n ? `${n.id}  ·  ${n.type}` : summary(); },
+    onSelect: showDossier,
+  });
+  graph.start();
+
+  function summary() { return `${nodes.length} nodes · ${edges.length} edges`; }
+  hud.textContent = summary();
+
+  // The page owns this markup, not the component — textContent, never innerHTML.
+  function showDossier(n) {
+    dossier.replaceChildren();
+    if (!n) {
+      const k = document.createElement('span');
+      k.className = 'k';
+      k.textContent = 'click a node';
+      dossier.append(k);
+      return;
+    }
+    const degree = edges.filter(e => e.source === n.id || e.target === n.id).length;
+    for (const [key, value] of [['id', n.id], ['type', n.type], ['connections', degree], ['first seen', n.firstSeen]]) {
+      const k = document.createElement('div'); k.className = 'k'; k.textContent = key;
+      const v = document.createElement('div'); v.className = 'v'; v.textContent = String(value);
+      dossier.append(k, v);
+    }
+  }
+
+  document.querySelectorAll('[data-layout]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-layout]').forEach(b => b.className = 'btn secondary');
+      btn.className = 'btn';
+      graph.options.layout = btn.dataset.layout;
+      graph.layout();
+      graph.fit();
+    });
+  });
+
+  document.getElementById('q').addEventListener('input', e => graph.search(e.target.value));
+  addEventListener('pagehide', () => graph.destroy());
+</script>
+</body>
+</html>

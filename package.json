@@ -28,6 +28,7 @@
     "./components-js": "./src/lib/components.js",
     "./carousel": "./src/lib/carousel.js",
     "./corrupted-globe": "./src/lib/corrupted-globe.js",
+    "./corrupted-graph": "./src/lib/corrupted-graph.js",
     "./corrupted-vortex": "./src/lib/corrupted-vortex.js",
     "./corrupted-particles": "./src/lib/corrupted-particles.js",
     "./corruption-charsets": "./src/core/corruption-charsets.js",

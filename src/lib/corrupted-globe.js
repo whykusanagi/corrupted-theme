@@ -489,7 +489,12 @@ export class CorruptedGlobe {
 
   _onPointerDown(e) {
     this._drag = e.clientX;
-    if (this.canvas.setPointerCapture) this.canvas.setPointerCapture(e.pointerId);
+    // setPointerCapture throws NotFoundError for an id the browser no longer
+    // considers active; an exception here would abort the handler and break
+    // dragging outright.
+    if (this.canvas.setPointerCapture) {
+      try { this.canvas.setPointerCapture(e.pointerId); } catch { /* released */ }
+    }
   }
 
   _onPointerMove(e) {

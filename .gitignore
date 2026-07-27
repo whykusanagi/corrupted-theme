@@ -70,3 +70,9 @@ cdn-worker/
 
 # design-sync local state (never published — not in package.json files allowlist)
 .design-sync/
+
+# celeste-cli local state — auto-stamped with a git hash on every run, so it
+# would churn on every commit. Neither is in the package.json files allowlist,
+# so neither ships either way.
+.celeste/
+.grimoire

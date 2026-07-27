@@ -38,7 +38,10 @@ export const LIPSYNC = Object.freeze({
 
 /**
  * Root-mean-square amplitude of a time-domain buffer.
- * @param {Float32Array|number[]} buffer
+ *
+ * @param {Float32Array|number[]} buffer - samples in -1..1, i.e. exactly what
+ *   `AnalyserNode.getFloatTimeDomainData(buf)` fills in. Frequency data
+ *   (`getByteFrequencyData`) is the wrong input and will read far too hot.
  * @returns {number} roughly 0..1
  */
 export function rms(buffer) {

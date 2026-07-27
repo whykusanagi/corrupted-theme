@@ -54,6 +54,12 @@ function hashFrame(seed, frame, key) {
  *   rngAt:(key?:string)=>()=>number, rngFor:(frame:number,key?:string)=>()=>number,
  *   frameAt:(timeMs:number)=>number
  * }}
+ *   `seek` and `advance` both return the NEW frame index, so you can use
+ *   either as an expression. `frame` and `time` are live getters — `time` is
+ *   milliseconds. `rngAt(key)` gives a PRNG for whatever frame the clock is on
+ *   right now; `rngFor(frame, key)` gives one for any frame without moving the
+ *   clock, which is what an offline exporter wants. The `key` namespaces
+ *   independent streams so two effects on the same frame don't share numbers.
  */
 export function createFrameClock(options = {}) {
   const fps = Number.isFinite(options.fps) && options.fps > 0 ? options.fps : 30;
@@ -117,10 +123,13 @@ export function createFrameClock(options = {}) {
  * @returns {{total:number, at:(tMs:number)=>{phase:'reveal'|'hold'|'dissolve'|'gone', progress:number, revealed:number}}}
  *   `at(tMs)` reports the envelope at an elapsed time. `phase` is one of
  *   `reveal`, `hold`, `dissolve`, `gone`. `progress` is 0..1 WITHIN the current
- *   phase. `revealed` is 0..1 across the whole envelope and is the value you
- *   drive a decode with: it rises 0→1 during reveal, stays 1 through hold,
- *   falls 1→0 during dissolve, and is 0 once gone. Multiply it by a string
- *   length to get how many characters should currently be readable.
+ *   phase. `revealed` is 0..1 across the whole envelope and is the value that
+ *   drives a text reveal: it rises 0→1 during reveal, stays 1 through hold,
+ *   falls 1→0 during dissolve, and is 0 once gone. To render it, take
+ *   `Math.floor(revealed * text.length)` — it is a fraction, not a count — and
+ *   show that many characters from the START of the string, replacing the rest
+ *   with corruption glyphs. Left-to-right is the convention the package's
+ *   decode primitives use; nothing here enforces it.
  */
 export function createDissolve(options = {}) {
   const revealMs = Math.max(0, options.revealMs ?? 800);

@@ -121,6 +121,26 @@ export function parseModule(source) {
   }
 
   const version = header.match(/@version\s+([\d.]+)/)?.[1] ?? null;
+
+  // Hand-written @example blocks. 28 modules carry one and none of them
+  // reached the published surface, which is why the reference read like a type
+  // listing: every worked example the author wrote was being discarded.
+  const examples = [];
+  const exRe = /@example([^\n]*)\n((?:\s*\*(?![ \t]*@)[^\n]*\n?)*)/g;
+  for (const m of header.matchAll(exRe)) {
+    const code = m[2]
+      .split('\n')
+      .map((l) => l.replace(/^\s*\*[ \t]?/, ''))
+      .join('\n')
+      .replace(/^\s*\n/, '')
+      .replace(/\s+$/, '');
+    const dedent = Math.min(...code.split('\n').filter((l) => l.trim())
+      .map((l) => l.match(/^ */)[0].length));
+    examples.push({
+      caption: m[1].trim() || undefined,
+      code: code.split('\n').map((l) => l.slice(dedent)).join('\n'),
+    });
+  }
   const composes = [...header.matchAll(/@composes\s+(\S+)(?:\s+[—-]\s+(.*))?/g)]
     .map((m) => ({ target: m[1], note: (m[2] ?? '').trim() || undefined }));
 
@@ -135,7 +155,7 @@ export function parseModule(source) {
   const fnRe = /(?:\/\*\*((?:[^*]|\*(?!\/))*)\*\/\s*\n)?^export (?:async )?function (\w+)\s*\(([^)]*)\)/gm;
   for (const m of source.matchAll(fnRe)) {
     const doc = m[1] ?? '';
-    const params = [...doc.matchAll(/@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[?([\w.]+)\]?(?:=([^\]]*))?\]?[ \t]*[-—–]?[ \t]*([^\n]*)/g)]
+    const params = [...doc.matchAll(/@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[?([\w.]+)\]?(?:=((?:[^\[\]]|\[[^\]]*\])*))?\]?[ \t]*[-—–]?[ \t]*([^\n]*)/g)]
       .map((pm) => ({
         name: pm[2], type: pm[1].trim(),
         default: pm[3] !== undefined ? pm[3] : undefined,
@@ -184,7 +204,7 @@ export function parseModule(source) {
   // any param whose type contained braces — `{{warp:number,grain:number}}`,
   // `{'card'|{w:number,h:number}}` — failed to match and was dropped from the
   // published surface entirely. Found by blind validation, not by reading this.
-  const optionRe = /@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[options\.(\w+)(?:=([^\]]*))?\][ \t]*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
+  const optionRe = /@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[options\.(\w+)(?:=((?:[^\[\]]|\[[^\]]*\])*))?\][ \t]*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
   const cleanDesc = (raw) => {
     const text = raw
       .split('\n').map((l) => l.replace(/^\s*\*\s?/, '')).join(' ')
@@ -205,7 +225,7 @@ export function parseModule(source) {
   // shape here (MicroGfx), not just a constant. Without this they published as
   // a bare name with no constructor and no methods, so a consumer had no
   // documented way to invoke them at all.
-  const methodParamRe = /@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[?([\w.]+)\]?(?:=([^\]]*))?\]?[ \t]*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
+  const methodParamRe = /@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[?([\w.]+)\]?(?:=((?:[^\[\]]|\[[^\]]*\])*))?\]?[ \t]*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
 
   const namespaces = {};
   for (const m of source.matchAll(/^export const (\w+) = \{/gm)) {
@@ -303,14 +323,14 @@ export function parseModule(source) {
       (byClass[key] ??= []).push({ ...o, owner: undefined });
     }
     return { description, version, classes, functions, constants, composes,
-             options: [], classOptions: byClass, methods, methodDetail, constructors, namespaces, fnDetail, properties };
+             options: [], classOptions: byClass, methods, methodDetail, constructors, namespaces, fnDetail, properties, examples };
   }
   const seen = new Set();
   const uniqueOptions = options
     .map((o) => ({ ...o, owner: undefined }))
     .filter((o) => !seen.has(o.name) && seen.add(o.name));
   return { description, version, classes, functions, constants, composes,
-           options: uniqueOptions, methods, methodDetail, constructors, namespaces, fnDetail, properties };
+           options: uniqueOptions, methods, methodDetail, constructors, namespaces, fnDetail, properties, examples };
 }
 
 /** Build the manifest object from package.json exports. */
@@ -366,6 +386,7 @@ export function buildManifest() {
         fnDetail: parsed.fnDetail && Object.keys(parsed.fnDetail).length ? parsed.fnDetail : undefined,
         namespaces: parsed.namespaces && Object.keys(parsed.namespaces).length ? parsed.namespaces : undefined,
         properties: parsed.properties && Object.keys(parsed.properties).length ? parsed.properties : undefined,
+        examples: parsed.examples?.length ? parsed.examples : undefined,
         constructors: parsed.constructors && Object.keys(parsed.constructors).length ? parsed.constructors : undefined,
         composes: parsed.composes.length ? parsed.composes : undefined,
         requiresCss: REQUIRES_CSS[key],
@@ -533,7 +554,11 @@ export function renderReferenceBlock(manifest) {
         }
       }
     }
-    if (singleClass) {
+    if (e.examples?.length) {
+      for (const ex of e.examples) {
+        out.push('', ...(ex.caption ? [`_${ex.caption}_`] : []), '```js', ex.code, '```');
+      }
+    } else if (singleClass) {
       const opts = (e.options ?? []).slice(0, 2)
         .filter((o) => o.default !== undefined)
         .map((o) => `${o.name}: ${o.default}`).join(', ');

@@ -84,7 +84,7 @@ export class CorruptedGlobe {
     this.options = {
       origin:   isLatLon(options.origin) ? options.origin : { lat: 0, lon: 0 },
       spin:     options.spin ?? 0.0009,
-      tilt:     (options.tilt ?? -18) * D2R,
+      tilt:     options.tilt ?? -18,   // degrees — converted at use, see proj()
       radius:   options.radius ?? 0.42,
       graticule: options.graticule === false
         ? false
@@ -280,7 +280,12 @@ export class CorruptedGlobe {
     const y = Math.sin(p);
     const z = Math.cos(p) * Math.cos(l);
 
-    const tilt = this.options.tilt;
+    // Converted here rather than at construction so `options.tilt` stays in
+    // the documented unit. Storing radians under a name documented as degrees
+    // made `globe.options.tilt = -30` silently mean -1719 degrees — and the
+    // other options (spin, layout, style) are live-writable, so callers do
+    // exactly that.
+    const tilt = this.options.tilt * D2R;
     const y2 = y * Math.cos(tilt) - z * Math.sin(tilt);
     const z2 = y * Math.sin(tilt) + z * Math.cos(tilt);
 

@@ -2604,6 +2604,31 @@ Typing Animation with Buffer Corruption
 - npm: `import { … } from '@whykusanagi/corrupted-theme/typing-animation'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/typing-animation.js`
 
+_SFW Mode (Default)_
+```js
+```javascript
+const element = document.querySelector('.typing-text');
+const typing = new TypingAnimation(element, {
+  duration: 2000,         // 2s total regardless of text length
+  loop: true,
+  loopDelay: 1500,
+  // nsfw: false (default - SFW phrases only)
+});
+
+typing.start('Neural corruption detected...');
+```
+```
+
+_NSFW Mode (Explicit Opt-in)_
+```js
+```javascript
+// ⚠️ 18+ Content Warning
+const typing = new TypingAnimation(element, {
+  nsfw: true  // Explicit opt-in for NSFW phrases
+});
+```
+```
+
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number|null` | `null` | Total ms for one typing pass. When set, char interval = max(33, duration/length). Takes priority over typingSpeed. |
@@ -2622,6 +2647,37 @@ Corrupted Text Animation
 - npm: `import { … } from '@whykusanagi/corrupted-theme/corrupted-text'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-text.js`
 - Browser-only: touches `document` at import time (do not import in Node/SSR)
+
+_Basic Usage (Auto-initialization via data attributes)_
+```js
+```html
+<span class="corrupted-multilang"
+      data-english="Hello World"
+      data-romaji="konnichiwa"
+      data-hiragana="こんにちは"
+      data-katakana="コンニチハ"
+      data-kanji="今日は">
+</span>
+```
+```
+
+_Manual Initialization_
+```js
+```javascript
+const element = document.querySelector('.my-text');
+const corrupted = new CorruptedText(element, {
+  duration: 3000,
+  cycleDelay: 100,
+  loop: true
+});
+
+// Control playback
+corrupted.start();
+corrupted.stop();
+corrupted.restart();
+corrupted.settle('Final Text');
+```
+```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2761,14 +2817,21 @@ CorruptedGlobe — orthographic wireframe globe with great-circle arcs.
     - `t`: `number` — 0..1
     - returns: [lat, lon]
 
+_Traffic converging on one location_
 ```js
-new CorruptedGlobe(containerEl, { origin: {lat:0,lon:0}, points: [ }).start();
+import { CorruptedGlobe } from '@whykusanagi/corrupted-theme/corrupted-globe';
+const globe = new CorruptedGlobe(canvasEl, {
+  origin: { lat: 37.77, lon: -122.42 },
+  points: [{ lat: 51.5, lon: -0.13, weight: 0.8 }],
+});
+globe.start();
+globe.fire({ lat: 51.5, lon: -0.13 }, { weight: 0.8 });
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `origin` | `{lat:number,lon:number}` | `{lat:0,lon:0}` | Default arc endpoint |
-| `points` | `Array<{lat:number,lon:number,weight?:number,color?:string}>` | `[` | ] - Static markers |
+| `points` | `Array<{lat:number,lon:number,weight?:number,color?:string}>` | `[]` | Static markers |
 | `spin` | `number` | `0.0009` | Rotation in radians per ms; 0 = static |
 | `tilt` | `number` | `-18` | Axial tilt in degrees |
 | `radius` | `number` | `0.42` | Globe radius as a fraction of min(w, h) |
@@ -2802,14 +2865,22 @@ CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic.
   - `nodeAt(x, y)` — The node under a canvas-space point, or null.
   - `reheat(alpha = 0.4)` — Reheat so the graph responds to an interaction.
 
+_Bipartite — accounts on the left, shared attributes on the right_
 ```js
-new CorruptedGraph(containerEl, { nodes: [, edges: [ }).start();
+import { CorruptedGraph } from '@whykusanagi/corrupted-theme/corrupted-graph';
+const g = new CorruptedGraph(canvasEl, {
+  nodes: [{ id: 'a1', type: 'account' }, { id: 'ip:1.2.3.4', type: 'ip' }],
+  edges: [{ source: 'a1', target: 'ip:1.2.3.4' }],
+  layout: 'bipartite',
+  bipartite: { leftTypes: ['account'] },
+});
+g.start();
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `nodes` | `Array<{id:string,type?:string,weight?:number,x?:number,y?:number}>` | `[` | ] |
-| `edges` | `Array<{source:string|number,target:string|number,weight?:number}>` | `[` | ] |
+| `nodes` | `Array<{id:string,type?:string,weight?:number,x?:number,y?:number}>` | `[]` |  |
+| `edges` | `Array<{source:string|number,target:string|number,weight?:number}>` | `[]` |  |
 | `layout` | `'force'|'bipartite'|'fixed'` | `'force'` |  |
 | `force` | `{charge:number, linkDistance:number, linkStrength:number, gravity:number, damping:number, alphaMin:number, maxTicks:number}` |  | charge is negative (repulsion, default -120); linkDistance is the spring rest length in layout units (default 40) |
 | `bipartite` | `{leftTypes:string[], gap:number, sort:'degree'|'weight'|'id'}` |  | leftTypes are node `type` values placed in the left column; gap is column separation as a fraction of width (default 0.6); sort orders each column (default 'degree') |
@@ -2858,6 +2929,13 @@ MicroGfx — seeded generative instrument graphics.
     - `opts` (default `{}`): `object`
     - `opts.scale` (default `1`): `number` — resolution multiplier; 2 renders a 1200x630 card as a 2400x1260 PNG. The vector artwork is re-rasterised at the larger size, so it stays sharp rather than being upscaled.
 
+```js
+import { MicroGfx } from '@whykusanagi/corrupted-theme/micro-gfx';
+const art = MicroGfx.generate({ seed: 1234, format: 'poster' });
+MicroGfx.mount(document.querySelector('#stage'), art);
+const blob = await MicroGfx.toPNG(art, { scale: 2 });
+```
+
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `seed` | `number|null` | `null` | null picks one; the seed used is returned |
@@ -2881,12 +2959,21 @@ Frame-deterministic canvas rendering.
     - `options` (default `{}`): `object`
     - `options.fps` (default `30`): `number`
     - `options.seed` (default `0`): `number`
+    - returns: `seek` and `advance` both return the NEW frame index, so you can use either as an expression. `frame` and `time` are live getters — `time` is milliseconds. `rngAt(key)` gives a PRNG for whatever frame the clock is on right now; `rngFor(frame, key)` gives one for any frame without moving the clock, which is what an offline exporter wants. The `key` namespaces independent streams so two effects on the same frame don't share numbers.
   - `createDissolve(options = {})` → `{total:number, at:(tMs:number)=>{phase:'reveal'|'hold'|'dissolve'|'gone', progress:number, revealed:number}}` — Reveal → hold → dissolve envelope.
     - `options` (default `{}`): `object`
     - `options.revealMs` (default `800`): `number`
     - `options.holdMs` (default `1200`): `number`
     - `options.dissolveMs` (default `800`): `number`
-    - returns: `at(tMs)` reports the envelope at an elapsed time. `phase` is one of `reveal`, `hold`, `dissolve`, `gone`. `progress` is 0..1 WITHIN the current phase. `revealed` is 0..1 across the whole envelope and is the value you drive a decode with: it rises 0→1 during reveal, stays 1 through hold, falls 1→0 during dissolve, and is 0 once gone. Multiply it by a string length to get how many characters should currently be readable.
+    - returns: `at(tMs)` reports the envelope at an elapsed time. `phase` is one of `reveal`, `hold`, `dissolve`, `gone`. `progress` is 0..1 WITHIN the current phase. `revealed` is 0..1 across the whole envelope and is the value that drives a text reveal: it rises 0→1 during reveal, stays 1 through hold, falls 1→0 during dissolve, and is 0 once gone. To render it, take `Math.floor(revealed * text.length)` — it is a fraction, not a count — and show that many characters from the START of the string, replacing the rest with corruption glyphs. Left-to-right is the convention the package's decode primitives use; nothing here enforces it.
+
+_Deterministic capture_
+```js
+import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek';
+const clock = createFrameClock({ fps: 30, seed: 1234 });
+clock.seek(400);
+const rng = clock.rngAt('particles');   // same values every time
+```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2903,7 +2990,7 @@ Audio amplitude envelope — RMS → smoothing → clamped 0..1 target.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/lipsync.js`
 - Functions:
   - `rms(buffer)` → `number` — Root-mean-square amplitude of a time-domain buffer.
-    - `buffer`: `Float32Array|number[]`
+    - `buffer`: `Float32Array|number[]` — samples in -1..1, i.e. exactly what
     - returns: roughly 0..1
   - `smoothRms(prevSmoothed, rawRms, factor = LIPSYNC.SMOOTH_FACTOR)` — Exponential moving average of the raw RMS.
     - `prevSmoothed`: `number`
@@ -2916,6 +3003,17 @@ Audio amplitude envelope — RMS → smoothing → clamped 0..1 target.
     - `current`: `number`
     - `target`: `number`
     - `step` (default `0.35`): `number`
+
+_Drive a corruption intensity from an analyser_
+```js
+import { rms, smoothRms, mouthTarget, approach } from
+  '@whykusanagi/corrupted-theme/lipsync';
+let smoothed = 0, weight = 0;
+function frame(buffer) {
+  smoothed = smoothRms(smoothed, rms(buffer));
+  weight = approach(weight, mouthTarget(smoothed));
+}
+```
 ### `audio-spectrum`
 
 AudioSpectrum — canvas spectrum driven by real audio.
@@ -2935,7 +3033,10 @@ AudioSpectrum — canvas spectrum driven by real audio.
   - `levels`: `{bass:number, mid:number, treble:number, rms:number}` — Read fresh every frame while running, each 0..1. Feed to any component or helper that takes a normalised level; pairs with the `lipsync` module.
 
 ```js
-new AudioSpectrum(containerEl, { source: null, fftSize: 256 }).start();
+import { AudioSpectrum } from '@whykusanagi/corrupted-theme/audio-spectrum';
+const spectrum = new AudioSpectrum(canvas, { source: audioEl });
+await spectrum.resume();   // browsers require a user gesture
+spectrum.start();
 ```
 
 | Option | Type | Default | Description |
@@ -3365,7 +3466,13 @@ WebSocketManager — auto-reconnecting WebSocket wrapper.
   - `isConnected()` → `boolean`
 
 ```js
-new WebSocketManager({ maxAttempts: 10 }).start();
+import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager';
+
+const ws = new WebSocketManager({ url: 'wss://example.com/ws' });
+ws.on((msg) => console.log(msg));
+ws.connect();
+ws.send({ type: 'ping' });
+ws.destroy();
 ```
 
 | Option | Type | Default | Description |
@@ -3392,6 +3499,14 @@ Toast — singleton notification helper.
   - `Toast.success(message, options)`
   - `Toast.error(message, options)`
   - `Toast.info(message, options)`
+
+```js
+import { Toast } from '@whykusanagi/corrupted-theme/toast';
+Toast.show('Saved');
+Toast.success('OK', { duration: 3000 });
+Toast.error('Failed');
+Toast.info('Loading...');
+```
 ### `clock-widget`
 
 ClockWidget — cycling multi-timezone clock display.
@@ -3405,12 +3520,18 @@ ClockWidget — cycling multi-timezone clock display.
   - `destroy()` — Stop timers, remove ARIA attribute, and mark instance as destroyed.
 
 ```js
-new ClockWidget(containerEl, { timezones: ['America/Los_Angeles', cycleMs: 10000 }).start();
+const widget = new ClockWidget(document.getElementById('clock'), {
+  timezones: ['America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles'],
+  cycleMs:   10000,
+  format:    '12h',
+  showDate:  true,
+});
+widget.start();
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `timezones` | `string[]` | `['America/Los_Angeles'` | ] - IANA timezone names |
+| `timezones` | `string[]` | `['America/Los_Angeles']` | IANA timezone names |
 | `cycleMs` | `number` | `10000` | ms between timezone rotations |
 | `format` | `'12h'|'24h'` | `'12h'` | Time format |
 | `showDate` | `boolean` | `true` | Whether to render the date line |
@@ -3427,12 +3548,18 @@ EventBar — horizontal status row with label + content + optional icon.
   - `destroy()` — Remove all rendered content and mark instance as destroyed.
 
 ```js
-new EventBar(containerEl, { items: [ }).start();
+new EventBar(document.getElementById('events'), {
+  items: [
+    { label: 'Latest Follow', content: '@user1', icon: '★' },
+    { label: 'Latest Sub',    content: '@user2', icon: '♥' },
+    { label: 'Latest Tip',    content: '$5.00'             },
+  ]
+});
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `items` | `Array<{label: string, content: string, icon?: string}>` | `[` | ] |
+| `items` | `Array<{label: string, content: string, icon?: string}>` | `[]` |  |
 ### `logo-banner`
 
 LogoBanner — positioned logo with optional subtitle and reveal animation.
@@ -3448,7 +3575,15 @@ LogoBanner — positioned logo with optional subtitle and reveal animation.
   - `destroy()` — Remove rendered content and mark instance as destroyed.
 
 ```js
-new LogoBanner(containerEl, { src: '', subtitle: '' }).start();
+const banner = new LogoBanner(document.getElementById('logo'), {
+  src:         '/assets/logo.png',
+  subtitle:    'CORRUPTED STREAM',
+  size:        'normal',
+  animation:   'fade',
+  position:    'top-left',
+  showSubtitle: true,
+});
+banner.show();
 ```
 
 | Option | Type | Default | Description |
@@ -3474,6 +3609,15 @@ Export a DOM element to a PNG file.
     - `options.scale` (default `2`): `number` — Render scale (1 = 1:1, 2 = retina)
     - `options.backgroundColor` (default `null`): `string|null` — Optional background fill (transparent if null)
 
+```js
+const { exportElementAsPng } = await import('@whykusanagi/corrupted-theme/png-export');
+await exportElementAsPng(document.getElementById('card'), {
+  filename: 'my-card.png',
+  scale: 2,
+  backgroundColor: '#000000'
+});
+```
+
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `filename` | `string` | `'export.png'` | Download filename |
@@ -3491,7 +3635,11 @@ NsfwReveal — blur-until-clicked overlay.
   - `destroy()` — Restore the element to its pre-NsfwReveal state and remove all
 
 ```js
-new NsfwReveal(containerEl, { warning: 'NSFW — click to reveal', blurPx: 20 }).start();
+import { NsfwReveal } from '@whykusanagi/corrupted-theme/nsfw-reveal';
+
+const nr = new NsfwReveal(imgEl, { warning: 'NSFW — click to reveal' });
+// later:
+nr.destroy();
 ```
 
 | Option | Type | Default | Description |
@@ -3511,13 +3659,29 @@ PhraseCycle — discrete phrase-state cycling primitive.
   - `destroy()` — Tear down and release the element reference.
   - `isRunning()` → `boolean` — Whether the cycle is currently running.
 
+_Basic settling cycle_
 ```js
-new PhraseCycle(containerEl, { phrases: [, interval: 200 }).start();
+import { PhraseCycle } from '@whykusanagi/corrupted-theme/phrase-cycle';
+const cycle = new PhraseCycle(element, {
+  phrases: ['Initializing...', 'Connecting...', 'Authenticating...'],
+  interval: 400,
+  finalText: 'Ready.',
+});
+cycle.start();
+```
+
+_Looping (no settle)_
+```js
+new PhraseCycle(loaderEl, {
+  phrases: ['Loading.', 'Loading..', 'Loading...'],
+  interval: 300,
+  loop: true,
+}).start();
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `phrases` | `string[]` | `[` | ] - Ordered array of phrases to cycle through |
+| `phrases` | `string[]` | `[]` | Ordered array of phrases to cycle through |
 | `interval` | `number` | `200` | ms between phrase swaps |
 | `duration` | `number|null` | `null` | Total ms before settling. null = phrases.length × interval (one full pass) |
 | `finalText` | `string|null` | `null` | Text written after cycle ends. null = leave last-shown phrase visible |
@@ -3538,14 +3702,23 @@ ChromaticPulse — RGB-split chromatic-aberration pulse on any element.
   - `stop()` — Stop pulsing and restore the element's original text-shadow.
   - `destroy()` — Tear down and release the element reference. Not reusable after.
 
+_Live (random cadence)_
 ```js
-new ChromaticPulse(containerEl, { intensity: 1, interval: [2000,6000 }).start();
+import { ChromaticPulse } from '@whykusanagi/corrupted-theme/chromatic-pulse';
+const pulse = new ChromaticPulse(logoEl, { intensity: 1 });
+pulse.start();
+```
+
+_Deterministic frame rendering (video export)_
+```js
+const pulse = new ChromaticPulse(logoEl, { seed: 42 });
+pulse.renderFrame(frameIdx, 60);   // same frame → same pixels
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `intensity` | `number` | `1` | Fringe offset multiplier (1 = up to 4px) |
-| `interval` | `number[]` | `[2000,6000` | ] - [min,max] ms between pulse starts (live mode) |
+| `interval` | `number[]` | `[2000,6000]` | [min,max] ms between pulse starts (live mode) |
 | `pulseMs` | `number` | `150` | Duration of one pulse |
 | `seed` | `number|null` | `null` | Seed for deterministic cadence (null = Math.random) |
 ### `binary-particles`
@@ -3564,8 +3737,10 @@ BinaryParticles — rising binary/hex/phrase token field.
   - `stop()` — Stop live playback and remove the particle layer. Reusable.
   - `destroy()` — Tear down and release references. Not reusable after.
 
+_Ambient field_
 ```js
-new BinaryParticles(containerEl, { count: 24, charset: 'mixed' }).start();
+import { BinaryParticles } from '@whykusanagi/corrupted-theme/binary-particles';
+new BinaryParticles(stageEl, { count: 30, charset: 'mixed' }).start();
 ```
 
 | Option | Type | Default | Description |
@@ -3596,8 +3771,11 @@ GlitchTitleCard — █▓▒░ buffer-fill intro/outro title cards.
   - `stop()` — Stop and remove the card. Reusable.
   - `destroy()` — Tear down and release references. Not reusable after.
 
+_Stream intro card_
 ```js
-new GlitchTitleCard(containerEl, { text: '', mode: 'intro' }).start();
+import { GlitchTitleCard } from '@whykusanagi/corrupted-theme/glitch-title-card';
+new GlitchTitleCard(stageEl, { text: 'ABYSS ONLINE', mode: 'intro' })
+  .start(() => console.log('settled'));
 ```
 
 | Option | Type | Default | Description |
@@ -3625,8 +3803,10 @@ TerminalTakeover — container-filling "system corrupted" terminal card (size th
   - `stop()` — Clear the card immediately. Reusable.
   - `destroy()` — Tear down and release references. Not reusable after.
 
+_Beat-drop takeover_
 ```js
-new TerminalTakeover(containerEl, { title: 'SIGNAL LOST', messages: null }).start();
+import { TerminalTakeover } from '@whykusanagi/corrupted-theme/terminal-takeover';
+new TerminalTakeover(stageEl, { title: 'SIGNAL LOST', duration: 800 }).start();
 ```
 
 | Option | Type | Default | Description |
@@ -3653,8 +3833,14 @@ StreamTicker — ambient corner logo + scrolling corruption ticker.
   - `stop()` — Stop the loop and unmount both layers. Reusable.
   - `destroy()` — Tear down and release references. Not reusable after.
 
+_Branded stream overlay_
 ```js
-new StreamTicker(containerEl, { logoText: '', logoSrc: null }).start();
+import { StreamTicker } from '@whykusanagi/corrupted-theme/stream-ticker';
+new StreamTicker(stageEl, {
+  logoText: 'mychannel',
+  label: 'LIVE',
+  logoSrc: '/assets/logo.png',
+}).start();
 ```
 
 | Option | Type | Default | Description |
@@ -3686,8 +3872,18 @@ CorruptedMandala — procedural SVG sacred-geometry background.
     - `bottom`: `string` — New bottom label (undefined = keep)
   - `destroy()` — Clear the SVG and release references. Not reusable after.
 
+_Fullscreen ambient background_
 ```js
-new CorruptedMandala(containerEl, { labelTop: 'CORRUPTED', labelBottom: 'ARCHIVE.SYS' }).start();
+import { CorruptedMandala } from '@whykusanagi/corrupted-theme/corrupted-mandala';
+const mandala = new CorruptedMandala(svgEl, { labelTop: 'MY.CHANNEL' });
+mandala.init().resize(1920, 1080).setActive(true);
+```
+
+_Deterministic video export_
+```js
+// CSS-only animation: freeze any frame via seekAnimations
+import { seekAnimations } from '@whykusanagi/corrupted-theme/time-utils';
+seekAnimations(svgEl, frameIdx / 60);
 ```
 
 | Option | Type | Default | Description |
@@ -3792,8 +3988,16 @@ ScrollDecode — text decodes as it scrolls into view.
     - `viewportH`: `number` — window.innerHeight
     - returns: 0..1
 
+_Portfolio section reveals_
 ```js
-new ScrollDecode(containerEl, { rearm: false, progress: false }).start();
+import { ScrollDecode } from '@whykusanagi/corrupted-theme/scroll-decode';
+document.querySelectorAll('.decode-on-scroll').forEach((el) =>
+  new ScrollDecode(el).start());
+```
+
+_Scroll-scrubbed decode_
+```js
+new ScrollDecode(headline, { progress: true }).start();
 ```
 
 | Option | Type | Default | Description |
@@ -3851,8 +4055,11 @@ GlitchStaggerGrid — Pattern 4: staggered grid corruption.
     - `wave`: `number` — ms per grid unit (clamped ≥40)
     - returns: Delay ms per element
 
+_"Starting soon" tile wall_
 ```js
-new GlitchStaggerGrid(containerEl, { selector: ':scope > *', origin: 'center' }).play();
+import { GlitchStaggerGrid } from '@whykusanagi/corrupted-theme/glitch-stagger-grid';
+new GlitchStaggerGrid(tileWall, { origin: 'center', wave: 80 })
+  .play(() => console.log('settled'));
 ```
 
 | Option | Type | Default | Description |

@@ -28,13 +28,26 @@ test('palette carries every colour the spec defines', () => {
   });
 });
 
+test('theme colours are magenta, violet and white', () => {
+  assert.deepEqual(colors.themeColors, ['magenta', 'purple', 'white']);
+});
+
+test('cyan and red are accents, and carry no state meaning', () => {
+  assert.deepEqual(colors.accents, ['cyan', 'red']);
+  // Accents are a legibility tool. If either ever acquires a semanticUse
+  // role, the two-tier model has collapsed back into the old confusion.
+  for (const role of Object.keys(colors.semanticUse)) {
+    const c = colors.semanticUse[role];
+    assert.ok(!colors.accents.includes(c),
+      `semanticUse.${role} is '${c}', but accents must not carry state`);
+  }
+});
+
 test('semanticUse matches the spec usage guidelines', () => {
   assert.equal(colors.semanticUse.decoded, 'white', 'stable/decoded text is white, not cyan');
   assert.equal(colors.semanticUse.corruption, 'magenta', 'magenta is the primary corruption colour');
   assert.equal(colors.semanticUse.corrupting, 'magenta2', 'playful/SFW corruption is magenta2');
   assert.equal(colors.semanticUse.intimate, 'purple');
-  assert.equal(colors.semanticUse.critical, 'red');
-  assert.equal(colors.semanticUse.accent, 'cyan', 'cyan is accent ONLY');
   assert.equal(colors.semanticUse.system, 'green');
   assert.equal(colors.semanticUse.void, 'black');
 });
@@ -42,6 +55,8 @@ test('semanticUse matches the spec usage guidelines', () => {
 test('inlined data module is regenerated from colors.json', async () => {
   const { default: inlined } = await import('../../src/data/colors.data.js');
   assert.deepEqual(inlined.palette, colors.palette);
+  assert.deepEqual(inlined.themeColors, colors.themeColors);
+  assert.deepEqual(inlined.accents, colors.accents);
   assert.deepEqual(inlined.semanticUse, colors.semanticUse);
 });
 

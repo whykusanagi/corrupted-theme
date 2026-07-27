@@ -5,6 +5,8 @@
   "required": [
     "schemaVersion",
     "palette",
+    "themeColors",
+    "accents",
     "semanticUse"
   ],
   "additionalProperties": false,
@@ -79,6 +81,40 @@
     },
     "tierPaletteNotes": {
       "type": "string"
+    },
+    "themeColors": {
+      "description": "The aesthetic. A composition should read as on-theme using only these.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "white",
+          "black",
+          "magenta",
+          "purple",
+          "magenta2",
+          "red",
+          "cyan",
+          "green"
+        ]
+      }
+    },
+    "accents": {
+      "description": "Legibility and emphasis tools - highlight, or lift text off a dark background. Not state signals.",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "white",
+          "black",
+          "magenta",
+          "purple",
+          "magenta2",
+          "red",
+          "cyan",
+          "green"
+        ]
+      }
     }
   }
 }

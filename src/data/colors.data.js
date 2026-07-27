@@ -12,14 +12,21 @@ export default {
     "cyan": "#00ffff",
     "green": "#00ff00"
   },
+  "themeColors": [
+    "magenta",
+    "purple",
+    "white"
+  ],
+  "accents": [
+    "cyan",
+    "red"
+  ],
   "semanticUse": {
     "decoded": "white",
-    "void": "black",
     "corruption": "magenta",
     "intimate": "purple",
     "corrupting": "magenta2",
-    "critical": "red",
-    "accent": "cyan",
+    "void": "black",
     "system": "green"
   },
   "tierPaletteNotes": "Tier/role/element palettes (e.g., nikke's NIKKE-game tier colors) are downstream concerns and intentionally NOT in this file."

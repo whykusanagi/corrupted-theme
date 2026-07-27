@@ -118,9 +118,15 @@ export const MicroGfx = {
       ? { ...THEMES.magenta, ...options.theme }
       : (THEMES[options.theme] || THEMES.magenta);
 
+    // Unspecified layers are chosen by the seed. Explicit options still win,
+    // so a caller can pin a look and still roll the details.
+    const ul = options.layers || {};
     const layers = {
-      base: 'grid', halftone: true, rails: true, scanlines: true, glyphs: true,
-      ...(options.layers || {}),
+      base:      ul.base      ?? pick(rng, ['grid', 'mesh', 'flat', 'grid', 'mesh']),
+      halftone:  ul.halftone  ?? rng() < 0.75,
+      rails:     ul.rails     ?? true,
+      scanlines: ul.scanlines ?? rng() < 0.8,
+      glyphs:    ul.glyphs    ?? true,
     };
     const d = options.degrade || {};
     const degrade = {
@@ -457,35 +463,84 @@ const DRAW = {
   },
 };
 
+/** Fisher-Yates with the seeded rng, so the primitive order varies per seed. */
+function shuffled(rng, arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 /**
- * Place primitives down one side of the frame.
+ * Layout archetypes. The seed picks one, which is what makes two seeds look
+ * like different posters rather than the same poster with different noise.
  *
- * ponytail: a fixed column of slots rather than a packing algorithm. The
- * composition reads as an instrument panel either way, and a solver here
- * would be a lot of code to place six rectangles.
+ * ponytail: four hand-written arrangements, not a packing solver. A solver
+ * would be far more code to place a handful of rectangles, and the archetypes
+ * are what give the output its instrument-panel character anyway.
  */
+const ARCHETYPES = ['columnLeft', 'columnRight', 'split', 'band'];
+
+function slotsFor(kind, { w, h }, m, count) {
+  const out = [];
+  if (kind === 'band') {
+    const bandY = h * (0.42 + (count % 3) * 0.06);
+    const bw = (w - m * 2) / count;
+    for (let i = 0; i < count; i++) {
+      out.push({ x: m + i * bw, y: bandY, w: bw * 0.82, h: Math.min(110, h * 0.16) });
+    }
+    return out;
+  }
+  if (kind === 'split') {
+    const colW = Math.min(w * 0.3, (w - m * 3) / 2);
+    const per = Math.ceil(count / 2);
+    const top = h * 0.3;
+    const slotH = Math.min(96, (h - top - m) / per);
+    for (let i = 0; i < count; i++) {
+      const side = i < per ? 0 : 1;
+      const row = i % per;
+      out.push({
+        x: side === 0 ? m : w - m - colW,
+        y: top + row * slotH, w: colW, h: slotH * 0.62,
+      });
+    }
+    return out;
+  }
+  const left = kind === 'columnLeft';
+  const colW = Math.min(w * 0.34, w * 0.36);
+  const x = left ? m : w - m - colW;
+  const top = h * 0.3;
+  const slotH = Math.min(96, (h - top - m) / count);
+  for (let i = 0; i < count; i++) {
+    out.push({ x, y: top + i * slotH, w: colW, h: slotH * 0.62 });
+  }
+  return out;
+}
+
 function drawPrimitives(parent, ctx, chosen) {
-  const names = chosen.filter(n => DRAW[n]);
-  if (!names.length) return;
+  const available = chosen.filter(n => DRAW[n]);
+  if (!available.length) return;
   const { rng, w, h, density } = ctx;
 
   const g = el('g', {}, parent);
   const m = Math.round(Math.min(w, h) * 0.045) + 26;
-  const slots = Math.max(1, Math.round(names.length * (0.4 + density * 0.6)));
-  const colX = rng() < 0.5 ? m : w * 0.58;
-  const colW = Math.min(w * 0.34, w - colX - m);
-  const top = h * 0.32;
-  const slotH = Math.min(96, (h - top - m) / slots);
 
-  for (let i = 0; i < slots; i++) {
-    const name = names[i % names.length];
-    DRAW[name](g, ctx, {
-      x: colX,
-      y: top + i * slotH,
-      w: colW,
-      h: slotH * 0.62,
-    });
-  }
+  // Which primitives, how many, and in what order — all from the seed.
+  const order = shuffled(rng, available);
+  const min = Math.max(1, Math.round(available.length * 0.35));
+  const max = Math.max(min, Math.round(available.length * (0.45 + density * 0.55)));
+  const count = min + Math.floor(rng() * (max - min + 1));
+
+  const kind = pick(rng, ARCHETYPES);
+  const boxes = slotsFor(kind, { w, h }, m, count);
+
+  boxes.forEach((box, i) => {
+    DRAW[order[i % order.length]](g, ctx, box);
+  });
+
+  ctx.archetype = kind;
 }
 
 if (typeof module !== 'undefined' && module.exports) {

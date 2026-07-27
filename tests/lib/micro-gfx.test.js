@@ -74,6 +74,20 @@ test('every filter seeds from the composition seed, so damage is reproducible', 
   assert.ok(seedUses.length >= 3, `all three filters seeded, found ${seedUses.length}`);
 });
 
+test('the seed drives composition, not just noise', () => {
+  // The first cut varied texture but reused one of two fixed column layouts,
+  // so every seed produced recognisably the same poster. Composition choices
+  // — archetype, primitive order, primitive count, layer set — must all come
+  // from the seeded rng.
+  assert.match(CODE, /const ARCHETYPES = \['columnLeft', 'columnRight', 'split', 'band'\]/);
+  assert.match(CODE, /const kind = pick\(rng, ARCHETYPES\)/, 'archetype is seeded');
+  assert.match(CODE, /const order = shuffled\(rng, available\)/, 'primitive order is seeded');
+  assert.match(CODE, /const count = min \+ Math\.floor\(rng\(\)/, 'primitive count is seeded');
+  // Unspecified layers are seeded; explicit options still win.
+  assert.match(CODE, /base:\s+ul\.base\s+\?\? pick\(rng,/);
+  assert.match(CODE, /halftone:\s+ul\.halftone\s+\?\? rng\(\)/);
+});
+
 test('the palette uses theme colours; cyan and red appear only as highlights', () => {
   const themes = SRC.match(/const THEMES = \{[\s\S]*?\n\};/)[0];
   for (const line of themes.split('\n').filter(l => l.includes('bg:'))) {

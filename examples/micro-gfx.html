@@ -124,12 +124,14 @@
   <div class="panel">
     <h3>Seed</h3>
     <div class="row">
-      <button class="btn" id="roll">Roll</button>
-      <button class="btn secondary" id="again">Regenerate same seed</button>
+      <button class="btn" id="roll">Roll new seed</button>
+      <input class="glass-input" id="seedin" inputmode="numeric" style="flex:1;min-width:120px"
+             aria-label="Seed">
     </div>
     <p class="seed" id="seedout">—</p>
-    <p>Pattern 5 requires determinism: the same seed always produces the
-       identical artwork, degradation included.</p>
+    <p>Type a seed to reproduce an artwork exactly — composition, layer choice
+       and degradation all derive from it. That is what Pattern 5 means by
+       determinism, and it is why the seed is worth keeping next to the image.</p>
 
     <h3>Format</h3>
     <div class="row" id="formats"></div>
@@ -174,6 +176,7 @@
 
   const art = document.getElementById('art');
   const seedout = document.getElementById('seedout');
+  const seedin = document.getElementById('seedin');
   let current = null;
 
   function render() {
@@ -191,6 +194,7 @@
     });
     MicroGfx.mount(art, current);
     state.seed = current.seed;
+    seedin.value = current.seed;
     seedout.textContent = `seed ${current.seed} · ${current.width}×${current.height}`;
   }
 
@@ -227,7 +231,10 @@
     state.seed = Math.floor(Math.random() * 0xffffffff);
     render();
   });
-  document.getElementById('again').addEventListener('click', render);
+  seedin.addEventListener('change', e => {
+    const v = Number(e.target.value);
+    if (Number.isFinite(v)) { state.seed = v >>> 0; render(); }
+  });
 
   document.getElementById('png').addEventListener('click', async () => {
     const blob = await MicroGfx.toPNG(current, { scale: 2 });

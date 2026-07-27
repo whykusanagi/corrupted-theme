@@ -61,6 +61,8 @@ export const NAV = [
       { label: 'Corrupted Globe', icon: 'fa-globe', target: 'examples/corrupted-globe.html' },
       { label: 'Corrupted Graph', icon: 'fa-circle-nodes', target: 'examples/corrupted-graph.html' },
       { label: 'MicroGfx Posters', icon: 'fa-vector-square', target: 'examples/micro-gfx.html' },
+      { label: 'Audio Spectrum', icon: 'fa-wave-square', target: 'examples/audio-spectrum.html' },
+      { label: 'Deterministic Frames', icon: 'fa-clock-rotate-left', target: 'examples/canvas-seek.html' },
       { label: 'Animation Blocks', icon: 'fa-film', target: 'examples/animation-blocks/index.html' },
       { label: 'CRT Effects', icon: 'fa-tv', target: 'examples/advanced/crt-effects.html' },
       { label: 'Decrypt Reveal', icon: 'fa-key', target: 'examples/advanced/decrypt-reveal.html' },

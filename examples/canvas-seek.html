@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deterministic Frames — corrupted-theme</title>
+<!--
+  canvas-seek: frame-deterministic canvas rendering.
+
+  seekAnimations frame-locks CSS animations; canvas had no equivalent, which
+  is what blocks offline export. rngFor(frame, key) derives randomness from
+  (seed, frame, key), so frame 400 renders identically whether you played
+  there or jumped straight to it. The proof on this page is the two canvases:
+  the left one plays, the right one is drawn by seeking to the left one's
+  frame. They are pixel-identical at every position.
+
+  createDissolve adds the reveal -> hold -> dissolve envelope: text decodes
+  out of corruption, holds, then re-corrupts and fades back out.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Courier New', monospace; min-height: 100vh; }
+  .wrap { max-width: 1180px; margin: 96px auto 0; padding: 0 24px; }
+  h2 { font-size: 1rem; color: #ff00ff; margin: 0 0 6px; }
+  p.lede { font-size: .78rem; color: var(--text-muted); line-height: 1.5; max-width: 70ch; margin: 0 0 14px; }
+  .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .card { border: 1px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--glass); overflow: hidden; }
+  .card h3 { margin: 0; padding: 8px 12px; font-size: .7rem; letter-spacing: .08em;
+    text-transform: uppercase; color: var(--text-muted); border-bottom: 1px solid var(--border); }
+  canvas { width: 100%; height: 200px; display: block; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin: 14px 0; }
+  .stat { font-size: .78rem; color: #ffffff; }
+  .ok { color: #00ffff; }
+  .bad { color: #ff0000; }
+  #dissolve { font-size: 1.6rem; letter-spacing: 2px; color: #ffffff;
+    min-height: 2.4rem; margin: 8px 0 4px; }
+  .phase { font-size: .7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: .08em; }
+  section { margin-bottom: 44px; }
+  input[type=range] { width: 260px; accent-color: #ff00ff; background: transparent; }
+  @media (max-width: 860px) { .pair { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="showcase-complete.html#components"><i class="fas fa-shapes"></i> Standard</a>
+            <a href="showcase-complete.html#navigation"><i class="fas fa-bars"></i> Navigation</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+            <a href="showcase-complete.html#v030-components"><i class="fas fa-wave-square"></i> What's New</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery (0.3.0)</a>
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="scroll-decode.html"><i class="fas fa-scroll"></i> Scroll Decode</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="anime-blocks-advanced.html"><i class="fas fa-clapperboard"></i> Advanced Blocks (0.3.1)</a>
+            <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
+            <a href="audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="canvas-seek.html" class="active"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
+            <a href="advanced/phrase-cycle.html"><i class="fas fa-history"></i> Phrase Cycle</a>
+            <a href="advanced/glsl-vortex.html"><i class="fas fa-hurricane"></i> GLSL Vortex</a>
+            <a href="advanced/particles-bg.html"><i class="fas fa-atom"></i> Particles BG</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+            <a href="nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+<div class="wrap">
+  <section>
+    <h2>Same frame, two routes</h2>
+    <p class="lede">The left canvas plays forward. The right one is drawn by
+       seeking straight to the left one's current frame — no replay. If the
+       randomness were not frame-derived these would diverge immediately.</p>
+    <div class="pair">
+      <div class="card"><h3>played</h3><canvas id="a"></canvas></div>
+      <div class="card"><h3>seeked</h3><canvas id="b"></canvas></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="toggle">Pause</button>
+      <button class="btn secondary" id="jump">Jump to frame 400</button>
+      <span class="stat" id="stat">—</span>
+    </div>
+  </section>
+
+  <section>
+    <h2>Reveal → hold → dissolve</h2>
+    <p class="lede">The decode primitives run chaos → order and stop.
+       <code>createDissolve</code> adds the tail: settled glyphs re-corrupt and
+       fade back out, so a title can come and go without a second animation.</p>
+    <div id="dissolve"></div>
+    <div class="phase" id="phase">—</div>
+    <div class="row">
+      <label class="phase" for="scrub">scrub</label>
+      <input type="range" id="scrub" min="0" max="2800" step="10" value="0">
+      <button class="btn secondary" id="loop">Loop</button>
+    </div>
+  </section>
+</div>
+
+<script type="module">
+  import { createFrameClock, createDissolve } from '../src/core/canvas-seek.js';
+  import { CorruptionCharsets } from '../src/core/corruption-charsets.js';
+
+  /* ── deterministic particle field ─────────────────────────────────────── */
+
+  const SEED = 20260727;
+  const played = createFrameClock({ fps: 30, seed: SEED });
+  const seeked = createFrameClock({ fps: 30, seed: SEED });
+
+  function fit(cv) {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    const r = cv.getBoundingClientRect();
+    cv.width = Math.round(r.width * dpr);
+    cv.height = Math.round(r.height * dpr);
+    cv.getContext('2d').setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: r.width, h: r.height };
+  }
+
+  // Purely a function of (frame, seed) — nothing carries over between frames.
+  function drawField(cv, clock) {
+    const g = cv.getContext('2d');
+    const r = cv.getBoundingClientRect();
+    g.clearRect(0, 0, r.width, r.height);
+    const rng = clock.rngAt('field');
+    const set = CorruptionCharsets.katakana;
+    g.font = "14px 'Courier New', monospace";
+    for (let i = 0; i < 90; i++) {
+      const x = rng() * r.width;
+      const y = rng() * r.height;
+      const pick = rng();
+      g.fillStyle = pick < 0.6 ? '#8b5cf6' : pick < 0.9 ? '#ff00ff' : '#ffffff';
+      g.globalAlpha = 0.35 + rng() * 0.65;
+      g.fillText(set[Math.floor(rng() * set.length)], x, y);
+    }
+    g.globalAlpha = 1;
+  }
+
+  const cvA = document.getElementById('a');
+  const cvB = document.getElementById('b');
+  const stat = document.getElementById('stat');
+  fit(cvA); fit(cvB);
+  addEventListener('resize', () => { fit(cvA); fit(cvB); render(); });
+
+  function identical() {
+    // Compare the two canvases pixel for pixel.
+    const da = cvA.getContext('2d').getImageData(0, 0, cvA.width, cvA.height).data;
+    const db = cvB.getContext('2d').getImageData(0, 0, cvB.width, cvB.height).data;
+    if (da.length !== db.length) return false;
+    for (let i = 0; i < da.length; i += 97) if (da[i] !== db[i]) return false;
+    return true;
+  }
+
+  function render() {
+    drawField(cvA, played);
+    seeked.seek(played.frame);        // arrive by seeking, not by playing
+    drawField(cvB, seeked);
+    const same = identical();
+    stat.innerHTML = `frame ${played.frame} · ` +
+      `<span class="${same ? 'ok' : 'bad'}">${same ? 'pixel-identical' : 'DIVERGED'}</span>`;
+  }
+
+  let playing = true;
+  let last = performance.now();
+  function loopField(now) {
+    const dt = Math.min(now - last, 60); last = now;
+    if (playing) { played.advance(dt); render(); }
+    requestAnimationFrame(loopField);
+  }
+  requestAnimationFrame(loopField);
+  render();
+
+  document.getElementById('toggle').addEventListener('click', e => {
+    playing = !playing;
+    e.currentTarget.textContent = playing ? 'Pause' : 'Play';
+  });
+  document.getElementById('jump').addEventListener('click', () => {
+    played.seek(400);
+    render();
+  });
+
+  /* ── dissolve envelope ────────────────────────────────────────────────── */
+
+  const TEXT = 'SIGNAL DECAY';
+  const env = createDissolve({ revealMs: 800, holdMs: 1200, dissolveMs: 800 });
+  const out = document.getElementById('dissolve');
+  const phaseEl = document.getElementById('phase');
+  const scrub = document.getElementById('scrub');
+  scrub.max = String(env.total);
+
+  function renderDissolve(t) {
+    const { phase, revealed } = env.at(t);
+    const set = CorruptionCharsets.katakana;
+    const shown = Math.round(TEXT.length * revealed);
+    let s = '';
+    for (let i = 0; i < TEXT.length; i++) {
+      if (TEXT[i] === ' ') { s += ' '; continue; }
+      s += i < shown ? TEXT[i] : set[Math.floor(Math.random() * set.length)];
+    }
+    out.textContent = s;
+    phaseEl.textContent = `${phase} · revealed ${revealed.toFixed(2)}`;
+  }
+
+  let looping = true;
+  let t0 = performance.now();
+  function loopDissolve(now) {
+    if (looping) {
+      const t = (now - t0) % (env.total + 600);
+      scrub.value = String(Math.min(env.total, Math.round(t)));
+      renderDissolve(t);
+    }
+    requestAnimationFrame(loopDissolve);
+  }
+  requestAnimationFrame(loopDissolve);
+
+  scrub.addEventListener('input', e => {
+    looping = false;
+    document.getElementById('loop').className = 'btn';
+    renderDissolve(Number(e.target.value));
+  });
+  document.getElementById('loop').addEventListener('click', e => {
+    looping = !looping;
+    t0 = performance.now();
+    e.currentTarget.className = looping ? 'btn secondary' : 'btn';
+  });
+</script>
+</body>
+</html>

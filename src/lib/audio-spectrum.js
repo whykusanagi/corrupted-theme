@@ -185,7 +185,19 @@ export class AudioSpectrum {
       : (typeof webkitAudioContext !== 'undefined' ? webkitAudioContext : null);
     if (!Ctx) return;
 
-    if (!this._audioCtx) { this._audioCtx = new Ctx(); this._ownsContext = true; }
+    const src = this.options.source;
+    const isNode = typeof AudioNode !== 'undefined' && src instanceof AudioNode;
+
+    // An AudioNode already belongs to a context, and nodes cannot be connected
+    // across contexts. Join the caller's context rather than creating one —
+    // creating our own here throws InvalidAccessError on the first connect.
+    if (isNode) {
+      this._audioCtx = src.context;
+      this._ownsContext = false;
+    } else if (!this._audioCtx) {
+      this._audioCtx = new Ctx();
+      this._ownsContext = true;
+    }
     const ac = this._audioCtx;
 
     this._analyser = ac.createAnalyser();
@@ -193,8 +205,7 @@ export class AudioSpectrum {
     this._analyser.smoothingTimeConstant = this.options.smoothing;
     this._freq = new Uint8Array(this._analyser.frequencyBinCount);
 
-    const src = this.options.source;
-    if (typeof AudioNode !== 'undefined' && src instanceof AudioNode) {
+    if (isNode) {
       this._sourceNode = src;
     } else if (typeof MediaStream !== 'undefined' && src instanceof MediaStream) {
       this._sourceNode = ac.createMediaStreamSource(src);

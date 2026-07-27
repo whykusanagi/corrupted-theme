@@ -81,7 +81,7 @@ npm install @whykusanagi/corrupted-theme
 ```html
 <!-- Pinned version (recommended for production) -->
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.1/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/theme.min.css">
 
 <!-- Floating @latest (use only for sites you control and update together) -->
 <link rel="stylesheet"
@@ -105,9 +105,9 @@ Both domains serve the same content. Use the domain that matches your site's roo
 **Pinned version** (production-safe — breaking changes never auto-propagate):
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.1/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.1/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/corrupted-text.min.js"></script>
 ```
 
 **Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):
@@ -120,9 +120,27 @@ For production hardening, add SRI hashes (published in `CHANGELOG.md` for each r
 
 Browse every animation on the demo site, which deploys from `main`: [corrupted.whykusanagi.xyz/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
 
-## What's New in 0.3.1
+## What's New in 0.3.2
 
-**0.3.1** completes the advanced animation-block set — nine more classes (`CorruptedTextOverlay`, `CharacterFlowParticles`, `DataVisualizationDashboard`, `OminousTemple`, `TacticalTerrainMap`, `FloatingCardStack`, `ModuleLoadingList`, `SegmentedProgressBar`, `ImageGallerySlideshow`), all defaulting to `nsfw: false`. See the [changelog](CHANGELOG.md) for the full list.
+**0.3.2** adds six data-and-generative components, and applies the spec's
+palette rule across the library.
+
+| Export | What it does |
+|---|---|
+| `corrupted-globe` | Orthographic globe with animated great-circle arcs. Canvas 2D, no map data — the sphere is a graticule |
+| `corrupted-graph` | Node-and-edge graph with its own force layout. Nodes render as katakana glyphs, edges sag like cables, selection lights its edges. Bipartite mode for two-column data |
+| `micro-gfx` | Seeded generative instrument graphics — spec Pattern 5. Composes labelled modules into a poster, then degrades the surface with warp, erode and grain. Same seed, identical artwork |
+| `audio-spectrum` | Spectrum driven by a real `AnalyserNode`. `.levels` exposes bass/mid/treble/rms for driving other components |
+| `canvas-seek` | Frame-deterministic canvas rendering — `seekAnimations` for canvas. Plus the reveal → hold → dissolve envelope |
+| `lipsync` | RMS → smoothing → clamped 0..1 envelope. Pure math; drives any audio-reactive property |
+
+**Palette.** `CORRUPTED_THEME_SPEC.md` has said white-is-stable since v1.1,
+but the change only ever reached the palette table. 0.3.2 applies it: settled
+and decoded text is white, corruption is magenta and violet, and **cyan and
+red are accents** — highlights and legibility, not state. Cyan is retained
+where it genuinely is an accent (RGB-split channels, glass borders, the
+opt-in cyan variants). `corruptTextSemantic` also stops ignoring its
+`context` argument; `context: 'default'` is byte-identical to before.
 
 It builds on the **0.3.0** library summarized below — a large set of animation, overlay, and transition components, plus zero-dependency orchestration helpers modeled on anime.js v4 APIs.
 
@@ -144,11 +162,11 @@ Every file under `src/` is an ES module. Load one of two ways:
 ```html
 <!-- Module import (npm or CDN) -->
 <script type="module">
-  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.1/src/lib/scroll-decode.js';
+  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.2/src/lib/scroll-decode.js';
 </script>
 
 <!-- Browser global for no-build sites (IIFE builds only; SRI in CHANGELOG.md) -->
-<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.1/dist/toast.global.js"></script>
+<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.2/dist/toast.global.js"></script>
 ```
 
 A classic `<script src>` pointing at a `src/` file throws

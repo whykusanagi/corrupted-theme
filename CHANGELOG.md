@@ -7,6 +7,98 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-07-27
+
+> Six new components for data and generative visuals, plus the palette
+> correction the spec has called for since v1.1. Additive: no export was
+> removed or renamed, and no existing caller's output changes.
+
+### Added
+
+- **`corrupted-globe`** — orthographic globe with animated great-circle arcs.
+  Canvas 2D, zero dependencies, no map data: the sphere is a graticule rather
+  than a coastline. Arcs slerp between lat/lon pairs and lift off the surface
+  in 3D so limb occlusion stays correct as they cross the edge.
+- **`corrupted-graph`** — node-and-edge graph with an in-package force layout
+  (spring/repulsion integrator, no d3). Nodes render as katakana glyphs stable
+  per node id, edges sag like cables, and selecting a node lights its edges as
+  glowing cables. `layout: 'bipartite'` gives fixed two-column placement.
+  Renders to canvas and builds no HTML — node metadata reaches you through
+  `onSelect`, so untrusted graph data cannot become markup.
+- **`micro-gfx`** — seeded generative instrument graphics, implementing
+  `CORRUPTED_THEME_SPEC.md` **Pattern 5: Static Material Degradation**.
+  Composes labelled instrument modules into card/banner/poster/portrait/square
+  frames across five layout archetypes, then degrades the surface with warp,
+  erode and grain SVG filters. Every filter seeds from the composition seed,
+  so the same seed regenerates byte-identical artwork. `polarity: 'paper'`
+  inverts the field while keeping magenta and violet carrying structure.
+- **`audio-spectrum`** — the first genuinely audio-driven visual in the
+  package: a real `AnalyserNode` rather than a `Math.sin` stand-in. `.levels`
+  exposes bass/mid/treble/rms for driving other components.
+- **`canvas-seek`** — frame-deterministic canvas rendering. `seekAnimations`
+  frame-locks CSS animations; this is the canvas equivalent, deriving
+  randomness from (seed, frame, key) so any frame renders byte-identically in
+  isolation. Also `createDissolve`: the reveal → hold → dissolve envelope,
+  where settled glyphs re-corrupt and fade back out.
+- **`lipsync`** — RMS → smoothing → clamped 0..1 amplitude envelope. Pure
+  functions, no DOM or Web Audio; drives any audio-reactive property.
+  Algorithm derived from [aituber-onair](https://github.com/shinshin86/aituber-onair) (MIT).
+- **`corruptTextSemantic`** now honours its `context` argument, which it has
+  ignored since v0.2.0. Six contexts (`loading`, `processing`, `analyzing`,
+  `corrupting`, `watching`, `connecting`) bias substitutions toward related
+  glyphs. `SEMANTIC_CONTEXTS` is exported.
+
+### Changed: palette
+
+`CORRUPTED_THEME_SPEC.md` has specified white-as-stable since v1.1
+(2026-01-15), but the change only ever reached the palette table. This release
+applies it across the library and restructures the palette into two tiers:
+
+- **Theme colours — magenta, violet, white.** These are the aesthetic and they
+  encode corruption state. Settled, decoded and revealed text is white;
+  corruption is magenta and violet.
+- **Accents — cyan and red.** Highlights and legibility, not state signals.
+  Red still suits alarm because it reads that way, but is no longer *reserved*
+  for it.
+- `src/data/colors.json` gains `white` and `black`, declares first-class
+  `themeColors` and `accents` arrays, and corrects `semanticUse` (`decoded`
+  was `cyan`, `accent` was `magenta`). **Accent colours no longer carry any
+  semantic role.**
+- Cyan is deliberately retained where it is genuinely an accent: RGB-split
+  channels (it pairs with `#ff0000` in chromatic aberration), glass borders and
+  glows, the opt-in `.corrupted-ghost-cyan` / `.glass-container-cyan` variants,
+  and structural grid chrome.
+
+**Migration:** none required. Components that took a `color` option still do;
+only the *defaults* moved. Pass `color: '#00ffff'` to keep the previous look.
+`corruptTextSemantic` with `context: 'default'` (or any unrecognised context)
+produces output byte-identical to before — enforced by test.
+
+### Spec
+
+- `CORRUPTED_THEME_SPEC.md` → **1.2**: adds **Pattern 5: Static Material
+  Degradation**, the first non-temporal corruption pattern; splits the palette
+  into theme colours and accents; and corrects Patterns 3 and 4, core tenet 2
+  and the SFW phrase guidance, which had contradicted the palette table.
+
+### Security
+
+- SHA-pinned the remaining GitHub Actions (`actions/checkout`,
+  `actions/setup-node`). CodeQL's `actions/unpinned-tag` query only flags
+  third-party actions, so these sat on mutable tags unflagged.
+- `micro-gfx` builds SVG as a DOM tree — `createElementNS` for elements,
+  `textContent` for every caller string. No markup is concatenated, so caller
+  text cannot become elements or event handlers, and no external references
+  are emitted so the PNG canvas cannot taint.
+- `corrupted-graph` caps nodes and edges, validates every edge endpoint before
+  render, and truncates over-cap input with a counted warning rather than
+  silently.
+- `audio-spectrum` never calls `getUserMedia`; obtaining a `MediaStream`
+  remains the caller's explicit decision.
+- Release gate re-verified: 0 open code-scanning, Dependabot and
+  secret-scanning alerts.
+
+
 ## [0.3.1] - 2026-07-10
 
 > Adds nine advanced animation-block classes, completing the advanced-blocks set. Everything is additive; every block defaults to `nsfw: false` (`lewdMode`/`includeLewd` are deprecated aliases that warn).

@@ -83,6 +83,17 @@ test('S9: a media element stays audible, and a stream is not echoed back', () =>
     'streams must be excluded from the destination reconnect');
 });
 
+test('an AudioNode source joins its own context instead of a new one', () => {
+  // Nodes cannot be connected across AudioContexts. Creating our own and then
+  // connecting the caller's node throws InvalidAccessError on the first
+  // connect — found in the browser with a real oscillator graph.
+  assert.match(CODE, /this\._audioCtx = src\.context;\s*\n\s*this\._ownsContext = false;/);
+  // The source type must be decided BEFORE any context is constructed.
+  const fn = CODE.match(/_ensureGraph\(\) \{[\s\S]*?\n  \}/)[0];
+  assert.ok(fn.indexOf('const isNode =') < fn.indexOf('new Ctx()'),
+    'source type is resolved before a context is created');
+});
+
 test('the AudioContext is only closed when this instance created it', () => {
   // Closing a context the caller owns would kill their whole audio graph.
   assert.match(CODE, /this\._ownsContext = true/);

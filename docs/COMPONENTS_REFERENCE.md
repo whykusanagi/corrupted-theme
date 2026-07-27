@@ -2443,7 +2443,7 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.3.1, 44 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.2, 50 JS exports)
 
 Container expectations: overlay-suite and block components position themselves
 absolutely inside their container, so give the container `position: relative`
@@ -2461,6 +2461,12 @@ ignore container geometry. Every option below is parsed from the source JSDoc.
 | `@whykusanagi/corrupted-theme/character-corruption` | corruptTextJapanese, corruptTextSemantic, initAutoCorruption, stopAutoCorruption | Character-Level Japanese Corruption Matches Celeste CLI's CorruptTextJapanese() implementation |
 | `@whykusanagi/corrupted-theme/components-js` | initAccordions, toggleCollapse, showCollapse, hideCollapse | Component Helpers JavaScript utilities for interactive Bootstrap-equivalent components |
 | `@whykusanagi/corrupted-theme/carousel` | initCarousel, destroyCarousel | Carousel / Slideshow Component |
+| `@whykusanagi/corrupted-theme/corrupted-globe` | CorruptedGlobe | CorruptedGlobe — orthographic wireframe globe with great-circle arcs. |
+| `@whykusanagi/corrupted-theme/corrupted-graph` | CorruptedGraph | CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic. |
+| `@whykusanagi/corrupted-theme/micro-gfx` | — | MicroGfx — seeded generative instrument graphics. |
+| `@whykusanagi/corrupted-theme/canvas-seek` | createFrameClock, createDissolve | Frame-deterministic canvas rendering. |
+| `@whykusanagi/corrupted-theme/lipsync` | rms, smoothRms, mouthTarget, approach | Audio amplitude envelope — RMS → smoothing → clamped 0..1 target. |
+| `@whykusanagi/corrupted-theme/audio-spectrum` | AudioSpectrum | AudioSpectrum — canvas spectrum driven by real audio. |
 | `@whykusanagi/corrupted-theme/corrupted-vortex` | — | src/lib/corrupted-vortex.js |
 | `@whykusanagi/corrupted-theme/corrupted-particles` | CorruptedParticles | src/lib/corrupted-particles.js |
 | `@whykusanagi/corrupted-theme/corruption-charsets` | — | CorruptionCharsets |
@@ -2609,6 +2615,108 @@ Carousel / Slideshow Component
 | `keyboard` | `boolean` | `true` | Enable keyboard navigation |
 | `touch` | `boolean` | `true` | Enable touch/swipe |
 | `pauseOnHover` | `boolean` | `true` | Pause autoplay on hover |
+### `corrupted-globe`
+
+CorruptedGlobe — orthographic wireframe globe with great-circle arcs.
+
+- npm: `import { CorruptedGlobe } from '@whykusanagi/corrupted-theme/corrupted-globe'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-globe.js`
+- Constructor: `new CorruptedGlobe(canvas, options = {})`
+- Methods: `init()`, `start()`, `stop()`, `destroy()`, `setPoints()`, `fire()`, `rampColor()`, `proj()`, `greatCircle()`
+
+```js
+new CorruptedGlobe(containerEl, { spin: 0.0009, tilt: -18 }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `spin` | `number` | `0.0009` | Rotation in radians per ms; 0 = static |
+| `tilt` | `number` | `-18` | Axial tilt in degrees |
+| `radius` | `number` | `0.42` | Globe radius as a fraction of min(w, h) |
+| `arc` | `object` |  | Arc behaviour |
+| `palette` | `object` |  | Colour overrides; see DEFAULT_PALETTE |
+| `reducedMotion` | `boolean|'auto'` | `'auto'` | Honour prefers-reduced-motion |
+### `corrupted-graph`
+
+CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic.
+
+- npm: `import { CorruptedGraph } from '@whykusanagi/corrupted-theme/corrupted-graph'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-graph.js`
+- Constructor: `new CorruptedGraph(canvas, options = {})`
+- Methods: `init()`, `setData()`, `layout()`, `start()`, `stop()`, `destroy()`, `setFilter()`, `search()`, `focus()`, `fit()`, `nodeAt()`, `reheat()`
+
+```js
+new CorruptedGraph(containerEl, { layout: 'force' }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `layout` | `'force'|'bipartite'|'fixed'` | `'force'` |  |
+| `bipartite` | `object` |  | leftTypes, gap, sort |
+| `nodeShape` | `'glyph'|'circle'` | `'glyph'` |  |
+| `nodeColors` | `Object<string,string>` |  | node type → colour |
+| `edgeStyle` | `'line'|'cable'` | `'cable'` |  |
+| `labelDecode` | `boolean` | `true` | decode labels out of corruption on hover |
+| `idleGlitch` | `number` | `0.02` | per-frame chance a glyph re-rolls |
+| `interactive` | `object` |  | pan, zoom, hover, select, drag |
+| `maxNodes` | `number` | `2000` | hard cap; excess is dropped with a warning |
+| `maxEdges` | `number` | `8000` | hard cap; excess is dropped with a warning |
+| `reducedMotion` | `boolean|'auto'` | `'auto'` |  |
+| `onHover` | `Function|null` |  | (node|null) => void |
+### `micro-gfx`
+
+MicroGfx — seeded generative instrument graphics.
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/micro-gfx'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/micro-gfx.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `seed` | `number|null` | `null` | null picks one; the seed used is returned |
+| `theme` | `'magenta'|'violet'|'mono'|'void'|object` | `'magenta'` |  |
+| `layers` | `object` |  | base, halftone, rails, scanlines, glyphs |
+| `primitives` | `string[]` |  | which instrument primitives to place |
+| `density` | `number` | `0.5` | 0..1, how much of the frame primitives fill |
+| `nsfw` | `boolean` | `false` | allow NSFW phrases in the glyph layer |
+### `canvas-seek`
+
+Frame-deterministic canvas rendering.
+
+- npm: `import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/canvas-seek.js`
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `fps` | `number` | `30` |  |
+| `revealMs` | `number` | `800` |  |
+| `dissolveMs` | `number` | `800` |  |
+### `lipsync`
+
+Audio amplitude envelope — RMS → smoothing → clamped 0..1 target.
+
+- npm: `import { rms } from '@whykusanagi/corrupted-theme/lipsync'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/lipsync.js`
+### `audio-spectrum`
+
+AudioSpectrum — canvas spectrum driven by real audio.
+
+- npm: `import { AudioSpectrum } from '@whykusanagi/corrupted-theme/audio-spectrum'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/audio-spectrum.js`
+- Constructor: `new AudioSpectrum(canvas, options = {})`
+- Methods: `init()`, `resume()`, `setSource()`, `start()`, `stop()`, `destroy()`
+
+```js
+new AudioSpectrum(containerEl, { source: null, bands: 48 }).start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `source` | `HTMLMediaElement|MediaStream|AudioNode|null` | `null` |  |
+| `bands` | `number` | `48` | drawn bars |
+| `smoothing` | `number` | `0.8` | AnalyserNode smoothing, 0..1 |
+| `style` | `'bars'|'mirror'|'terminal'` | `'bars'` |  |
+| `reconnectDestination` | `boolean` | `true` | keep audio audible |
+| `reducedMotion` | `boolean|'auto'` | `'auto'` | / |
 ### `corrupted-vortex`
 
 src/lib/corrupted-vortex.js
@@ -2683,7 +2791,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `finalText` | `string` | `'SYSTEM READY'` | Target text |
 | `duration` | `number` | `2000` | ms |
 | `nsfw` | `boolean` | `false` | include NSFW chars |
-| `color` | `string` | `'#00ffff'` |  |
+| `color` | `string` | `'#ffffff'` |  |
 
 **ProgressBar** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
@@ -2706,7 +2814,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `3000` |  |
-| `color` | `string` | `'#00ffff'` |  |
+| `color` | `string` | `'#ffffff'` |  |
 
 **GlitchPulse** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 

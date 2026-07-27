@@ -1036,10 +1036,10 @@ export class FloatingCardStack {
                             textEl.style.cssText = `
                                 font-family: 'Courier New', monospace;
                                 font-size: 10px;
-                                color: #00ffff;
+                                color: #ffffff;
                                 text-shadow:
-                                    0 0 5px #00ffff,
-                                    0 0 10px #00ffff,
+                                    0 0 5px #ff00ff,
+                                    0 0 10px #ff00ff,
                                     1px 1px 4px rgba(0, 0, 0, 0.9);
                                 line-height: 1.4;
                                 opacity: 0.95;
@@ -1146,7 +1146,7 @@ export class FloatingCardStack {
         // 3-Type Lewd System from CORRUPTED_THEME_SPEC.md
         // Returns HTML with colored spans for revealed (cyan) + corruption (purple/magenta)
 
-        // Type 3: Romaji Glitch Phrases (Cyan #00ffff) - decorative romaji/emoticon glitter (SFW)
+        // Type 3: Romaji Glitch Phrases (Magenta #ff00ff) - decorative romaji/emoticon glitter (SFW)
         const romajiGlitch = [
             'nyaa~', 'ara ara~', 'fufufu~', 'kyaa~', 'baka~',
             '&lt;3', 'uwu', 'owo', '&gt;w&lt;', '^w^'
@@ -1161,9 +1161,9 @@ export class FloatingCardStack {
                 // Type 2: Short phrase (30%) - Magenta
                 return { text: getRandomPhrase(this.nsfw), color: '#d94f90' };
             } else {
-                // Type 3: Romaji (30%) - Cyan
+                // Type 3: Romaji (30%) - Magenta
                 const phrase = romajiGlitch[Math.floor(Math.random() * romajiGlitch.length)];
-                return { text: phrase, color: '#00ffff' };
+                return { text: phrase, color: '#ff00ff' };
             }
         };
 
@@ -1175,8 +1175,8 @@ export class FloatingCardStack {
         const remaining = text.length - revealAmount;
 
         if (remaining <= 0) {
-            // Fully revealed - stable cyan
-            return `<span style="color: #00ffff;">${escapeHtml(revealed)}</span>`;
+            // Fully revealed - stable white
+            return `<span style="color: #ffffff;">${escapeHtml(revealed)}</span>`;
         }
 
         // Get corruption for remaining space
@@ -1184,7 +1184,7 @@ export class FloatingCardStack {
         const chaosBuffer = corruption.text.substring(0, Math.min(remaining, corruption.text.length));
 
         // Return HTML: revealed (stable color) + corruption (type-specific color)
-        return `<span style="color: #00ffff;">${escapeHtml(revealed)}</span><span style="color: ${escapeHtml(corruption.color)}; text-shadow: 0 0 10px ${escapeHtml(corruption.color)};">${escapeHtml(chaosBuffer)}</span>`;
+        return `<span style="color: #ffffff;">${escapeHtml(revealed)}</span><span style="color: ${escapeHtml(corruption.color)}; text-shadow: 0 0 10px ${escapeHtml(corruption.color)};">${escapeHtml(chaosBuffer)}</span>`;
     }
 
     corruptText(text) {
@@ -1221,8 +1221,8 @@ export class FloatingCardStack {
         const remaining = finalText.length - revealedChars;
 
         if (remaining <= 0) {
-            // Fully decoded - stable cyan
-            return `<span style="color: #00ffff; text-shadow: 0 0 10px #00ffff;">${escapeHtml(finalText)}</span>`;
+            // Fully decoded - stable white
+            return `<span style="color: #ffffff; text-shadow: 0 0 10px #ff00ff;">${escapeHtml(finalText)}</span>`;
         }
 
         // Get corruption for unrevealed portion
@@ -1235,15 +1235,15 @@ export class FloatingCardStack {
             chaosBuffer = corruptionText;
         }
 
-        // Return HTML: revealed (cyan) + corruption (type-specific color)
-        return `<span style="color: #00ffff; text-shadow: 0 0 10px #00ffff;">${escapeHtml(revealed)}</span><span style="color: ${escapeHtml(corruption.color)}; text-shadow: 0 0 10px ${escapeHtml(corruption.color)};">${escapeHtml(chaosBuffer)}</span>`;
+        // Return HTML: revealed (white) + corruption (type-specific color)
+        return `<span style="color: #ffffff; text-shadow: 0 0 10px #ff00ff;">${escapeHtml(revealed)}</span><span style="color: ${escapeHtml(corruption.color)}; text-shadow: 0 0 10px ${escapeHtml(corruption.color)};">${escapeHtml(chaosBuffer)}</span>`;
     }
 
     getRandomCorruptionForDecoding() {
         // Returns { text, color } for decoding animation
         const rand = Math.random();
 
-        // Type 3: Romaji Glitch Phrases (Cyan #00ffff) - decorative romaji/emoticon glitter (SFW)
+        // Type 3: Romaji Glitch Phrases (Magenta #ff00ff) - decorative romaji/emoticon glitter (SFW)
         const romajiGlitch = [
             'nyaa~', 'ara ara~', 'fufufu~', 'kyaa~', 'baka~',
             '<3', 'uwu', 'owo', '>w<', '^w^'
@@ -1262,10 +1262,10 @@ export class FloatingCardStack {
                 color: '#d94f90'
             };
         } else {
-            // Type 3: Romaji (30%) - Cyan
+            // Type 3: Romaji (30%) - Magenta
             return {
                 text: romajiGlitch[Math.floor(Math.random() * romajiGlitch.length)],
-                color: '#00ffff'
+                color: '#ff00ff'
             };
         }
     }
@@ -1431,7 +1431,7 @@ export class DataVisualizationDashboard {
                 : false);
 
         // Corrupted theme colors
-        this.colorPrimary = '#00ffff';    // Cyan - stable
+        this.colorPrimary = '#ffffff';    // White - stable/decoded
         this.colorSecondary = '#8b5cf6';  // Purple - deep corruption
         this.colorAccent = '#d94f90';     // Magenta - surface corruption
         this.colorDanger = '#ff0000';     // Red - critical

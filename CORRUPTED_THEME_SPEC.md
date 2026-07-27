@@ -303,7 +303,7 @@ Final:    System Online                    (stable white)
 
 **Concept:** Character-by-character decoding (Pattern 1) WITH phrase flickering in unrevealed portion (Pattern 2). Simulates neural network progressively decoding text while the buffer ahead still contains corrupted phrase fragments.
 
-**What it is:** Revealed text is stable (cyan), unrevealed portion shows phrase snippets from buffer
+**What it is:** Revealed text is stable (white), unrevealed portion shows phrase snippets from buffer
 **Content:** SFW (default) or NSFW (opt-in with `{ nsfw: true }`)
 **Component:** Custom implementation combining `CorruptedText` + phrase buffer
 
@@ -403,9 +403,9 @@ runs a short character-decode burst whose START TIME is delayed
 proportionally to its grid distance from the origin (the "wave").
 
 - **Direction:** chaos → order. The wavefront corrupts; behind it, elements
-  settle to stable cyan (#00ffff). The grid always ends fully readable.
+  settle to stable white (#ffffff). The grid always ends fully readable.
 - **Color ramp by corruption age:** purple (#8b5cf6) at the wavefront →
-  magenta (#ff00ff) mid-decay → cyan (#00ffff) settled.
+  magenta (#ff00ff) mid-decay → white (#ffffff) settled.
 - **Charsets:** standard registry sets only (katakana primary; blocks for
   heavy corruption). Via CorruptionCharsets — never inline.
 - **Use for:** navigation menus, gallery/tile grids, dashboard panels,
@@ -444,10 +444,11 @@ one moment mid-decay.
   composition seed, so the same seed always produces the identical artifact.
   This is non-negotiable — a poster you cannot regenerate is not a design
   system output.
-- **Color = state**, as everywhere else in this spec: cyan (#00ffff) carries
-  the readable, settled readout; purple (#8b5cf6) and magenta (#ff00ff)
-  carry structure and accents; red (#ff0000) is reserved for genuine alarm
-  states and must not be used decoratively.
+- **Color = state**, as everywhere else in this spec: white (#ffffff) carries
+  the readable, settled readout; magenta (#ff00ff) and purple (#8b5cf6)
+  carry corruption and structure; cyan (#00ffff) is an occasional accent
+  only; red (#ff0000) is reserved for genuine alarm states and must not be
+  used decoratively.
 - **Charsets:** standard registry sets via `CorruptionCharsets` — never
   inline. Katakana primary; blocks for heavy corruption.
 - **Use for:** thumbnails, stream cards, social banners, poster exports,
@@ -524,7 +525,7 @@ declarative, with no dependency and no per-pixel JavaScript.
 - "Reality.exe has stopped responding..."
 - "Decrypting protocols..."
 
-**Color Usage:** Mix of cyan (#00ffff), magenta (#d94f90), purple (#8b5cf6)
+**Color Usage:** Mix of magenta2 (#d94f90), magenta (#ff00ff), purple (#8b5cf6)
 
 ---
 
@@ -785,7 +786,7 @@ function corruptedCountdown(label, startValue, endValue) {
 ### Core Tenets
 
 1. **Chaos → Order**: Information emerges from corruption, not the reverse
-2. **Readable Endpoints**: Final state must be readable (cyan, stable)
+2. **Readable Endpoints**: Final state must be readable (white, stable)
 3. **Motion Indicates Instability**: Static = stable, animated = corrupted
 4. **Color = State**: Each color represents a corruption level/type
 5. **Japanese = Foreign/Unknown**: Use foreign scripts for "unreadable" corruption
@@ -891,15 +892,29 @@ corrupted.start();
     Seed-deterministic by requirement.
   - Retroactively noted: **Pattern 4: Staggered Grid Corruption** shipped in
     package 0.3.0 without a version-history entry here.
-  - **Known inconsistency, unresolved:** the 1.1 entry below records a
-    BREAKING change of stable/decoded text from cyan (#00ffff) to white
-    (#ffffff), with cyan "relegated to rare accent use only". That change
-    never reached the implementation. `CLAUDE.md` §7 documents cyan as
-    "Primary text, decoded/stable", Pattern 4 settles elements to cyan, and
-    the shipped components follow suit. Patterns 4 and 5 are written to the
-    de facto convention (cyan = stable). Either the 1.1 entry or the
-    codebase needs to move; this note exists so the next reader does not
-    assume the doc is authoritative here.
+  - **Cyan compliance pass — the 1.1 palette change is now actually applied.**
+    The 1.1 entry below moved stable/decoded text from cyan (#00ffff) to
+    white (#ffffff) and demoted cyan to accent-only. That change reached the
+    palette table and Pattern 1, but never reached Patterns 3 and 4, the
+    "Readable Endpoints" tenet, the SFW phrase colour guidance, the
+    machine-readable `src/data/colors.json`, or the components. This release
+    finishes it:
+    - Patterns 3 and 4, core tenet 2, and the SFW phrase colour guidance now
+      say white, matching the palette table they always contradicted.
+    - `src/data/colors.json` gains `white` and `black`, and its
+      `semanticUse` is corrected — `decoded` was `cyan` (now `white`) and
+      `accent` was `magenta` (now `cyan`, with `corruption: magenta` added).
+    - Components: settled/decoded/revealed text and any colour declared
+      "stable" moved to white; cyan used *as a corruption colour* moved to
+      the magenta family.
+    - Cyan is retained where it is genuinely an accent under the palette
+      table: RGB-split channels (it pairs with #ff0000), glass borders and
+      glows, opt-in `.corrupted-ghost-cyan` / `.glass-container-cyan`
+      variants, and structural grid chrome.
+    - **Note for `CLAUDE.md` §7**, which still documents cyan as "Primary
+      text, decoded/stable" and omits white and black entirely. That section
+      now contradicts this spec. `CLAUDE.md` is read-only policy per its own
+      §4.3, so it is left for the maintainer to update.
 
 - **1.1** (2026-01-15): Content classification normalization & terminology clarification
   - **BREAKING**: Changed from 3-type to 2-class system (SFW/NSFW)

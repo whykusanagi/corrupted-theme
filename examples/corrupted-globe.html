@@ -8,7 +8,7 @@
   CorruptedGlobe: orthographic wireframe globe with great-circle arcs.
   Arcs slerp between lat/lon pairs and lift off the surface in 3D, so limb
   occlusion stays correct as they cross the edge. Weight drives both arc
-  width and the palette ramp: cyan (low) -> magenta2 (mid) -> magenta (high),
+  width and the palette ramp: white (low) -> magenta2 (mid) -> magenta (high),
   per CORRUPTED_THEME_SPEC.md "Color = State".
 
   Canvas 2D, zero dependencies, no map data — the sphere is a graticule.
@@ -26,15 +26,15 @@
   #globe { width: 100%; height: 100%; display: block; touch-action: none; cursor: grab; }
   #globe:active { cursor: grabbing; }
   .hud { position: absolute; top: 14px; left: 14px; pointer-events: none; }
-  .hud .v { font-size: 1.3rem; font-weight: bold; color: #00ffff;
-    text-shadow: 0 0 12px rgba(0,255,255,.5); }
+  .hud .v { font-size: 1.3rem; font-weight: bold; color: #ffffff;
+    text-shadow: 0 0 12px rgba(255,0,255,.5); }
   .hud .k { font-size: .72rem; color: var(--text-muted); }
   .legend { position: absolute; bottom: 14px; left: 14px; display: flex; flex-wrap: wrap;
     gap: .7rem; font-size: .66rem; color: var(--text-muted); pointer-events: none; }
   .legend i { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
     margin-right: .3rem; vertical-align: middle; }
   .panel { display: flex; flex-direction: column; gap: 10px; }
-  .panel h3 { margin: 0 0 4px; font-size: .95rem; color: #00ffff; }
+  .panel h3 { margin: 0 0 4px; font-size: .95rem; color: #ff00ff; }
   .panel p { margin: 0; font-size: .78rem; color: var(--text-muted); line-height: 1.5; }
   .row { display: flex; gap: 8px; flex-wrap: wrap; }
   .hint { max-width: 1180px; margin: 20px auto 60px; padding: 0 24px;
@@ -123,7 +123,7 @@
     </div>
     <div class="legend">
       <span><i style="background:#00ff00"></i>origin</span>
-      <span><i style="background:#00ffff"></i>low</span>
+      <span><i style="background:#ffffff"></i>low</span>
       <span><i style="background:#d94f90"></i>mid</span>
       <span><i style="background:#ff00ff"></i>high</span>
     </div>

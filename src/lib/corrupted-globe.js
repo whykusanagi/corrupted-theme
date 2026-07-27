@@ -32,17 +32,19 @@ const D2R = Math.PI / 180;
 
 const DEFAULT_PALETTE = {
   sphere:    'rgba(8,6,18,0.82)',
-  limb:      'rgba(0,255,255,0.28)',
+  limb:      'rgba(0,255,255,0.28)',  // the one cyan accent — spec: highlight use only
   graticule: 'rgba(139,92,246,0.16)',
   glowInner: 'rgba(139,92,246,0.10)',
-  glowOuter: 'rgba(0,255,255,0.05)',
-  origin:     'rgba(0,255,0,0.9)',
+  glowOuter: 'rgba(139,92,246,0.05)',
+  origin:     'rgba(0,255,0,0.9)',    // green = system reference (spec)
   originRing: '0,255,0',   // rgb triplet — alpha is animated by the pulse
   impact:     '255,0,255', // rgb triplet — alpha is animated by ring expansion
+  // Volume ramp reads as rising corruption: stable white -> playful magenta2
+  // -> primary magenta. Per CORRUPTED_THEME_SPEC.md "Color Palette".
   ramp: [
-    'rgba(0,255,255,0.75)',   // low    — settled cyan
-    'rgba(217,79,144,0.85)',  // mid    — magenta2
-    'rgba(255,0,255,0.95)',   // high   — magenta
+    'rgba(255,255,255,0.75)', // low    — white, stable/quiet
+    'rgba(217,79,144,0.85)',  // mid    — magenta2, high-energy
+    'rgba(255,0,255,0.95)',   // high   — magenta, primary corruption
   ],
 };
 

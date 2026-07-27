@@ -3,20 +3,24 @@
 export default {
   "schemaVersion": "1.0",
   "palette": {
-    "cyan": "#00ffff",
+    "white": "#ffffff",
+    "black": "#000000",
     "magenta": "#ff00ff",
     "purple": "#8b5cf6",
     "magenta2": "#d94f90",
     "red": "#ff0000",
+    "cyan": "#00ffff",
     "green": "#00ff00"
   },
   "semanticUse": {
-    "decoded": "cyan",
-    "corrupting": "magenta2",
+    "decoded": "white",
+    "void": "black",
+    "corruption": "magenta",
     "intimate": "purple",
+    "corrupting": "magenta2",
     "critical": "red",
-    "system": "green",
-    "accent": "magenta"
+    "accent": "cyan",
+    "system": "green"
   },
   "tierPaletteNotes": "Tier/role/element palettes (e.g., nikke's NIKKE-game tier colors) are downstream concerns and intentionally NOT in this file."
 };

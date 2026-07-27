@@ -11,12 +11,11 @@ const LAYERS = [
   { name: 'near', weight: 0.20, minSize: 16, maxSize: 20, minSpeed: 0.8, maxSpeed: 1.4, minOpacity: 0.60, maxOpacity: 0.80 },
 ];
 
-const CYAN    = '#00ffff';  // --corrupted-cyan
-const PURPLE  = '#8b5cf6';  // --corrupted-purple
-const MAGENTA = '#ff00ff';  // --corrupted-magenta
-const CYAN_RGB    = { r: 0,   g: 255, b: 255 };
-const PURPLE_RGB  = { r: 139, g: 92,  b: 246 };
-const MAGENTA_RGB = { r: 255, g: 0,   b: 255 };
+// Spec palette: SFW/playful corruption is magenta2, deep/NSFW is purple or
+// magenta. Cyan is accent-only and so is not a phrase colour.
+const MAGENTA2_RGB = { r: 217, g: 79,  b: 144 };
+const PURPLE_RGB   = { r: 139, g: 92,  b: 246 };
+const MAGENTA_RGB  = { r: 255, g: 0,   b: 255 };
 
 export class CorruptedParticles {
   /** @internal — tracks whether the includeLewd deprecation warning has fired */
@@ -99,7 +98,7 @@ export class CorruptedParticles {
     const lewd      = this.options.nsfw && NSFW_PHRASES.includes(phrase);
     const colorRgb  = lewd
       ? (Math.random() < 0.5 ? MAGENTA_RGB : PURPLE_RGB)
-      : CYAN_RGB;
+      : MAGENTA2_RGB;
     return {
       x, y,
       vx: Math.cos(angle) * speed,
@@ -238,7 +237,7 @@ export class CorruptedParticles {
         const lineAlpha = (1 - ldist / LINE_DIST) * 0.4;
         const rgb       = (a.lewd || b.lewd)
           ? (a.lewd ? a.colorRgb : b.colorRgb)
-          : CYAN_RGB;
+          : MAGENTA2_RGB;
 
         this.ctx.beginPath();
         this.ctx.strokeStyle = `rgba(${rgb.r},${rgb.g},${rgb.b},${lineAlpha})`;

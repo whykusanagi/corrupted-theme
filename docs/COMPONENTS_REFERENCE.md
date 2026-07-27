@@ -2775,6 +2775,7 @@ new CorruptedGlobe(containerEl, { origin: {lat:0,lon:0}, points: [ }).start();
 | `graticule` | `{parallels:number,meridians:number}|false` |  | Grid step in degrees |
 | `arc` | `{lift:number, duration:number, trail:number, steps:number, impactRing:boolean}` |  | arc flight behaviour; see the arc.* entries below |
 | `palette` | `object` |  | Colour overrides; see DEFAULT_PALETTE |
+| `maxArcs` | `number` | `200` | Cap on queued arcs; the oldest is dropped past it |
 | `interactive` | `{drag:boolean}` |  | Pointer drag to rotate |
 | `reducedMotion` | `boolean|'auto'` | `'auto'` | Honour prefers-reduced-motion |
 ### `corrupted-graph`

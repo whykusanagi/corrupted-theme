@@ -71,6 +71,7 @@ const isLatLon = p =>
  * @param {number}  [options.arc.steps=44]      - Polyline resolution
  * @param {boolean} [options.arc.impactRing=true] - Expanding ring on landing
  * @param {object}  [options.palette]       - Colour overrides; see DEFAULT_PALETTE
+ * @param {number}  [options.maxArcs=200]   - Cap on queued arcs; the oldest is dropped past it
  * @param {{drag:boolean}} [options.interactive] - Pointer drag to rotate
  * @param {boolean|'auto'} [options.reducedMotion='auto'] - Honour prefers-reduced-motion
  */
@@ -95,6 +96,7 @@ export class CorruptedGlobe {
         steps:      arc.steps ?? 44,
         impactRing: arc.impactRing ?? true,
       },
+      maxArcs:     Math.max(1, options.maxArcs ?? 200),
       palette:     { ...DEFAULT_PALETTE, ...(options.palette || {}) },
       interactive: { drag: true, ...(options.interactive || {}) },
       reducedMotion: options.reducedMotion ?? 'auto',
@@ -230,6 +232,11 @@ export class CorruptedGlobe {
    */
   fire(from, opts = {}) {
     if (this._destroyed || !isLatLon(from)) return this;
+    // Bound the queue. Arcs are only expired by the render loop, and the
+    // IntersectionObserver stops that loop when the globe scrolls out of
+    // view — so a caller firing on a timer would queue without limit and then
+    // try to animate the entire backlog the moment it scrolls back.
+    if (this.arcs.length >= this.options.maxArcs) this.arcs.shift();
     const to = isLatLon(opts.to) ? opts.to : this.options.origin;
     const weight = Math.min(Math.max(opts.weight ?? 0.5, 0), 1);
     this.arcs.push({

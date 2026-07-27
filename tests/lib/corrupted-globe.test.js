@@ -91,6 +91,27 @@ test('fire() honours an explicit `to` and colour override', () => {
   assert.equal(g.arcs[0].color, '#abcdef');
 });
 
+test('the arc queue is bounded while the render loop is stopped', () => {
+  // Arcs only expire inside the draw loop, and the IntersectionObserver stops
+  // that loop when the globe scrolls out of view. Unbounded, a caller firing
+  // on a timer queues forever and then animates the whole backlog at once.
+  const g = new CorruptedGlobe(null, { maxArcs: 50 });
+  for (let i = 0; i < 5000; i++) g.fire({ lat: 51, lon: 0 });
+  assert.equal(g.arcs.length, 50, 'queue is capped');
+});
+
+test('the cap drops the OLDEST arc, so the newest are the ones shown', () => {
+  const g = new CorruptedGlobe(null, { maxArcs: 3 });
+  for (const lat of [10, 20, 30, 40, 50]) g.fire({ lat, lon: 0 });
+  assert.deepEqual(g.arcs.map(a => a.from.lat), [30, 40, 50]);
+});
+
+test('maxArcs defaults sensibly and cannot be zero', () => {
+  assert.equal(new CorruptedGlobe(null).options.maxArcs, 200);
+  assert.equal(new CorruptedGlobe(null, { maxArcs: 0 }).options.maxArcs, 1);
+  assert.equal(new CorruptedGlobe(null, { maxArcs: -5 }).options.maxArcs, 1);
+});
+
 test('greatCircle: endpoints exact, equator midpoint is the true midpoint', () => {
   const near = (a, b, eps = 1e-9) => assert.ok(Math.abs(a - b) < eps, `${a} !== ${b}`);
 

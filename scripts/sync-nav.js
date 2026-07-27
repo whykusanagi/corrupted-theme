@@ -60,6 +60,7 @@ export const NAV = [
       { label: 'Advanced Blocks (0.3.1)', icon: 'fa-clapperboard', target: 'examples/anime-blocks-advanced.html' },
       { label: 'Corrupted Globe', icon: 'fa-globe', target: 'examples/corrupted-globe.html' },
       { label: 'Corrupted Graph', icon: 'fa-circle-nodes', target: 'examples/corrupted-graph.html' },
+      { label: 'MicroGfx Posters', icon: 'fa-vector-square', target: 'examples/micro-gfx.html' },
       { label: 'Animation Blocks', icon: 'fa-film', target: 'examples/animation-blocks/index.html' },
       { label: 'CRT Effects', icon: 'fa-tv', target: 'examples/advanced/crt-effects.html' },
       { label: 'Decrypt Reveal', icon: 'fa-key', target: 'examples/advanced/decrypt-reveal.html' },

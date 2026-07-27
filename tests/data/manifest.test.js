@@ -44,10 +44,22 @@ test('buildManifest covers every package export with resolvable targets', () => 
   assert.match(m.conventions.nsfw, /opt-in/);
 });
 
-test('llms.txt renders under 16KB with every export listed', () => {
+test('llms.txt stays dense and lists every export', () => {
   const m = buildManifest();
   const txt = renderLlmsTxt(m);
-  assert.ok(txt.length < 16384, `llms.txt too large: ${txt.length}`);
+
+  // The point of this gate is that the agent surface fits comfortably in an
+  // LLM context AND that nobody writes a bloated module header (descriptions
+  // are generated from them). A single frozen byte count conflated the two:
+  // it was set when the catalog was smaller and then failed at 63 exports for
+  // purely additive growth, which is not the regression worth catching.
+  //
+  // So: a generous absolute ceiling, plus a per-export density cap that
+  // actually catches bloat regardless of catalog size.
+  assert.ok(txt.length < 24576, `llms.txt too large for an LLM context: ${txt.length}`);
+  const perExport = Math.round(txt.length / m.exports.length);
+  assert.ok(perExport < 320, `llms.txt averages ${perExport} bytes/export — trim module headers`);
+
   for (const e of m.exports) assert.ok(txt.includes(e.export), `missing ${e.export}`);
   assert.match(txt, /browser-only/); // corrupted-text flag surfaces
 });

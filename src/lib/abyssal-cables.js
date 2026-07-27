@@ -30,7 +30,7 @@ export class AbyssalCableSystem {
             end: { x: endX, y: endY },
             controlPoints: this.generateControlPoints(startX, startY, endX, endY, options),
             thickness: options.thickness || 2,
-            color: options.color || '#00ffff',
+            color: options.color || '#d94f90',
             glowColor: options.glowColor || '#8b5cf6',
             alpha: options.alpha !== undefined ? options.alpha : 1.0,
             textFlow: options.textFlow !== undefined ? options.textFlow : true,

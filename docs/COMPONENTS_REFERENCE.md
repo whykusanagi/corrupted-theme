@@ -2443,12 +2443,23 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.3.1, 44 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.2, 50 JS exports)
 
 Container expectations: overlay-suite and block components position themselves
 absolutely inside their container, so give the container `position: relative`
 and a size. The full-viewport canvas transitions render `position: fixed` and
 ignore container geometry. Every option below is parsed from the source JSDoc.
+
+Canvas components (`corrupted-globe`, `corrupted-graph`, `audio-spectrum`) take
+a `<canvas>` and size their backing store for the display. Give the canvas a
+size in CSS; a bare `<canvas width="600">` with no CSS size also works, but its
+layout box is then pinned to that first measurement rather than staying
+responsive.
+
+The CDN URLs below resolve against the published `@latest`. Working from a
+checkout of this repo, or against a version that is not published yet, import
+from the local tree instead — e.g.
+`import { CorruptedGlobe } from '../src/lib/corrupted-globe.js'`.
 
 | Import | API | Purpose |
 |---|---|---|
@@ -2461,6 +2472,12 @@ ignore container geometry. Every option below is parsed from the source JSDoc.
 | `@whykusanagi/corrupted-theme/character-corruption` | corruptTextJapanese, corruptTextSemantic, initAutoCorruption, stopAutoCorruption | Character-Level Japanese Corruption Matches Celeste CLI's CorruptTextJapanese() implementation |
 | `@whykusanagi/corrupted-theme/components-js` | initAccordions, toggleCollapse, showCollapse, hideCollapse | Component Helpers JavaScript utilities for interactive Bootstrap-equivalent components |
 | `@whykusanagi/corrupted-theme/carousel` | initCarousel, destroyCarousel | Carousel / Slideshow Component |
+| `@whykusanagi/corrupted-theme/corrupted-globe` | CorruptedGlobe | CorruptedGlobe — orthographic wireframe globe with great-circle arcs. |
+| `@whykusanagi/corrupted-theme/corrupted-graph` | CorruptedGraph | CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic. |
+| `@whykusanagi/corrupted-theme/micro-gfx` | — | MicroGfx — seeded generative instrument graphics. |
+| `@whykusanagi/corrupted-theme/canvas-seek` | createFrameClock, createDissolve | Frame-deterministic canvas rendering. |
+| `@whykusanagi/corrupted-theme/lipsync` | rms, smoothRms, mouthTarget, approach | Audio amplitude envelope — RMS → smoothing → clamped 0..1 target. |
+| `@whykusanagi/corrupted-theme/audio-spectrum` | AudioSpectrum | AudioSpectrum — canvas spectrum driven by real audio. |
 | `@whykusanagi/corrupted-theme/corrupted-vortex` | — | src/lib/corrupted-vortex.js |
 | `@whykusanagi/corrupted-theme/corrupted-particles` | CorruptedParticles | src/lib/corrupted-particles.js |
 | `@whykusanagi/corrupted-theme/corruption-charsets` | — | CorruptionCharsets |
@@ -2503,6 +2520,13 @@ gallery.js — Gallery System with Lightbox and NSFW Support
 
 - npm: `import { initGallery } from '@whykusanagi/corrupted-theme/gallery'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/gallery.js`
+- Functions:
+  - `initGallery(selector = '.gallery-container', options = {})` → `Gallery` — Initializes a gallery instance
+    - `selector` (default `'.gallery-container'`): `string|HTMLElement` — Gallery container selector or element
+    - `options` (default `{}`): `Object` — Configuration options
+    - returns: Gallery instance with filter, openLightbox, closeLightbox, destroy, etc.
+  - `destroyGallery(instance)` — Destroys a gallery instance. If no instance is passed, destroys the default instance.
+    - `instance`: `Gallery` — Gallery instance to destroy
 ### `lightbox`
 
 lightbox.js — Standalone Lightbox for the Corrupted Theme
@@ -2510,7 +2534,15 @@ lightbox.js — Standalone Lightbox for the Corrupted Theme
 - npm: `import { Lightbox } from '@whykusanagi/corrupted-theme/lightbox'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/lightbox.js`
 - Constructor: `new Lightbox(_unused, options = {})`
-- Methods: `setImages()`, `open()`, `close()`, `navigate()`, `destroy()`
+- Methods:
+  - `setImages(images)` — Replace the image list. Accepts the same shape gallery.js produces:
+    - `images`: `Array<object>`
+  - `open(index)` — Open the lightbox at the given index.
+    - `index`: `number`
+  - `close()` — Close the lightbox.
+  - `navigate(direction)` — Navigate to the next (+1) or previous (-1) image.
+    - `direction`: `number` — 1 or -1
+  - `destroy()` — Remove DOM element, cancel all event listeners, and release state.
 
 ```js
 new Lightbox(containerEl).start();
@@ -2521,6 +2553,42 @@ countdown-widget.js — Event Countdown Widget with Configurable Shapes
 
 - npm: `import { initCountdown } from '@whykusanagi/corrupted-theme/countdown'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/countdown-widget.js`
+- Properties:
+  - `title`: `string` — Title displayed above countdown
+  - `eventDate`: `string` — ISO 8601 date string for target time
+  - `[basicMessage]`: `string` — Short description
+  - `[detailedMessage]`: `string` — HTML message with links
+  - `[completedMessage]`: `string` — Message shown when countdown ends
+  - `[style='compact']`: `string` — Widget style variant
+  - `[character]`: `CharacterConfig` — Character image configuration
+  - `[popup]`: `PopupConfig` — Popup message configuration
+  - `[colors]`: `Object` — Popup color overrides
+  - `image`: `string` — Character image URL or path
+  - `[rotation=0]`: `number` — Image rotation in degrees
+  - `[objectPosition]`: `string` — CSS object-position value
+  - `[background]`: `BackgroundConfig` — Shape background config
+  - `[overlay]`: `OverlayConfig` — Overlay image config
+  - `[type='diamond']`: `string` — Shape type
+  - `[color]`: `string` — CSS background value
+  - `[borderColor]`: `string` — Hex color for border
+  - `[pattern=false]`: `boolean` — Use pattern overlay
+  - `[image]`: `string` — Overlay image URL
+  - `[position='behind']`: `string` — 'behind' or 'front'
+  - `[animation]`: `string` — Animation type ('float' or null)
+  - `[rotation]`: `number` — Overlay rotation
+  - `message`: `string` — HTML content for popup
+  - `[frequency=10000]`: `number` — Ms between popups
+  - `[duration=5000]`: `number` — Ms popup stays visible
+- Functions:
+  - `initCountdown(options = {})` → `Promise<Object>` — Initializes the countdown widget
+    - `options`: `Object` — Initialization options
+    - `options.event`: `string` — Event name to load config from JSON
+    - `options.config`: `CountdownConfig` — Inline configuration
+    - `options.containerId`: `string` — Container element ID
+    - `options.configPath`: `string` — Path to config JSON files
+    - `options.assetBasePath`: `string` — Base path for assets
+    - returns: Widget API
+  - `destroyCountdown()` — Destroys the countdown widget and cleans up resources
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2535,6 +2603,31 @@ Typing Animation with Buffer Corruption
 
 - npm: `import { … } from '@whykusanagi/corrupted-theme/typing-animation'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/typing-animation.js`
+
+_SFW Mode (Default)_
+```js
+```javascript
+const element = document.querySelector('.typing-text');
+const typing = new TypingAnimation(element, {
+  duration: 2000,         // 2s total regardless of text length
+  loop: true,
+  loopDelay: 1500,
+  // nsfw: false (default - SFW phrases only)
+});
+
+typing.start('Neural corruption detected...');
+```
+```
+
+_NSFW Mode (Explicit Opt-in)_
+```js
+```javascript
+// ⚠️ 18+ Content Warning
+const typing = new TypingAnimation(element, {
+  nsfw: true  // Explicit opt-in for NSFW phrases
+});
+```
+```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2555,6 +2648,37 @@ Corrupted Text Animation
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-text.js`
 - Browser-only: touches `document` at import time (do not import in Node/SSR)
 
+_Basic Usage (Auto-initialization via data attributes)_
+```js
+```html
+<span class="corrupted-multilang"
+      data-english="Hello World"
+      data-romaji="konnichiwa"
+      data-hiragana="こんにちは"
+      data-katakana="コンニチハ"
+      data-kanji="今日は">
+</span>
+```
+```
+
+_Manual Initialization_
+```js
+```javascript
+const element = document.querySelector('.my-text');
+const corrupted = new CorruptedText(element, {
+  duration: 3000,
+  cycleDelay: 100,
+  loop: true
+});
+
+// Control playback
+corrupted.start();
+corrupted.stop();
+corrupted.restart();
+corrupted.settle('Final Text');
+```
+```
+
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `3000` | Total animation duration in milliseconds |
@@ -2574,6 +2698,34 @@ Character-Level Japanese Corruption Matches Celeste CLI's CorruptTextJapanese() 
 
 - npm: `import { corruptTextJapanese } from '@whykusanagi/corrupted-theme/character-corruption'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/character-corruption.js`
+- Functions:
+  - `corruptTextJapanese(text, intensity = 0.3)` → `string` — Corrupt text with character-level Japanese mixing
+    - `text`: `string` — English text to corrupt
+    - `intensity` (default `0.3`): `number` — Corruption intensity (0.0-0.45)
+    - returns: Corrupted text with Japanese characters mixed in
+  - `corruptTextSemantic(text, context = 'default', intensity = 0.3)` → `string` — Semantic corruption with context-aware character selection.
+    - `text`: `string` — Text to corrupt
+    - `context` (default `'default'`): `string` — One of SEMANTIC_CONTEXTS, or 'default'
+    - `intensity` (default `0.3`): `number` — Corruption intensity, 0..1
+    - returns: Contextually corrupted text
+  - `initAutoCorruption()` — Auto-corrupt DOM elements with data attributes
+  - `stopAutoCorruption(element)` — Stop auto-corruption for a specific element
+    - `element`: `HTMLElement` — Element to stop corrupting
+  - `restartAutoCorruption(element)` — Restart auto-corruption for a specific element
+    - `element`: `HTMLElement` — Element to restart corruption
+  - `destroyAllAutoCorruption()` — Stop all active auto-corruption intervals
+  - `createCorruptedElement(text, options = {})` → `HTMLElement` — Utility: Create a corrupted text element
+    - `text`: `string` — Original text
+    - `options` (default `{}`): `Object` — Configuration options
+    - `options.intensity` (default `0.35`): `number` — Corruption intensity
+    - `options.interval` (default `3000`): `number` — Re-corruption interval (0 = no repeat)
+    - `options.className` (default `''`): `string` — Additional CSS classes
+    - `options.tag` (default `'span'`): `string` — HTML tag to create
+    - returns: Created element with auto-corruption
+  - `getRandomPhrase(category, subcategory = null)` → `string` — Get a random phrase from a specific category
+    - `category`: `string` — Category from CORRUPTION_PHRASES or PERSONALITY_PHRASES
+    - `subcategory`: `string` — Subcategory (for PERSONALITY_PHRASES: 'english', 'japanese', 'romaji')
+    - returns: Random phrase from the category
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2587,6 +2739,22 @@ Component Helpers JavaScript utilities for interactive Bootstrap-equivalent comp
 
 - npm: `import { initAccordions } from '@whykusanagi/corrupted-theme/components-js'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/components.js`
+- Functions:
+  - `initAccordions()` — Initialize all accordions on the page
+  - `toggleCollapse(element)` — Toggle a collapse element
+    - `element`: `HTMLElement|string` — Element or selector
+  - `showCollapse(element)` — Show a collapse element
+    - `element`: `HTMLElement|string` — Element or selector
+  - `hideCollapse(element)` — Hide a collapse element
+    - `element`: `HTMLElement|string` — Element or selector
+  - `showToast(options)` → `HTMLElement` — Show a toast notification
+    - `options`: `Object` — Toast configuration
+    - returns: Toast element
+  - `openModal(selector)` — Open a modal by selector
+    - `selector`: `string|HTMLElement`
+  - `closeModal(selector)` — Close a modal by selector
+    - `selector`: `string|HTMLElement`
+  - `destroyComponents()` — Destroy all component managers and clean up listeners.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2599,6 +2767,13 @@ Carousel / Slideshow Component
 
 - npm: `import { initCarousel } from '@whykusanagi/corrupted-theme/carousel'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/carousel.js`
+- Functions:
+  - `initCarousel(selector = '.carousel', options = {})` → `Carousel` — Initialize a carousel instance
+    - `selector` (default `'.carousel'`): `string|HTMLElement` — Carousel container
+    - `options` (default `{}`): `Object` — Configuration options
+    - returns: Carousel instance
+  - `destroyCarousel(instance)` — Destroy a carousel instance
+    - `instance`: `Carousel` — Instance to destroy (default: first created)
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2609,6 +2784,271 @@ Carousel / Slideshow Component
 | `keyboard` | `boolean` | `true` | Enable keyboard navigation |
 | `touch` | `boolean` | `true` | Enable touch/swipe |
 | `pauseOnHover` | `boolean` | `true` | Pause autoplay on hover |
+### `corrupted-globe`
+
+CorruptedGlobe — orthographic wireframe globe with great-circle arcs.
+
+- npm: `import { CorruptedGlobe } from '@whykusanagi/corrupted-theme/corrupted-globe'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-globe.js`
+- Constructor: `new CorruptedGlobe(canvas, options = {})`
+- Methods:
+  - `init()`
+  - `start()` → `this` — Start the animation loop. Idempotent.
+  - `stop()` — Stop the animation loop. Reusable.
+  - `destroy()` — Tear down and release references. Not reusable after.
+  - `setPoints(points)` → `this` — Replace the static marker set. Invalid coordinates are dropped with a
+    - `points`: `Array<{lat:number,lon:number,weight?:number,color?:string}>`
+  - `fire(from, opts = {})` → `this` — Launch an arc. Travels `from` → `to` (defaults to `options.origin`).
+    - `from`: `{lat:number,lon:number}`
+    - `opts`: `object`
+    - `opts.to`: `{lat:number,lon:number}` — Endpoint; defaults to origin
+    - `opts.weight`: `number` — 0..1, drives width and ramp colour
+    - `opts.color`: `string` — Explicit colour, overrides the ramp
+  - `rampColor(weight)` → `string` — Map a normalised weight onto the palette ramp.
+    - `weight`: `number` — 0..1
+    - returns: rgba colour
+  - `proj(lat, lon, r = 1)` → `{x:number,y:number,vis:boolean,z:number}` — Project lat/lon onto the canvas.
+    - `lat`: `number`
+    - `lon`: `number`
+    - `r`: `number` — Radius multiplier; > 1 lifts the point off the surface
+  - `CorruptedGlobe.greatCircle(lat1, lon1, lat2, lon2, t)` → `[number, number]` _(static — call on the class, not an instance)_ — Great-circle interpolation via slerp on unit vectors.
+    - `lat1`: `number`
+    - `lat2`: `number`
+    - `t`: `number` — 0..1
+    - returns: [lat, lon]
+
+_Traffic converging on one location_
+```js
+import { CorruptedGlobe } from '@whykusanagi/corrupted-theme/corrupted-globe';
+const globe = new CorruptedGlobe(canvasEl, {
+  origin: { lat: 37.77, lon: -122.42 },
+  points: [{ lat: 51.5, lon: -0.13, weight: 0.8 }],
+});
+globe.start();
+globe.fire({ lat: 51.5, lon: -0.13 }, { weight: 0.8 });
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `origin` | `{lat:number,lon:number}` | `{lat:0,lon:0}` | Default arc endpoint |
+| `points` | `Array<{lat:number,lon:number,weight?:number,color?:string}>` | `[]` | Static markers |
+| `spin` | `number` | `0.0009` | Rotation in radians per ms; 0 = static |
+| `tilt` | `number` | `-18` | Axial tilt in degrees |
+| `radius` | `number` | `0.42` | Globe radius as a fraction of min(w, h) |
+| `graticule` | `{parallels:number,meridians:number}|false` |  | Grid step in degrees |
+| `arc` | `{lift:number, duration:number, trail:number, steps:number, impactRing:boolean}` |  | arc flight behaviour; see the arc.* entries below |
+| `palette` | `object` |  | Colour overrides; see DEFAULT_PALETTE |
+| `maxArcs` | `number` | `200` | Cap on queued arcs; the oldest is dropped past it |
+| `interactive` | `{drag:boolean}` |  | Pointer drag to rotate |
+| `reducedMotion` | `boolean|'auto'` | `'auto'` | Honour prefers-reduced-motion |
+### `corrupted-graph`
+
+CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic.
+
+- npm: `import { CorruptedGraph } from '@whykusanagi/corrupted-theme/corrupted-graph'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-graph.js`
+- Constructor: `new CorruptedGraph(canvas, options = {})`
+- Methods:
+  - `init()`
+  - `setData({ nodes = [], edges = [] } = {})` → `this` — Replace the graph. Layout runs synchronously here, not per frame.
+    - `data`: `{nodes:Array, edges:Array}`
+  - `layout()` → `this` — Recompute node positions. Called by setData; call again after changing
+  - `start()` — Start the render loop. Idempotent.
+  - `stop()` — Stop the render loop. Reusable.
+  - `destroy()` — Tear down and release references. Not reusable after.
+  - `setFilter(fn)` — Dim everything the predicate rejects. `null` clears.
+    - `fn`: `((node:object)=>boolean)|null`
+  - `search(query)` — Convenience filter over id and type. Empty string clears.
+    - `query`: `string`
+  - `focus(id)` — Centre the view on a node by id.
+  - `fit()` — Reset pan and zoom so the whole graph is in frame.
+  - `nodeAt(x, y)` — The node under a canvas-space point, or null.
+  - `reheat(alpha = 0.4)` — Reheat so the graph responds to an interaction.
+
+_Bipartite — accounts on the left, shared attributes on the right_
+```js
+import { CorruptedGraph } from '@whykusanagi/corrupted-theme/corrupted-graph';
+const g = new CorruptedGraph(canvasEl, {
+  nodes: [{ id: 'a1', type: 'account' }, { id: 'ip:1.2.3.4', type: 'ip' }],
+  edges: [{ source: 'a1', target: 'ip:1.2.3.4' }],
+  layout: 'bipartite',
+  bipartite: { leftTypes: ['account'] },
+});
+g.start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `nodes` | `Array<{id:string,type?:string,weight?:number,x?:number,y?:number}>` | `[]` |  |
+| `edges` | `Array<{source:string|number,target:string|number,weight?:number}>` | `[]` |  |
+| `layout` | `'force'|'bipartite'|'fixed'` | `'force'` |  |
+| `force` | `{charge:number, linkDistance:number, linkStrength:number, gravity:number, damping:number, alphaMin:number, maxTicks:number}` |  | charge is negative (repulsion, default -120); linkDistance is the spring rest length in layout units (default 40) |
+| `bipartite` | `{leftTypes:string[], gap:number, sort:'degree'|'weight'|'id'}` |  | leftTypes are node `type` values placed in the left column; gap is column separation as a fraction of width (default 0.6); sort orders each column (default 'degree') |
+| `nodeShape` | `'glyph'|'circle'` | `'glyph'` |  |
+| `glyphSet` | `string` | `'katakana'` | CorruptionCharsets key |
+| `nodeColors` | `Object<string,string>` |  | node type → colour |
+| `edgeStyle` | `'line'|'cable'` | `'cable'` |  |
+| `labels` | `'none'|'hover'|'always'` | `'hover'` |  |
+| `labelDecode` | `boolean` | `true` | decode labels out of corruption on hover |
+| `idleGlitch` | `number` | `0.02` | per-frame chance a glyph re-rolls |
+| `interactive` | `{pan:boolean, zoom:boolean, hover:boolean, select:boolean, drag:boolean}` |  | all default true; drag applies to force layout only |
+| `padding` | `number|{top:number,right:number,bottom:number,left:number}` | `26` | inset from the canvas edge |
+| `maxNodes` | `number` | `2000` | hard cap; excess is dropped with a warning |
+| `maxEdges` | `number` | `8000` | hard cap; excess is dropped with a warning |
+| `reducedMotion` | `boolean|'auto'` | `'auto'` |  |
+| `onSelect` | `Function|null` |  | (node|null) => void; caller owns any HTML |
+| `onHover` | `Function|null` |  | (node|null) => void |
+### `micro-gfx`
+
+MicroGfx — seeded generative instrument graphics.
+
+- npm: `import { … } from '@whykusanagi/corrupted-theme/micro-gfx'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/micro-gfx.js`
+- Properties:
+  - `formats`: `object` — Named pixel sizes for the `format` option: `card` 1200x630, `banner` 1500x500, `poster` 1080x1350, `portrait` 1080x1920, `square` 1080x1080. Pass `{w, h}` for anything else.
+  - `themes`: `string[]` — Valid `theme` values: magenta, violet, mono, void. All four are dark grounds; use `polarity: 'paper'` for a pale one.
+  - `primitives`: `string[]` — Valid `primitives` entries: barcode, dotMatrix, gaugeStack, histogram, coordReadout, dimension, sparkline, keyValue, qr.
+- `MicroGfx` methods:
+  - `MicroGfx.generate(options = {})` → `{svg:string, node:SVGSVGElement, seed:number, width:number, height:number}` — Build one artwork.
+    - `options` (default `{}`): `object`
+    - `options.seed` (default `null`): `number|null` — null picks one; the seed used is returned
+    - `options.format` (default `'card'`): `'card'|'banner'|'poster'|'portrait'|'square'|{w:number,h:number}` — see MicroGfx.formats for pixel sizes
+    - `options.theme` (default `'magenta'`): `'magenta'|'violet'|'mono'|'void'|object` — colour set; all four are dark grounds, use polarity for a pale one
+    - `options.polarity`: `'dark'|'paper'` — 'paper' gives a pale ground with dark ink; omit to let the seed choose
+    - `options.layers`: `object` — base, halftone, rails, scanlines, glyphs
+    - `options.primitives`: `string[]` — which instrument primitives to place
+    - `options.density` (default `0.5`): `number` — 0..1, how much of the frame primitives fill
+    - `options.degrade`: `{warp:number,erode:number,grain:number}` — Pattern 5 knobs, each 0..1
+    - `options.text`: `{title:string,eyebrow:string,serial:string,nameplate:string}` — each field independently optional; caller strings are set as element text, never parsed as markup
+    - `options.nsfw` (default `false`): `boolean` — allow NSFW phrases in the glyph layer
+  - `MicroGfx.mount(element, result)` — Append the artwork to an element, replacing anything already there.
+    - `element`: `Element`
+    - `result`: `{node:SVGSVGElement}` — from generate()
+  - `MicroGfx.toPNG(result, opts = {})` → `Promise<Blob>` — Rasterise to PNG.
+    - `result`: `{node:SVGSVGElement,width:number,height:number}` — from generate()
+    - `opts` (default `{}`): `object`
+    - `opts.scale` (default `1`): `number` — resolution multiplier; 2 renders a 1200x630 card as a 2400x1260 PNG. The vector artwork is re-rasterised at the larger size, so it stays sharp rather than being upscaled.
+
+```js
+import { MicroGfx } from '@whykusanagi/corrupted-theme/micro-gfx';
+const art = MicroGfx.generate({ seed: 1234, format: 'poster' });
+MicroGfx.mount(document.querySelector('#stage'), art);
+const blob = await MicroGfx.toPNG(art, { scale: 2 });
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `seed` | `number|null` | `null` | null picks one; the seed used is returned |
+| `format` | `'card'|'banner'|'poster'|'portrait'|'square'|{w:number,h:number}` | `'card'` | see MicroGfx.formats for pixel sizes |
+| `theme` | `'magenta'|'violet'|'mono'|'void'|object` | `'magenta'` | colour set; all four are dark grounds, use polarity for a pale one |
+| `polarity` | `'dark'|'paper'` |  | 'paper' gives a pale ground with dark ink; omit to let the seed choose |
+| `layers` | `object` |  | base, halftone, rails, scanlines, glyphs |
+| `primitives` | `string[]` |  | which instrument primitives to place |
+| `density` | `number` | `0.5` | 0..1, how much of the frame primitives fill |
+| `degrade` | `{warp:number,erode:number,grain:number}` |  | Pattern 5 knobs, each 0..1 |
+| `text` | `{title:string,eyebrow:string,serial:string,nameplate:string}` |  | each field independently optional; caller strings are set as element text, never parsed as markup |
+| `nsfw` | `boolean` | `false` | allow NSFW phrases in the glyph layer |
+### `canvas-seek`
+
+Frame-deterministic canvas rendering.
+
+- npm: `import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/canvas-seek.js`
+- Functions:
+  - `createFrameClock(options = {})` → `{ fps:number, frame:number, time:number, seek:(frame:number)=>number, advance:(dtMs:number)=>number, reset:()=>void, rngAt:(key?:string)=>()=>number, rngFor:(frame:number,key?:string)=>()=>number, frameAt:(timeMs:number)=>number }` — A seekable frame counter with per-frame deterministic randomness.
+    - `options` (default `{}`): `object`
+    - `options.fps` (default `30`): `number`
+    - `options.seed` (default `0`): `number`
+    - returns: `seek` and `advance` both return the NEW frame index, so you can use either as an expression. `frame` and `time` are live getters — `time` is milliseconds. `rngAt(key)` gives a PRNG for whatever frame the clock is on right now; `rngFor(frame, key)` gives one for any frame without moving the clock, which is what an offline exporter wants. The `key` namespaces independent streams so two effects on the same frame don't share numbers.
+  - `createDissolve(options = {})` → `{total:number, at:(tMs:number)=>{phase:'reveal'|'hold'|'dissolve'|'gone', progress:number, revealed:number}}` — Reveal → hold → dissolve envelope.
+    - `options` (default `{}`): `object`
+    - `options.revealMs` (default `800`): `number`
+    - `options.holdMs` (default `1200`): `number`
+    - `options.dissolveMs` (default `800`): `number`
+    - returns: `at(tMs)` reports the envelope at an elapsed time. `phase` is one of `reveal`, `hold`, `dissolve`, `gone`. `progress` is 0..1 WITHIN the current phase. `revealed` is 0..1 across the whole envelope and is the value that drives a text reveal: it rises 0→1 during reveal, stays 1 through hold, falls 1→0 during dissolve, and is 0 once gone. To render it, take `Math.floor(revealed * text.length)` — it is a fraction, not a count — and show that many characters from the START of the string, replacing the rest with corruption glyphs. Left-to-right is the convention the package's decode primitives use; nothing here enforces it.
+
+_Deterministic capture_
+```js
+import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek';
+const clock = createFrameClock({ fps: 30, seed: 1234 });
+clock.seek(400);
+const rng = clock.rngAt('particles');   // same values every time
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `fps` | `number` | `30` |  |
+| `seed` | `number` | `0` |  |
+| `revealMs` | `number` | `800` |  |
+| `holdMs` | `number` | `1200` |  |
+| `dissolveMs` | `number` | `800` |  |
+### `lipsync`
+
+Audio amplitude envelope — RMS → smoothing → clamped 0..1 target.
+
+- npm: `import { rms } from '@whykusanagi/corrupted-theme/lipsync'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/lipsync.js`
+- Functions:
+  - `rms(buffer)` → `number` — Root-mean-square amplitude of a time-domain buffer.
+    - `buffer`: `Float32Array|number[]` — samples in -1..1, i.e. exactly what
+    - returns: roughly 0..1
+  - `smoothRms(prevSmoothed, rawRms, factor = LIPSYNC.SMOOTH_FACTOR)` — Exponential moving average of the raw RMS.
+    - `prevSmoothed`: `number`
+    - `rawRms`: `number`
+    - `factor` (default `0.5`): `number` — higher holds the previous value longer
+  - `mouthTarget(smoothed, ceiling = LIPSYNC.RMS_CEILING)` — Map a smoothed RMS onto a clamped 0..1 target.
+    - `smoothed`: `number`
+    - `ceiling` (default `0.06`): `number` — amplitude treated as fully open
+  - `approach(current, target, step = LIPSYNC.INTERP)` — One step of linear interpolation from `current` toward `target`.
+    - `current`: `number`
+    - `target`: `number`
+    - `step` (default `0.35`): `number`
+
+_Drive a corruption intensity from an analyser_
+```js
+import { rms, smoothRms, mouthTarget, approach } from
+  '@whykusanagi/corrupted-theme/lipsync';
+let smoothed = 0, weight = 0;
+function frame(buffer) {
+  smoothed = smoothRms(smoothed, rms(buffer));
+  weight = approach(weight, mouthTarget(smoothed));
+}
+```
+### `audio-spectrum`
+
+AudioSpectrum — canvas spectrum driven by real audio.
+
+- npm: `import { AudioSpectrum } from '@whykusanagi/corrupted-theme/audio-spectrum'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/audio-spectrum.js`
+- Constructor: `new AudioSpectrum(canvas, options = {})`
+- Methods:
+  - `init()`
+  - `resume()` → `Promise<void>` — Resume the AudioContext. Browsers start it suspended until a user
+  - `setSource(source)` — Replace the audio source. Accepts a media element, a MediaStream the
+    - `source`: `HTMLMediaElement|MediaStream|AudioNode|null`
+  - `start()` — Start drawing. Idempotent.
+  - `stop()` — Stop drawing. The audio graph stays connected. Reusable.
+  - `destroy()` — Tear down. Only closes the AudioContext if this instance created it.
+- Properties:
+  - `levels`: `{bass:number, mid:number, treble:number, rms:number}` — Read fresh every frame while running, each 0..1. Feed to any component or helper that takes a normalised level; pairs with the `lipsync` module.
+
+```js
+import { AudioSpectrum } from '@whykusanagi/corrupted-theme/audio-spectrum';
+const spectrum = new AudioSpectrum(canvas, { source: audioEl });
+await spectrum.resume();   // browsers require a user gesture
+spectrum.start();
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `source` | `HTMLMediaElement|MediaStream|AudioNode|null` | `null` |  |
+| `fftSize` | `number` | `256` | power of two, 32..32768 |
+| `bands` | `number` | `48` | drawn bars |
+| `smoothing` | `number` | `0.8` | AnalyserNode smoothing, 0..1 |
+| `style` | `'bars'|'mirror'|'terminal'` | `'bars'` |  |
+| `palette` | `string[]` |  | low → high colour ramp |
+| `reconnectDestination` | `boolean` | `true` | keep audio audible |
+| `reducedMotion` | `boolean|'auto'` | `'auto'` |  |
 ### `corrupted-vortex`
 
 src/lib/corrupted-vortex.js
@@ -2622,7 +3062,11 @@ src/lib/corrupted-particles.js
 - npm: `import { CorruptedParticles } from '@whykusanagi/corrupted-theme/corrupted-particles'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-particles.js`
 - Constructor: `new CorruptedParticles(canvas, options = {})`
-- Methods: `init()`, `start()`, `stop()`, `destroy()`
+- Methods:
+  - `init()`
+  - `start()`
+  - `stop()`
+  - `destroy()`
 
 ```js
 new CorruptedParticles(containerEl).start();
@@ -2640,7 +3084,31 @@ DecryptReveal
 - npm: `import { DecryptReveal } from '@whykusanagi/corrupted-theme/decrypt-reveal'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/decrypt-reveal.js`
 - Constructor: `new DecryptReveal(options = {})`
-- Methods: `decode()`, `stop()`, `start()`, `cleanup()`, `cleanupAll()`, `destroy()`, `getActiveCount()`, `isAnimating()`, `return()`
+- Methods:
+  - `decode(element, content, opts = {})` → `number` — Start a fixed-length decryption animation. The element is set to
+    - `element`: `object` — DOM element with .textContent
+    - `content`: `string` — Final readable text to decrypt to
+    - `opts`: `object`
+    - `opts.duration`: `number`
+    - `opts.charset`: `string` — Overrides manager-level default
+    - returns: Animation ID (pass to cleanup() to cancel early)
+  - `stop()` — Cancel all active animations and clear their timers.
+  - `start()` — Resume hook — called automatically when document becomes visible again.
+  - `cleanup(id)` — Cancel a single animation by its ID.
+    - `id`: `number` — Return value from decode()
+  - `cleanupAll()`
+  - `destroy()` — Tear down the manager completely. Cancels all animations, removes the
+  - `getActiveCount()` → `number` — completed naturally but not yet auto-removed).
+    - returns: Count of animations currently tracked (some may have completed naturally but not yet auto-removed).
+  - `isAnimating(id)` → `boolean`
+    - `id`: `number`
+    - returns: true while the animation is still running
+- Functions:
+  - `decodeText(element, finalText, opts = {})` → `Function` — Convenience: decode a single element without a manager.
+    - `element`: `object`
+    - `finalText`: `string`
+    - `opts`: `object`
+    - returns: cleanup — call to cancel early
 
 ```js
 new DecryptReveal({  }).start();
@@ -2656,7 +3124,44 @@ src/lib/crt-effects.js
 - npm: `import { CRTEffects } from '@whykusanagi/corrupted-theme/crt-effects'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/crt-effects.js`
 - Constructor: `new CRTEffects(container, options = {})`
-- Methods: `start()`, `stop()`, `destroy()`, `createScanlines()`, `applyChromaticAberration()`, `startFlicker()`, `stopFlicker()`, `applyPixelDistortion()`, `applyCRTGlow()`, `addPhosphorTrail()`, `applyVignette()`, `animateRGBSplit()`, `screenShake()`, `cleanup()`
+- Methods:
+  - `start()` — Attach overlay DOM nodes and begin configured effects.
+  - `stop()` — Pause flicker; leave DOM overlays in place.
+  - `destroy()` — Full teardown — removes overlays, resets styles, marks destroyed.
+  - `createScanlines()` — Append a scanline overlay div to `this.container`.
+  - `applyChromaticAberration(element, intensity = 2)` — Apply RGB-split chromatic aberration filter to an element.
+    - `element`: `HTMLElement`
+    - `intensity`: `number` — pixel offset
+  - `startFlicker(element, intensity = 0.05, frequency = 100)` — Start random-interval opacity flicker on an element.
+    - `element`: `HTMLElement`
+    - `intensity`: `number` — max opacity reduction
+    - `frequency`: `number` — base interval in ms
+  - `stopFlicker(element)` — Stop opacity flicker and restore element opacity.
+    - `element`: `HTMLElement`
+  - `applyPixelDistortion(canvas)` — Apply random horizontal pixel-row displacement to a canvas (glitch slice).
+    - `canvas`: `HTMLCanvasElement`
+  - `applyCRTGlow(element, color = CORRUPTED_MAGENTA2, intensity = 20)` — Apply phosphor glow filter to an element (instance method variant).
+    - `element`: `HTMLElement`
+    - `color`: `string`
+    - `intensity`: `number`
+  - `applyVignette(element, intensity = 0.3)` → `HTMLElement|null` — Append a radial-gradient vignette overlay to `container`.
+    - `element`: `HTMLElement` — container to append overlay to
+    - `intensity`: `number`
+    - returns: the vignette node
+  - `animateRGBSplit(element, duration = 200)` — Animate RGB split for a short duration at ~60fps using rAF.
+    - `element`: `HTMLElement`
+    - `duration`: `number` — ms
+  - `screenShake(element, duration = 300, intensity = 5)` — Shake element via random transform offsets for a fixed duration.
+    - `element`: `HTMLElement`
+    - `duration`: `number` — ms
+    - `intensity`: `number` — max px displacement
+  - `cleanup()` — Remove all injected overlays and reset container styles.
+- Functions:
+  - `injectCRTStyles()`
+  - `applyCRTGlow(element, color = CORRUPTED_MAGENTA2, intensity = 20)` — Apply a phosphor glow filter to any element without needing a CRTEffects instance.
+    - `element`: `HTMLElement`
+    - `color` (default `'#d94f90'`): `string` — glow color (default: --corrupted-magenta2)
+    - `intensity` (default `20`): `number` — drop-shadow blur radius in px
 
 ```js
 new CRTEffects(containerEl, { autoStart: false, scanlines: true }).start();
@@ -2668,13 +3173,23 @@ new CRTEffects(containerEl, { autoStart: false, scanlines: true }).start();
 | `scanlines` | `boolean` | `true` | include scanline overlay |
 | `vignette` | `boolean` | `true` | include vignette overlay |
 | `vignetteIntensity` | `number` | `0.3` |  |
+| `flicker` | `boolean` | `false` | enable opacity flicker |
 | `flickerIntensity` | `number` | `0.05` |  |
+| `flickerFrequency` | `number` | `100` | ms base interval |
 ### `animation-blocks`
 
 Animation Building Blocks ========================= Ten modular animation components that compose into full transition scenes. Each block follows the package-canonical API:
 
 - npm: `import { TitleDecoder } from '@whykusanagi/corrupted-theme/animation-blocks'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/animation-blocks.js`
+- Functions:
+  - `playParallel(blocks)` → `Promise<void>` — Play multiple animation blocks in parallel.
+    - `blocks`: `Array`
+  - `playSequence(blocks)` → `Promise<void>` — Play multiple animation blocks sequentially.
+    - `blocks`: `Array`
+  - `playStaggered(blocks, staggerDelay = 200)` → `Promise<void>` — Play blocks with staggered start times.
+    - `blocks`: `Array`
+    - `staggerDelay` (default `200`): `number` — ms between each block start
 
 **TitleDecoder** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
@@ -2683,22 +3198,25 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `finalText` | `string` | `'SYSTEM READY'` | Target text |
 | `duration` | `number` | `2000` | ms |
 | `nsfw` | `boolean` | `false` | include NSFW chars |
-| `color` | `string` | `'#00ffff'` |  |
+| `color` | `string` | `'#ffffff'` |  |
+| `fontSize` | `string` | `'48px'` |  |
 
 **ProgressBar** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `2000` |  |
+| `color` | `string` | `'#ffffff'` |  |
 | `height` | `number` | `4` | px |
 | `position` | `string` | `'bottom'` | 'top'|'bottom' |
-| `glitch` | `boolean` | `true` | / |
+| `glitch` | `boolean` | `true` |  |
 
 **ScanlineSweep** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `1500` |  |
+| `color` | `string` | `'#ffffff'` |  |
 | `sweeps` | `number` | `2` | number of vertical passes |
 
 **TerminalBoot** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
@@ -2706,13 +3224,16 @@ Animation Building Blocks ========================= Ten modular animation compon
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `3000` |  |
-| `color` | `string` | `'#00ffff'` |  |
+| `lines` | `string[]` |  | array of boot log lines. ⚠️ SECURITY: rendered as raw HTML via innerHTML. Pass static/author- controlled content only. If lines could contain user input, escape HTML entities (`&`, `<`, `>`, `"`) before passing. |
+| `color` | `string` | `'#ffffff'` |  |
+| `fontSize` | `string` | `'16px'` |  |
 
 **GlitchPulse** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `1000` |  |
+| `intensity` | `number` | `0.5` | max bar opacity |
 | `color` | `string` | `'#ff00ff'` | CSS color value; values outside the safe color charset fall back to the default (the string is interpolated into generated markup) |
 
 **ASCIIBorder** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
@@ -2720,36 +3241,46 @@ Animation Building Blocks ========================= Ten modular animation compon
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `1500` |  |
+| `color` | `string` | `'#ff8c00'` |  |
 | `thickness` | `number` | `2` | unused in current impl (visual scale) |
 | `style` | `string` | `'double'` | 'single'|'double'|'heavy'|'rounded' |
 | `padding` | `number` | `20` |  |
+| `drawOrder` | `string` | `'clockwise'` | 'clockwise'|'simultaneous'|'corners-first' |
 
 **SystemDiagnostic** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `3000` |  |
+| `lines` | `string[]` |  | array of diagnostic log lines. ⚠️ SECURITY: rendered as raw HTML via innerHTML. Pass static/author- controlled content only. If lines could contain user input, escape HTML entities (`&`, `<`, `>`, `"`) before passing. |
 | `color` | `string` | `'#00ff00'` |  |
+| `position` | `string` | `'left'` | 'left'|'right'|'center' |
 | `fontSize` | `string` | `'16px'` |  |
-| `showCursor` | `boolean` | `true` | / |
+| `scrollSpeed` | `number` | `1.0` | multiplier (0.5=slow, 2.0=fast) |
+| `showCursor` | `boolean` | `true` |  |
 
 **LoadingBarMulti** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `3000` |  |
+| `bars` | `Array` |  | array of { label, speed, color } |
 | `width` | `number` | `400` |  |
+| `height` | `number` | `20` |  |
 | `position` | `string` | `'center'` | 'center'|'bottom'|'top' |
 | `showPercentage` | `boolean` | `true` |  |
+| `glitchEffect` | `boolean` | `true` |  |
 
 **DataTransmission** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `duration` | `number` | `2500` |  |
+| `color` | `string` | `'#ffffff'` |  |
 | `direction` | `string` | `'horizontal'` | 'horizontal'|'vertical' |
 | `packetCount` | `number` | `20` |  |
-| `showDataRate` | `boolean` | `true` | / |
+| `packetSize` | `number` | `6` | px |
+| `showDataRate` | `boolean` | `true` |  |
 
 **TerminalPrompt** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
@@ -2758,7 +3289,9 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `duration` | `number` | `2000` | max total ms (safety cap) |
 | `commands` | `string[]` |  | lines to type |
 | `color` | `string` | `'#00ff00'` |  |
+| `position` | `string` | `'bottom-left'` | 'bottom-left'|'top-left'|'center' |
 | `fontSize` | `string` | `'16px'` |  |
+| `typingSpeed` | `number` | `50` | ms per character |
 
 **CorruptedTextOverlay** options:
 
@@ -2793,7 +3326,10 @@ src/lib/corrupted-particles-background.js
 - npm: `import { CorruptedParticlesBackground } from '@whykusanagi/corrupted-theme/corrupted-particles-background'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-particles-background.js`
 - Constructor: `new CorruptedParticlesBackground(options = {})`
-- Methods: `start()`, `stop()`, `destroy()`
+- Methods:
+  - `start()` — Manually start (or resume after stop()). No-op if not yet initialised or destroyed.
+  - `stop()` — Pause rendering without tearing down. Resumes on start() or visibilitychange.
+  - `destroy()` — Tear down completely: stop animation, remove canvas from DOM, remove listeners.
 
 ```js
 new CorruptedParticlesBackground({ targetSelector: '.glass-backdrop', nsfw: false }).start();
@@ -2813,18 +3349,77 @@ Random utility functions. Centralized random selection and variance helpers.
 
 - npm: `import { randomPick } from '@whykusanagi/corrupted-theme/random-utils'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/random-utils.js`
+- Functions:
+  - `randomPick(array)` → `` — Select a random element from an array.
+    - `array`: `Array` — Array to select from
+    - returns: Random element
+  - `randomInt(min, max)` → `number` — Generate a random integer between min and max (inclusive).
+    - `min`: `number` — Minimum value
+    - `max`: `number` — Maximum value
+    - returns: Random integer
+  - `randomFloat(min, max)` → `number` — Generate a random float between min and max.
+    - `min`: `number` — Minimum value
+    - `max`: `number` — Maximum value
+    - returns: Random float
+  - `randomVariance(base, variance = 0.2)` → `number` — Add random variance to a base value.
+    - `base`: `number` — Base value
+    - `variance` (default `0.2`): `number` — Variance as decimal (0.2 = ±20%)
+    - returns: Value with random variance applied
+  - `shuffle(array)` → `Array` — Shuffle array in place using the Fisher-Yates algorithm.
+    - `array`: `Array` — Array to shuffle (mutated in place)
+    - returns: The same array reference, shuffled
+  - `randomSample(array, count)` → `Array` — Select N random elements from an array without replacement.
+    - `array`: `Array` — Source array (not mutated)
+    - `count`: `number` — Number of elements to select
+    - returns: Array of selected elements
+  - `seededRandom(seed)` → `() => number` — Create a deterministic pseudo-random generator (mulberry32).
+    - `seed`: `number` — Any number; coerced to uint32
+    - returns: Generator returning floats in [0, 1)
 ### `time-utils`
 
 Time utility functions. Centralized date/time formatting helpers.
 
 - npm: `import { formatTime24h } from '@whykusanagi/corrupted-theme/time-utils'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/time-utils.js`
+- Functions:
+  - `formatTime24h(date = new Date()` → `string` — Format time in 24-hour format.
+    - `date` (default `new Date()`): `Date` — Date to format
+    - returns: Time as "HH:MM"
+  - `formatTime12h(date = new Date()` → `string` — Format time in 12-hour format.
+    - `date` (default `new Date()`): `Date` — Date to format
+    - returns: Time as "HH:MM AM/PM"
+  - `formatDate(date = new Date()` → `string` — Format date.
+    - `date` (default `new Date()`): `Date` — Date to format
+    - returns: Date as "Mon DD, YYYY"
+  - `formatDateTime(date = new Date()` → `string` — Format date and time combined.
+    - `date` (default `new Date()`): `Date` — Date to format
+    - returns: DateTime as "Mon DD, YYYY HH:MM"
+  - `timeAgo(date)` → `string` — Format relative time (e.g., "5s ago", "3m ago").
+    - `date`: `Date` — Date to compare against now
+    - returns: Relative time string
+  - `formatDuration(seconds)` → `string` — Format duration in seconds to a human-readable string.
+    - `seconds`: `number` — Duration in seconds (NOT milliseconds)
+    - returns: Duration as "Xh Ym Zs" (omits zero units, except "0s" for zero-length durations)
+  - `parseTimestamp(timestamp)` → `Date` — Parse an ISO 8601 timestamp string to a Date.
+    - `timestamp`: `string` — ISO 8601 timestamp
+    - returns: Parsed date
+  - `seekAnimations(root, timeSeconds)` — Freeze every CSS animation under a root at an absolute time.
+    - `root`: `Element|Document` — Container whose descendants get frozen
+    - `timeSeconds`: `number` — Absolute animation time to seek to (>= 0)
 ### `clipboard-helpers`
 
 Clipboard helper utilities.
 
 - npm: `import { copyWithFeedback } from '@whykusanagi/corrupted-theme/clipboard-helpers'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/clipboard-helpers.js`
+- Functions:
+  - `copyWithFeedback(buttonEl, text, options = {})` → `Promise<boolean>` — Copy text to clipboard and briefly swap a button's label to confirm success.
+    - `buttonEl`: `Element|null` — Button element whose label to swap (required)
+    - `text`: `string` — Text to copy (required, non-empty)
+    - `options`: `object`
+    - `options.successLabel` (default `'COPIED'`): `string` — Label shown on the button after copy
+    - `options.durationMs` (default `1200`): `number` — How long to show the success label (ms)
+    - returns: True if copy succeeded, false otherwise
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2836,6 +3431,17 @@ URL state serialization helpers.
 
 - npm: `import { serializeFormToParams } from '@whykusanagi/corrupted-theme/url-state'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/url-state.js`
+- Functions:
+  - `serializeFormToParams(formEl)` → `URLSearchParams` — Serialize all named form fields to URLSearchParams.
+    - `formEl`: `Element|null` — Form (or any container with [name] children)
+    - returns: Serialized parameters (empty if formEl is falsy or has no fields)
+  - `applyParamsToForm(formEl, searchParams)` → `void` — Apply URLSearchParams back to a form's fields.
+    - `formEl`: `Element|null` — Form (or any container with [name] children)
+    - `searchParams`: `URLSearchParams` — Parameters to apply
+  - `buildShareUrl(formEl, baseUrl)` → `string` — Build a full "share" URL by encoding a form's current state into the
+    - `formEl`: `Element|null` — Form to serialize (null produces a clean URL)
+    - `baseUrl`: `string` — Base URL to attach params to.
+    - returns: Absolute URL string with serialized form state as query params
 ### `websocket-manager`
 
 WebSocketManager — auto-reconnecting WebSocket wrapper.
@@ -2843,10 +3449,30 @@ WebSocketManager — auto-reconnecting WebSocket wrapper.
 - npm: `import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/websocket-manager.js`
 - Constructor: `new WebSocketManager(options = {})`
-- Methods: `connect()`, `disconnect()`, `send()`, `on()`, `off()`, `onMessage()`, `offMessage()`, `destroy()`, `getStatus()`, `isConnected()`
+- Methods:
+  - `connect()` — Open the WebSocket connection.
+  - `disconnect()` — Close the connection and cancel any pending reconnect.
+  - `send(message)` → `boolean` — Send a JSON-serialisable message.
+    - `message`: `Object`
+    - returns: true if sent
+  - `on(handler)` — Register a message handler.
+    - `handler`: `Function` — Called with each incoming message object.
+  - `off(handler)` — Remove a previously registered handler.
+    - `handler`: `Function`
+  - `onMessage(handler)` — Legacy aliases kept for compatibility with callers using onMessage/offMessage.
+  - `offMessage(handler)`
+  - `destroy()` — Clean up all resources, remove DOM listeners, and prevent reconnection.
+  - `getStatus()` → `'open'|'connecting'|'closing'|'closed'|'disconnected'`
+  - `isConnected()` → `boolean`
 
 ```js
-new WebSocketManager({ maxAttempts: 10 }).start();
+import { WebSocketManager } from '@whykusanagi/corrupted-theme/websocket-manager';
+
+const ws = new WebSocketManager({ url: 'wss://example.com/ws' });
+ws.on((msg) => console.log(msg));
+ws.connect();
+ws.send({ type: 'ping' });
+ws.destroy();
 ```
 
 | Option | Type | Default | Description |
@@ -2856,6 +3482,7 @@ new WebSocketManager({ maxAttempts: 10 }).start();
 | `baseDelay` | `number` | `2000` | Base reconnect delay (ms) |
 | `maxDelay` | `number` | `30000` | Maximum reconnect delay cap (ms) |
 | `useExponentialBackoff` | `boolean` | `true` |  |
+| `autoReconnect` | `boolean` | `true` |  |
 | `trackEvents` | `boolean` | `false` | Enable event-ID dedup |
 | `enableAck` | `boolean` | `false` | Send ACK for events with requires_ack |
 | `handleVisibilityChange` | `boolean` | `true` | Disconnect on page-hidden |
@@ -2867,6 +3494,19 @@ Toast — singleton notification helper.
 - npm: `import { … } from '@whykusanagi/corrupted-theme/toast'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/toast.js`
 - Requires stylesheet: `./toast-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/toast.css`
+- `Toast` methods:
+  - `Toast.show(message, options)`
+  - `Toast.success(message, options)`
+  - `Toast.error(message, options)`
+  - `Toast.info(message, options)`
+
+```js
+import { Toast } from '@whykusanagi/corrupted-theme/toast';
+Toast.show('Saved');
+Toast.success('OK', { duration: 3000 });
+Toast.error('Failed');
+Toast.info('Loading...');
+```
 ### `clock-widget`
 
 ClockWidget — cycling multi-timezone clock display.
@@ -2874,15 +3514,24 @@ ClockWidget — cycling multi-timezone clock display.
 - npm: `import { ClockWidget } from '@whykusanagi/corrupted-theme/clock-widget'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/clock-widget.js`
 - Constructor: `new ClockWidget(element, options = {})`
-- Methods: `start()`, `stop()`, `destroy()`
+- Methods:
+  - `start()` — Start ticking and (if multiple timezones) rotating.
+  - `stop()` — Pause all timers without destroying the instance.
+  - `destroy()` — Stop timers, remove ARIA attribute, and mark instance as destroyed.
 
 ```js
-new ClockWidget(containerEl, { timezones: ['America/Los_Angeles', cycleMs: 10000 }).start();
+const widget = new ClockWidget(document.getElementById('clock'), {
+  timezones: ['America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles'],
+  cycleMs:   10000,
+  format:    '12h',
+  showDate:  true,
+});
+widget.start();
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `timezones` | `string[]` | `['America/Los_Angeles'` | ] - IANA timezone names |
+| `timezones` | `string[]` | `['America/Los_Angeles']` | IANA timezone names |
 | `cycleMs` | `number` | `10000` | ms between timezone rotations |
 | `format` | `'12h'|'24h'` | `'12h'` | Time format |
 | `showDate` | `boolean` | `true` | Whether to render the date line |
@@ -2893,11 +3542,24 @@ EventBar — horizontal status row with label + content + optional icon.
 - npm: `import { EventBar } from '@whykusanagi/corrupted-theme/event-bar'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/event-bar.js`
 - Constructor: `new EventBar(element, options = {})`
-- Methods: `update()`, `destroy()`
+- Methods:
+  - `update(items)` — Replace the displayed items with a new list.
+    - `items`: `Array<{label: string, content: string, icon?: string}>|null`
+  - `destroy()` — Remove all rendered content and mark instance as destroyed.
 
 ```js
-new EventBar(containerEl).start();
+new EventBar(document.getElementById('events'), {
+  items: [
+    { label: 'Latest Follow', content: '@user1', icon: '★' },
+    { label: 'Latest Sub',    content: '@user2', icon: '♥' },
+    { label: 'Latest Tip',    content: '$5.00'             },
+  ]
+});
 ```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `items` | `Array<{label: string, content: string, icon?: string}>` | `[]` |  |
 ### `logo-banner`
 
 LogoBanner — positioned logo with optional subtitle and reveal animation.
@@ -2905,10 +3567,23 @@ LogoBanner — positioned logo with optional subtitle and reveal animation.
 - npm: `import { LogoBanner } from '@whykusanagi/corrupted-theme/logo-banner'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/logo-banner.js`
 - Constructor: `new LogoBanner(element, options = {})`
-- Methods: `show()`, `hide()`, `update()`, `destroy()`
+- Methods:
+  - `show()` — Reveal the banner using the configured animation.
+  - `hide()` — Hide the banner (CSS transition handles the fade).
+  - `update(options)` — Merge new options and re-render.
+    - `options`: `Partial<typeof this.options>`
+  - `destroy()` — Remove rendered content and mark instance as destroyed.
 
 ```js
-new LogoBanner(containerEl, { src: '', subtitle: '' }).start();
+const banner = new LogoBanner(document.getElementById('logo'), {
+  src:         '/assets/logo.png',
+  subtitle:    'CORRUPTED STREAM',
+  size:        'normal',
+  animation:   'fade',
+  position:    'top-left',
+  showSubtitle: true,
+});
+banner.show();
 ```
 
 | Option | Type | Default | Description |
@@ -2917,13 +3592,31 @@ new LogoBanner(containerEl, { src: '', subtitle: '' }).start();
 | `subtitle` | `string` | `''` | Subtitle text |
 | `showSubtitle` | `boolean` | `true` | Whether to render subtitle |
 | `size` | `'small'|'normal'|'large'` | `'normal'` |  |
+| `animation` | `'fade'|'slide'|'none'` | `'fade'` |  |
 | `position` | `'top-left'|'top-right'|'top-center'|'center'|'bottom-left'|'bottom-right'` | `'top-right'` |  |
+| `zIndex` | `number` | `250` |  |
 ### `png-export`
 
 Export a DOM element to a PNG file.
 
 - npm: `import { exportElementAsPng } from '@whykusanagi/corrupted-theme/png-export'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/png-export.js`
+- Functions:
+  - `exportElementAsPng(el, options = {})` → `Promise<void>` — Export a DOM element to a PNG file.
+    - `el`: `HTMLElement` — The element to export
+    - `options`: `object`
+    - `options.filename` (default `'export.png'`): `string` — Download filename
+    - `options.scale` (default `2`): `number` — Render scale (1 = 1:1, 2 = retina)
+    - `options.backgroundColor` (default `null`): `string|null` — Optional background fill (transparent if null)
+
+```js
+const { exportElementAsPng } = await import('@whykusanagi/corrupted-theme/png-export');
+await exportElementAsPng(document.getElementById('card'), {
+  filename: 'my-card.png',
+  scale: 2,
+  backgroundColor: '#000000'
+});
+```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2937,15 +3630,22 @@ NsfwReveal — blur-until-clicked overlay.
 - npm: `import { NsfwReveal } from '@whykusanagi/corrupted-theme/nsfw-reveal'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/nsfw-reveal.js`
 - Constructor: `new NsfwReveal(target, options = {})`
-- Methods: `reveal()`, `destroy()`
+- Methods:
+  - `reveal()` — Remove the blur and overlay on demand (e.g. programmatic reveal).
+  - `destroy()` — Restore the element to its pre-NsfwReveal state and remove all
 
 ```js
-new NsfwReveal(containerEl, { warning: 'NSFW — click to reveal' }).start();
+import { NsfwReveal } from '@whykusanagi/corrupted-theme/nsfw-reveal';
+
+const nr = new NsfwReveal(imgEl, { warning: 'NSFW — click to reveal' });
+// later:
+nr.destroy();
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `warning` | `string` | `'NSFW — click to reveal'` |  |
+| `blurPx` | `number` | `20` | Blur radius in pixels. |
 ### `phrase-cycle`
 
 PhraseCycle — discrete phrase-state cycling primitive.
@@ -2953,15 +3653,35 @@ PhraseCycle — discrete phrase-state cycling primitive.
 - npm: `import { PhraseCycle } from '@whykusanagi/corrupted-theme/phrase-cycle'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/phrase-cycle.js`
 - Constructor: `new PhraseCycle(element, options = {})`
-- Methods: `start()`, `stop()`, `destroy()`, `isRunning()`
+- Methods:
+  - `start()` → `this` — Start the cycle. Idempotent: calling start() while already running is a no-op.
+  - `stop()` — Stop the cycle without settling.
+  - `destroy()` — Tear down and release the element reference.
+  - `isRunning()` → `boolean` — Whether the cycle is currently running.
 
+_Basic settling cycle_
 ```js
-new PhraseCycle(containerEl, { phrases: [, interval: 200 }).start();
+import { PhraseCycle } from '@whykusanagi/corrupted-theme/phrase-cycle';
+const cycle = new PhraseCycle(element, {
+  phrases: ['Initializing...', 'Connecting...', 'Authenticating...'],
+  interval: 400,
+  finalText: 'Ready.',
+});
+cycle.start();
+```
+
+_Looping (no settle)_
+```js
+new PhraseCycle(loaderEl, {
+  phrases: ['Loading.', 'Loading..', 'Loading...'],
+  interval: 300,
+  loop: true,
+}).start();
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `phrases` | `string[]` | `[` | ] - Ordered array of phrases to cycle through |
+| `phrases` | `string[]` | `[]` | Ordered array of phrases to cycle through |
 | `interval` | `number` | `200` | ms between phrase swaps |
 | `duration` | `number|null` | `null` | Total ms before settling. null = phrases.length × interval (one full pass) |
 | `finalText` | `string|null` | `null` | Text written after cycle ends. null = leave last-shown phrase visible |
@@ -2974,16 +3694,31 @@ ChromaticPulse — RGB-split chromatic-aberration pulse on any element.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/chromatic-pulse.js`
 - Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
 - Constructor: `new ChromaticPulse(element, options = {})`
-- Methods: `start()`, `renderFrame()`, `stop()`, `destroy()`
+- Methods:
+  - `start()` → `this` — Start the live pulse loop. Idempotent.
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame (video export). Pulses fire at a fixed
+    - `frameIdx`: `number` — Frame number (0-based)
+    - `fps`: `number` — Frames per second of the export
+  - `stop()` — Stop pulsing and restore the element's original text-shadow.
+  - `destroy()` — Tear down and release the element reference. Not reusable after.
 
+_Live (random cadence)_
 ```js
-new ChromaticPulse(containerEl, { intensity: 1, interval: [2000,6000 }).start();
+import { ChromaticPulse } from '@whykusanagi/corrupted-theme/chromatic-pulse';
+const pulse = new ChromaticPulse(logoEl, { intensity: 1 });
+pulse.start();
+```
+
+_Deterministic frame rendering (video export)_
+```js
+const pulse = new ChromaticPulse(logoEl, { seed: 42 });
+pulse.renderFrame(frameIdx, 60);   // same frame → same pixels
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `intensity` | `number` | `1` | Fringe offset multiplier (1 = up to 4px) |
-| `interval` | `number[]` | `[2000,6000` | ] - [min,max] ms between pulse starts (live mode) |
+| `interval` | `number[]` | `[2000,6000]` | [min,max] ms between pulse starts (live mode) |
 | `pulseMs` | `number` | `150` | Duration of one pulse |
 | `seed` | `number|null` | `null` | Seed for deterministic cadence (null = Math.random) |
 ### `binary-particles`
@@ -2994,10 +3729,18 @@ BinaryParticles — rising binary/hex/phrase token field.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/binary-particles.js`
 - Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
 - Constructor: `new BinaryParticles(container, options = {})`
-- Methods: `start()`, `renderFrame()`, `stop()`, `destroy()`
+- Methods:
+  - `start()` → `this` — Start live playback (rAF-driven). Idempotent.
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame. Same (frameIdx, seed) → identical DOM.
+    - `frameIdx`: `number` — Frame number (0-based)
+    - `fps`: `number` — Frames per second (used for beat sync)
+  - `stop()` — Stop live playback and remove the particle layer. Reusable.
+  - `destroy()` — Tear down and release references. Not reusable after.
 
+_Ambient field_
 ```js
-new BinaryParticles(containerEl, { count: 24, charset: 'mixed' }).start();
+import { BinaryParticles } from '@whykusanagi/corrupted-theme/binary-particles';
+new BinaryParticles(stageEl, { count: 30, charset: 'mixed' }).start();
 ```
 
 | Option | Type | Default | Description |
@@ -3017,10 +3760,22 @@ GlitchTitleCard — █▓▒░ buffer-fill intro/outro title cards.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/glitch-title-card.js`
 - Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
 - Constructor: `new GlitchTitleCard(container, options = {})`
-- Methods: `start()`, `renderFrame()`, `renderProgress()`, `stop()`, `destroy()`
+- Methods:
+  - `start(onComplete)` → `this` — Play the card. Intro reveals then settles readable and stays until
+    - `onComplete`: `Function` — Called once the card settles
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame (video export).
+    - `frameIdx`: `number` — Frame number (0-based)
+    - `fps`: `number` — Frames per second of the export
+  - `renderProgress(progress)` — Render the card at an absolute progress position.
+    - `progress`: `number` — 0..1 through the reveal
+  - `stop()` — Stop and remove the card. Reusable.
+  - `destroy()` — Tear down and release references. Not reusable after.
 
+_Stream intro card_
 ```js
-new GlitchTitleCard(containerEl, { text: '', mode: 'intro' }).start();
+import { GlitchTitleCard } from '@whykusanagi/corrupted-theme/glitch-title-card';
+new GlitchTitleCard(stageEl, { text: 'ABYSS ONLINE', mode: 'intro' })
+  .start(() => console.log('settled'));
 ```
 
 | Option | Type | Default | Description |
@@ -3039,10 +3794,19 @@ TerminalTakeover — container-filling "system corrupted" terminal card (size th
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/terminal-takeover.js`
 - Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
 - Constructor: `new TerminalTakeover(container, options = {})`
-- Methods: `start()`, `renderFrame()`, `stop()`, `destroy()`
+- Methods:
+  - `start(onComplete)` → `this` — Show the takeover; auto-clears after options.duration. Idempotent.
+    - `onComplete`: `Function` — Called after the card clears
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame (video export): visible for the first
+    - `frameIdx`: `number` — Frame number (0-based)
+    - `fps`: `number` — Frames per second of the export
+  - `stop()` — Clear the card immediately. Reusable.
+  - `destroy()` — Tear down and release references. Not reusable after.
 
+_Beat-drop takeover_
 ```js
-new TerminalTakeover(containerEl, { title: 'SIGNAL LOST', messages: null }).start();
+import { TerminalTakeover } from '@whykusanagi/corrupted-theme/terminal-takeover';
+new TerminalTakeover(stageEl, { title: 'SIGNAL LOST', duration: 800 }).start();
 ```
 
 | Option | Type | Default | Description |
@@ -3061,10 +3825,22 @@ StreamTicker — ambient corner logo + scrolling corruption ticker.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/stream-ticker.js`
 - Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
 - Constructor: `new StreamTicker(container, options = {})`
-- Methods: `start()`, `renderFrame()`, `stop()`, `destroy()`
+- Methods:
+  - `start()` → `this` — Mount the layers and start the live loop. Idempotent.
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame. Ticker phrases refresh every 30 frames;
+    - `frameIdx`: `number` — Frame number (0-based)
+    - `fps`: `number` — Unused; present for suite API consistency
+  - `stop()` — Stop the loop and unmount both layers. Reusable.
+  - `destroy()` — Tear down and release references. Not reusable after.
 
+_Branded stream overlay_
 ```js
-new StreamTicker(containerEl, { logoText: '', logoSrc: null }).start();
+import { StreamTicker } from '@whykusanagi/corrupted-theme/stream-ticker';
+new StreamTicker(stageEl, {
+  logoText: 'mychannel',
+  label: 'LIVE',
+  logoSrc: '/assets/logo.png',
+}).start();
 ```
 
 | Option | Type | Default | Description |
@@ -3084,10 +3860,30 @@ CorruptedMandala — procedural SVG sacred-geometry background.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-mandala.js`
 - Requires stylesheet: `./corrupted-mandala-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/corrupted-mandala.css`
 - Constructor: `new CorruptedMandala(svgElement, options = {})`
-- Methods: `init()`, `setActive()`, `resize()`, `setLabels()`, `destroy()`
+- Methods:
+  - `init()` → `this` — Build the composition at the current size. Call once after construction
+  - `setActive(active)` → `this` — Show/hide the composition (display toggle; rebuild state is kept).
+    - `active`: `boolean`
+  - `resize(w, h)` → `this` — Resize the composition. Full rebuild — resize is infrequent and the
+    - `w`: `number` — Canvas width in px
+    - `h`: `number` — Canvas height in px
+  - `setLabels(top, bottom)` — Update the frame labels without a rebuild.
+    - `top`: `string` — New top label (undefined = keep)
+    - `bottom`: `string` — New bottom label (undefined = keep)
+  - `destroy()` — Clear the SVG and release references. Not reusable after.
 
+_Fullscreen ambient background_
 ```js
-new CorruptedMandala(containerEl, { labelTop: 'CORRUPTED', labelBottom: 'ARCHIVE.SYS' }).start();
+import { CorruptedMandala } from '@whykusanagi/corrupted-theme/corrupted-mandala';
+const mandala = new CorruptedMandala(svgEl, { labelTop: 'MY.CHANNEL' });
+mandala.init().resize(1920, 1080).setActive(true);
+```
+
+_Deterministic video export_
+```js
+// CSS-only animation: freeze any frame via seekAnimations
+import { seekAnimations } from '@whykusanagi/corrupted-theme/time-utils';
+seekAnimations(svgEl, frameIdx / 60);
 ```
 
 | Option | Type | Default | Description |
@@ -3109,6 +3905,17 @@ Terminal vocabulary + charset generators for transition effects.
 
 - npm: `import { generateHex } from '@whykusanagi/corrupted-theme/terminal-vocab'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/terminal-vocab.js`
+- Functions:
+  - `generateHex(length = 16)` — Random `0x…` hex token of `length` digits.
+  - `generateKatakana(length = 10)` — Random katakana run.
+  - `generateHiragana(length = 10)` — Random hiragana run.
+  - `getRandomCharacter(includeSymbols = false)` — Random single character from the kana pool (matrix-rain style).
+  - `generateCorruptionBlock(lines = 5, charsPerLine = 40)` — Multi-line kana/hex/block corruption blob.
+  - `getRandomCodeBlock(nsfw = false)`
+  - `getRandomMenuIt(nsfw = false)`
+  - `getRandomStatus(nsfw = false)`
+  - `getRandomHeader(nsfw = false)`
+  - `getRandomLoadingMessage(nsfw = false)`
 ### `abyssal-cables`
 
 Abyssal Cables - Tentacle/Cable System for Neural Corruption Transitions
@@ -3166,10 +3973,31 @@ ScrollDecode — text decodes as it scrolls into view.
 - npm: `import { ScrollDecode } from '@whykusanagi/corrupted-theme/scroll-decode'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/scroll-decode.js`
 - Constructor: `new ScrollDecode(element, options = {})`
-- Methods: `start()`, `stop()`, `destroy()`, `scramble()`, `viewportProgress()`
+- Methods:
+  - `start()` → `this` — Arm the viewport lifecycle. Idempotent.
+  - `stop()` — Detach observers/listeners and cancel any running decode. Reusable.
+  - `destroy()` — Stop, restore the readable text, release references. Not reusable.
+  - `ScrollDecode.scramble(text, progress, charset, rng = Math.random)` → `string` _(static — call on the class, not an instance)_ — Pattern-1 scramble at a fixed reveal fraction. Pure aside from rng.
+    - `text`: `string` — Target text
+    - `progress`: `number` — 0..1 revealed fraction (clamped)
+    - `charset`: `string` — Corruption charset
+    - `rng`: `() => number` — Injectable for deterministic tests
+    - returns: Scrambled string, same length as text
+  - `ScrollDecode.viewportProgress(rect, viewportH)` → `number` _(static — call on the class, not an instance)_ — Element's traversal progress through the viewport: 0 when its top edge
+    - `rect`: `DOMRect` — element.getBoundingClientRect()
+    - `viewportH`: `number` — window.innerHeight
+    - returns: 0..1
 
+_Portfolio section reveals_
 ```js
-new ScrollDecode(containerEl, { rearm: false, progress: false }).start();
+import { ScrollDecode } from '@whykusanagi/corrupted-theme/scroll-decode';
+document.querySelectorAll('.decode-on-scroll').forEach((el) =>
+  new ScrollDecode(el).start());
+```
+
+_Scroll-scrubbed decode_
+```js
+new ScrollDecode(headline, { progress: true }).start();
 ```
 
 | Option | Type | Default | Description |
@@ -3186,7 +4014,20 @@ CorruptedTimeline — sequence animation blocks into one orchestrated scene.
 - npm: `import { CorruptedTimeline } from '@whykusanagi/corrupted-theme/corrupted-timeline'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-timeline.js`
 - Constructor: `new CorruptedTimeline(options = {})`
-- Methods: `add()`, `label()`, `play()`, `pause()`, `seek()`, `stop()`, `destroy()`
+- Methods:
+  - `add(item, offset = '+=0', opts = {})` → `this` — Append an item.
+    - `item`: `object` — Object with play(cb), or start()/stop() + opts.duration
+    - `offset`: `number|string` — ms from t0 | '+=N'/'-=N' after/before previous end | a label name
+    - `opts`: `object` — { duration } required for start()-style items
+  - `label(name)` → `this` — Mark the completion point of the previously added entry.
+    - `name`: `string`
+  - `play(fromMs = 0)` → `this` — Start (or resume after pause()) from the given position.
+    - `fromMs`: `number` — Only used on fresh starts; see seek()
+  - `pause()` — Suspend pending starts (in-flight items run to completion).
+  - `seek(ms)` → `this` — Jump the schedule: entries resolvable to a start < ms are skipped
+    - `ms`: `number`
+  - `stop()` — Cancel everything; entries reset to pending. Reusable.
+  - `destroy()` — Stop and release references. Not reusable.
 
 ```js
 new CorruptedTimeline({ autoplay: false, onComplete: null }).play();
@@ -3203,10 +4044,22 @@ GlitchStaggerGrid — Pattern 4: staggered grid corruption.
 - npm: `import { GlitchStaggerGrid } from '@whykusanagi/corrupted-theme/glitch-stagger-grid'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/glitch-stagger-grid.js`
 - Constructor: `new GlitchStaggerGrid(container, options = {})`
-- Methods: `play()`, `stop()`, `destroy()`, `computeDelays()`
+- Methods:
+  - `play(onComplete)` → `this` — Run the ripple once. Idempotent while playing.
+    - `onComplete`: `Function` — Fires when every element has settled
+  - `stop()` — Cancel mid-ripple and restore original text/colors. Reusable.
+  - `destroy()` — Stop and release references. Not reusable.
+  - `GlitchStaggerGrid.computeDelays(centers, origin, wave)` → `number[]` _(static — call on the class, not an instance)_ — Distance-proportional delays, normalized so one nearest-neighbor step
+    - `centers`: `number[][]` — [x, y] element centers
+    - `origin`: `number[]` — [x, y] ripple origin
+    - `wave`: `number` — ms per grid unit (clamped ≥40)
+    - returns: Delay ms per element
 
+_"Starting soon" tile wall_
 ```js
-new GlitchStaggerGrid(containerEl, { selector: ':scope > *', origin: 'center' }).play();
+import { GlitchStaggerGrid } from '@whykusanagi/corrupted-theme/glitch-stagger-grid';
+new GlitchStaggerGrid(tileWall, { origin: 'center', wave: 80 })
+  .play(() => console.log('settled'));
 ```
 
 | Option | Type | Default | Description |
@@ -3222,4 +4075,15 @@ Corruption easing + stagger presets.
 
 - npm: `import { … } from '@whykusanagi/corrupted-theme/corruption-easings'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/corruption-easings.js`
+- `STAGGER` methods:
+  - `STAGGER.rippleFromCenter(i, total, cols, wave = 80)` → `number` — Pattern 4 ripple: delay proportional to grid distance from center.
+    - `i`: `number` — Element index (row-major)
+    - `total`: `number` — Total element count
+    - `cols`: `number` — Grid column count
+    - `wave` (default `80`): `number` — ms per grid-unit of distance (clamped ≥40, spec floor)
+  - `STAGGER.rippleFrom(i, cols, origin, wave = 80)` → `number` — Pattern 4 ripple from an arbitrary grid origin.
+    - `i`: `number` — Element index (row-major)
+    - `cols`: `number` — Grid column count
+    - `origin`: `number[]` — [row, col] origin
+    - `wave` (default `80`): `number` — ms per grid-unit (clamped ≥40)
 <!-- MANIFEST:END -->

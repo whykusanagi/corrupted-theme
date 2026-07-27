@@ -44,10 +44,24 @@ test('buildManifest covers every package export with resolvable targets', () => 
   assert.match(m.conventions.nsfw, /opt-in/);
 });
 
-test('llms.txt renders under 16KB with every export listed', () => {
+test('llms.txt stays dense and lists every export', () => {
   const m = buildManifest();
   const txt = renderLlmsTxt(m);
-  assert.ok(txt.length < 16384, `llms.txt too large: ${txt.length}`);
+
+  // Two things this gate is for: the surface fits comfortably in an LLM
+  // context, and nobody writes a bloated module header (descriptions are
+  // generated from them).
+  //
+  // Total-bytes-per-export measured neither well. It counts SIGNATURES and
+  // return shapes — the payload blind validation showed consumers cannot work
+  // without — as if they were bloat, so enriching the docs tripped it. The
+  // density cap now measures description prose only, which is the thing that
+  // actually rots.
+  assert.ok(txt.length < 32768, `llms.txt too large for an LLM context: ${txt.length}`);
+  const descBytes = m.exports.reduce((n, e) => n + (e.description?.length ?? 0), 0);
+  const perDesc = Math.round(descBytes / m.exports.length);
+  assert.ok(perDesc < 140, `module-header descriptions average ${perDesc} chars — trim them`);
+
   for (const e of m.exports) assert.ok(txt.includes(e.export), `missing ${e.export}`);
   assert.match(txt, /browser-only/); // corrupted-text flag surfaces
 });

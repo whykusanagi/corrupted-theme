@@ -32,6 +32,7 @@ content_type_for() {
     map)    echo "application/json; charset=utf-8" ;;
     svg)    echo "image/svg+xml" ;;
     png)    echo "image/png" ;;
+    mp3)    echo "audio/mpeg" ;;
     woff2)  echo "font/woff2" ;;
     *)      echo "" ;;
   esac

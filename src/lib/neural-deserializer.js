@@ -197,8 +197,8 @@ export class NeuralDeserializer {
         edgePoints.forEach(point => {
             const cable = this.cableSystem.createCable(point.x, point.y, centerX, centerY, {
                 thickness: 0.8,
-                color: '#00ffff',
-                glowColor: '#00ffff',
+                color: '#d94f90',
+                glowColor: '#8b5cf6',
                 alpha: 0.4,
                 textFlow: true,
                 nsfw: false, // Scan messages only
@@ -230,7 +230,7 @@ export class NeuralDeserializer {
 
                 const cable = this.cableSystem.createCable(x1, y1, x2, y2, {
                     thickness: 0.5,
-                    color: '#00ffff',
+                    color: '#d94f90',
                     glowColor: '#8b5cf6',
                     alpha: 0.15 - (ringIndex * 0.02),
                     textFlow: true,
@@ -374,7 +374,7 @@ export class NeuralDeserializer {
                     finalText: customText,
                     duration: decoderDuration,
                     nsfw: nsfw,
-                    color: '#00ffff',
+                    color: '#ffffff',
                     fontSize: '42px'
                 });
                 this.titleDecoder.play(); // Fire and forget - runs independently
@@ -611,9 +611,9 @@ export class NeuralDeserializer {
 
         // Draw header text
         this.ctx.font = 'bold 40px monospace';
-        this.ctx.fillStyle = `rgba(0, 255, 255, ${alpha})`;
+        this.ctx.fillStyle = `rgba(255, 255, 255, ${alpha})`;
         this.ctx.textAlign = 'center';
-        this.ctx.shadowColor = '#00ffff';
+        this.ctx.shadowColor = '#ff00ff';
         this.ctx.shadowBlur = 30;
         this.ctx.fillText(headerText, this.canvas.width / 2, 120);
 

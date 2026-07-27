@@ -76,6 +76,11 @@
             <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
             <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
             <a href="anime-blocks-advanced.html"><i class="fas fa-clapperboard"></i> Advanced Blocks (0.3.1)</a>
+            <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
+            <a href="audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="canvas-seek.html"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
             <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
             <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
             <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
@@ -108,12 +113,22 @@
 
 <script>
   const DEMOS = [
+    { title: 'CorruptedGlobe', tag: 'NEW · 0.3.2', src: 'corrupted-globe.html',
+      desc: 'Orthographic wireframe globe with animated great-circle arcs. Arcs lift off the surface in 3D so limb occlusion stays correct; weight drives width and the palette ramp.' },
+    { title: 'CorruptedGraph', tag: 'NEW · 0.3.2', src: 'corrupted-graph.html',
+      desc: 'Node-and-edge graph with an in-package force layout. Katakana glyph nodes, sagging cable edges, and selection that lights its own edges. Bipartite mode for two-column data.' },
+    { title: 'MicroGfx', tag: 'NEW · 0.3.2 · Pattern 5', src: 'micro-gfx.html',
+      desc: 'Seeded generative instrument posters. Labelled modules composed across five archetypes, then degraded with warp, erode and grain. Same seed, identical artwork.' },
+    { title: 'AudioSpectrum', tag: 'NEW · 0.3.2', src: 'audio-spectrum.html',
+      desc: 'Spectrum driven by a real AnalyserNode rather than a sine stand-in. Exposes bass/mid/treble/rms for driving other components.' },
+    { title: 'Deterministic Frames', tag: 'NEW · 0.3.2', src: 'canvas-seek.html',
+      desc: 'Frame-locked canvas rendering — seeking to a frame renders it pixel-identically to playing there. Plus the reveal → hold → dissolve envelope.' },
     { title: 'Stream Overlay Suite', tag: 'NEW · 0.3.0', src: 'stream-overlays.html',
       desc: 'ChromaticPulse, BinaryParticles, GlitchTitleCard, TerminalTakeover, StreamTicker — live + deterministic renderFrame modes.' },
     { title: 'CorruptedMandala', tag: 'NEW · 0.3.0', src: 'corrupted-mandala.html',
       desc: 'Procedural SVG sacred-geometry background: rotating phrase rings, staggered star pulses, mandorla halo, ornamental frame.' },
     { title: 'GlitchStaggerGrid', tag: 'NEW · 0.3.0 · Pattern 4', src: 'glitch-stagger-grid.html',
-      desc: 'Corruption ripples across a tile grid from center/corner/clicked tile — purple → magenta → cyan, always ends readable.' },
+      desc: 'Corruption ripples across a tile grid from center/corner/clicked tile — purple → magenta → white, always ends readable.' },
     { title: 'CorruptedTimeline', tag: 'NEW · 0.3.0', src: 'corrupted-timeline.html',
       desc: 'OBS scene orchestrator: sequence blocks with absolute/relative/label offsets (anime.js createTimeline model, zero deps).' },
     { title: 'ScrollDecode', tag: 'NEW · 0.3.0', src: 'scroll-decode.html',

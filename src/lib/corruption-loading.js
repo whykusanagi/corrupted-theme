@@ -13,6 +13,14 @@
 import phrasesData from '../data/phrases.data.js';
 import charsetsData from '../data/charsets.data.js';
 
+// The implementation lives in an IIFE (it predates this file being an ES
+// module). Rather than re-indent 385 lines, the IIFE assigns its two public
+// functions to these module-scope bindings, which are exported at the bottom.
+// ESM live bindings make that safe: the IIFE runs during module evaluation, so
+// importers never observe the undefined state.
+let _showCorruptionLoading;
+let _cancelLoading;
+
 (function() {
   'use strict';
 
@@ -394,9 +402,19 @@ import charsetsData from '../data/charsets.data.js';
     window.CorruptionLoading = { show: showCorruptionLoading, cancel: cancelLoading };
   }
 
+  // Hand the public surface out to module scope. Unconditional — unlike the
+  // window attach above, this must also happen in Node and during SSR.
+  _showCorruptionLoading = showCorruptionLoading;
+  _cancelLoading = cancelLoading;
+
   // Export for modules
   if (typeof module !== 'undefined' && module.exports) {
     module.exports = { showCorruptionLoading, cancelLoading };
   }
 })();
+
+export {
+  _showCorruptionLoading as showCorruptionLoading,
+  _cancelLoading as cancelLoading,
+};
 

@@ -324,6 +324,13 @@ class CorruptedVortex {
 }
 
 // Export for manual use / build pipelines
+export { CorruptedVortex };
+
+// Also published as a global. The demo page constructs it from a plain inline
+// <script>, and consumers on 0.2.x loaded this file as a classic script — the
+// named export above is additive, not a replacement.
+if (typeof window !== 'undefined') window.CorruptedVortex = CorruptedVortex;
+
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { CorruptedVortex };
 }

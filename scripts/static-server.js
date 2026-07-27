@@ -23,6 +23,7 @@ const MIME_TYPES = {
   '.js': 'application/javascript',
   '.json': 'application/json',
   '.png': 'image/png',
+  '.mp3': 'audio/mpeg',
   '.jpg': 'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.gif': 'image/gif',

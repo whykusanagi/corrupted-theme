@@ -193,36 +193,73 @@ export function corruptTextJapanese(text, intensity = 0.3) {
 }
 
 /**
- * Semantic corruption with context-aware character selection
+ * Character pools per semantic context.
  *
- * Future enhancement (v0.2.0): Uses context hints to select semantically
- * appropriate Japanese characters. For example, "loading" would prefer
- * characters related to reading/loading (読み込み).
+ * Corruption reads as meaningful when the substituted glyphs relate to what
+ * the system claims to be doing: text that says "loading" degrades into
+ * reading/loading characters rather than arbitrary katakana.
  *
- * Currently falls back to standard corruption.
+ * @type {Object<string, string[]>}
+ */
+export const SEMANTIC_CONTEXTS = Object.freeze({
+  loading:    ['読', '込', 'ロ', 'ー', 'ド', '待'],
+  processing: ['処', '理', 'プ', 'ロ', 'セ', 'ス'],
+  analyzing:  ['分', '析', '解', '査', '検'],
+  corrupting: ['壊', '腐', '敗', '崩', '毀'],
+  watching:   ['監', '視', '見', '観', '察'],
+  connecting: ['接', '続', '繋', '結', '線'],
+});
+
+/**
+ * Semantic corruption with context-aware character selection.
+ *
+ * A named context biases substitutions toward glyphs that relate to it, so
+ * the corruption reads as the system degrading *at that task*.
+ *
+ * `context: 'default'` — and any unrecognised context — produces exactly the
+ * same output as {@link corruptTextJapanese}. That is deliberate: this
+ * function shipped as a stub that ignored its `context` argument, so
+ * changing the default path would silently alter output for every existing
+ * caller. Only the named contexts opt in to the new behaviour.
  *
  * @param {string} text - Text to corrupt
- * @param {string} [context='default'] - Context hint (loading, processing, analyzing, corrupting, etc.)
- * @param {number} [intensity=0.3] - Corruption intensity
+ * @param {string} [context='default'] - One of SEMANTIC_CONTEXTS, or 'default'
+ * @param {number} [intensity=0.3] - Corruption intensity, 0..1
  * @returns {string} Contextually corrupted text
  *
  * @example
  * corruptTextSemantic('Loading', 'loading', INTENSITY.MEDIUM);
- * // Future: Will prefer 読, 込, ロ, ー, ド characters
- * // Current: Falls back to corruptTextJapanese()
+ * // → 'L読adi込g' — degrades into reading/loading glyphs
+ *
+ * @example
+ * corruptTextSemantic('Loading', 'default');
+ * // → identical to corruptTextJapanese('Loading')
  */
 export function corruptTextSemantic(text, context = 'default', intensity = 0.3) {
-  // TODO: Implement context-aware character selection in v0.2.0
-  // Context mappings:
-  // - loading: 読, 込, ロ, ー, ド
-  // - processing: 処, 理, プ, ロ, セ, ス
-  // - analyzing: 分, 析, 解
-  // - corrupting: 壊, 腐, 敗
-  // - watching: 監, 視, 見
-  // - connecting: 接, 続, 繋
+  const pool = SEMANTIC_CONTEXTS[context];
+  if (!pool) return corruptTextJapanese(text, intensity);
 
-  // For now, fallback to standard corruption
-  return corruptTextJapanese(text, intensity);
+  const chars = String(text ?? '').split('');
+  let result = '';
+
+  for (const char of chars) {
+    // Same guard as corruptTextJapanese: only letters corrupt.
+    if (!/[a-zA-Z]/.test(char) || Math.random() >= intensity) {
+      result += char;
+      continue;
+    }
+    // Mostly context glyphs, with a minority of standard katakana so the
+    // result still reads as corruption rather than a word in another script.
+    if (Math.random() < 0.75) {
+      result += pool[Math.floor(Math.random() * pool.length)];
+    } else {
+      result += CHARACTER_SETS.katakana[
+        Math.floor(Math.random() * CHARACTER_SETS.katakana.length)
+      ];
+    }
+  }
+
+  return result;
 }
 
 /**

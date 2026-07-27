@@ -132,7 +132,7 @@ export class TitleDecoder {
    * @param {string}           [options.finalText='SYSTEM READY']  — Target text
    * @param {number}           [options.duration=2000]             — ms
    * @param {boolean}          [options.nsfw=false]                — include NSFW chars
-   * @param {string}           [options.color='#00ffff']
+   * @param {string}           [options.color='#ffffff']
    * @param {string}           [options.fontSize='48px']
    */
   constructor(container, options = {}) {
@@ -143,7 +143,7 @@ export class TitleDecoder {
       finalText: options.finalText || 'SYSTEM READY',
       duration:  options.duration  || 2000,
       nsfw:      options.nsfw      || false,
-      color:     options.color     || '#00ffff',
+      color:     options.color     || '#ffffff',
       fontSize:  options.fontSize  || '48px',
     };
 
@@ -288,7 +288,7 @@ export class ProgressBar {
    * @param {HTMLElement|null} container
    * @param {Object}  [options]
    * @param {number}  [options.duration=2000]
-   * @param {string}  [options.color='#00ffff']
+   * @param {string}  [options.color='#ffffff']
    * @param {number}  [options.height=4]           — px
    * @param {string}  [options.position='bottom']  — 'top'|'bottom'
    * @param {boolean} [options.glitch=true]
@@ -299,7 +299,7 @@ export class ProgressBar {
     this.container = container;
     this.options = {
       duration: options.duration  || 2000,
-      color:    options.color     || '#00ffff',
+      color:    options.color     || '#ffffff',
       height:   options.height    || 4,
       position: options.position  || 'bottom',
       glitch:   options.glitch    !== false,
@@ -413,7 +413,7 @@ export class ScanlineSweep {
    * @param {HTMLElement|null} container
    * @param {Object} [options]
    * @param {number} [options.duration=1500]
-   * @param {string} [options.color='#00ffff']
+   * @param {string} [options.color='#ffffff']
    * @param {number} [options.sweeps=2]   — number of vertical passes
    */
   constructor(container, options = {}) {
@@ -422,7 +422,7 @@ export class ScanlineSweep {
     this.container = container;
     this.options = {
       duration: options.duration || 1500,
-      color:    options.color    || '#00ffff',
+      color:    options.color    || '#ffffff',
       sweeps:   options.sweeps   || 2,
     };
 
@@ -526,7 +526,7 @@ export class TerminalBoot {
    *   ⚠️ SECURITY: rendered as raw HTML via innerHTML. Pass static/author-
    *   controlled content only. If lines could contain user input, escape
    *   HTML entities (`&`, `<`, `>`, `"`) before passing.
-   * @param {string}   [options.color='#00ffff']
+   * @param {string}   [options.color='#ffffff']
    * @param {string}   [options.fontSize='16px']
    */
   constructor(container, options = {}) {
@@ -541,7 +541,7 @@ export class TerminalBoot {
         '> CALIBRATING REALITY DISTORTION...',
         '> SYSTEM ONLINE',
       ],
-      color:    options.color    || '#00ffff',
+      color:    options.color    || '#ffffff',
       fontSize: options.fontSize || '16px',
     };
 
@@ -1336,7 +1336,7 @@ export class DataTransmission {
    * @param {HTMLElement|null} container
    * @param {Object}  [options]
    * @param {number}  [options.duration=2500]
-   * @param {string}  [options.color='#00ffff']
+   * @param {string}  [options.color='#ffffff']
    * @param {string}  [options.direction='horizontal'] — 'horizontal'|'vertical'
    * @param {number}  [options.packetCount=20]
    * @param {number}  [options.packetSize=6]           — px
@@ -1348,7 +1348,7 @@ export class DataTransmission {
     this.container = container;
     this.options = {
       duration:     options.duration     || 2500,
-      color:        options.color        || '#00ffff',
+      color:        options.color        || '#ffffff',
       direction:    options.direction    || 'horizontal',
       packetCount:  options.packetCount  || 20,
       packetSize:   options.packetSize   || 6,

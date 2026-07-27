@@ -31,9 +31,13 @@ Thumbs.db
 *.sublime-workspace
 
 # Environment
+# .env.* is deliberately broad (repo policy §10): .env.production and friends
+# would otherwise slip past a narrower `.env.local` rule. Template files are
+# re-admitted explicitly — they hold placeholders, never values.
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
+!**/.env.example
 
 # Temporary
 *.tmp
@@ -63,3 +67,12 @@ docs/LLM_PROVIDERS.md
 docs/ROUTING.md
 docs/IMPLEMENTATION_VALIDATION.md
 cdn-worker/
+
+# design-sync local state (never published — not in package.json files allowlist)
+.design-sync/
+
+# celeste-cli local state — auto-stamped with a git hash on every run, so it
+# would churn on every commit. Neither is in the package.json files allowlist,
+# so neither ships either way.
+.celeste/
+.grimoire

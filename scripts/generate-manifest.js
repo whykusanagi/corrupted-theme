@@ -43,6 +43,65 @@ const REQUIRES_CSS = {
  * @param {string} source - File contents
  * @returns {object} { description, version, classes, functions, constants, composes, options }
  */
+/**
+ * Read a brace-balanced `{...}` starting at `from`, across lines, stripping
+ * JSDoc leading asterisks. Return types nest arbitrarily —
+ * `{{total:number, at:(t)=>{phase:string}}}` — and span lines, which no single
+ * regex handles cleanly. Returns null when unbalanced.
+ * @param {string} text
+ * @param {number} from - index of the opening brace
+ * @returns {string|null}
+ */
+function balancedBraces(text, from) {
+  if (text[from] !== '{') return null;
+  let depth = 0;
+  for (let i = from; i < text.length; i++) {
+    if (text[i] === '{') depth++;
+    else if (text[i] === '}') {
+      depth--;
+      if (depth === 0) {
+        return text.slice(from + 1, i)
+          .split('\n').map((l) => l.replace(/^\s*\*\s?/, '')).join(' ')
+          .replace(/\s+/g, ' ').trim();
+      }
+    }
+  }
+  return null;
+}
+
+/**
+ * Extract `@returns` type + description from a JSDoc block.
+ * @param {string} doc
+ * @returns {{type:string, description?:string}|undefined}
+ */
+function parseReturns(doc) {
+  const at = doc.search(/@returns?\s+\{/);
+  if (at === -1) return undefined;
+  const brace = doc.indexOf('{', at);
+  const type = balancedBraces(doc, brace);
+  if (type === null) return undefined;
+  let depth = 0, close = brace;
+  for (let i = brace; i < doc.length; i++) {
+    if (doc[i] === '{') depth++;
+    else if (doc[i] === '}' && --depth === 0) { close = i; break; }
+  }
+  // The description may wrap onto following ` *   ` lines, like @param does.
+  const tail = doc.slice(close + 1);
+  const raw = tail.match(/^[ \t]*([^\n]*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/)?.[1] || '';
+  const desc = raw
+    .split('\n').map((l) => l.replace(/^\s*\*\s?/, '')).join(' ')
+    .replace(/\s+/g, ' ').trim();
+  return { type, description: desc || undefined };
+}
+
+/** Flatten a wrapped JSDoc description into one line. */
+function flattenDoc(raw) {
+  const t = (raw || '')
+    .split('\n').map((l) => l.replace(/^\s*\*\s?/, '')).join(' ')
+    .replace(/\s+/g, ' ').trim();
+  return t && !t.startsWith('@') ? t : undefined;
+}
+
 export function parseModule(source) {
   const header = source.match(/\/\*\*([\s\S]*?)\*\//)?.[1] ?? '';
   const lines = header.split('\n').map((l) => l.replace(/^\s*\*\s?/, ''));
@@ -62,11 +121,67 @@ export function parseModule(source) {
   }
 
   const version = header.match(/@version\s+([\d.]+)/)?.[1] ?? null;
+
+  // Hand-written @example blocks. 28 modules carry one and none of them
+  // reached the published surface, which is why the reference read like a type
+  // listing: every worked example the author wrote was being discarded.
+  const examples = [];
+  const exRe = /@example([^\n]*)\n((?:\s*\*(?![ \t]*@)[^\n]*\n?)*)/g;
+  for (const m of header.matchAll(exRe)) {
+    const code = m[2]
+      .split('\n')
+      .map((l) => l.replace(/^\s*\*[ \t]?/, ''))
+      .join('\n')
+      .replace(/^\s*\n/, '')
+      .replace(/\s+$/, '');
+    const dedent = Math.min(...code.split('\n').filter((l) => l.trim())
+      .map((l) => l.match(/^ */)[0].length));
+    examples.push({
+      caption: m[1].trim() || undefined,
+      code: code.split('\n').map((l) => l.slice(dedent)).join('\n'),
+    });
+  }
   const composes = [...header.matchAll(/@composes\s+(\S+)(?:\s+[—-]\s+(.*))?/g)]
     .map((m) => ({ target: m[1], note: (m[2] ?? '').trim() || undefined }));
 
   const classes = [...source.matchAll(/^export class (\w+)/gm)].map((m) => m[1]);
   const functions = [...source.matchAll(/^export (?:async )?function (\w+)/gm)].map((m) => m[1]);
+
+  // Standalone functions need signatures too. Publishing `rms, smoothRms,
+  // mouthTarget, approach` as four bare names tells a consumer nothing — not
+  // the argument order, not what each one takes. Blind validation could not
+  // write a single correct call from that.
+  const fnDetail = {};
+  const fnRe = /(?:\/\*\*((?:[^*]|\*(?!\/))*)\*\/\s*\n)?^export (?:async )?function (\w+)\s*\(([^)]*)\)/gm;
+  for (const m of source.matchAll(fnRe)) {
+    const doc = m[1] ?? '';
+    const params = [...doc.matchAll(/@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[?([\w.]+)\]?(?:=((?:[^\[\]]|\[[^\]]*\])*))?\]?[ \t]*[-—–]?[ \t]*([^\n]*)/g)]
+      .map((pm) => ({
+        name: pm[2], type: pm[1].trim(),
+        default: pm[3] !== undefined ? pm[3] : undefined,
+        description: flattenDoc(pm[4]),
+      }));
+    const returns = parseReturns(doc);
+    const summary = (doc.split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim())
+      .filter((l) => l && !l.startsWith('@'))[0]) || undefined;
+    fnDetail[m[2]] = {
+      signature: `${m[2]}(${m[3].replace(/\s+/g, ' ').trim()})`,
+      summary,
+      params: params.length ? params : undefined,
+      returns,
+    };
+  }
+
+  // Documented instance properties (@property in the class JSDoc). `.levels`
+  // was referenced in prose but its shape was published nowhere.
+  const properties = {};
+  const propRe = /@property\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+(\S+)[ \t]*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
+  for (const m of source.matchAll(propRe)) {
+    const desc = (m[3] || '')
+      .split('\n').map((l) => l.replace(/^\s*\*\s?/, '')).join(' ')
+      .replace(/\s+/g, ' ').trim();
+    properties[m[2]] = { type: m[1].trim(), description: desc || undefined };
+  }
   const constants = [...source.matchAll(/^export const (\w+)/gm)].map((m) => m[1]);
 
   // Options are attributed to the class whose region of the file they sit in,
@@ -80,7 +195,16 @@ export function parseModule(source) {
     return owner ?? null;
   };
 
-  const optionRe = /@param\s+\{([^}]+)\}\s+\[options\.(\w+)(?:=([^\]]*))?\]\s*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
+  // Two fixes here, both found by blind validation rather than by reading:
+  //  1. The separator after `]` used `\s*`, which crosses newlines. A param
+  //     with no inline description therefore swallowed the NEXT @param line
+  //     whole, silently dropping it from the published surface. Latent since
+  //     0.3.0 — it only bites when a param has no trailing prose.
+  //  2. Brace-BALANCED type capture. `[^}]+` stopped at the first closing brace, so
+  // any param whose type contained braces — `{{warp:number,grain:number}}`,
+  // `{'card'|{w:number,h:number}}` — failed to match and was dropped from the
+  // published surface entirely. Found by blind validation, not by reading this.
+  const optionRe = /@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[options\.(\w+)(?:=((?:[^\[\]]|\[[^\]]*\])*))?\][ \t]*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
   const cleanDesc = (raw) => {
     const text = raw
       .split('\n').map((l) => l.replace(/^\s*\*\s?/, '')).join(' ')
@@ -97,6 +221,47 @@ export function parseModule(source) {
     owner: regionFor(m.index),
   }));
 
+  // Namespace objects — `export const X = { method() {} }` — are a real public
+  // shape here (MicroGfx), not just a constant. Without this they published as
+  // a bare name with no constructor and no methods, so a consumer had no
+  // documented way to invoke them at all.
+  const methodParamRe = /@param\s+\{((?:[^{}\n]|\{[^{}\n]*\})+)\}\s+\[?([\w.]+)\]?(?:=((?:[^\[\]]|\[[^\]]*\])*))?\]?[ \t]*[-—–]?[ \t]*(.*(?:\n\s*\*(?![ \t]*@|\/)[ \t]*[^\n]*)*)/g;
+
+  const namespaces = {};
+  for (const m of source.matchAll(/^export const (\w+) = \{/gm)) {
+    const start = m.index;
+    // Walk braces to find the object's extent.
+    let depth = 0, end = start;
+    for (let i = source.indexOf('{', start); i < source.length; i++) {
+      if (source[i] === '{') depth++;
+      else if (source[i] === '}') { depth--; if (depth === 0) { end = i; break; } }
+    }
+    const body = source.slice(start, end);
+    const nsRe = /(?:\/\*\*((?:[^*]|\*(?!\/))*)\*\/\s*\n)?^  (?:async )?([a-zA-Z]\w*)\s*\(([^)]*)\)\s*\{/gm;
+    const names = [];
+    for (const mm of body.matchAll(nsRe)) {
+      if (['if', 'for', 'while', 'switch', 'catch', 'return'].includes(mm[2])) continue;
+      const doc = mm[1] ?? '';
+      const returns = parseReturns(doc);
+      const summary = (doc.split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim())
+        .filter((l) => l && !l.startsWith('@'))[0]) || undefined;
+      const nsParams = [...doc.matchAll(methodParamRe)]
+        .map((pm) => ({
+          name: pm[2], type: pm[1].trim(),
+          default: pm[3] !== undefined ? pm[3] : undefined,
+          description: flattenDoc(pm[4]),
+        }));
+      names.push({
+        name: mm[2],
+        signature: `${mm[2]}(${mm[3].replace(/\s+/g, ' ').trim()})`,
+        summary,
+        params: nsParams.length ? nsParams : undefined,
+        returns,
+      });
+    }
+    if (names.length) namespaces[m[1]] = names;
+  }
+
   // Constructor signature per class — components differ (element+options vs
   // options-only), and blind validation showed consumers cannot guess.
   const constructors = {};
@@ -106,15 +271,49 @@ export function parseModule(source) {
     if (sig !== undefined) constructors[c.name] = sig;
   });
 
-  // Public method names per class (constructor and _private excluded) — so
-  // consumers see e.g. CorruptedTimeline's add/label/play/pause/seek surface.
+  // Public methods per class, WITH their signature and parameter shapes.
+  //
+  // Names alone are not usable: blind validation showed a consumer can see
+  // that `setData` and `fire` exist and still have no idea what to pass them.
+  // The data shape lives in each method's own @param tags, not in the
+  // constructor options, so it never reached the published surface before.
   const methods = {};
+  const methodDetail = {};
   classMarks.forEach((c, i) => {
     const slice = source.slice(c.index, classMarks[i + 1]?.index);
-    const names = [...slice.matchAll(/^  (?:static )?(?:async )?([a-zA-Z]\w*)\s*\(/gm)]
-      .map((m) => m[1])
-      .filter((n) => n !== 'constructor' && !['if', 'for', 'while', 'switch', 'catch'].includes(n));
-    if (names.length) methods[c.name] = [...new Set(names)];
+    const found = [];
+    const detail = {};
+    // Capture each method along with the JSDoc block immediately above it.
+    // The `static` marker must survive: a static method called on an instance
+    // throws `TypeError: x is not a function`. Publishing ScrollDecode.scramble
+    // under a plain "Methods:" heading sent a blind consumer straight into that.
+    const methodRe = /(?:\/\*\*((?:[^*]|\*(?!\/))*)\*\/\s*\n)?^  (static )?(?:async )?([a-zA-Z]\w*)\s*\(([^)]*)\)\s*\{/gm;
+    for (const m of slice.matchAll(methodRe)) {
+      const name = m[3];
+      if (name === 'constructor' || ['if', 'for', 'while', 'switch', 'catch'].includes(name)) continue;
+      if (found.includes(name)) continue;
+      found.push(name);
+      const doc = m[1] ?? '';
+      const isStatic = Boolean(m[2]);
+      const args = m[4].replace(/\s+/g, ' ').trim();
+      const params = [...doc.matchAll(methodParamRe)]
+        .map((pm) => ({ name: pm[2], type: pm[1].trim(), description: flattenDoc(pm[4]) }))
+        .filter((pp) => !pp.name.startsWith('options.'));
+      const returns = parseReturns(doc);
+      const summary = (doc.split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim())
+        .filter((l) => l && !l.startsWith('@'))[0]) || undefined;
+      detail[name] = {
+        static: isStatic || undefined,
+        signature: `${isStatic ? `${c.name}.` : ''}${name}(${args})`,
+        summary,
+        params: params.length ? params : undefined,
+        returns,
+      };
+    }
+    if (found.length) {
+      methods[c.name] = found;
+      methodDetail[c.name] = detail;
+    }
   });
 
   if (classMarks.length > 1) {
@@ -124,14 +323,14 @@ export function parseModule(source) {
       (byClass[key] ??= []).push({ ...o, owner: undefined });
     }
     return { description, version, classes, functions, constants, composes,
-             options: [], classOptions: byClass, methods, constructors };
+             options: [], classOptions: byClass, methods, methodDetail, constructors, namespaces, fnDetail, properties, examples };
   }
   const seen = new Set();
   const uniqueOptions = options
     .map((o) => ({ ...o, owner: undefined }))
     .filter((o) => !seen.has(o.name) && seen.add(o.name));
   return { description, version, classes, functions, constants, composes,
-           options: uniqueOptions, methods, constructors };
+           options: uniqueOptions, methods, methodDetail, constructors, namespaces, fnDetail, properties, examples };
 }
 
 /** Build the manifest object from package.json exports. */
@@ -183,6 +382,11 @@ export function buildManifest() {
         options: parsed.options.length ? parsed.options : undefined,
         classOptions: parsed.classOptions,
         methods: parsed.methods && Object.keys(parsed.methods).length ? parsed.methods : undefined,
+        methodDetail: parsed.methodDetail && Object.keys(parsed.methodDetail).length ? parsed.methodDetail : undefined,
+        fnDetail: parsed.fnDetail && Object.keys(parsed.fnDetail).length ? parsed.fnDetail : undefined,
+        namespaces: parsed.namespaces && Object.keys(parsed.namespaces).length ? parsed.namespaces : undefined,
+        properties: parsed.properties && Object.keys(parsed.properties).length ? parsed.properties : undefined,
+        examples: parsed.examples?.length ? parsed.examples : undefined,
         constructors: parsed.constructors && Object.keys(parsed.constructors).length ? parsed.constructors : undefined,
         composes: parsed.composes.length ? parsed.composes : undefined,
         requiresCss: REQUIRES_CSS[key],
@@ -249,8 +453,19 @@ export function renderLlmsTxt(manifest) {
       if (parts.length) opts = ` options per class: ${parts.join(' · ')}.`;
     }
     const singleClass = e.classes?.length === 1 ? e.classes[0] : null;
+    const det = singleClass ? e.methodDetail?.[singleClass] : null;
     const meth = singleClass && e.methods?.[singleClass]
-      ? ` methods: ${e.methods[singleClass].join('/')}.`
+      ? ` methods: ${e.methods[singleClass].map((n) => det?.[n]?.signature ?? `${n}()`).join(' ')}.`
+      : '';
+    const props = e.properties && Object.keys(e.properties).length
+      ? ` props: ${Object.entries(e.properties).map(([n, d]) => `${n}:${d.type}`).join(' ')}.`
+      : '';
+    const fns = e.fnDetail && Object.keys(e.fnDetail).length
+      ? ` fns: ${Object.values(e.fnDetail).map((d) => d.signature + (d.returns ? `→${d.returns.type}` : '')).join(' ')}.`
+      : '';
+    const nsFns = e.namespaces && Object.keys(e.namespaces).length
+      ? ' ' + Object.entries(e.namespaces).map(([ns, list]) =>
+          `${ns}: ${list.map((f) => f.signature + (f.returns ? `→${f.returns.type}` : '')).join(' ')}.`).join(' ')
       : '';
     const cssEntry = e.requiresCss ? manifest.exports.find((x) => x.export === e.requiresCss) : null;
     const css = e.requiresCss ? ` needs css: ${e.requiresCss} (${cssEntry?.cdnUrl ?? ''}).` : '';
@@ -261,7 +476,7 @@ export function renderLlmsTxt(manifest) {
       ? ` composes: ${e.composes.map((c) => c.target).join(', ')}.`
       : '';
     const flag = e.browserOnly ? ' [browser-only]' : '';
-    lines.push(`- ${e.export}${flag} → { ${api} }.${singleCtor} ${e.description ?? ''}${opts}${meth}${css}${comp}`);
+    lines.push(`- ${e.export}${flag} → { ${api} }.${singleCtor} ${e.description ?? ''}${opts}${meth}${props}${fns}${nsFns}${css}${comp}`);
   }
   lines.push('', 'Every component settles to a stable readable final state (spec tenet).');
   return lines.join('\n') + '\n';
@@ -292,9 +507,58 @@ export function renderReferenceBlock(manifest) {
       out.push(`- Constructor: \`new ${singleClass}(${e.constructors[singleClass]})\``);
     }
     if (singleClass && e.methods?.[singleClass]) {
-      out.push(`- Methods: \`${e.methods[singleClass].join('()\`, \`')}()\``);
+      const det = e.methodDetail?.[singleClass];
+      if (det) {
+        out.push('- Methods:');
+        for (const name of e.methods[singleClass]) {
+          const d = det[name];
+          if (!d) { out.push(`  - \`${name}()\``); continue; }
+          const ret = d.returns ? ` → \`${d.returns.type}\`` : '';
+          const tag = d.static ? ' _(static — call on the class, not an instance)_' : '';
+          out.push(`  - \`${d.signature}\`${ret}${tag}${d.summary ? ` — ${d.summary}` : ''}`);
+          for (const pp of d.params ?? []) {
+            out.push(`    - \`${pp.name}\`: \`${pp.type}\`${pp.description ? ` — ${pp.description}` : ''}`);
+          }
+          if (d.returns?.description) out.push(`    - returns: ${d.returns.description}`);
+        }
+      } else {
+        out.push(`- Methods: \`${e.methods[singleClass].join('()\`, \`')}()\``);
+      }
     }
-    if (singleClass) {
+    if (e.properties && Object.keys(e.properties).length) {
+      out.push('- Properties:');
+      for (const [n, d] of Object.entries(e.properties)) {
+        out.push(`  - \`${n}\`: \`${d.type}\`${d.description ? ` — ${d.description}` : ''}`);
+      }
+    }
+    if (e.fnDetail && Object.keys(e.fnDetail).length) {
+      out.push('- Functions:');
+      for (const [n, d] of Object.entries(e.fnDetail)) {
+        const ret = d.returns ? ` → \`${d.returns.type}\`` : '';
+        out.push(`  - \`${d.signature}\`${ret}${d.summary ? ` — ${d.summary}` : ''}`);
+        for (const pp of d.params ?? []) {
+          out.push(`    - \`${pp.name}\`${pp.default !== undefined ? ` (default \`${pp.default}\`)` : ''}: \`${pp.type}\`${pp.description ? ` — ${pp.description}` : ''}`);
+        }
+        if (d.returns?.description) out.push(`    - returns: ${d.returns.description}`);
+      }
+    }
+    if (e.namespaces && Object.keys(e.namespaces).length) {
+      for (const [ns, fns] of Object.entries(e.namespaces)) {
+        out.push(`- \`${ns}\` methods:`);
+        for (const f of fns) {
+          const ret = f.returns ? ` → \`${f.returns.type}\`` : '';
+          out.push(`  - \`${ns}.${f.signature}\`${ret}${f.summary ? ` — ${f.summary}` : ''}`);
+          for (const pp of f.params ?? []) {
+            out.push(`    - \`${pp.name}\`${pp.default !== undefined ? ` (default \`${pp.default}\`)` : ''}: \`${pp.type}\`${pp.description ? ` — ${pp.description}` : ''}`);
+          }
+        }
+      }
+    }
+    if (e.examples?.length) {
+      for (const ex of e.examples) {
+        out.push('', ...(ex.caption ? [`_${ex.caption}_`] : []), '```js', ex.code, '```');
+      }
+    } else if (singleClass) {
       const opts = (e.options ?? []).slice(0, 2)
         .filter((o) => o.default !== undefined)
         .map((o) => `${o.name}: ${o.default}`).join(', ');
@@ -325,6 +589,17 @@ export function renderReferenceBlock(manifest) {
     'absolutely inside their container, so give the container \`position: relative\`',
     'and a size. The full-viewport canvas transitions render \`position: fixed\` and',
     'ignore container geometry. Every option below is parsed from the source JSDoc.',
+    '',
+    'Canvas components (`corrupted-globe`, `corrupted-graph`, `audio-spectrum`) take',
+    'a `<canvas>` and size their backing store for the display. Give the canvas a',
+    'size in CSS; a bare `<canvas width="600">` with no CSS size also works, but its',
+    'layout box is then pinned to that first measurement rather than staying',
+    'responsive.',
+    '',
+    'The CDN URLs below resolve against the published `@latest`. Working from a',
+    'checkout of this repo, or against a version that is not published yet, import',
+    'from the local tree instead — e.g.',
+    '`import { CorruptedGlobe } from \'../src/lib/corrupted-globe.js\'`.',
     '',
     '| Import | API | Purpose |',
     '|---|---|---|',

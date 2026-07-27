@@ -7,7 +7,7 @@
  * elements settle to stable cyan. The grid always ends fully readable.
  *
  * Color ramp per spec: purple (#8b5cf6) wavefront → magenta (#ff00ff)
- * mid-decay → cyan (#00ffff) settled. Design reference: anime.js v4 grid
+ * mid-decay → white (#ffffff) settled. Design reference: anime.js v4 grid
  * `stagger` (MIT) — API model only, zero dependencies.
  *
  * Spec floors enforced: wave ≥ 40ms/neighbor, burst frames ≥ 100ms, total
@@ -32,7 +32,7 @@
 import { CorruptionCharsets } from '../core/corruption-charsets.js';
 import { TimerRegistry } from '../core/timer-registry.js';
 
-const RAMP = { wavefront: '#8b5cf6', mid: '#ff00ff', settled: '#00ffff' };
+const RAMP = { wavefront: '#8b5cf6', mid: '#ff00ff', settled: '#ffffff' };
 const BURST_MS = 800;
 const FRAME_MS = 100;      // spec floor: ≥100ms per flicker frame
 const SETTLE_CAP_MS = 4000;

@@ -30,7 +30,7 @@ export class ParticleGrid {
             duration: options.duration || 2000,
             rows: options.rows || 8,
             cols: options.cols || 12,
-            color: options.color || '#00ffff',
+            color: options.color || '#ffffff',
             particleSize: options.particleSize || 8,
             staggerFrom: options.staggerFrom || 'center', // 'center', 'edges', 'random'
             animationType: options.animationType || 'scale', // 'scale', 'rotate', 'explode'
@@ -439,7 +439,7 @@ export class WaveRipple {
         this.options = {
             duration: options.duration || 2500,
             waves: options.waves || 5,
-            color: options.color || '#00ffff',
+            color: options.color || '#ffffff',
             maxRadius: options.maxRadius || 500,
             ...options
         };
@@ -690,7 +690,7 @@ export class CircularProgress {
             duration: options.duration || 3000,
             radius: options.radius || 60,
             strokeWidth: options.strokeWidth || 8,
-            color: options.color || '#00ffff',
+            color: options.color || '#ffffff',
             glitchColor: options.glitchColor || '#8b5cf6',
             position: options.position || 'center', // 'center', 'top-right', 'bottom-left'
             showPercentage: options.showPercentage !== undefined ? options.showPercentage : true,
@@ -867,7 +867,7 @@ export class RadialBurst {
         this.options = {
             duration: options.duration || 2000,
             particleCount: options.particleCount || 40,
-            color: options.color || '#00ffff',
+            color: options.color || '#ffffff',
             particleSize: options.particleSize || 6,
             maxDistance: options.maxDistance || 300,
             easing: options.easing || 'easeOutExpo', // easeOutExpo, easeOutCubic, linear
@@ -1124,7 +1124,7 @@ export class HexagonGrid {
             rows: options.rows || 6,
             cols: options.cols || 8,
             hexSize: options.hexSize || 40,
-            color: options.color || '#00ffff',
+            color: options.color || '#ffffff',
             staggerFrom: options.staggerFrom || 'center', // 'center', 'top', 'random'
             fillStyle: options.fillStyle || 'stroke', // 'stroke', 'fill', 'both'
             ...options

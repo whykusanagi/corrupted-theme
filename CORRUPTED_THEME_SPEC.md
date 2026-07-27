@@ -1,6 +1,6 @@
 # Corrupted Theme Specification
 
-**Version:** 1.1
+**Version:** 1.2
 **Author:** whykusanagi
 **Status:** Production
 **License:** MIT (for contribution to corrupted-theme package)
@@ -19,27 +19,55 @@ The **Corrupted Theme** is a visual aesthetic for digital interfaces that simula
 
 ### 1. Color Palette
 
-**Primary Colors:**
+The palette has two tiers, and the distinction matters more than any
+individual hex value. **Theme colors carry meaning. Accent colors carry
+legibility.**
+
+**Theme colors — magenta, violet, white.** These three are the aesthetic.
+Any composition should read as belonging to the theme using only these.
+
 ```css
---corrupted-white:    #ffffff;  /* Primary text, decoded/stable state */
---corrupted-black:    #000000;  /* Background, void, deep darkness */
---corrupted-magenta:  #ff00ff;  /* Primary corruption color */
---corrupted-purple:   #8b5cf6;  /* Deep/intimate corruption */
---corrupted-magenta2: #d94f90;  /* High-energy glitches, playful corruption */
---corrupted-red:      #ff0000;  /* Critical state, danger, terminal errors */
---corrupted-cyan:     #00ffff;  /* Accent only (rare, for highlights) */
---corrupted-green:    #00ff00;  /* System/matrix references (rare) */
+--corrupted-white:    #ffffff;  /* Stable, decoded, final readable state */
+--corrupted-magenta:  #ff00ff;  /* Primary corruption */
+--corrupted-purple:   #8b5cf6;  /* Violet — deep/intimate corruption */
+```
+
+**Supporting colors.** Extensions of the theme rather than additions to it.
+
+```css
+--corrupted-magenta2: #d94f90;  /* High-energy / playful corruption */
+--corrupted-black:    #000000;  /* Background, void, corrupted holes */
+--corrupted-green:    #00ff00;  /* Rare matrix/system callback */
+```
+
+**Accent colors — cyan and red.** These exist to make a visual *work*:
+highlight something, or separate text from a dark background. They are a
+typographic and compositional tool, not a state signal.
+
+```css
+--corrupted-cyan:     #00ffff;  /* Accent — highlight, separation */
+--corrupted-red:      #ff0000;  /* Accent — highlight, separation, alarm */
 ```
 
 **Usage Guidelines:**
-- **White (#ffffff)**: Primary stable/decoded text, final readable state
-- **Black (#000000)**: Background, void areas, corrupted "holes" in data
-- **Magenta (#ff00ff)**: Primary corruption color, main glitch aesthetic
-- **Purple (#8b5cf6)**: Deep corruption (intimate/NSFW phrases, intense degradation)
-- **Magenta2 (#d94f90)**: Playful corruption (SFW phrases, high-energy glitches)
-- **Red (#ff0000)**: Critical/terminal states (0%, errors, failures, system collapse)
-- **Cyan (#00ffff)**: Accent ONLY (occasional highlight, rare matrix callback)
-- **Green (#00ff00)**: System/matrix references (rare, nostalgic nod to Matrix aesthetic)
+- **White (#ffffff)**: Stable/decoded text, final readable state. The
+  endpoint every corruption animation settles to.
+- **Magenta (#ff00ff)**: Primary corruption color, the main glitch aesthetic.
+- **Violet (#8b5cf6)**: Deep corruption — intimate/NSFW phrases, intense
+  degradation, depth and shadow. (The CSS variable is
+  `--corrupted-purple`; violet is the design name for the same colour.)
+- **Magenta2 (#d94f90)**: Playful corruption — SFW phrases, high-energy
+  glitches. A magenta variant, not a fourth theme colour.
+- **Black (#000000)**: Background, void areas, corrupted "holes" in data.
+- **Green (#00ff00)**: Rare matrix/system callback.
+- **Cyan (#00ffff)** and **Red (#ff0000)**: accents. Reach for them when a
+  composition needs a highlight, or when text would otherwise sink into a
+  dark background. Red additionally reads naturally as alarm, so it suits
+  critical states — but that is a convention it lends itself to, not a
+  reservation. Neither accent should carry the identity of a component.
+
+**Cyan is not, and never was, a stable-text colour.** It appeared in that
+role by mistake and spread; see the 1.2 entry in Version History.
 
 ### 2. Text Shadow Effects
 
@@ -303,7 +331,7 @@ Final:    System Online                    (stable white)
 
 **Concept:** Character-by-character decoding (Pattern 1) WITH phrase flickering in unrevealed portion (Pattern 2). Simulates neural network progressively decoding text while the buffer ahead still contains corrupted phrase fragments.
 
-**What it is:** Revealed text is stable (cyan), unrevealed portion shows phrase snippets from buffer
+**What it is:** Revealed text is stable (white), unrevealed portion shows phrase snippets from buffer
 **Content:** SFW (default) or NSFW (opt-in with `{ nsfw: true }`)
 **Component:** Custom implementation combining `CorruptedText` + phrase buffer
 
@@ -403,9 +431,9 @@ runs a short character-decode burst whose START TIME is delayed
 proportionally to its grid distance from the origin (the "wave").
 
 - **Direction:** chaos → order. The wavefront corrupts; behind it, elements
-  settle to stable cyan (#00ffff). The grid always ends fully readable.
+  settle to stable white (#ffffff). The grid always ends fully readable.
 - **Color ramp by corruption age:** purple (#8b5cf6) at the wavefront →
-  magenta (#ff00ff) mid-decay → cyan (#00ffff) settled.
+  magenta (#ff00ff) mid-decay → white (#ffffff) settled.
 - **Charsets:** standard registry sets only (katakana primary; blocks for
   heavy corruption). Via CorruptionCharsets — never inline.
 - **Use for:** navigation menus, gallery/tile grids, dashboard panels,
@@ -417,6 +445,53 @@ proportionally to its grid distance from the origin (the "wave").
 **Reference implementation:** `GlitchStaggerGrid`
 (`@whykusanagi/corrupted-theme/glitch-stagger-grid`, 0.3.0). Design
 reference: anime.js v4 grid `stagger` (MIT) — API model only, no dependency.
+
+---
+
+### Pattern 5: Static Material Degradation
+
+Corruption rendered as damage to the *surface* rather than as motion over
+time. The artifact is a single frame — a poster, card, banner or export —
+that reads as a recovered document from a degrading system. Patterns 1-4 all
+animate chaos → order; Pattern 5 is the first non-temporal pattern, freezing
+one moment mid-decay.
+
+- **Direction:** order → chaos, then stopped. The composition underneath is
+  legible instrument-panel structure — readouts, gauges, serial lines,
+  dimension marks. Degradation is applied on top and must never obscure the
+  primary readout.
+- **Three degradation layers**, applied in this order, each independently
+  dialable 0 → 1:
+  1. **Warp** — `feTurbulence type="fractalNoise"` feeding
+     `feDisplacementMap`. Bends geometry, as if the substrate buckled.
+  2. **Erode** — `feTurbulence` + a high-contrast `feColorMatrix` alpha ramp
+     + `feComposite operator="in"`. Eats away ink coverage.
+  3. **Grain** — `feTurbulence` at high `baseFrequency`, low alpha,
+     `stitchTiles="stitch"`. Sensor noise over everything.
+- **Determinism:** every degradation layer derives its filter seed from the
+  composition seed, so the same seed always produces the identical artifact.
+  This is non-negotiable — a poster you cannot regenerate is not a design
+  system output.
+- **Theme colours carry the composition:** white (#ffffff) for the readable,
+  settled readout; magenta (#ff00ff) and violet (#8b5cf6) for corruption,
+  structure and depth. Cyan and red are available as accents where a readout
+  needs to lift off the background — sparingly, and never as the identity of
+  the piece.
+- **Charsets:** standard registry sets via `CorruptionCharsets` — never
+  inline. Katakana primary; blocks for heavy corruption.
+- **Use for:** thumbnails, stream cards, social banners, poster exports,
+  portfolio backgrounds — any single-frame surface.
+- **Accessibility:** no animation, so no flicker limit applies. Instead:
+  primary text holds ≥ 4.5:1 contrast against its local background *after*
+  degradation is applied; `erode` is capped so no glyph loses more than ~30%
+  coverage; and `degrade: 0` must produce a fully clean, legible artifact.
+  Degradation is an effect, never a load-bearing part of the composition.
+
+**Reference implementation:** `MicroGfx`
+(`@whykusanagi/corrupted-theme/micro-gfx`, 0.3.2). Degradation uses SVG
+filter primitives from the W3C Filter Effects spec — `feTurbulence`,
+`feDisplacementMap`, `feColorMatrix`, `feComposite` — so the whole pattern is
+declarative, with no dependency and no per-pixel JavaScript.
 
 ---
 
@@ -478,7 +553,7 @@ reference: anime.js v4 grid `stagger` (MIT) — API model only, no dependency.
 - "Reality.exe has stopped responding..."
 - "Decrypting protocols..."
 
-**Color Usage:** Mix of cyan (#00ffff), magenta (#d94f90), purple (#8b5cf6)
+**Color Usage:** Mix of magenta2 (#d94f90), magenta (#ff00ff), purple (#8b5cf6)
 
 ---
 
@@ -739,9 +814,11 @@ function corruptedCountdown(label, startValue, endValue) {
 ### Core Tenets
 
 1. **Chaos → Order**: Information emerges from corruption, not the reverse
-2. **Readable Endpoints**: Final state must be readable (cyan, stable)
+2. **Readable Endpoints**: Final state must be readable (white, stable)
 3. **Motion Indicates Instability**: Static = stable, animated = corrupted
-4. **Color = State**: Each color represents a corruption level/type
+4. **Color = State**: The theme colours encode corruption level — white is
+   settled, magenta and violet are corrupting. The accents (cyan, red) are
+   exempt: they serve legibility and emphasis, not state.
 5. **Japanese = Foreign/Unknown**: Use foreign scripts for "unreadable" corruption
 
 ### Emotional Resonance
@@ -837,6 +914,48 @@ corrupted.start();
 ---
 
 ## Version History
+
+- **1.2** (2026-07-27): Static corruption
+  - Added **Pattern 5: Static Material Degradation** — the first
+    non-temporal pattern. Corruption as damage to the surface (warp /
+    erode / grain via SVG filter primitives) rather than motion over time.
+    Seed-deterministic by requirement.
+  - Retroactively noted: **Pattern 4: Staggered Grid Corruption** shipped in
+    package 0.3.0 without a version-history entry here.
+  - **Palette restructured into theme colours and accent colours.** This is
+    the clarification the palette section always needed, and it resolves the
+    cyan confusion at the root rather than at the symptom.
+    - **Theme colours are magenta, violet and white.** They are the
+      aesthetic and they encode corruption state.
+    - **Cyan and red are accents.** They exist to make a visual work —
+      highlight something, or lift text off a dark background. They are a
+      compositional tool, not a state signal. Red still suits alarm states
+      because it reads that way naturally, but it is no longer *reserved*
+      for them; the previous "critical/terminal states" framing overstated
+      it.
+    - Magenta2, black and green are supporting colours: extensions of the
+      theme rather than additions to it.
+  - **Cyan was never a stable-text colour.** It entered that role by
+    mistake and propagated through the patterns, the data file and the
+    components. The correction, applied here:
+    - Patterns 3 and 4, core tenet 2 and the SFW phrase colour guidance say
+      white. Core tenet 4 ("Color = State") now exempts the accents, which
+      serve legibility rather than state.
+    - `src/data/colors.json` gains `white` and `black`, declares `cyan` and
+      `red` as `accents`, and corrects `semanticUse` — `decoded` was `cyan`
+      (now `white`) and `accent` was `magenta` (now `corruption: magenta`).
+    - Components: settled/decoded/revealed text and any colour declared
+      "stable" moved to white; cyan used *as a corruption colour* moved to
+      the magenta family; cyan was removed as any component's dominant
+      colour.
+    - Cyan is deliberately retained in genuine accent roles: RGB-split
+      channels (it pairs with #ff0000 in chromatic aberration), glass
+      borders and glows, the opt-in `.corrupted-ghost-cyan` /
+      `.glass-container-cyan` variants, and structural grid chrome.
+    - **Note for `CLAUDE.md` §7**, which still documents cyan as "Primary
+      text, decoded/stable" and omits white and black entirely. That section
+      now contradicts this spec. `CLAUDE.md` is read-only policy per its own
+      §4.3, so it is left for the maintainer to update.
 
 - **1.1** (2026-01-15): Content classification normalization & terminology clarification
   - **BREAKING**: Changed from 3-type to 2-class system (SFW/NSFW)

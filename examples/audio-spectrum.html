@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AudioSpectrum — corrupted-theme</title>
+<!--
+  AudioSpectrum: a spectrum driven by a real AnalyserNode, not a Math.sin
+  stand-in. `.levels` exposes bass / mid / treble / rms so the same signal can
+  drive other components — here it also feeds corrupted-theme/lipsync to show
+  the amplitude envelope those pure functions produce.
+
+  Theme colours carry the bars; cyan marks only the peak band.
+
+  The source here is a short voice clip shipped with the package, played
+  through an <audio> element — the same path most callers use. That exercises
+  reconnectDestination: createMediaElementSource reroutes the element's output
+  into the graph, and without the reconnect you would see bars but hear
+  nothing.
+
+  Privacy: the component never opens a microphone. Obtaining a MediaStream is
+  always the caller's explicit decision.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Courier New', monospace; min-height: 100vh; }
+  .stage { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+    gap: 24px; max-width: 1200px; margin: 96px auto 0; padding: 0 24px; align-items: start; }
+  .viz { border: 1px solid var(--border); border-radius: var(--radius-lg);
+    background: var(--glass); overflow: hidden; }
+  #spectrum { width: 100%; height: 320px; display: block; }
+  .panel { display: flex; flex-direction: column; gap: 14px; }
+  .panel h3 { margin: 0 0 2px; font-size: .95rem; color: #ff00ff; }
+  .panel p { margin: 0; font-size: .76rem; color: var(--text-muted); line-height: 1.5; }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .meters { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+  .meter { display: grid; grid-template-columns: 4.5rem 1fr 2.6rem; gap: 8px;
+    align-items: center; font-size: .7rem; }
+  .meter .k { color: var(--text-muted); text-transform: uppercase; letter-spacing: .06em; }
+  .meter .track { height: 8px; background: rgba(255,255,255,.06); border-radius: 2px; overflow: hidden; }
+  .meter .fill { display: block; height: 100%; width: 0; background: #ff00ff; }
+  .meter .v { text-align: right; color: #ffffff; font-variant-numeric: tabular-nums; }
+  .hint { max-width: 1200px; margin: 20px auto 60px; padding: 0 24px;
+    color: var(--text-muted); font-size: .8rem; }
+  @media (max-width: 900px) { .stage { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="showcase-complete.html#components"><i class="fas fa-shapes"></i> Standard</a>
+            <a href="showcase-complete.html#navigation"><i class="fas fa-bars"></i> Navigation</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+            <a href="showcase-complete.html#v030-components"><i class="fas fa-wave-square"></i> What's New</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery (0.3.0)</a>
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="scroll-decode.html"><i class="fas fa-scroll"></i> Scroll Decode</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="anime-blocks-advanced.html"><i class="fas fa-clapperboard"></i> Advanced Blocks (0.3.1)</a>
+            <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
+            <a href="audio-spectrum.html" class="active"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="canvas-seek.html"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
+            <a href="advanced/phrase-cycle.html"><i class="fas fa-history"></i> Phrase Cycle</a>
+            <a href="advanced/glsl-vortex.html"><i class="fas fa-hurricane"></i> GLSL Vortex</a>
+            <a href="advanced/particles-bg.html"><i class="fas fa-atom"></i> Particles BG</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
+            <a href="nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-square"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+<div class="stage">
+  <div class="viz"><canvas id="spectrum" aria-label="Audio frequency spectrum"></canvas></div>
+
+  <div class="panel">
+    <h3>Playback</h3>
+    <div class="row">
+      <button class="btn" id="play">Play</button>
+      <button class="btn secondary" id="stop">Pause</button>
+    </div>
+    <div>
+      <label class="k" for="vol" style="font-size:.7rem;color:var(--text-muted);
+        text-transform:uppercase;letter-spacing:.06em">volume <span id="volv">60%</span></label>
+      <input type="range" id="vol" min="0" max="1" step="0.05" value="0.6"
+             style="width:100%;accent-color:#ff00ff;background:transparent">
+    </div>
+    <p>A spoken count up and back down, looped — clean syllable pulses make
+       the band response easy to read. Browsers start an AudioContext
+       suspended, so playback has to begin from a user gesture; that is what
+       Play is for.</p>
+
+    <h3>Style</h3>
+    <div class="row" id="styles"></div>
+
+    <h3>Levels</h3>
+    <p>Read from the analyser every frame. Feed these to any component that
+       takes a 0..1 value.</p>
+    <div class="meters" id="meters"></div>
+
+    <h3>Envelope</h3>
+    <p>The same rms run through <code>lipsync</code> — smoothing, then a
+       clamped 0..1 target, then per-frame approach.</p>
+    <div class="meters">
+      <div class="meter">
+        <span class="k">weight</span>
+        <span class="track"><i class="fill" id="fill-weight" style="background:#00ffff"></i></span>
+        <span class="v" id="v-weight">0.00</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="hint">a looped voice clip drives the analyser · cyan marks the peak band · the component never opens a microphone</p>
+
+<script type="module">
+  import { AudioSpectrum } from '../src/lib/audio-spectrum.js';
+  import { smoothRms, mouthTarget, approach } from '../src/core/lipsync.js';
+
+  const canvas = document.getElementById('spectrum');
+
+  // A shipped, same-origin clip. Same-origin matters: a cross-origin file
+  // without CORS headers would taint the graph and the analyser would read
+  // silence.
+  const audio = new Audio('assets/voice-line.mp3');
+  audio.loop = true;   // a count up and back down, so the bars keep moving
+  audio.preload = 'metadata';
+  audio.volume = 0.6;
+
+  const spectrum = new AudioSpectrum(canvas, { source: audio, bands: 56 });
+  spectrum.start();
+
+  const METERS = [
+    ['bass', '#ffffff'], ['mid', '#d94f90'], ['treble', '#ff00ff'], ['rms', '#8b5cf6'],
+  ];
+  const meterHost = document.getElementById('meters');
+  const fills = {};
+  const vals = {};
+  for (const [key, color] of METERS) {
+    const row = document.createElement('div');
+    row.className = 'meter';
+    const k = document.createElement('span'); k.className = 'k'; k.textContent = key;
+    const track = document.createElement('span'); track.className = 'track';
+    const fill = document.createElement('i'); fill.className = 'fill'; fill.style.background = color;
+    track.appendChild(fill);
+    const v = document.createElement('span'); v.className = 'v'; v.textContent = '0.00';
+    row.append(k, track, v);
+    meterHost.appendChild(row);
+    fills[key] = fill; vals[key] = v;
+  }
+
+  let smoothed = 0, weight = 0;
+  const fillWeight = document.getElementById('fill-weight');
+  const vWeight = document.getElementById('v-weight');
+  function tick() {
+    const l = spectrum.levels;
+    for (const [key] of METERS) {
+      fills[key].style.width = `${Math.round(l[key] * 100)}%`;
+      vals[key].textContent = l[key].toFixed(2);
+    }
+    smoothed = smoothRms(smoothed, l.rms);
+    // Ceiling tuned to this clip: at 0.35 the envelope pinned near 1 and
+    // showed no range. LIPSYNC.RMS_CEILING (0.06) is tuned for quiet TTS.
+    weight = approach(weight, mouthTarget(smoothed, 0.55));
+    fillWeight.style.width = `${Math.round(weight * 100)}%`;
+    vWeight.textContent = weight.toFixed(2);
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+
+  document.getElementById('play').addEventListener('click', async () => {
+    await spectrum.resume();      // graph is built lazily; this also unsuspends
+    await audio.play();
+  });
+  document.getElementById('stop').addEventListener('click', () => audio.pause());
+
+  const vol = document.getElementById('vol');
+  const volv = document.getElementById('volv');
+  vol.addEventListener('input', e => {
+    audio.volume = Number(e.target.value);
+    volv.textContent = `${Math.round(audio.volume * 100)}%`;
+  });
+
+  const styleHost = document.getElementById('styles');
+  for (const s of ['bars', 'mirror', 'terminal']) {
+    const b = document.createElement('button');
+    b.className = s === 'bars' ? 'btn' : 'btn secondary';
+    b.textContent = s;
+    b.addEventListener('click', () => {
+      [...styleHost.children].forEach(c => c.className = 'btn secondary');
+      b.className = 'btn';
+      spectrum.options.style = s;
+    });
+    styleHost.appendChild(b);
+  }
+
+  addEventListener('pagehide', () => { audio.pause(); spectrum.destroy(); });
+</script>
+</body>
+</html>

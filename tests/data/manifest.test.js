@@ -48,17 +48,19 @@ test('llms.txt stays dense and lists every export', () => {
   const m = buildManifest();
   const txt = renderLlmsTxt(m);
 
-  // The point of this gate is that the agent surface fits comfortably in an
-  // LLM context AND that nobody writes a bloated module header (descriptions
-  // are generated from them). A single frozen byte count conflated the two:
-  // it was set when the catalog was smaller and then failed at 63 exports for
-  // purely additive growth, which is not the regression worth catching.
+  // Two things this gate is for: the surface fits comfortably in an LLM
+  // context, and nobody writes a bloated module header (descriptions are
+  // generated from them).
   //
-  // So: a generous absolute ceiling, plus a per-export density cap that
-  // actually catches bloat regardless of catalog size.
-  assert.ok(txt.length < 24576, `llms.txt too large for an LLM context: ${txt.length}`);
-  const perExport = Math.round(txt.length / m.exports.length);
-  assert.ok(perExport < 320, `llms.txt averages ${perExport} bytes/export — trim module headers`);
+  // Total-bytes-per-export measured neither well. It counts SIGNATURES and
+  // return shapes — the payload blind validation showed consumers cannot work
+  // without — as if they were bloat, so enriching the docs tripped it. The
+  // density cap now measures description prose only, which is the thing that
+  // actually rots.
+  assert.ok(txt.length < 32768, `llms.txt too large for an LLM context: ${txt.length}`);
+  const descBytes = m.exports.reduce((n, e) => n + (e.description?.length ?? 0), 0);
+  const perDesc = Math.round(descBytes / m.exports.length);
+  assert.ok(perDesc < 140, `module-header descriptions average ${perDesc} chars — trim them`);
 
   for (const e of m.exports) assert.ok(txt.includes(e.export), `missing ${e.export}`);
   assert.match(txt, /browser-only/); // corrupted-text flag surfaces

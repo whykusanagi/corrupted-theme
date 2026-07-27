@@ -27,6 +27,8 @@
  *   is spatial/data-driven where the mandala is symbolic
  */
 
+import { fitCanvas } from './_canvas-sizing.js';
+
 const TAU = Math.PI * 2;
 const D2R = Math.PI / 180;
 
@@ -62,7 +64,7 @@ const isLatLon = p =>
  * @param {number}  [options.tilt=-18]      - Axial tilt in degrees
  * @param {number}  [options.radius=0.42]   - Globe radius as a fraction of min(w, h)
  * @param {{parallels:number,meridians:number}|false} [options.graticule] - Grid step in degrees
- * @param {object}  [options.arc]           - Arc behaviour
+ * @param {{lift:number, duration:number, trail:number, steps:number, impactRing:boolean}} [options.arc] - arc flight behaviour; see the arc.* entries below
  * @param {number}  [options.arc.lift=0.22]     - Peak altitude, fraction of globe radius
  * @param {number}  [options.arc.duration=1400] - Flight time in ms
  * @param {number}  [options.arc.trail=0.42]    - Visible fraction trailing the head
@@ -323,18 +325,12 @@ export class CorruptedGlobe {
   }
 
   _resize() {
-    if (!this.canvas || !this.ctx) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = this.canvas.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
+    const fit = fitCanvas(this.canvas, this.ctx, { state: this });
+    if (!fit) return;
 
-    this.canvas.width  = Math.round(rect.width  * dpr);
-    this.canvas.height = Math.round(rect.height * dpr);
-    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-    this._cssW = rect.width;
-    this._cssH = rect.height;
-    this._R = Math.min(rect.width, rect.height) * this.options.radius;
+    this._cssW = fit.w;
+    this._cssH = fit.h;
+    this._R = Math.min(fit.w, fit.h) * this.options.radius;
 
     if (!this._running) this._drawStatic();
   }

@@ -34,6 +34,8 @@
  * @composes lipsync — the pure amplitude→target math behind `.levels`
  */
 
+import { fitCanvas } from './_canvas-sizing.js';
+
 /* Theme colours carry the bars; cyan marks only the peak band, which is the
    one place an accent belongs. See CORRUPTED_THEME_SPEC.md "Color Palette". */
 const DEFAULT_PALETTE = ['#ffffff', '#d94f90', '#ff00ff'];
@@ -51,6 +53,10 @@ const PEAK = '#00ffff';
  * @param {string[]} [options.palette]        - low → high colour ramp
  * @param {boolean} [options.reconnectDestination=true] - keep audio audible
  * @param {boolean|'auto'} [options.reducedMotion='auto']
+ *
+ * @property {{bass:number, mid:number, treble:number, rms:number}} levels -
+ *   Read fresh every frame while running, each 0..1. Feed to any component or
+ *   helper that takes a normalised level; pairs with the `lipsync` module.
  */
 export class AudioSpectrum {
   constructor(canvas, options = {}) {
@@ -262,15 +268,10 @@ export class AudioSpectrum {
   }
 
   _resize() {
-    if (!this.canvas || !this.ctx) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = this.canvas.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
-    this.canvas.width = Math.round(rect.width * dpr);
-    this.canvas.height = Math.round(rect.height * dpr);
-    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    this._cssW = rect.width;
-    this._cssH = rect.height;
+    const fit = fitCanvas(this.canvas, this.ctx, { state: this });
+    if (!fit) return;
+    this._cssW = fit.w;
+    this._cssH = fit.h;
     if (!this._running) this._draw();
   }
 

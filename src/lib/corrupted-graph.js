@@ -31,6 +31,7 @@
 
 import { CorruptionCharsets } from '../core/corruption-charsets.js';
 import { seededRandom } from '../core/random-utils.js';
+import { fitCanvas } from './_canvas-sizing.js';
 
 const TAU = Math.PI * 2;
 
@@ -72,8 +73,8 @@ function hashId(str) {
  * @param {Array<{id:string,type?:string,weight?:number,x?:number,y?:number}>} [options.nodes=[]]
  * @param {Array<{source:string|number,target:string|number,weight?:number}>} [options.edges=[]]
  * @param {'force'|'bipartite'|'fixed'} [options.layout='force']
- * @param {object} [options.force] - charge, linkDistance, linkStrength, gravity, damping, alphaMin, maxTicks
- * @param {object} [options.bipartite] - leftTypes, gap, sort
+ * @param {{charge:number, linkDistance:number, linkStrength:number, gravity:number, damping:number, alphaMin:number, maxTicks:number}} [options.force] - charge is negative (repulsion, default -120); linkDistance is the spring rest length in layout units (default 40)
+ * @param {{leftTypes:string[], gap:number, sort:'degree'|'weight'|'id'}} [options.bipartite] - leftTypes are node `type` values placed in the left column; gap is column separation as a fraction of width (default 0.6); sort orders each column (default 'degree')
  * @param {'glyph'|'circle'} [options.nodeShape='glyph']
  * @param {string} [options.glyphSet='katakana'] - CorruptionCharsets key
  * @param {Object<string,string>} [options.nodeColors] - node type → colour
@@ -81,7 +82,7 @@ function hashId(str) {
  * @param {'none'|'hover'|'always'} [options.labels='hover']
  * @param {boolean} [options.labelDecode=true] - decode labels out of corruption on hover
  * @param {number} [options.idleGlitch=0.02] - per-frame chance a glyph re-rolls
- * @param {object} [options.interactive] - pan, zoom, hover, select, drag
+ * @param {{pan:boolean, zoom:boolean, hover:boolean, select:boolean, drag:boolean}} [options.interactive] - all default true; drag applies to force layout only
  * @param {number|{top:number,right:number,bottom:number,left:number}} [options.padding=26] - inset from the canvas edge
  * @param {number} [options.maxNodes=2000] - hard cap; excess is dropped with a warning
  * @param {number} [options.maxEdges=8000] - hard cap; excess is dropped with a warning
@@ -526,15 +527,10 @@ export class CorruptedGraph {
   }
 
   _resize() {
-    if (!this.canvas || !this.ctx) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
-    const rect = this.canvas.getBoundingClientRect();
-    if (rect.width === 0 || rect.height === 0) return;
-    this.canvas.width = Math.round(rect.width * dpr);
-    this.canvas.height = Math.round(rect.height * dpr);
-    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    this._cssW = rect.width;
-    this._cssH = rect.height;
+    const fit = fitCanvas(this.canvas, this.ctx, { state: this });
+    if (!fit) return;
+    this._cssW = fit.w;
+    this._cssH = fit.h;
     if (!this._running) this._draw();
   }
 

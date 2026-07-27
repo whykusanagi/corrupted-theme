@@ -126,6 +126,16 @@ function el(name, attrs = {}, parent = null, text = null) {
 const clamp01 = v => Math.min(1, Math.max(0, Number.isFinite(v) ? v : 0));
 const pick = (rng, arr) => arr[Math.floor(rng() * arr.length)];
 
+/**
+ * @property {object} formats - Named pixel sizes for the `format` option:
+ *   `card` 1200x630, `banner` 1500x500, `poster` 1080x1350,
+ *   `portrait` 1080x1920, `square` 1080x1080. Pass `{w, h}` for anything else.
+ * @property {string[]} themes - Valid `theme` values: magenta, violet, mono, void.
+ *   All four are dark grounds; use `polarity: 'paper'` for a pale one.
+ * @property {string[]} primitives - Valid `primitives` entries: barcode,
+ *   dotMatrix, gaugeStack, histogram, coordReadout, dimension, sparkline,
+ *   keyValue, qr.
+ */
 export const MicroGfx = {
   formats: FORMATS,
   themes: Object.keys(THEMES),
@@ -136,14 +146,14 @@ export const MicroGfx = {
    *
    * @param {object} [options={}]
    * @param {number|null} [options.seed=null] - null picks one; the seed used is returned
-   * @param {'card'|'banner'|'poster'|'portrait'|'square'|{w:number,h:number}} [options.format='card']
-   * @param {'magenta'|'violet'|'mono'|'void'|object} [options.theme='magenta']
-   * @param {'dark'|'paper'} [options.polarity] - omit to let the seed choose
+   * @param {'card'|'banner'|'poster'|'portrait'|'square'|{w:number,h:number}} [options.format='card'] - see MicroGfx.formats for pixel sizes
+   * @param {'magenta'|'violet'|'mono'|'void'|object} [options.theme='magenta'] - colour set; all four are dark grounds, use polarity for a pale one
+   * @param {'dark'|'paper'} [options.polarity] - 'paper' gives a pale ground with dark ink; omit to let the seed choose
    * @param {object}  [options.layers] - base, halftone, rails, scanlines, glyphs
    * @param {string[]} [options.primitives] - which instrument primitives to place
    * @param {number}  [options.density=0.5] - 0..1, how much of the frame primitives fill
    * @param {{warp:number,erode:number,grain:number}} [options.degrade] - Pattern 5 knobs, each 0..1
-   * @param {{title:string,eyebrow:string,serial:string,nameplate:string}} [options.text]
+   * @param {{title:string,eyebrow:string,serial:string,nameplate:string}} [options.text] - each field independently optional; caller strings are set as element text, never parsed as markup
    * @param {boolean} [options.nsfw=false] - allow NSFW phrases in the glyph layer
    * @returns {{svg:string, node:SVGSVGElement, seed:number, width:number, height:number}}
    */
@@ -248,8 +258,11 @@ export const MicroGfx = {
    * Combined with emitting no external refs, the canvas never taints, so
    * `toBlob` cannot throw SecurityError.
    *
-   * @param {{node:SVGSVGElement,width:number,height:number}} result
-   * @param {{scale?:number}} [opts={}]
+   * @param {{node:SVGSVGElement,width:number,height:number}} result - from generate()
+   * @param {object} [opts={}]
+   * @param {number} [opts.scale=1] - resolution multiplier; 2 renders a
+   *   1200x630 card as a 2400x1260 PNG. The vector artwork is re-rasterised at
+   *   the larger size, so it stays sharp rather than being upscaled.
    * @returns {Promise<Blob>}
    */
   toPNG(result, opts = {}) {

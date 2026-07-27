@@ -114,7 +114,13 @@ export function createFrameClock(options = {}) {
  * @param {number} [options.revealMs=800]
  * @param {number} [options.holdMs=1200]
  * @param {number} [options.dissolveMs=800]
- * @returns {{total:number, at:(tMs:number)=>{phase:string,progress:number,revealed:number}}}
+ * @returns {{total:number, at:(tMs:number)=>{phase:'reveal'|'hold'|'dissolve'|'gone', progress:number, revealed:number}}}
+ *   `at(tMs)` reports the envelope at an elapsed time. `phase` is one of
+ *   `reveal`, `hold`, `dissolve`, `gone`. `progress` is 0..1 WITHIN the current
+ *   phase. `revealed` is 0..1 across the whole envelope and is the value you
+ *   drive a decode with: it rises 0→1 during reveal, stays 1 through hold,
+ *   falls 1→0 during dissolve, and is 0 once gone. Multiply it by a string
+ *   length to get how many characters should currently be readable.
  */
 export function createDissolve(options = {}) {
   const revealMs = Math.max(0, options.revealMs ?? 800);
@@ -125,7 +131,7 @@ export function createDissolve(options = {}) {
   return {
     total,
     /**
-     * @param {number} tMs - elapsed milliseconds
+     * @param {number} tMs - elapsed milliseconds since the envelope started
      * @returns {{phase:'reveal'|'hold'|'dissolve'|'gone', progress:number, revealed:number}}
      */
     at(tMs) {

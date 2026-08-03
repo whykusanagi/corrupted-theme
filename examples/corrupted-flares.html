@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CorruptedFlares — corrupted-theme</title>
+<!--
+  CorruptedFlares: 5×5 anime-style micro VFX grid in theme colours.
+  Sparkles / rings / reticles / bursts with glitch snap timing and
+  cyan+red chromatic fringes only (accent rule). Magenta / violet /
+  white (+ magenta2) cycle the board.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+  }
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    gap: 28px;
+    max-width: 1100px;
+    margin: 96px auto 40px;
+    padding: 0 24px;
+    align-items: start;
+  }
+  .board {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: #000;
+    box-shadow: 0 0 40px rgba(255, 0, 255, 0.08);
+  }
+  .panel h3 {
+    margin: 0 0 6px;
+    font-size: .95rem;
+    color: #ff00ff;
+    text-shadow: 0 0 12px rgba(255, 0, 255, 0.45);
+  }
+  .panel p {
+    margin: 0 0 16px;
+    font-size: .76rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  label.f {
+    font-size: .7rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  input[type=range] { width: 100%; accent-color: #ff00ff; }
+  .meta {
+    font-size: .72rem;
+    color: #ffffff;
+    opacity: 0.75;
+    margin-top: 8px;
+  }
+  .swatches { display: flex; gap: 6px; margin: 10px 0 16px; }
+  .swatches span {
+    width: 18px; height: 18px; border-radius: 3px;
+    box-shadow: 0 0 8px currentColor;
+  }
+  .recipes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+    font-size: .68rem;
+    color: var(--text-muted);
+    max-height: 220px;
+    overflow: auto;
+    padding-right: 4px;
+  }
+  .recipes code { color: #d94f90; }
+  @media (max-width: 860px) {
+    .stage { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="index.html" class="active">
+            <i class="fas fa-flask"></i> Examples
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="corrupted-flares.html" class="active"><i class="fas fa-wand-magic-sparkles"></i> Corrupted Flares</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="stage">
+    <div class="board" id="board"></div>
+    <div class="panel">
+      <h3>CorruptedFlares</h3>
+      <p>
+        Full 5×5 micro-flare board. Same geometric juice as anime overlay packs,
+        but palette and motion follow the theme: magenta / violet / white cycle
+        the grid; cyan and red only fringe as chromatic aberration; loops snap
+        and stutter instead of easing clean.
+      </p>
+
+      <div class="swatches" aria-hidden="true">
+        <span style="background:#ff00ff;color:#ff00ff"></span>
+        <span style="background:#8b5cf6;color:#8b5cf6"></span>
+        <span style="background:#d94f90;color:#d94f90"></span>
+        <span style="background:#ffffff;color:#ffffff"></span>
+        <span style="background:#00ffff;color:#00ffff;opacity:.5"></span>
+        <span style="background:#ff0000;color:#ff0000;opacity:.5"></span>
+      </div>
+
+      <div>
+        <label class="f" for="speed">Speed</label>
+        <input id="speed" type="range" min="0.35" max="2.5" step="0.05" value="1">
+      </div>
+      <div style="margin-top:12px">
+        <label class="f" for="loop">Loop ms</label>
+        <input id="loop" type="range" min="700" max="2800" step="50" value="1400">
+      </div>
+      <div style="margin-top:12px">
+        <label class="f" for="cycle">Colour cycle ms</label>
+        <input id="cycle" type="range" min="2000" max="10000" step="100" value="4800">
+      </div>
+
+      <div class="row" style="margin-top:16px">
+        <button class="btn btn-primary" id="reseed" type="button">Reseed</button>
+        <button class="btn btn-secondary" id="toggle" type="button">Pause</button>
+      </div>
+      <div class="meta" id="meta">seed —</div>
+
+      <h3 style="margin-top:22px">Recipes</h3>
+      <div class="recipes" id="recipes"></div>
+    </div>
+  </div>
+
+<script type="module">
+  import { CorruptedFlares, FLARE_GRID } from '../src/lib/corrupted-flares.js';
+
+  const board = document.getElementById('board');
+  const meta = document.getElementById('meta');
+  const recipesEl = document.getElementById('recipes');
+
+  FLARE_GRID.forEach((name, i) => {
+    const div = document.createElement('div');
+    div.innerHTML = `${String(i + 1).padStart(2, '0')} <code>${name}</code>`;
+    recipesEl.appendChild(div);
+  });
+
+  let seed = (Math.random() * 1e9) | 0;
+  let flares = null;
+
+  function mount() {
+    if (flares) flares.destroy();
+    board.replaceChildren();
+    const avail = board.clientWidth - 40;
+    const cellSize = avail > 0
+      ? Math.max(72, Math.min(112, Math.floor((avail - 4 * 10) / 5)))
+      : 112;
+    flares = new CorruptedFlares(board, {
+      seed,
+      cellSize,
+      speed: Number(document.getElementById('speed').value),
+      loopMs: Number(document.getElementById('loop').value),
+      colorCycleMs: Number(document.getElementById('cycle').value),
+    });
+    flares.start();
+    meta.textContent = `seed ${seed} · ${FLARE_GRID.length} recipes`;
+    document.getElementById('toggle').textContent = 'Pause';
+  }
+
+  mount();
+
+  document.getElementById('speed').addEventListener('input', (e) => {
+    if (!flares) return;
+    flares.options.speed = Number(e.target.value);
+  });
+  document.getElementById('loop').addEventListener('input', (e) => {
+    if (!flares) return;
+    flares.options.loopMs = Number(e.target.value);
+  });
+  document.getElementById('cycle').addEventListener('input', (e) => {
+    if (!flares) return;
+    flares.options.colorCycleMs = Number(e.target.value);
+  });
+  document.getElementById('reseed').addEventListener('click', () => {
+    seed = (Math.random() * 1e9) | 0;
+    mount();
+  });
+  document.getElementById('toggle').addEventListener('click', () => {
+    if (!flares) return;
+    if (flares._running) {
+      flares.stop();
+      document.getElementById('toggle').textContent = 'Play';
+    } else {
+      flares.start();
+      document.getElementById('toggle').textContent = 'Pause';
+    }
+  });
+
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(mount, 150);
+  });
+</script>
+</body>
+</html>

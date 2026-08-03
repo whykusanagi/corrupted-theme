@@ -30,6 +30,7 @@
     "./corrupted-globe": "./src/lib/corrupted-globe.js",
     "./corrupted-graph": "./src/lib/corrupted-graph.js",
     "./micro-gfx": "./src/lib/micro-gfx.js",
+    "./corrupted-flares": "./src/lib/corrupted-flares.js",
     "./canvas-seek": "./src/core/canvas-seek.js",
     "./lipsync": "./src/core/lipsync.js",
     "./audio-spectrum": "./src/lib/audio-spectrum.js",

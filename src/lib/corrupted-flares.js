@@ -3,25 +3,51 @@
  *
  * A 5×5 board of short geometric flare loops (sparkles, rings, reticles,
  * bursts). Shapes borrow the NopiA "flare light" vocabulary; colour and
- * motion belong to the theme: magenta / violet / white carry identity,
- * cyan + red appear only as chromatic fringes, timing snaps and stutters
- * instead of smoothing cleanly.
+ * motion belong to the theme: cyan + red appear only as chromatic fringes,
+ * and timing snaps and stutters instead of smoothing cleanly.
  *
- * @example Grid showcase
+ * Colour is a state signal, not decoration (Core Tenet 4). Each cell is
+ * coloured by its OWN corruption age — violet at the corruption event,
+ * magenta mid-decay, white once settled — so the board reads chaos → order
+ * per cell rather than cycling hues on a shared clock. After `loops` cycles
+ * cells hold a static white mark and the animation stops, which is the
+ * readable endpoint Core Tenet 2 requires.
+ *
+ * ## Which API to use
+ *
+ * `CorruptedFlares.draw()` / `drawAt()` are the primary surface — single
+ * flares composited onto a canvas you own, over video, artwork or a
+ * transparent OBS layer. They paint no background and restore the context.
+ * The `CorruptedFlares` class is the 5×5 board: a showcase format, and the
+ * right choice only when you actually want a grid. Pass `plate: false` to
+ * make that board transparent too.
+ *
+ * @example VFX pass over artwork — the common case
  *   import { CorruptedFlares } from '@whykusanagi/corrupted-theme/corrupted-flares';
- *   const flares = new CorruptedFlares(stage, { seed: 42 });
- *   flares.start();
+ *   ctx.save();
+ *   ctx.translate(x, y);
+ *   CorruptedFlares.draw(ctx, 'glitchStar', 0.4, { size: 80 });
+ *   ctx.restore();
  *
- * @example Single recipe on your own canvas
- *   CorruptedFlares.draw(ctx, 'starBurst', t, { size: 96, color: '#ff00ff' });
+ * @example Frame-locked for offline capture
+ *   import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek';
+ *   const clock = createFrameClock({ fps: 30, seed: 42 });
+ *   clock.seek(frameIdx);
+ *   CorruptedFlares.drawAt(ctx, 'starBurst', clock, { size: 80, ramp: true });
+ *
+ * @example Transparent board for an overlay
+ *   const flares = new CorruptedFlares(stage, { seed: 42, plate: false });
+ *   flares.start();
+ *   const png = await flares.toPNG({ scale: 2 });
  *
  * @module lib/corrupted-flares
- * @version 0.3.2
+ * @version 0.3.3
  * @author whykusanagi
  * @license MIT
  *
- * @see CORRUPTED_THEME_SPEC.md — Color Palette, Glitch Animations
+ * @see CORRUPTED_THEME_SPEC.md — Pattern 6: Ambient Mark Decay
  * @composes CorruptionCharsets — glyphFlash recipe
+ * @composes createFrameClock — canvas-seek, for deterministic frame export
  */
 
 import { CorruptionCharsets } from '../core/corruption-charsets.js';
@@ -29,11 +55,23 @@ import { seededRandom } from '../core/random-utils.js';
 
 /* ── Palette ────────────────────────────────────────────────────────────── */
 
-/** Theme colours cycle the whole board (like the reference pack's hue shifts). */
-const THEME_CYCLE = ['#ff00ff', '#8b5cf6', '#d94f90', '#ffffff', '#ff00ff', '#8b5cf6'];
+/**
+ * Corruption-age ramp, shared with Pattern 4's reference implementation
+ * (`GlitchStaggerGrid`). Colour encodes how far a cell is through its own
+ * decay — violet at the corruption event, magenta mid-decay, white once
+ * settled. It is NOT a decorative hue cycle: Core Tenet 4 makes colour a
+ * state signal, so it must be driven by each cell's own clock.
+ */
+const RAMP = { wavefront: '#8b5cf6', mid: '#ff00ff', settled: '#ffffff' };
 const FRINGE = '#00ffff';
 const ALARM = '#ff0000';
 const CELL_BG = '#0a0a0a';
+
+/**
+ * Where in its loop a settled cell is frozen. `pulse()` peaks at 0.5, so the
+ * pulse-driven recipes hold their fully-formed shape rather than a fading one.
+ */
+const SETTLE_T = 0.5;
 
 /* ── Easing / timing ────────────────────────────────────────────────────── */
 
@@ -58,13 +96,43 @@ function pulse(t) {
   return Math.sin(clamp01(t) * Math.PI);
 }
 
-/** Quantized terminal motion — stutter instead of smooth fade. */
-function snap(t, steps = 8) {
-  return Math.floor(clamp01(t) * steps) / steps;
+/** Spec accessibility floor: no flicker frame may be shorter than this. */
+const FLICKER_FLOOR_MS = 100;
+
+/**
+ * Quantized terminal motion — stutter instead of smooth fade.
+ *
+ * `steps` is an upper bound, not a promise. A fast `loopMs` (or a `speed`
+ * above 1) would otherwise push a 12-step stutter to ~23ms per frame, well
+ * under the spec's 100ms photosensitivity limit. The floor is enforced here
+ * rather than left to whoever picks the options.
+ *
+ * @param {number} t - Loop progress 0..1
+ * @param {number} [steps=8] - Desired quantization
+ * @param {number} [loopMs=Infinity] - Effective duration of one loop
+ */
+function snap(t, steps = 8, loopMs = Infinity) {
+  const safe = Math.max(1, Math.floor(loopMs / FLICKER_FLOOR_MS));
+  const s = Math.min(steps, safe);
+  return Math.floor(clamp01(t) * s) / s;
 }
 
 function lerp(a, b, t) {
   return a + (b - a) * t;
+}
+
+/**
+ * Colour for a cell at loop position `t` — violet → magenta → white.
+ * Chaos → order, once per loop, per cell.
+ * @param {number} t - This cell's own loop progress, 0..1
+ * @param {{wavefront: string, mid: string, settled: string}} ramp
+ * @returns {string} hex colour
+ */
+function rampColor(t, ramp) {
+  const u = clamp01(t);
+  return u < 0.5
+    ? mixHex(ramp.wavefront, ramp.mid, easeOutCubic(u / 0.5))
+    : mixHex(ramp.mid, ramp.settled, easeOutCubic((u - 0.5) / 0.5));
 }
 
 /* ── Drawing primitives ─────────────────────────────────────────────────── */
@@ -215,8 +283,8 @@ export const FLARE_RECIPES = {
     clearGlow(ctx);
   },
 
-  glitchStar(ctx, t, r, color) {
-    const st = snap(t, 10);
+  glitchStar(ctx, t, r, color, opts) {
+    const st = snap(t, 10, opts.loopMs);
     const jitter = (st % 0.3) > 0.15 ? 1 : 0;
     const a = pulse(t);
     ctx.save();
@@ -271,8 +339,8 @@ export const FLARE_RECIPES = {
     clearGlow(ctx);
   },
 
-  brokenArc(ctx, t, r, color) {
-    const drawn = snap(easeOutCubic(t), 12);
+  brokenArc(ctx, t, r, color, opts) {
+    const drawn = snap(easeOutCubic(t), 12, opts.loopMs);
     const a = t < 0.75 ? 1 : 1 - (t - 0.75) / 0.25;
     const start = -Math.PI * 0.85;
     glow(ctx, color, 8);
@@ -371,7 +439,7 @@ export const FLARE_RECIPES = {
     const pool = CorruptionCharsets.katakana;
     const ch = pool[Math.floor((opts.index * 7 + 3) % pool.length)];
     const a = pulse(t);
-    const st = snap(t, 6);
+    const st = snap(t, 6, opts.loopMs);
     glow(ctx, color, 14 * a);
     setFill(ctx, color, a);
     ctx.font = `bold ${Math.round(r * 0.9)}px "Courier New", monospace`;
@@ -490,9 +558,9 @@ export const FLARE_RECIPES = {
     clearGlow(ctx);
   },
 
-  signalLost(ctx, t, r, color) {
+  signalLost(ctx, t, r, color, opts) {
     const a = pulse(t);
-    const st = snap(t, 8);
+    const st = snap(t, 8, opts.loopMs);
     glow(ctx, color, 10);
     setStroke(ctx, color, 2, a);
     strokeCircle(ctx, r * 0.5);
@@ -517,31 +585,35 @@ export const FLARE_RECIPES = {
     clearGlow(ctx);
   },
 
-  gearNotch(ctx, t, r, color) {
-    const a = 0.65 + 0.35 * pulse((t * 2) % 1);
-    const teeth = 10;
-    glow(ctx, color, 8);
-    setStroke(ctx, color, 2, a);
-    ctx.save();
-    ctx.rotate(t * Math.PI * 2);
-    ctx.beginPath();
-    for (let i = 0; i < teeth; i++) {
-      const a0 = (i / teeth) * Math.PI * 2;
-      const a1 = ((i + 0.45) / teeth) * Math.PI * 2;
-      const outer = r * 0.55;
-      const inner = r * 0.42;
-      ctx.lineTo(Math.cos(a0) * outer, Math.sin(a0) * outer);
-      ctx.lineTo(Math.cos(a1) * outer, Math.sin(a1) * outer);
-      ctx.lineTo(Math.cos(a1) * inner, Math.sin(a1) * inner);
-      const a2 = ((i + 1) / teeth) * Math.PI * 2;
-      ctx.lineTo(Math.cos(a2) * inner, Math.sin(a2) * inner);
+  /**
+   * Barcode ticks with segments dropping out — the instrument-panel register
+   * MicroGfx works in, degraded. Replaced `gearNotch`, which read as
+   * mechanical/steampunk rather than data corruption.
+   */
+  dataStrip(ctx, t, r, color, opts) {
+    const n = 9;
+    const a = pulse(t);
+    const st = snap(t, 8, opts.loopMs);
+    const shift = Math.round(st * 8);
+    glow(ctx, color, 8 * a);
+    for (let i = 0; i < n; i++) {
+      // Deterministic dropout that marches with the stutter — corruption holes,
+      // not noise. Same seed and frame always lose the same ticks.
+      if (((i * 7 + shift * 3) % 5) === 0) continue;
+      const x = ((i / (n - 1)) - 0.5) * r * 1.5;
+      const h = r * (0.22 + 0.5 * (((i * 13) % 5) / 4));
+      setStroke(ctx, color, 2.5, a);
+      ctx.beginPath();
+      ctx.moveTo(x, -h);
+      ctx.lineTo(x, h);
+      ctx.stroke();
     }
-    ctx.closePath();
+    // Baseline rule, the readout it would sit on
+    setStroke(ctx, color, 1, a * 0.4);
+    ctx.beginPath();
+    ctx.moveTo(-r * 0.78, r * 0.72);
+    ctx.lineTo(r * 0.78, r * 0.72);
     ctx.stroke();
-    ctx.restore();
-    setFill(ctx, color, a);
-    pathStar(ctx, r * 0.2, 0.4);
-    ctx.fill();
     clearGlow(ctx);
   },
 
@@ -552,7 +624,6 @@ export const FLARE_RECIPES = {
     for (let i = 0; i < n; i++) {
       const ang = (i / n) * Math.PI * 2 - Math.PI / 2;
       const dist = r * 0.55 * easeOutCubic(t);
-      setStroke(ctx, color, 2, a);
       ctx.save();
       ctx.rotate(ang);
       ctx.translate(dist, 0);
@@ -608,7 +679,7 @@ export const FLARE_GRID = [
   'xPop', 'sparkCross', 'brokenArc', 'diamondPulse', 'orbitDots',
   'dashedRingSpin', 'voidHole', 'chromaticBurst', 'glyphFlash', 'scanSlash',
   'pixelShatter', 'targetLock', 'sparkleField', 'hexCorrupt', 'signalLost',
-  'bloomDot', 'gearNotch', 'shardBurst', 'rippleDecay', 'staticFlash',
+  'bloomDot', 'dataStrip', 'shardBurst', 'rippleDecay', 'staticFlash',
 ];
 
 /* ── Class ──────────────────────────────────────────────────────────────── */
@@ -622,12 +693,21 @@ export const FLARE_GRID = [
  * @param {number} [options.cellSize=112] - CSS px per cell
  * @param {number} [options.gap=10]
  * @param {number} [options.loopMs=1400] - Duration of one recipe loop
- * @param {number} [options.colorCycleMs=4800] - Whole-board palette shift
+ * @param {number} [options.loops=3] - Corruption cycles before a cell settles
+ *   to a static, readable white mark. `Infinity` keeps the board corrupting
+ *   forever — decorative, but it never reaches the readable end state Core
+ *   Tenet 2 requires, so prefer a finite count for content surfaces.
  * @param {number} [options.speed=1]
  * @param {number|null} [options.seed=null]
  * @param {string[]} [options.recipes] - Override grid recipe list
- * @param {string[]} [options.palette] - Override colour cycle
+ * @param {{wavefront: string, mid: string, settled: string}} [options.ramp] -
+ *   Override the corruption-age colour ramp
  * @param {boolean} [options.rounded=true] - Round cell corners via clip
+ * @param {boolean} [options.plate=true] - Draw the dark cell tile and its
+ *   border. Set `false` for a fully transparent board you can composite over
+ *   video, artwork or an OBS scene — this also drops the per-cell clip, so
+ *   glow bleeds between cells the way an overlay should.
+ * @param {() => void} [options.onSettled] - Fired once the whole board settles
  */
 export class CorruptedFlares {
   constructor(container, options = {}) {
@@ -638,30 +718,34 @@ export class CorruptedFlares {
       cellSize: options.cellSize ?? 112,
       gap: options.gap ?? 10,
       loopMs: options.loopMs ?? 1400,
-      colorCycleMs: options.colorCycleMs ?? 4800,
+      loops: options.loops ?? 3,
       speed: options.speed ?? 1,
       seed: options.seed ?? null,
       recipes: options.recipes ?? FLARE_GRID.slice(),
-      palette: options.palette ?? THEME_CYCLE.slice(),
+      ramp: { ...RAMP, ...(options.ramp ?? {}) },
       rounded: options.rounded !== false,
+      plate: options.plate !== false,
+      onSettled: options.onSettled ?? null,
     };
     this._rng = this.options.seed === null ? Math.random : seededRandom(this.options.seed);
-    this._cellRng = [];
     this._phases = [];
     this._canvas = null;
     this._ctx = null;
     this._raf = null;
     this._running = false;
     this._destroyed = false;
+    this._settled = false;
+    this._forceSettled = false;
     this._startTs = 0;
     this._dpr = 1;
+    // Board clock, in ms. Survives stop()/start() so pausing resumes in place
+    // instead of rewinding. Seeded off zero because most recipes are empty at
+    // t=0 — the first painted frame should already have something in it.
+    this._elapsed = this.options.loopMs * 0.28;
 
     const n = this.options.cols * this.options.rows;
     for (let i = 0; i < n; i++) {
       this._phases.push(this._rng());
-      // Per-cell seeded stream for staticFlash etc.
-      const cellSeed = ((this.options.seed ?? 1) * 997 + i * 131) >>> 0;
-      this._cellRng.push(seededRandom(cellSeed || 1));
     }
 
     if (container) this._mount();
@@ -673,21 +757,72 @@ export class CorruptedFlares {
   start() {
     if (this._destroyed || this._running || !this._canvas) return this;
     if (this._prefersReducedMotion()) {
-      this.renderFrame(Math.round(this.options.loopMs * 0.35 / (1000 / 60)), 60);
+      // Static fallback IS the settled end state — readable white, no motion.
+      this.settle();
       return this;
     }
     this._running = true;
-    this._startTs = performance.now();
+    // Anchor the wall clock behind us by however far the board already ran, so
+    // the first rAF frame continues from _elapsed rather than snapping to 0.
+    this._startTs = performance.now() - this._elapsed;
     // Paint immediately so the first frame is visible before rAF (headless /
     // first-paint screenshots, paused-tab restores, etc.).
-    this._paint(this.options.loopMs * 0.28);
+    this._paint(this._elapsed);
     const tick = (now) => {
       if (!this._running) return;
-      this._paint(now - this._startTs);
+      this._elapsed = now - this._startTs;
+      // Once every cell has decayed to white there is nothing left to animate.
+      // Holding a static frame at 60fps is the definition of wasted battery.
+      if (this._paint(this._elapsed)) {
+        this._running = false;
+        this._raf = null;
+        this._settled = true;
+        this.options.onSettled?.();
+        return;
+      }
       this._raf = requestAnimationFrame(tick);
     };
     this._raf = requestAnimationFrame(tick);
     return this;
+  }
+
+  /**
+   * Jump straight to the settled end state: every cell white and static.
+   * This is the readable endpoint Core Tenet 2 requires, and the static
+   * fallback the accessibility guidance asks for.
+   * @returns {this}
+   */
+  settle() {
+    if (this._destroyed || !this._canvas) return this;
+    this.stop();
+    // Forced rather than clock-derived, so this also works for loops:Infinity.
+    this._forceSettled = true;
+    this._paint(this._elapsed);
+    this._forceSettled = false;
+    this._settled = true;
+    return this;
+  }
+
+  /** True once the board has reached its settled, readable end state. */
+  get isSettled() {
+    return this._settled;
+  }
+
+  /** True while the animation loop is running. */
+  get isRunning() {
+    return this._running;
+  }
+
+  /**
+   * Rewind to the corruption event and run again.
+   * @returns {this}
+   */
+  restart() {
+    if (this._destroyed) return this;
+    this.stop();
+    this._elapsed = 0;
+    this._settled = false;
+    return this.start();
   }
 
   /**
@@ -697,8 +832,64 @@ export class CorruptedFlares {
    */
   renderFrame(frameIdx, fps = 60) {
     if (this._destroyed || !this._canvas) return;
-    const ms = (frameIdx / fps) * 1000 * this.options.speed;
-    this._paint(ms);
+    // Elapsed wall-clock only. `speed` is applied once, inside _paint — the
+    // same place the live loop applies it, so export and playback agree.
+    this._paint((frameIdx / fps) * 1000);
+  }
+
+  /**
+   * Render the frame a `createFrameClock` is sitting on. Lets an offline
+   * exporter drive the board off the same clock as everything else in the
+   * composition, so a scrubbed preview and a captured frame agree.
+   *
+   * @example
+   *   import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek';
+   *   const clock = createFrameClock({ fps: 30, seed: 42 });
+   *   clock.seek(120);
+   *   flares.renderAt(clock);
+   *
+   * @param {{frame: number, fps: number}} clock
+   */
+  renderAt(clock) {
+    if (!clock) return;
+    this.renderFrame(clock.frame, clock.fps);
+  }
+
+  /**
+   * Export the current frame as a PNG blob. Transparent wherever nothing was
+   * drawn when `plate: false`, so the result composites directly.
+   *
+   * @param {object} [opts]
+   * @param {number} [opts.scale=1] - Multiplier on the board's CSS size
+   * @returns {Promise<Blob>}
+   */
+  toPNG(opts = {}) {
+    if (this._destroyed || !this._canvas) {
+      return Promise.reject(new Error('CorruptedFlares: nothing to export'));
+    }
+    const scale = Number.isFinite(opts.scale) && opts.scale > 0 ? opts.scale : 1;
+    // Re-paint at the requested resolution rather than upscaling the live
+    // canvas — vector output stays crisp at any export size.
+    const out = document.createElement('canvas');
+    out.width = Math.round(this._cssW * scale);
+    out.height = Math.round(this._cssH * scale);
+    const octx = out.getContext('2d');
+    const liveCtx = this._ctx;
+    const liveDpr = this._dpr;
+    this._ctx = octx;
+    this._dpr = scale;
+    try {
+      this._paint(this._elapsed);
+    } finally {
+      this._ctx = liveCtx;
+      this._dpr = liveDpr;
+    }
+    return new Promise((resolve, reject) => {
+      out.toBlob(
+        (blob) => (blob ? resolve(blob) : reject(new Error('CorruptedFlares: toBlob failed'))),
+        'image/png',
+      );
+    });
   }
 
   /** Stop the loop; leaves last frame visible. */
@@ -724,15 +915,31 @@ export class CorruptedFlares {
   }
 
   /**
-   * Draw one recipe into an existing context (origin at center).
+   * Draw one recipe into an existing context, origin at the current transform
+   * (translate first to place it). **This is the API for compositing** — it
+   * touches nothing but the pixels it draws, leaves the context exactly as it
+   * found it, and never paints a background, so the result drops straight onto
+   * video, artwork or a transparent OBS layer.
+   *
+   * @example Scatter a VFX pass over a thumbnail
+   *   for (const [name, x, y, t] of marks) {
+   *     ctx.save();
+   *     ctx.translate(x, y);
+   *     CorruptedFlares.draw(ctx, name, t, { size: 70, color: '#ff00ff' });
+   *     ctx.restore();
+   *   }
+   *
    * @param {CanvasRenderingContext2D} ctx
    * @param {string} name - Recipe key in FLARE_RECIPES
    * @param {number} t - Loop progress 0..1
    * @param {object} [opts]
    * @param {number} [opts.size=96]
-   * @param {string} [opts.color='#ff00ff']
+   * @param {string} [opts.color='#ff00ff'] - Or `rampColorAt(t)` for a
+   *   corruption-age tint matching the grid
    * @param {number} [opts.index=0]
    * @param {() => number} [opts.rng]
+   * @param {number} [opts.loopMs=1400] - Real loop duration, so the flicker
+   *   floor is measured against your playback rate rather than assumed
    */
   static draw(ctx, name, t, opts = {}) {
     const recipe = FLARE_RECIPES[name];
@@ -740,12 +947,62 @@ export class CorruptedFlares {
     const size = opts.size ?? 96;
     const color = opts.color ?? '#ff00ff';
     const r = size * 0.42;
-    recipe(ctx, clamp01(t), r, color, {
-      index: opts.index ?? 0,
-      rng: opts.rng ?? Math.random,
+    // Recipes set fill/stroke/shadow, and glyphFlash sets font + text
+    // alignment. This is the caller's context, so hand it back untouched.
+    ctx.save();
+    try {
+      recipe(ctx, clamp01(t), r, color, {
+        index: opts.index ?? 0,
+        rng: opts.rng ?? Math.random,
+        // Defaults to the component's own loop length so a caller driving this
+        // from their own rAF still gets flicker frames above the 100ms floor.
+        loopMs: opts.loopMs ?? 1400,
+      });
+    } finally {
+      ctx.restore();
+    }
+  }
+
+  /**
+   * Frame-locked `draw()` for offline export. Derives loop position from the
+   * clock's playback time and takes its randomness from `clock.rngFor`, so a
+   * given frame index always produces identical pixels — which is what a
+   * frame-cached capture pipeline needs to skip re-rendering unchanged frames.
+   *
+   * @example Deterministic VFX pass in a headless capture
+   *   const clock = createFrameClock({ fps: 30, seed: 42 });
+   *   clock.seek(frameIdx);
+   *   CorruptedFlares.drawAt(ctx, 'glitchStar', clock, { size: 80, loopMs: 1400 });
+   *
+   * @param {CanvasRenderingContext2D} ctx
+   * @param {string} name
+   * @param {{frame: number, time: number, rngFor: Function}} clock
+   * @param {object} [opts] - As `draw()`, plus:
+   * @param {number} [opts.loopMs=1400] - Duration of one flare loop
+   * @param {number} [opts.offsetMs=0] - Shift this flare's phase
+   * @param {boolean} [opts.ramp=false] - Tint by corruption age instead of
+   *   `opts.color`
+   */
+  static drawAt(ctx, name, clock, opts = {}) {
+    if (!clock) return;
+    const loopMs = opts.loopMs ?? 1400;
+    const t = ((((clock.time + (opts.offsetMs ?? 0)) % loopMs) + loopMs) % loopMs) / loopMs;
+    CorruptedFlares.draw(ctx, name, t, {
+      ...opts,
+      loopMs,
+      color: opts.ramp ? rampColor(t, RAMP) : opts.color,
+      rng: clock.rngFor ? clock.rngFor(clock.frame, name) : opts.rng,
     });
-    ctx.globalAlpha = 1;
-    clearGlow(ctx);
+  }
+
+  /**
+   * Colour for a corruption age, for callers compositing single flares who
+   * want the grid's violet → magenta → white ramp.
+   * @param {number} t - Loop progress 0..1
+   * @returns {string} hex colour
+   */
+  static rampColorAt(t) {
+    return rampColor(t, RAMP);
   }
 
   /** Recipe names in board order (or custom options.recipes). */
@@ -778,24 +1035,31 @@ export class CorruptedFlares {
     this._cssH = cssH;
   }
 
-  _paletteColor(ms) {
-    const { palette, colorCycleMs, speed } = this.options;
-    const u = ((ms * speed) / colorCycleMs) % palette.length;
-    const i = Math.floor(u);
-    const f = u - i;
-    // Hold most of the cycle, quick blend — board "snaps" colour like the pack
-    const blend = f < 0.82 ? 0 : (f - 0.82) / 0.18;
-    const a = palette[i];
-    const b = palette[(i + 1) % palette.length];
-    return blend <= 0 ? a : mixHex(a, b, easeOutCubic(blend));
+  /**
+   * How far cell `i` is through its own corruption, in loops.
+   * Whole part = completed cycles, fraction = position in the current one.
+   */
+  _cellCycles(i, ms) {
+    const { loopMs, speed } = this.options;
+    return ((ms * speed) / loopMs) + (this._phases[i] ?? 0);
   }
 
+  /**
+   * Paint the board.
+   * @param {number} ms - Board clock
+   * @returns {boolean} true once every cell has settled
+   */
   _paint(ms) {
     const ctx = this._ctx;
-    if (!ctx) return;
-    const { cols, rows, cellSize, gap, loopMs, recipes, speed, rounded } = this.options;
+    if (!ctx) return false;
+    const {
+      cols, rows, cellSize, gap, recipes, rounded, plate, loops, ramp, loopMs, speed,
+    } = this.options;
     const dpr = this._dpr;
-    const color = this._paletteColor(ms);
+    let allSettled = true;
+    // What one loop actually takes on screen — `speed` shortens it, and the
+    // flicker floor has to be measured against the real duration.
+    const effLoopMs = loopMs / (speed || 1);
 
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, this._cssW, this._cssH);
@@ -808,31 +1072,41 @@ export class CorruptedFlares {
         const x = col * (cellSize + gap);
         const y = row * (cellSize + gap);
 
-        // Cell plate
+        // Cell plate. Skipped entirely for overlay use — an opaque tile cannot
+        // be composited over video or an OBS scene, and the clip that goes with
+        // it would cut the glow at the cell edge.
         ctx.save();
-        roundRect(ctx, x, y, cellSize, cellSize, radius);
-        ctx.fillStyle = CELL_BG;
-        ctx.fill();
-        ctx.strokeStyle = 'rgba(255,0,255,0.32)';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-        ctx.clip();
+        if (plate) {
+          roundRect(ctx, x, y, cellSize, cellSize, radius);
+          ctx.fillStyle = CELL_BG;
+          ctx.fill();
+          ctx.strokeStyle = 'rgba(255,0,255,0.32)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+          ctx.clip();
+        }
 
-        // Recipe
+        // Recipe. Colour comes from THIS cell's corruption age, not a board
+        // clock — a settled cell must not read white while its neighbour is
+        // mid-burst, and vice versa (Core Tenet 4).
         const name = recipes[i % recipes.length];
         const recipe = FLARE_RECIPES[name];
-        const phase = this._phases[i] ?? 0;
-        const t = (((ms * speed) / loopMs) + phase) % 1;
+        const cycles = this._cellCycles(i, ms);
+        const settled = this._forceSettled || cycles >= loops;
+        const t = settled ? SETTLE_T : cycles % 1;
+        const color = settled ? ramp.settled : rampColor(t, ramp);
+        if (!settled) allSettled = false;
 
         ctx.save();
         ctx.translate(x + cellSize / 2, y + cellSize / 2);
         if (recipe) {
-          // Reset per-cell rng stream each frame from phase for stability
-          const rng = this._cellRng[i] ?? Math.random;
-          // Rewind by re-seeding from index+frame bucket so staticFlash is stable
-          const frameBucket = Math.floor(t * 20);
-          const frameRng = seededRandom((((this.options.seed ?? 1) + 1) * 7919 + i * 104729 + frameBucket) >>> 0 || 1);
-          recipe(ctx, t, cellSize * 0.42, color, { index: i, rng: name === 'staticFlash' ? frameRng : rng });
+          // staticFlash is the only recipe that draws from rng. Re-seed it per
+          // frame bucket so its speckles hold for a few frames and stay
+          // reproducible for a given (seed, frame) — everything else is pure.
+          const rng = name === 'staticFlash'
+            ? seededRandom(((((this.options.seed ?? 1) + 1) * 7919 + i * 104729 + Math.floor(t * 20)) >>> 0) || 1)
+            : Math.random;
+          recipe(ctx, t, cellSize * 0.42, color, { index: i, rng, loopMs: effLoopMs });
         }
         ctx.restore();
         ctx.restore();
@@ -841,6 +1115,7 @@ export class CorruptedFlares {
         clearGlow(ctx);
       }
     }
+    return allSettled;
   }
 
   _prefersReducedMotion() {

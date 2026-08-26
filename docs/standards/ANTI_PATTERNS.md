@@ -173,9 +173,9 @@ This document catalogs **forbidden patterns** and common mistakes in Celeste bra
   color: #d94f90;       /* Pink - TOO SIMILAR */
 }
 
-/* ✅ CORRECT: Pink on dark (7.2:1 - passes AAA) */
+/* ✅ CORRECT: Magenta2 on the page ground (5.2:1 — passes AA) */
 .btn {
-  background: #0a0612;  /* Dark purple-black */
+  background: #0a0a0a;  /* --bg, the shipped page ground */
   color: #d94f90;       /* Pink - HIGH CONTRAST */
 }
 ```
@@ -224,7 +224,7 @@ This document catalogs **forbidden patterns** and common mistakes in Celeste bra
 .btn {
   background: #d94f90;  /* Official pink */
   background: #8b5cf6;  /* Official purple */
-  background: #00d4ff;  /* Official cyan */
+  background: #00ffff;  /* Official cyan */
 }
 ```
 

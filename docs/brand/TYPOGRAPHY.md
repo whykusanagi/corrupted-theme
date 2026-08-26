@@ -485,7 +485,7 @@ style := lipgloss.NewStyle().
 See `COLOR_SYSTEM.md` for full contrast specifications.
 
 **Summary**:
-- ✅ White text on `#0a0612`: **21:1** (AAA)
+- ✅ White text on `#0a0a0a` (`--bg`): **19.8:1** (AAA)
 - ✅ All accent colors on dark bg: **>4.5:1** (AA minimum)
 
 ### Line Length

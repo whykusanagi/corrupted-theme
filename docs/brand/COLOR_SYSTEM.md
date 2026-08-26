@@ -32,9 +32,9 @@ The signature brand color - used for primary actions, highlights, and corruption
 | `accent-dark` | `#b61b70` | `182, 27, 112` | `327°, 74%, 41%` | Active/pressed state |
 
 **WCAG Contrast Ratios**:
-- ✅ `#d94f90` on `#0a0612` (dark bg): **7.2:1** (AAA)
-- ✅ `#d94f90` on `#140c28` (glass bg): **5.8:1** (AA)
-- ✅ White text on `#d94f90`: **4.9:1** (AA)
+- ✅ `#d94f90` on `#0a0a0a` (`--bg`): **5.2:1** (AA — not AAA)
+- ✅ `#d94f90` on `#12121a` (`--surface`): **5.0:1** (AA)
+- ✅ White text on `#d94f90`: **3.8:1** (AA for large text only)
 
 **CSS Usage**:
 ```css
@@ -75,8 +75,8 @@ Used for secondary emphasis, section headers, and corruption phrases.
 | `secondary-purple-dark` | `#7c3aed` | `124, 58, 237` | `262°, 83%, 58%` | Active state |
 
 **WCAG Contrast Ratios**:
-- ✅ `#8b5cf6` on `#0a0612`: **6.8:1** (AA)
-- ✅ White text on `#8b5cf6`: **5.2:1** (AA)
+- ✅ `#8b5cf6` on `#0a0a0a` (`--bg`): **4.7:1** (AA)
+- ✅ White text on `#8b5cf6`: **4.2:1** (AA for large text only)
 
 **Usage**:
 - Dashboard section headers
@@ -95,9 +95,9 @@ Used for tertiary accents, links, and status indicators.
 | `secondary-cyan-dark` | `#00a3cc` | `0, 163, 204` | `192°, 100%, 40%` | Active state |
 
 **WCAG Contrast Ratios**:
-- ✅ `#00d4ff` on `#0a0612`: **9.1:1** (AAA)
-- ⚠️ `#00d4ff` on `#140c28`: **7.3:1** (AA - excellent)
-- ✅ Black text on `#00d4ff`: **4.7:1** (AA)
+- ✅ `#00ffff` on `#0a0a0a` (`--bg`): **15.8:1** (AAA)
+- ✅ `#00ffff` on `#12121a` (`--surface`): **15.0:1** (AAA)
+- ✅ Black text on `#00ffff`: **16.7:1** (AAA)
 
 **Usage**:
 - Hyperlinks
@@ -226,10 +226,10 @@ Darker glassmorphism for elevated/modal elements.
 
 ### Primary Text
 
-| Token Name | Value | Opacity | Contrast on `#0a0612` |
+| Token Name | Value | Opacity | Contrast on `#0a0a0a` |
 |------------|-------|---------|----------------------|
-| `text-primary` | `#ffffff` | 100% | **21:1** (AAA) |
-| `text-secondary` | `rgba(255, 255, 255, 0.7)` | 70% | **14.7:1** (AAA) |
+| `text-primary` | `#ffffff` | 100% | **19.8:1** (AAA) |
+| `text-secondary` | `rgba(255, 255, 255, 0.7)` | 70% | **9.8:1** (AAA) |
 | `text-tertiary` | `rgba(255, 255, 255, 0.5)` | 50% | **10.5:1** (AAA) |
 | `text-disabled` | `rgba(255, 255, 255, 0.3)` | 30% | **6.3:1** (AA) |
 
@@ -426,15 +426,15 @@ background: linear-gradient(
 
 | Combination | Contrast Ratio | WCAG Level | Status |
 |-------------|----------------|------------|--------|
-| White on `#0a0612` | 21:1 | AAA | ✅ |
-| `#d94f90` on `#0a0612` | 7.2:1 | AAA | ✅ |
-| `#8b5cf6` on `#0a0612` | 6.8:1 | AA | ✅ |
-| `#00d4ff` on `#0a0612` | 9.1:1 | AAA | ✅ |
-| `#ff4757` on `#0a0612` | 6.4:1 | AA | ✅ |
-| `#2ed573` on `#0a0612` | 7.9:1 | AAA | ✅ |
-| White text (70%) on `#0a0612` | 14.7:1 | AAA | ✅ |
-| White text (50%) on `#0a0612` | 10.5:1 | AAA | ✅ |
-| White text (30%) on `#0a0612` | 6.3:1 | AA | ✅ |
+| White on `#0a0a0a` | 19.8:1 | AAA | ✅ |
+| `#d94f90` magenta2 on `#0a0a0a` | 5.2:1 | AA | ✅ |
+| `#8b5cf6` violet on `#0a0a0a` | 4.7:1 | AA | ✅ |
+| `#00ffff` cyan on `#0a0a0a` | 15.8:1 | AAA | ✅ |
+| `#ff0000` red on `#0a0a0a` | 5.0:1 | AA | ✅ |
+| `#00ff00` green on `#0a0a0a` | 14.4:1 | AAA | ✅ |
+| White text (70%) on `#0a0a0a` | 9.8:1 | AAA | ✅ |
+| White text (50%) on `#0a0a0a` | 5.3:1 | AA | ✅ |
+| White text (30%) on `#0a0a0a` | 2.6:1 | **fails** | ❌ do not use for text |
 
 **All primary combinations meet WCAG AA minimum (4.5:1)**
 

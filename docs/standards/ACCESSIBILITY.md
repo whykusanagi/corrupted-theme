@@ -69,7 +69,7 @@ Celeste is committed to **WCAG 2.1 Level AA compliance** across all platforms (w
 
 | Criterion | Requirement | Celeste Implementation |
 |-----------|-------------|------------------------|
-| **1.4.3** | Contrast (Minimum) | 4.5:1 for text, 3:1 for UI | ✅ All pass AAA (7+:1) |
+| **1.4.3** | Contrast (Minimum) | 4.5:1 for text, 3:1 for UI | ✅ All body-text colours pass AA; see the measured table below |
 | **1.4.5** | Images of Text | Avoid images of text | ✅ CSS/SVG text |
 | **2.4.7** | Focus Visible | Clear focus indicators | ✅ 2px pink outline |
 | **2.5.5** | Target Size | 44x44px minimum | ✅ All buttons comply |
@@ -80,7 +80,7 @@ Celeste is committed to **WCAG 2.1 Level AA compliance** across all platforms (w
 
 | Criterion | Requirement | Celeste Implementation |
 |-----------|-------------|------------------------|
-| **1.4.6** | Contrast (Enhanced) | 7:1 for text, 4.5:1 for UI | ✅ All pass (10+:1) |
+| **1.4.6** | Contrast (Enhanced) | 7:1 for text, 4.5:1 for UI | ⚠️ White, cyan and green reach AAA. Magenta2, violet and red are AA only — do not rely on AAA for those |
 | **2.3.3** | Animation from Interactions | Disable via prefers-reduced-motion | ✅ Supported |
 | **2.5.1** | Pointer Gestures | No complex gestures | ✅ Simple clicks only |
 
@@ -88,20 +88,27 @@ Celeste is committed to **WCAG 2.1 Level AA compliance** across all platforms (w
 
 ## Color Contrast
 
-### Tested Combinations (WCAG AAA)
+### Measured Combinations
 
-All Celeste color combinations meet **WCAG AAA** standards (7:1 minimum):
+Measured against `--bg` (`#0a0a0a`), the shipped page ground. Ratios are WCAG
+2.1 relative luminance, recomputed 2026-08-26 — the previous figures were
+stated against `#0a0612`, a background this package does not ship, and several
+were wrong regardless of ground.
+
+**Not every theme colour reaches AAA, and the palette does not claim to.**
+Magenta2, violet and red clear AA for body text; white, cyan and green clear
+AAA. Where a design needs AAA, use white.
 
 ```css
 /* Tested contrast ratios */
 :root {
   /* Background + Text combinations */
-  --bg-dark: #0a0612;        /* Reference background */
-  --text-white: #ffffff;     /* 21:1 ratio (AAA ✅) */
-  --text-accent: #d94f90;    /* 7.2:1 ratio (AAA ✅) */
-  --text-purple: #8b5cf6;    /* 5.8:1 ratio (AA ✅) */
-  --text-cyan: #00d4ff;      /* 10.1:1 ratio (AAA ✅) */
-  --text-gray: #a0a0a0;      /* 10.5:1 ratio (AAA ✅) */
+  --bg-dark: #0a0a0a;        /* Reference background — the shipped --bg */
+  --text-white: #ffffff;     /* 19.8:1 (AAA ✅) */
+  --text-accent: #d94f90;    /* 5.2:1  (AA ✅ — not AAA) */
+  --text-purple: #8b5cf6;    /* 4.7:1  (AA ✅ — not AAA) */
+  --text-cyan: #00ffff;      /* 15.8:1 (AAA ✅) */
+  --text-gray: #b8afc8;      /* 9.4:1  (AAA ✅) — the shipped --text-secondary */
 
   /* Interactive element contrast (UI components) */
   --btn-bg: rgba(217, 79, 144, 0.2);
@@ -139,8 +146,8 @@ function getRelativeLuminance(hex) {
 }
 
 // Test Celeste colors
-const ratio = getContrastRatio('#d94f90', '#0a0612');
-console.log(`Contrast ratio: ${ratio.toFixed(1)}:1`);  // 7.2:1 (AAA ✅)
+const ratio = getContrastRatio('#d94f90', '#0a0a0a');
+console.log(`Contrast ratio: ${ratio.toFixed(1)}:1`);  // 5.2:1 — AA, not AAA
 
 // Passes WCAG AA? (4.5:1 minimum)
 console.log(`WCAG AA: ${ratio >= 4.5 ? 'PASS' : 'FAIL'}`);

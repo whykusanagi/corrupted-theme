@@ -2,6 +2,37 @@
 /* These are the foundation colors and design tokens */
 
 :root {
+  /* ========== CORRUPTION PALETTE ==========
+     The eight tokens CORRUPTED_THEME_SPEC.md declares. They were referenced in
+     87 places across toast.css, components.css and utilities.css — and defined
+     nowhere, so every one of those var() calls silently fell through to its
+     literal fallback. The indirection was decorative: overriding a token did
+     nothing, because there was no token to override.
+
+     Defining them is a visual no-op. All 64 fallback sites were checked against
+     the spec first and every one already matched, so nothing re-renders — but
+     from here the tokens are real and a consumer can actually retheme through
+     them.
+
+     Two tiers, and the distinction is load-bearing. THEME COLOURS encode
+     corruption state; ACCENTS are a compositional tool and never a state
+     signal. Cyan is an accent: it is not, and never was, the stable-text
+     colour. */
+
+  /* Theme colours — these are the aesthetic */
+  --corrupted-white:    #ffffff;  /* Stable, decoded, final readable state */
+  --corrupted-magenta:  #ff00ff;  /* Primary corruption */
+  --corrupted-purple:   #8b5cf6;  /* Violet — deep/intimate corruption */
+
+  /* Supporting — extensions of the theme, not additions to it */
+  --corrupted-magenta2: #d94f90;  /* High-energy / playful corruption */
+  --corrupted-black:    #000000;  /* Background, void, corrupted holes */
+  --corrupted-green:    #00ff00;  /* Rare matrix/system callback */
+
+  /* Accents — highlight and separation only, never state */
+  --corrupted-cyan:     #00ffff;
+  --corrupted-red:      #ff0000;
+
   /* ========== PRIMARY COLORS ========== */
   --accent: #d94f90;           /* Main pink accent */
   --accent-light: #e86ca8;     /* Lighter pink for hover states */

@@ -248,13 +248,13 @@
 
 /* Position card states */
 .position-card.filled {
-  border-color: var(--color-success);
-  background: rgba(16, 185, 129, 0.1);
+  border-color: #00ff00;
+  background: rgba(0, 255, 0, 0.08);
 }
 
 .position-card.filled:hover {
   border-color: #15803d;
-  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 255, 0, 0.18);
 }
 
 .position-card.selected {

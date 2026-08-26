@@ -2402,7 +2402,7 @@ export class TacticalTerrainMap {
         this.colorSecondary = '#8b5cf6';  // Purple - depth/shadow
         this.colorAccent = '#d94f90';     // Magenta - highlights/waypoints
         this.colorDanger = '#ff0000';     // Red - critical zones
-        this.colorWarning = '#ff8800';    // Orange - warning zones
+        this.colorWarning = '#d94f90';    // magenta2 - warning zones
         this.colorGreen = '#00ff00';      // Green - system zones
 
         // Define waypoint objectives (buildings, structures, corruption nodes)
@@ -4871,11 +4871,11 @@ export class CharacterFlowParticles {
         // Glow color mapping (from character selector)
         this.glowColors = {
             purple:  'rgba(139, 92, 246, 0.8)',
-            magenta: 'rgba(236, 72, 153, 0.8)',
+            magenta: 'rgba(255, 0, 255, 0.8)',
             black:   'rgba(0, 0, 0, 0.8)',
-            cyan:    'rgba(6, 182, 212, 0.8)',
+            cyan:    'rgba(0, 255, 255, 0.8)',
             yellow:  'rgba(234, 179, 8, 0.8)',
-            red:     'rgba(239, 68, 68, 0.8)'
+            red:     'rgba(255, 0, 0, 0.8)'
         };
 
         // Content arrays for particle generation (expanded for more variety)
@@ -5111,7 +5111,7 @@ export class CharacterFlowParticles {
                     'rgba(255, 0, 0, 0.9)',      // Red glitch
                     'rgba(0, 255, 255, 0.9)',    // Cyan glitch
                     'rgba(255, 0, 255, 0.9)',    // Magenta glitch
-                    'rgba(255, 255, 0, 0.9)'     // Yellow glitch
+                    'rgba(139, 92, 246, 0.9)'    // Violet glitch
                 ];
                 renderColor = glitchColors[Math.floor(Math.random() * glitchColors.length)];
             }
@@ -5442,7 +5442,7 @@ export class CharacterFlowParticles {
                 type = 'romaji';
                 fullContent = this.romajiGlitch[Math.floor(Math.random() * this.romajiGlitch.length)];
                 size = 14 + Math.random() * 4; // 14-18px
-                color = 'rgba(0, 212, 255, 0.8)'; // Cyan
+                color = 'rgba(0, 255, 255, 0.8)'; // Cyan
             }
 
             // Start with only first character visible (typing effect)

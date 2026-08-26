@@ -33,7 +33,7 @@ const TAU = Math.PI * 2;
 const D2R = Math.PI / 180;
 
 const DEFAULT_PALETTE = {
-  sphere:    'rgba(8,6,18,0.82)',
+  sphere:    'rgba(10,10,10,0.82)',
   limb:      'rgba(0,255,255,0.28)',  // the one cyan accent — spec: highlight use only
   graticule: 'rgba(139,92,246,0.16)',
   glowInner: 'rgba(139,92,246,0.10)',

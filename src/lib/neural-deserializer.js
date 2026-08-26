@@ -646,7 +646,7 @@ export class NeuralDeserializer {
             if (block.text.includes('ERROR') || block.text.includes('CRITICAL')) {
                 color = '#ff0000';
             } else if (block.text.includes('WARN')) {
-                color = '#ffaa00';
+                color = '#d94f90';
             } else if (block.text.includes('💜') || block.text.includes('pleasure') || block.text.includes('lewd')) {
                 color = '#8b5cf6'; // Purple for lewd content
             }

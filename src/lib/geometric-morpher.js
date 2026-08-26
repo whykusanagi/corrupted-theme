@@ -641,8 +641,8 @@ export class GeometricMorpher {
     drawSphericalEarth(size, rotation, progress) {
         // Draw base sphere with gradient
         const gradient = this.ctx.createRadialGradient(0, 0, 0, 0, 0, size);
-        gradient.addColorStop(0, `rgba(0, 100, 150, ${0.3 * progress})`);
-        gradient.addColorStop(0.7, `rgba(0, 50, 100, ${0.2 * progress})`);
+        gradient.addColorStop(0, `rgba(139, 92, 246, ${0.3 * progress})`);
+        gradient.addColorStop(0.7, `rgba(139, 92, 246, ${0.12 * progress})`);
         gradient.addColorStop(1, `rgba(0, 0, 0, 0)`);
 
         this.ctx.fillStyle = gradient;

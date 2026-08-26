@@ -22,6 +22,29 @@ import path from 'path';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
+/**
+ * Demos the nav must surface for the CURRENT release — the pages that show
+ * off what shipped most recently.
+ *
+ * **Bump this at every release.** Drop the demos from the release that has
+ * aged out and add the new ones; they stay reachable from the gallery at
+ * `examples/index.html` either way. Keeping a frozen list here is what let
+ * the Examples menu grow to 29 entries — every release appended and nothing
+ * was ever removed.
+ *
+ * Enforced by `tests/data/nav-sync.test.js`.
+ */
+export const RELEASE_DEMOS = {
+  version: '0.3.3',
+  pages: [
+    'examples/corrupted-flares.html',
+    'examples/corrupted-flares-in-situ.html',
+    'examples/micro-gfx.html',
+    'examples/corrupted-globe.html',
+    'examples/corrupted-graph.html',
+  ],
+};
+
 /** Canonical menu. Targets are site-root-relative; anchors allowed. */
 export const NAV = [
   { label: 'Home', icon: 'fa-home', target: 'index.html' },
@@ -30,10 +53,12 @@ export const NAV = [
     submenu: [
       { label: 'All Components', icon: 'fa-layer-group', target: 'examples/showcase-complete.html' },
       { label: 'Glass', icon: 'fa-square', target: 'examples/showcase-complete.html#glass' },
-      { label: 'Standard', icon: 'fa-shapes', target: 'examples/showcase-complete.html#components' },
-      { label: 'Navigation', icon: 'fa-bars', target: 'examples/showcase-complete.html#navigation' },
+      { label: 'Buttons', icon: 'fa-hand-pointer', target: 'examples/button.html' },
+      { label: 'Cards', icon: 'fa-clone', target: 'examples/card.html' },
+      { label: 'Forms', icon: 'fa-edit', target: 'examples/form.html' },
+      { label: 'Layouts', icon: 'fa-columns', target: 'examples/layout.html' },
+      { label: 'Widgets', icon: 'fa-th-large', target: 'examples/components/showcase.html' },
       { label: 'API Docs', icon: 'fa-code', target: 'examples/showcase-complete.html#api-docs' },
-      { label: "What's New", icon: 'fa-wave-square', target: 'examples/showcase-complete.html#v030-components' },
     ],
   },
   {
@@ -48,35 +73,31 @@ export const NAV = [
     ],
   },
   {
-    label: 'Examples', icon: 'fa-flask', target: 'examples/index.html',
+    label: 'Effects', icon: 'fa-wand-magic-sparkles', target: 'examples/index.html',
     submenu: [
-      { label: 'Animation Gallery (0.3.0)', icon: 'fa-th', target: 'examples/animations.html' },
-      { label: 'Stream Overlays', icon: 'fa-broadcast-tower', target: 'examples/stream-overlays.html' },
-      { label: 'Canvas Transitions', icon: 'fa-random', target: 'examples/transitions.html' },
-      { label: 'Corrupted Mandala', icon: 'fa-dharmachakra', target: 'examples/corrupted-mandala.html' },
-      { label: 'Scroll Decode', icon: 'fa-scroll', target: 'examples/scroll-decode.html' },
-      { label: 'Corrupted Timeline', icon: 'fa-stream', target: 'examples/corrupted-timeline.html' },
-      { label: 'Glitch Stagger Grid', icon: 'fa-border-all', target: 'examples/glitch-stagger-grid.html' },
-      { label: 'Advanced Blocks (0.3.1)', icon: 'fa-clapperboard', target: 'examples/anime-blocks-advanced.html' },
+      { label: 'Corrupted Flares', icon: 'fa-wand-magic-sparkles', target: 'examples/corrupted-flares.html' },
+      { label: 'Flares In Situ', icon: 'fa-image', target: 'examples/corrupted-flares-in-situ.html' },
+      { label: 'MicroGfx Posters', icon: 'fa-vector-square', target: 'examples/micro-gfx.html' },
       { label: 'Corrupted Globe', icon: 'fa-globe', target: 'examples/corrupted-globe.html' },
       { label: 'Corrupted Graph', icon: 'fa-circle-nodes', target: 'examples/corrupted-graph.html' },
-      { label: 'MicroGfx Posters', icon: 'fa-vector-square', target: 'examples/micro-gfx.html' },
-      { label: 'Audio Spectrum', icon: 'fa-wave-square', target: 'examples/audio-spectrum.html' },
-      { label: 'Deterministic Frames', icon: 'fa-clock-rotate-left', target: 'examples/canvas-seek.html' },
-      { label: 'Animation Blocks', icon: 'fa-film', target: 'examples/animation-blocks/index.html' },
-      { label: 'CRT Effects', icon: 'fa-tv', target: 'examples/advanced/crt-effects.html' },
-      { label: 'Decrypt Reveal', icon: 'fa-key', target: 'examples/advanced/decrypt-reveal.html' },
-      { label: 'Phrase Cycle', icon: 'fa-history', target: 'examples/advanced/phrase-cycle.html' },
-      { label: 'GLSL Vortex', icon: 'fa-hurricane', target: 'examples/advanced/glsl-vortex.html' },
-      { label: 'Particles BG', icon: 'fa-atom', target: 'examples/advanced/particles-bg.html' },
+      { label: 'Corrupted Mandala', icon: 'fa-dharmachakra', target: 'examples/corrupted-mandala.html' },
+      { label: 'Glitch Stagger Grid', icon: 'fa-border-all', target: 'examples/glitch-stagger-grid.html' },
       { label: 'Character Corruption', icon: 'fa-terminal', target: 'examples/basic/corrupted-text.html' },
-      { label: 'Buffer Corruption', icon: 'fa-keyboard', target: 'examples/basic/typing-animation.html' },
-      { label: 'Widgets Showcase', icon: 'fa-th-large', target: 'examples/components/showcase.html' },
-      { label: 'Nikke Team Builder', icon: 'fa-users', target: 'examples/nikke-team-builder.html' },
-      { label: 'Buttons', icon: 'fa-hand-pointer', target: 'examples/button.html' },
-      { label: 'Cards', icon: 'fa-square', target: 'examples/card.html' },
-      { label: 'Forms', icon: 'fa-edit', target: 'examples/form.html' },
-      { label: 'Layouts', icon: 'fa-columns', target: 'examples/layout.html' },
+      { label: 'Browse all →', icon: 'fa-ellipsis', target: 'examples/index.html' },
+    ],
+  },
+  {
+    label: 'Stream & Video', icon: 'fa-broadcast-tower', target: 'examples/stream-overlays.html',
+    submenu: [
+      { label: 'Stream Overlays', icon: 'fa-broadcast-tower', target: 'examples/stream-overlays.html' },
+      { label: 'Deterministic Frames', icon: 'fa-clock-rotate-left', target: 'examples/canvas-seek.html' },
+      { label: 'Canvas Transitions', icon: 'fa-random', target: 'examples/transitions.html' },
+      { label: 'Animation Gallery', icon: 'fa-th', target: 'examples/animations.html' },
+      { label: 'Animation Blocks', icon: 'fa-film', target: 'examples/animation-blocks/index.html' },
+      { label: 'Corrupted Timeline', icon: 'fa-stream', target: 'examples/corrupted-timeline.html' },
+      { label: 'CRT Effects', icon: 'fa-tv', target: 'examples/advanced/crt-effects.html' },
+      { label: 'Audio Spectrum', icon: 'fa-wave-square', target: 'examples/audio-spectrum.html' },
+      { label: 'Browse all →', icon: 'fa-ellipsis', target: 'examples/index.html' },
     ],
   },
   { label: 'Docs', icon: 'fa-book', target: 'https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md' },

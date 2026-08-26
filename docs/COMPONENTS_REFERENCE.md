@@ -2443,7 +2443,7 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.3.2, 50 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.3, 51 JS exports)
 
 Container expectations: overlay-suite and block components position themselves
 absolutely inside their container, so give the container `position: relative`
@@ -2475,6 +2475,7 @@ from the local tree instead — e.g.
 | `@whykusanagi/corrupted-theme/corrupted-globe` | CorruptedGlobe | CorruptedGlobe — orthographic wireframe globe with great-circle arcs. |
 | `@whykusanagi/corrupted-theme/corrupted-graph` | CorruptedGraph | CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic. |
 | `@whykusanagi/corrupted-theme/micro-gfx` | — | MicroGfx — seeded generative instrument graphics. |
+| `@whykusanagi/corrupted-theme/corrupted-flares` | CorruptedFlares | CorruptedFlares — geometric micro-VFX flares that decay on their own clock, for compositing over video, artwork or a transparent overlay layer. |
 | `@whykusanagi/corrupted-theme/canvas-seek` | createFrameClock, createDissolve | Frame-deterministic canvas rendering. |
 | `@whykusanagi/corrupted-theme/lipsync` | rms, smoothRms, mouthTarget, approach | Audio amplitude envelope — RMS → smoothing → clamped 0..1 target. |
 | `@whykusanagi/corrupted-theme/audio-spectrum` | AudioSpectrum | AudioSpectrum — canvas spectrum driven by real audio. |
@@ -2948,6 +2949,114 @@ const blob = await MicroGfx.toPNG(art, { scale: 2 });
 | `degrade` | `{warp:number,erode:number,grain:number}` |  | Pattern 5 knobs, each 0..1 |
 | `text` | `{title:string,eyebrow:string,serial:string,nameplate:string}` |  | each field independently optional; caller strings are set as element text, never parsed as markup |
 | `nsfw` | `boolean` | `false` | allow NSFW phrases in the glyph layer |
+### `corrupted-flares`
+
+CorruptedFlares — geometric micro-VFX flares that decay on their own clock, for compositing over video, artwork or a transparent overlay layer.
+
+- npm: `import { CorruptedFlares } from '@whykusanagi/corrupted-theme/corrupted-flares'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-flares.js`
+- Constructor: `new CorruptedFlares(container, options = {})`
+- Methods:
+  - `start()` → `this` — Start the live loop. Idempotent. @returns {this}
+  - `settle()` → `this` — Jump straight to the settled end state: every cell white and static.
+  - `restart()` → `this` — Rewind to the corruption event and run again.
+  - `renderFrame(frameIdx, fps = 60)` — Deterministic frame for video export.
+    - `frameIdx`: `number`
+    - `fps`: `number`
+  - `renderAt(clock)` — Render the frame a `createFrameClock` is sitting on. Lets an offline
+    - `clock`: `{frame: number, fps: number}`
+  - `toPNG(opts = {})` → `Promise<Blob>` — Export the current frame as a PNG blob. Transparent wherever nothing was
+    - `opts`: `object`
+    - `opts.scale`: `number` — Multiplier on the board's CSS size
+  - `stop()` — Stop the loop; leaves last frame visible.
+  - `destroy()` — Stop and remove the canvas. Not reusable.
+  - `CorruptedFlares.draw(ctx, name, t, opts = {})` _(static — call on the class, not an instance)_ — Draw one recipe into an existing context, origin at the current transform
+    - `ctx`: `CanvasRenderingContext2D`
+    - `name`: `string` — Recipe key in FLARE_RECIPES
+    - `t`: `number` — Loop progress 0..1
+    - `opts`: `object`
+    - `opts.size`: `number`
+    - `opts.color`: `string` — Or `rampColorAt(t)` for a corruption-age tint matching the grid
+    - `opts.index`: `number`
+    - `opts.rng`: `() => number`
+    - `opts.loopMs`: `number` — Real loop duration, so the flicker floor is measured against your playback rate rather than assumed
+  - `CorruptedFlares.drawAt(ctx, name, clock, opts = {})` _(static — call on the class, not an instance)_ — Frame-locked `draw()` for offline export. Derives loop position from the
+    - `ctx`: `CanvasRenderingContext2D`
+    - `name`: `string`
+    - `clock`: `{frame: number, time: number, rngFor: Function}`
+    - `opts`: `object` — As `draw()`, plus:
+    - `opts.loopMs`: `number` — Duration of one flare loop
+    - `opts.offsetMs`: `number` — Shift this flare's phase
+    - `opts.ramp`: `boolean` — Tint by corruption age instead of `opts.color`
+  - `CorruptedFlares.rampColorAt(t)` → `string` _(static — call on the class, not an instance)_ — Colour for a corruption age, for callers compositing single flares who
+    - `t`: `number` — Loop progress 0..1
+    - returns: hex colour
+- `FLARE_RECIPES` methods:
+  - `FLARE_RECIPES.starBurst(ctx, t, r, color)`
+  - `FLARE_RECIPES.ringPulse(ctx, t, r, color)`
+  - `FLARE_RECIPES.reticleSpin(ctx, t, r, color)`
+  - `FLARE_RECIPES.glitchStar(ctx, t, r, color, opts)`
+  - `FLARE_RECIPES.dualRing(ctx, t, r, color)`
+  - `FLARE_RECIPES.xPop(ctx, t, r, color)`
+  - `FLARE_RECIPES.sparkCross(ctx, t, r, color)`
+  - `FLARE_RECIPES.brokenArc(ctx, t, r, color, opts)`
+  - `FLARE_RECIPES.diamondPulse(ctx, t, r, color)`
+  - `FLARE_RECIPES.orbitDots(ctx, t, r, color)`
+  - `FLARE_RECIPES.dashedRingSpin(ctx, t, r, color)`
+  - `FLARE_RECIPES.voidHole(ctx, t, r, color)`
+  - `FLARE_RECIPES.chromaticBurst(ctx, t, r, color)`
+  - `FLARE_RECIPES.glyphFlash(ctx, t, r, color, opts)`
+  - `FLARE_RECIPES.scanSlash(ctx, t, r, color)`
+  - `FLARE_RECIPES.pixelShatter(ctx, t, r, color)`
+  - `FLARE_RECIPES.targetLock(ctx, t, r, color)`
+  - `FLARE_RECIPES.sparkleField(ctx, t, r, color)`
+  - `FLARE_RECIPES.hexCorrupt(ctx, t, r, color)`
+  - `FLARE_RECIPES.signalLost(ctx, t, r, color, opts)`
+  - `FLARE_RECIPES.bloomDot(ctx, t, r, color)`
+  - `FLARE_RECIPES.dataStrip(ctx, t, r, color, opts)` — Barcode ticks with segments dropping out — the instrument-panel register
+  - `FLARE_RECIPES.shardBurst(ctx, t, r, color)`
+  - `FLARE_RECIPES.rippleDecay(ctx, t, r, color)`
+  - `FLARE_RECIPES.staticFlash(ctx, t, r, color, opts)`
+
+_VFX pass over artwork — the common case_
+```js
+import { CorruptedFlares } from '@whykusanagi/corrupted-theme/corrupted-flares';
+ctx.save();
+ctx.translate(x, y);
+CorruptedFlares.draw(ctx, 'glitchStar', 0.4, { size: 80 });
+ctx.restore();
+```
+
+_Frame-locked for offline capture_
+```js
+import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek';
+const clock = createFrameClock({ fps: 30, seed: 42 });
+clock.seek(frameIdx);
+CorruptedFlares.drawAt(ctx, 'starBurst', clock, { size: 80, ramp: true });
+```
+
+_Transparent board for an overlay_
+```js
+const flares = new CorruptedFlares(stage, { seed: 42, plate: false });
+flares.start();
+const png = await flares.toPNG({ scale: 2 });
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `cols` | `number` | `5` |  |
+| `rows` | `number` | `5` |  |
+| `cellSize` | `number` | `112` | CSS px per cell |
+| `gap` | `number` | `10` |  |
+| `loopMs` | `number` | `1400` | Duration of one recipe loop |
+| `loops` | `number` | `3` | Corruption cycles before a cell settles to a static, readable white mark. `Infinity` keeps the board corrupting forever — decorative, but it never reaches the readable end state Core Tenet 2 requires, so prefer a finite count for content surfaces. |
+| `speed` | `number` | `1` |  |
+| `seed` | `number|null` | `null` |  |
+| `recipes` | `string[]` |  | Override grid recipe list |
+| `ramp` | `{wavefront: string, mid: string, settled: string}` |  | Override the corruption-age colour ramp |
+| `rounded` | `boolean` | `true` | Round cell corners via clip |
+| `plate` | `boolean` | `true` | Draw the dark cell tile and its border. Set `false` for a fully transparent board you can composite over video, artwork or an OBS scene — this also drops the per-cell clip, so glow bleeds between cells the way an overlay should. |
+| `onSettled` | `() => void` |  | Fired once the whole board settles |
 ### `canvas-seek`
 
 Frame-deterministic canvas rendering.

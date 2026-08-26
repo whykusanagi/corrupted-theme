@@ -1,8 +1,9 @@
 /**
- * CorruptedFlares — anime-style micro VFX grid, corrupted-theme palette.
+ * CorruptedFlares — geometric micro-VFX flares that decay on their own clock,
+ * for compositing over video, artwork or a transparent overlay layer.
  *
- * A 5×5 board of short geometric flare loops (sparkles, rings, reticles,
- * bursts). Shapes borrow the NopiA "flare light" vocabulary; colour and
+ * 25 short flare loops — sparkles, rings, reticles, bursts — plus a 5×5
+ * showcase board. Shapes work in the anime flare-light vocabulary; colour and
  * motion belong to the theme: cyan + red appear only as chromatic fringes,
  * and timing snaps and stutters instead of smoothing cleanly.
  *

@@ -24,9 +24,9 @@ third-party warnings.
 
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/corrupted-text.min.js"></script>
 ```
 
 **Pro:** Breaking changes never auto-propagate. **Con:** Manual version
@@ -52,7 +52,7 @@ For production hardening, add SRI hashes:
 
 ```html
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/corrupted-text.min.js"
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/corrupted-text.min.js"
         integrity="sha384-<paste-hash-here>"
         crossorigin="anonymous"></script>
 ```
@@ -147,7 +147,7 @@ exports, so npm and CDN import paths stay symmetrical):
 ```html
 <script type="module">
   import { ScrollDecode } from
-    'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.2/src/lib/scroll-decode.js';
+    'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.3/src/lib/scroll-decode.js';
   new ScrollDecode(document.querySelector('h1')).start();
 </script>
 ```

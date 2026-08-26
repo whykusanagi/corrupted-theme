@@ -1,6 +1,6 @@
 # Corrupted Theme Specification
 
-**Version:** 1.2
+**Version:** 1.3
 **Author:** whykusanagi
 **Status:** Production
 **License:** MIT (for contribution to corrupted-theme package)

@@ -2443,7 +2443,7 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.3.2, 50 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.3, 51 JS exports)
 
 Container expectations: overlay-suite and block components position themselves
 absolutely inside their container, so give the container `position: relative`
@@ -2475,6 +2475,7 @@ from the local tree instead — e.g.
 | `@whykusanagi/corrupted-theme/corrupted-globe` | CorruptedGlobe | CorruptedGlobe — orthographic wireframe globe with great-circle arcs. |
 | `@whykusanagi/corrupted-theme/corrupted-graph` | CorruptedGraph | CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic. |
 | `@whykusanagi/corrupted-theme/micro-gfx` | — | MicroGfx — seeded generative instrument graphics. |
+| `@whykusanagi/corrupted-theme/corrupted-flares` | CorruptedFlares | CorruptedFlares — geometric micro-VFX flares that decay on their own clock, for compositing over video, artwork or a transparent overlay layer. |
 | `@whykusanagi/corrupted-theme/canvas-seek` | createFrameClock, createDissolve | Frame-deterministic canvas rendering. |
 | `@whykusanagi/corrupted-theme/lipsync` | rms, smoothRms, mouthTarget, approach | Audio amplitude envelope — RMS → smoothing → clamped 0..1 target. |
 | `@whykusanagi/corrupted-theme/audio-spectrum` | AudioSpectrum | AudioSpectrum — canvas spectrum driven by real audio. |
@@ -2535,7 +2536,7 @@ lightbox.js — Standalone Lightbox for the Corrupted Theme
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/lightbox.js`
 - Constructor: `new Lightbox(_unused, options = {})`
 - Methods:
-  - `setImages(images)` — Replace the image list. Accepts the same shape gallery.js produces:
+  - `setImages(images)` — Replace the image list. Accepts the same shape gallery.js produces: `{ src, alt, caption, isNsfw, [element], [originalIndex] }`
     - `images`: `Array<object>`
   - `open(index)` — Open the lightbox at the given index.
     - `index`: `number`
@@ -2740,7 +2741,7 @@ Component Helpers JavaScript utilities for interactive Bootstrap-equivalent comp
 - npm: `import { initAccordions } from '@whykusanagi/corrupted-theme/components-js'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/components.js`
 - Functions:
-  - `initAccordions()` — Initialize all accordions on the page
+  - `initAccordions()` — Initialize all accordions on the page Auto-called on DOMContentLoaded
   - `toggleCollapse(element)` — Toggle a collapse element
     - `element`: `HTMLElement|string` — Element or selector
   - `showCollapse(element)` — Show a collapse element
@@ -2754,7 +2755,7 @@ Component Helpers JavaScript utilities for interactive Bootstrap-equivalent comp
     - `selector`: `string|HTMLElement`
   - `closeModal(selector)` — Close a modal by selector
     - `selector`: `string|HTMLElement`
-  - `destroyComponents()` — Destroy all component managers and clean up listeners.
+  - `destroyComponents()` — Destroy all component managers and clean up listeners. Removes all tracked listeners from auto-initialization and managers.
 
 | Option | Type | Default | Description |
 |---|---|---|---|
@@ -2793,10 +2794,10 @@ CorruptedGlobe — orthographic wireframe globe with great-circle arcs.
 - Constructor: `new CorruptedGlobe(canvas, options = {})`
 - Methods:
   - `init()`
-  - `start()` → `this` — Start the animation loop. Idempotent.
+  - `start()` → `this` — Start the animation loop. Idempotent. Under reduced motion this paints one settled, readable frame instead of looping — the accessibility contract is a stable end state, not no output.
   - `stop()` — Stop the animation loop. Reusable.
   - `destroy()` — Tear down and release references. Not reusable after.
-  - `setPoints(points)` → `this` — Replace the static marker set. Invalid coordinates are dropped with a
+  - `setPoints(points)` → `this` — Replace the static marker set. Invalid coordinates are dropped with a warning rather than silently, so bad data is visible in the console.
     - `points`: `Array<{lat:number,lon:number,weight?:number,color?:string}>`
   - `fire(from, opts = {})` → `this` — Launch an arc. Travels `from` → `to` (defaults to `options.origin`).
     - `from`: `{lat:number,lon:number}`
@@ -2852,7 +2853,7 @@ CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic.
   - `init()`
   - `setData({ nodes = [], edges = [] } = {})` → `this` — Replace the graph. Layout runs synchronously here, not per frame.
     - `data`: `{nodes:Array, edges:Array}`
-  - `layout()` → `this` — Recompute node positions. Called by setData; call again after changing
+  - `layout()` → `this` — Recompute node positions. Called by setData; call again after changing `options.layout`.
   - `start()` — Start the render loop. Idempotent.
   - `stop()` — Stop the render loop. Reusable.
   - `destroy()` — Tear down and release references. Not reusable after.
@@ -2921,7 +2922,7 @@ MicroGfx — seeded generative instrument graphics.
     - `options.degrade`: `{warp:number,erode:number,grain:number}` — Pattern 5 knobs, each 0..1
     - `options.text`: `{title:string,eyebrow:string,serial:string,nameplate:string}` — each field independently optional; caller strings are set as element text, never parsed as markup
     - `options.nsfw` (default `false`): `boolean` — allow NSFW phrases in the glyph layer
-  - `MicroGfx.mount(element, result)` — Append the artwork to an element, replacing anything already there.
+  - `MicroGfx.mount(element, result)` — Append the artwork to an element, replacing anything already there. This is the only supported DOM path — it appends nodes, never markup.
     - `element`: `Element`
     - `result`: `{node:SVGSVGElement}` — from generate()
   - `MicroGfx.toPNG(result, opts = {})` → `Promise<Blob>` — Rasterise to PNG.
@@ -2948,6 +2949,114 @@ const blob = await MicroGfx.toPNG(art, { scale: 2 });
 | `degrade` | `{warp:number,erode:number,grain:number}` |  | Pattern 5 knobs, each 0..1 |
 | `text` | `{title:string,eyebrow:string,serial:string,nameplate:string}` |  | each field independently optional; caller strings are set as element text, never parsed as markup |
 | `nsfw` | `boolean` | `false` | allow NSFW phrases in the glyph layer |
+### `corrupted-flares`
+
+CorruptedFlares — geometric micro-VFX flares that decay on their own clock, for compositing over video, artwork or a transparent overlay layer.
+
+- npm: `import { CorruptedFlares } from '@whykusanagi/corrupted-theme/corrupted-flares'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-flares.js`
+- Constructor: `new CorruptedFlares(container, options = {})`
+- Methods:
+  - `start()` → `this` — Start the live loop. Idempotent. @returns {this}
+  - `settle()` → `this` — Jump straight to the settled end state: every cell white and static. This is the readable endpoint Core Tenet 2 requires, and the static fallback the accessibility guidance asks for.
+  - `restart()` → `this` — Rewind to the corruption event and run again.
+  - `renderFrame(frameIdx, fps = 60)` — Deterministic frame for video export.
+    - `frameIdx`: `number`
+    - `fps`: `number`
+  - `renderAt(clock)` — Render the frame a `createFrameClock` is sitting on. Lets an offline exporter drive the board off the same clock as everything else in the composition, so a scrubbed preview and a captured frame agree.
+    - `clock`: `{frame: number, fps: number}`
+  - `toPNG(opts = {})` → `Promise<Blob>` — Export the current frame as a PNG blob. Transparent wherever nothing was drawn when `plate: false`, so the result composites directly.
+    - `opts`: `object`
+    - `opts.scale`: `number` — Multiplier on the board's CSS size
+  - `stop()` — Stop the loop; leaves last frame visible.
+  - `destroy()` — Stop and remove the canvas. Not reusable.
+  - `CorruptedFlares.draw(ctx, name, t, opts = {})` _(static — call on the class, not an instance)_ — Draw one recipe into an existing context, origin at the current transform (translate first to place it). **This is the API for compositing** — it touches nothing but the pixels it draws, leaves the context exactly as it found it, and never paints a background, so the result drops straight onto video, artwork or a transparent OBS layer.
+    - `ctx`: `CanvasRenderingContext2D`
+    - `name`: `string` — Recipe key in FLARE_RECIPES
+    - `t`: `number` — Loop progress 0..1
+    - `opts`: `object`
+    - `opts.size`: `number`
+    - `opts.color`: `string` — Or `rampColorAt(t)` for a corruption-age tint matching the grid
+    - `opts.index`: `number`
+    - `opts.rng`: `() => number`
+    - `opts.loopMs`: `number` — Real loop duration, so the flicker floor is measured against your playback rate rather than assumed
+  - `CorruptedFlares.drawAt(ctx, name, clock, opts = {})` _(static — call on the class, not an instance)_ — Frame-locked `draw()` for offline export. Derives loop position from the clock's playback time and takes its randomness from `clock.rngFor`, so a given frame index always produces identical pixels — which is what a frame-cached capture pipeline needs to skip re-rendering unchanged frames.
+    - `ctx`: `CanvasRenderingContext2D`
+    - `name`: `string`
+    - `clock`: `{frame: number, time: number, rngFor: Function}`
+    - `opts`: `object` — As `draw()`, plus:
+    - `opts.loopMs`: `number` — Duration of one flare loop
+    - `opts.offsetMs`: `number` — Shift this flare's phase
+    - `opts.ramp`: `boolean` — Tint by corruption age instead of `opts.color`
+  - `CorruptedFlares.rampColorAt(t)` → `string` _(static — call on the class, not an instance)_ — Colour for a corruption age, for callers compositing single flares who want the grid's violet → magenta → white ramp.
+    - `t`: `number` — Loop progress 0..1
+    - returns: hex colour
+- `FLARE_RECIPES` methods:
+  - `FLARE_RECIPES.starBurst(ctx, t, r, color)`
+  - `FLARE_RECIPES.ringPulse(ctx, t, r, color)`
+  - `FLARE_RECIPES.reticleSpin(ctx, t, r, color)`
+  - `FLARE_RECIPES.glitchStar(ctx, t, r, color, opts)`
+  - `FLARE_RECIPES.dualRing(ctx, t, r, color)`
+  - `FLARE_RECIPES.xPop(ctx, t, r, color)`
+  - `FLARE_RECIPES.sparkCross(ctx, t, r, color)`
+  - `FLARE_RECIPES.brokenArc(ctx, t, r, color, opts)`
+  - `FLARE_RECIPES.diamondPulse(ctx, t, r, color)`
+  - `FLARE_RECIPES.orbitDots(ctx, t, r, color)`
+  - `FLARE_RECIPES.dashedRingSpin(ctx, t, r, color)`
+  - `FLARE_RECIPES.voidHole(ctx, t, r, color)`
+  - `FLARE_RECIPES.chromaticBurst(ctx, t, r, color)`
+  - `FLARE_RECIPES.glyphFlash(ctx, t, r, color, opts)`
+  - `FLARE_RECIPES.scanSlash(ctx, t, r, color)`
+  - `FLARE_RECIPES.pixelShatter(ctx, t, r, color)`
+  - `FLARE_RECIPES.targetLock(ctx, t, r, color)`
+  - `FLARE_RECIPES.sparkleField(ctx, t, r, color)`
+  - `FLARE_RECIPES.hexCorrupt(ctx, t, r, color)`
+  - `FLARE_RECIPES.signalLost(ctx, t, r, color, opts)`
+  - `FLARE_RECIPES.bloomDot(ctx, t, r, color)`
+  - `FLARE_RECIPES.dataStrip(ctx, t, r, color, opts)` — Barcode ticks with segments dropping out — the instrument-panel register MicroGfx works in, degraded. Replaced `gearNotch`, which read as mechanical/steampunk rather than data corruption.
+  - `FLARE_RECIPES.shardBurst(ctx, t, r, color)`
+  - `FLARE_RECIPES.rippleDecay(ctx, t, r, color)`
+  - `FLARE_RECIPES.staticFlash(ctx, t, r, color, opts)`
+
+_VFX pass over artwork — the common case_
+```js
+import { CorruptedFlares } from '@whykusanagi/corrupted-theme/corrupted-flares';
+ctx.save();
+ctx.translate(x, y);
+CorruptedFlares.draw(ctx, 'glitchStar', 0.4, { size: 80 });
+ctx.restore();
+```
+
+_Frame-locked for offline capture_
+```js
+import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek';
+const clock = createFrameClock({ fps: 30, seed: 42 });
+clock.seek(frameIdx);
+CorruptedFlares.drawAt(ctx, 'starBurst', clock, { size: 80, ramp: true });
+```
+
+_Transparent board for an overlay_
+```js
+const flares = new CorruptedFlares(stage, { seed: 42, plate: false });
+flares.start();
+const png = await flares.toPNG({ scale: 2 });
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `cols` | `number` | `5` |  |
+| `rows` | `number` | `5` |  |
+| `cellSize` | `number` | `112` | CSS px per cell |
+| `gap` | `number` | `10` |  |
+| `loopMs` | `number` | `1400` | Duration of one recipe loop |
+| `loops` | `number` | `3` | Corruption cycles before a cell settles to a static, readable white mark. `Infinity` keeps the board corrupting forever — decorative, but it never reaches the readable end state Core Tenet 2 requires, so prefer a finite count for content surfaces. |
+| `speed` | `number` | `1` |  |
+| `seed` | `number|null` | `null` |  |
+| `recipes` | `string[]` |  | Override grid recipe list |
+| `ramp` | `{wavefront: string, mid: string, settled: string}` |  | Override the corruption-age colour ramp |
+| `rounded` | `boolean` | `true` | Round cell corners via clip |
+| `plate` | `boolean` | `true` | Draw the dark cell tile and its border. Set `false` for a fully transparent board you can composite over video, artwork or an OBS scene — this also drops the per-cell clip, so glow bleeds between cells the way an overlay should. |
+| `onSettled` | `() => void` |  | Fired each time the whole board reaches its settled end state. Re-arms across `restart()`, so a caller flipping a button between Pause and Replay gets the event every cycle, not only the first. Not fired by `settle()`, which is a direct jump rather than the animation arriving there. |
 ### `canvas-seek`
 
 Frame-deterministic canvas rendering.
@@ -3023,8 +3132,8 @@ AudioSpectrum — canvas spectrum driven by real audio.
 - Constructor: `new AudioSpectrum(canvas, options = {})`
 - Methods:
   - `init()`
-  - `resume()` → `Promise<void>` — Resume the AudioContext. Browsers start it suspended until a user
-  - `setSource(source)` — Replace the audio source. Accepts a media element, a MediaStream the
+  - `resume()` → `Promise<void>` — Resume the AudioContext. Browsers start it suspended until a user gesture, so call this from a click or keypress handler.
+  - `setSource(source)` — Replace the audio source. Accepts a media element, a MediaStream the caller already obtained, or an existing AudioNode.
     - `source`: `HTMLMediaElement|MediaStream|AudioNode|null`
   - `start()` — Start drawing. Idempotent.
   - `stop()` — Stop drawing. The audio graph stays connected. Reusable.
@@ -3085,26 +3194,26 @@ DecryptReveal
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/decrypt-reveal.js`
 - Constructor: `new DecryptReveal(options = {})`
 - Methods:
-  - `decode(element, content, opts = {})` → `number` — Start a fixed-length decryption animation. The element is set to
+  - `decode(element, content, opts = {})` → `number` — Start a fixed-length decryption animation. The element is set to `content` length from frame 1 (scrambled), then resolves left-to-right.
     - `element`: `object` — DOM element with .textContent
     - `content`: `string` — Final readable text to decrypt to
     - `opts`: `object`
     - `opts.duration`: `number`
     - `opts.charset`: `string` — Overrides manager-level default
     - returns: Animation ID (pass to cleanup() to cancel early)
-  - `stop()` — Cancel all active animations and clear their timers.
-  - `start()` — Resume hook — called automatically when document becomes visible again.
-  - `cleanup(id)` — Cancel a single animation by its ID.
+  - `stop()` — Cancel all active animations and clear their timers. Visual state of elements is preserved (text remains as last written). Called automatically when document.hidden becomes true.
+  - `start()` — Resume hook — called automatically when document becomes visible again. Intentional no-op: animations must be re-queued explicitly by callers. Included to satisfy the symmetric start/stop API surface.
+  - `cleanup(id)` — Cancel a single animation by its ID. No-op if id is unknown or already cleaned up.
     - `id`: `number` — Return value from decode()
   - `cleanupAll()`
-  - `destroy()` — Tear down the manager completely. Cancels all animations, removes the
-  - `getActiveCount()` → `number` — completed naturally but not yet auto-removed).
+  - `destroy()` — Tear down the manager completely. Cancels all animations, removes the visibilitychange listener, and marks the instance non-reusable.
+  - `getActiveCount()` → `number`
     - returns: Count of animations currently tracked (some may have completed naturally but not yet auto-removed).
   - `isAnimating(id)` → `boolean`
     - `id`: `number`
     - returns: true while the animation is still running
 - Functions:
-  - `decodeText(element, finalText, opts = {})` → `Function` — Convenience: decode a single element without a manager.
+  - `decodeText(element, finalText, opts = {})` → `Function` — Convenience: decode a single element without a manager. Returns a cleanup function.
     - `element`: `object`
     - `finalText`: `string`
     - `opts`: `object`
@@ -3155,7 +3264,7 @@ src/lib/crt-effects.js
     - `element`: `HTMLElement`
     - `duration`: `number` — ms
     - `intensity`: `number` — max px displacement
-  - `cleanup()` — Remove all injected overlays and reset container styles.
+  - `cleanup()` — Remove all injected overlays and reset container styles. Alias for destroy() — kept for upstream API compatibility.
 - Functions:
   - `injectCRTStyles()`
   - `applyCRTGlow(element, color = CORRUPTED_MAGENTA2, intensity = 20)` — Apply a phosphor glow filter to any element without needing a CRTEffects instance.
@@ -3183,9 +3292,9 @@ Animation Building Blocks ========================= Ten modular animation compon
 - npm: `import { TitleDecoder } from '@whykusanagi/corrupted-theme/animation-blocks'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/animation-blocks.js`
 - Functions:
-  - `playParallel(blocks)` → `Promise<void>` — Play multiple animation blocks in parallel.
+  - `playParallel(blocks)` → `Promise<void>` — Play multiple animation blocks in parallel. Calls destroy() on each block when all complete.
     - `blocks`: `Array`
-  - `playSequence(blocks)` → `Promise<void>` — Play multiple animation blocks sequentially.
+  - `playSequence(blocks)` → `Promise<void>` — Play multiple animation blocks sequentially. Calls destroy() on each block as it completes.
     - `blocks`: `Array`
   - `playStaggered(blocks, staggerDelay = 200)` → `Promise<void>` — Play blocks with staggered start times.
     - `blocks`: `Array`
@@ -3329,7 +3438,7 @@ src/lib/corrupted-particles-background.js
 - Methods:
   - `start()` — Manually start (or resume after stop()). No-op if not yet initialised or destroyed.
   - `stop()` — Pause rendering without tearing down. Resumes on start() or visibilitychange.
-  - `destroy()` — Tear down completely: stop animation, remove canvas from DOM, remove listeners.
+  - `destroy()` — Tear down completely: stop animation, remove canvas from DOM, remove listeners. After destroy() this instance cannot be reused.
 
 ```js
 new CorruptedParticlesBackground({ targetSelector: '.glass-backdrop', nsfw: false }).start();
@@ -3372,7 +3481,7 @@ Random utility functions. Centralized random selection and variance helpers.
     - `array`: `Array` — Source array (not mutated)
     - `count`: `number` — Number of elements to select
     - returns: Array of selected elements
-  - `seededRandom(seed)` → `() => number` — Create a deterministic pseudo-random generator (mulberry32).
+  - `seededRandom(seed)` → `() => number` — Create a deterministic pseudo-random generator (mulberry32). Same seed → same sequence, across runs and engines. Seed a generator with a frame index to make any animation renderable to video with identical output per frame. mulberry32 PRNG.
     - `seed`: `number` — Any number; coerced to uint32
     - returns: Generator returning floats in [0, 1)
 ### `time-utils`
@@ -3403,7 +3512,7 @@ Time utility functions. Centralized date/time formatting helpers.
   - `parseTimestamp(timestamp)` → `Date` — Parse an ISO 8601 timestamp string to a Date.
     - `timestamp`: `string` — ISO 8601 timestamp
     - returns: Parsed date
-  - `seekAnimations(root, timeSeconds)` — Freeze every CSS animation under a root at an absolute time.
+  - `seekAnimations(root, timeSeconds)` — Freeze every CSS animation under a root at an absolute time. Pauses each animated element and seeks it via negative animation-delay; each animation resolves to its own phase (t mod duration), so one call correctly seeks a 60s ring, a 40s ring, and a 3.2s pulse alike. Combine with seededRandom() to render CSS-animated components to video frames deterministically (recipe: docs/RENDER_TO_VIDEO.md).
     - `root`: `Element|Document` — Container whose descendants get frozen
     - `timeSeconds`: `number` — Absolute animation time to seek to (>= 0)
 ### `clipboard-helpers`
@@ -3438,7 +3547,7 @@ URL state serialization helpers.
   - `applyParamsToForm(formEl, searchParams)` → `void` — Apply URLSearchParams back to a form's fields.
     - `formEl`: `Element|null` — Form (or any container with [name] children)
     - `searchParams`: `URLSearchParams` — Parameters to apply
-  - `buildShareUrl(formEl, baseUrl)` → `string` — Build a full "share" URL by encoding a form's current state into the
+  - `buildShareUrl(formEl, baseUrl)` → `string` — Build a full "share" URL by encoding a form's current state into the search string of the given base URL.
     - `formEl`: `Element|null` — Form to serialize (null produces a clean URL)
     - `baseUrl`: `string` — Base URL to attach params to.
     - returns: Absolute URL string with serialized form state as query params
@@ -3450,7 +3559,7 @@ WebSocketManager — auto-reconnecting WebSocket wrapper.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/websocket-manager.js`
 - Constructor: `new WebSocketManager(options = {})`
 - Methods:
-  - `connect()` — Open the WebSocket connection.
+  - `connect()` — Open the WebSocket connection. Safe to call even if already connected (closes previous socket first).
   - `disconnect()` — Close the connection and cancel any pending reconnect.
   - `send(message)` → `boolean` — Send a JSON-serialisable message.
     - `message`: `Object`
@@ -3543,7 +3652,7 @@ EventBar — horizontal status row with label + content + optional icon.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/event-bar.js`
 - Constructor: `new EventBar(element, options = {})`
 - Methods:
-  - `update(items)` — Replace the displayed items with a new list.
+  - `update(items)` — Replace the displayed items with a new list. No-op after destroy().
     - `items`: `Array<{label: string, content: string, icon?: string}>|null`
   - `destroy()` — Remove all rendered content and mark instance as destroyed.
 
@@ -3570,7 +3679,7 @@ LogoBanner — positioned logo with optional subtitle and reveal animation.
 - Methods:
   - `show()` — Reveal the banner using the configured animation.
   - `hide()` — Hide the banner (CSS transition handles the fade).
-  - `update(options)` — Merge new options and re-render.
+  - `update(options)` — Merge new options and re-render. No-op after destroy().
     - `options`: `Partial<typeof this.options>`
   - `destroy()` — Remove rendered content and mark instance as destroyed.
 
@@ -3632,7 +3741,7 @@ NsfwReveal — blur-until-clicked overlay.
 - Constructor: `new NsfwReveal(target, options = {})`
 - Methods:
   - `reveal()` — Remove the blur and overlay on demand (e.g. programmatic reveal).
-  - `destroy()` — Restore the element to its pre-NsfwReveal state and remove all
+  - `destroy()` — Restore the element to its pre-NsfwReveal state and remove all references. Safe to call multiple times.
 
 ```js
 import { NsfwReveal } from '@whykusanagi/corrupted-theme/nsfw-reveal';
@@ -3654,9 +3763,9 @@ PhraseCycle — discrete phrase-state cycling primitive.
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/phrase-cycle.js`
 - Constructor: `new PhraseCycle(element, options = {})`
 - Methods:
-  - `start()` → `this` — Start the cycle. Idempotent: calling start() while already running is a no-op.
-  - `stop()` — Stop the cycle without settling.
-  - `destroy()` — Tear down and release the element reference.
+  - `start()` → `this` — Start the cycle. Idempotent: calling start() while already running is a no-op. Calling start() after stop() restarts from the first phrase.
+  - `stop()` — Stop the cycle without settling. Leaves the last-shown phrase visible in the element. The instance is reusable: calling start() again restarts from the first phrase.
+  - `destroy()` — Tear down and release the element reference. Idempotent. The instance is NOT reusable after destroy().
   - `isRunning()` → `boolean` — Whether the cycle is currently running.
 
 _Basic settling cycle_
@@ -3696,7 +3805,7 @@ ChromaticPulse — RGB-split chromatic-aberration pulse on any element.
 - Constructor: `new ChromaticPulse(element, options = {})`
 - Methods:
   - `start()` → `this` — Start the live pulse loop. Idempotent.
-  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame (video export). Pulses fire at a fixed
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame (video export). Pulses fire at a fixed period = mean of options.interval; each occupies the first pulseMs.
     - `frameIdx`: `number` — Frame number (0-based)
     - `fps`: `number` — Frames per second of the export
   - `stop()` — Stop pulsing and restore the element's original text-shadow.
@@ -3731,7 +3840,7 @@ BinaryParticles — rising binary/hex/phrase token field.
 - Constructor: `new BinaryParticles(container, options = {})`
 - Methods:
   - `start()` → `this` — Start live playback (rAF-driven). Idempotent.
-  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame. Same (frameIdx, seed) → identical DOM.
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame. Same (frameIdx, seed) → identical DOM. ponytail: rebuilds the particle layer every frame (source-faithful, one reflow via single-child swap); switch to per-particle transform updates if profiling ever shows this over the 5ms budget.
     - `frameIdx`: `number` — Frame number (0-based)
     - `fps`: `number` — Frames per second (used for beat sync)
   - `stop()` — Stop live playback and remove the particle layer. Reusable.
@@ -3761,7 +3870,7 @@ GlitchTitleCard — █▓▒░ buffer-fill intro/outro title cards.
 - Requires stylesheet: `./stream-overlays-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/stream-overlays.css`
 - Constructor: `new GlitchTitleCard(container, options = {})`
 - Methods:
-  - `start(onComplete)` → `this` — Play the card. Intro reveals then settles readable and stays until
+  - `start(onComplete)` → `this` — Play the card. Intro reveals then settles readable and stays until stop(); outro shows immediately and fires onComplete after duration. Idempotent while running.
     - `onComplete`: `Function` — Called once the card settles
   - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame (video export).
     - `frameIdx`: `number` — Frame number (0-based)
@@ -3797,7 +3906,7 @@ TerminalTakeover — container-filling "system corrupted" terminal card (size th
 - Methods:
   - `start(onComplete)` → `this` — Show the takeover; auto-clears after options.duration. Idempotent.
     - `onComplete`: `Function` — Called after the card clears
-  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame (video export): visible for the first
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame (video export): visible for the first duration-worth of frames, cleared after.
     - `frameIdx`: `number` — Frame number (0-based)
     - `fps`: `number` — Frames per second of the export
   - `stop()` — Clear the card immediately. Reusable.
@@ -3827,7 +3936,7 @@ StreamTicker — ambient corner logo + scrolling corruption ticker.
 - Constructor: `new StreamTicker(container, options = {})`
 - Methods:
   - `start()` → `this` — Mount the layers and start the live loop. Idempotent.
-  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame. Ticker phrases refresh every 30 frames;
+  - `renderFrame(frameIdx, fps = 60)` — Render one deterministic frame. Ticker phrases refresh every 30 frames; logo glow pulses on a 240-frame (4s) cycle — matching the source.
     - `frameIdx`: `number` — Frame number (0-based)
     - `fps`: `number` — Unused; present for suite API consistency
   - `stop()` — Stop the loop and unmount both layers. Reusable.
@@ -3861,10 +3970,10 @@ CorruptedMandala — procedural SVG sacred-geometry background.
 - Requires stylesheet: `./corrupted-mandala-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/corrupted-mandala.css`
 - Constructor: `new CorruptedMandala(svgElement, options = {})`
 - Methods:
-  - `init()` → `this` — Build the composition at the current size. Call once after construction
+  - `init()` → `this` — Build the composition at the current size. Call once after construction (kept as a separate step for source API compatibility).
   - `setActive(active)` → `this` — Show/hide the composition (display toggle; rebuild state is kept).
     - `active`: `boolean`
-  - `resize(w, h)` → `this` — Resize the composition. Full rebuild — resize is infrequent and the
+  - `resize(w, h)` → `this` — Resize the composition. Full rebuild — resize is infrequent and the geometry is cheap (source approach).
     - `w`: `number` — Canvas width in px
     - `h`: `number` — Canvas height in px
   - `setLabels(top, bottom)` — Update the frame labels without a rebuild.
@@ -3983,7 +4092,7 @@ ScrollDecode — text decodes as it scrolls into view.
     - `charset`: `string` — Corruption charset
     - `rng`: `() => number` — Injectable for deterministic tests
     - returns: Scrambled string, same length as text
-  - `ScrollDecode.viewportProgress(rect, viewportH)` → `number` _(static — call on the class, not an instance)_ — Element's traversal progress through the viewport: 0 when its top edge
+  - `ScrollDecode.viewportProgress(rect, viewportH)` → `number` _(static — call on the class, not an instance)_ — Element's traversal progress through the viewport: 0 when its top edge is at the viewport bottom, 1 when its bottom edge reaches 25% depth.
     - `rect`: `DOMRect` — element.getBoundingClientRect()
     - `viewportH`: `number` — window.innerHeight
     - returns: 0..1
@@ -4024,7 +4133,7 @@ CorruptedTimeline — sequence animation blocks into one orchestrated scene.
   - `play(fromMs = 0)` → `this` — Start (or resume after pause()) from the given position.
     - `fromMs`: `number` — Only used on fresh starts; see seek()
   - `pause()` — Suspend pending starts (in-flight items run to completion).
-  - `seek(ms)` → `this` — Jump the schedule: entries resolvable to a start < ms are skipped
+  - `seek(ms)` → `this` — Jump the schedule: entries resolvable to a start < ms are skipped (treated complete); the rest play with starts shifted by -ms.
     - `ms`: `number`
   - `stop()` — Cancel everything; entries reset to pending. Reusable.
   - `destroy()` — Stop and release references. Not reusable.
@@ -4049,7 +4158,7 @@ GlitchStaggerGrid — Pattern 4: staggered grid corruption.
     - `onComplete`: `Function` — Fires when every element has settled
   - `stop()` — Cancel mid-ripple and restore original text/colors. Reusable.
   - `destroy()` — Stop and release references. Not reusable.
-  - `GlitchStaggerGrid.computeDelays(centers, origin, wave)` → `number[]` _(static — call on the class, not an instance)_ — Distance-proportional delays, normalized so one nearest-neighbor step
+  - `GlitchStaggerGrid.computeDelays(centers, origin, wave)` → `number[]` _(static — call on the class, not an instance)_ — Distance-proportional delays, normalized so one nearest-neighbor step equals `wave` ms (uniform 3×3 grid: center 0, corners √2·wave).
     - `centers`: `number[][]` — [x, y] element centers
     - `origin`: `number[]` — [x, y] ripple origin
     - `wave`: `number` — ms per grid unit (clamped ≥40)

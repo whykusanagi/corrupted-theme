@@ -576,7 +576,7 @@ export async function initCountdown(options = {}) {
         <div class="countdown-error" style="
           padding: 2rem;
           text-align: center;
-          color: var(--text-secondary, #888);
+          color: var(--text-secondary, #b8afc8);
           background: var(--glass, rgba(20, 12, 40, 0.7));
           border-radius: var(--radius-lg, 12px);
           border: 1px solid var(--border, #3a2555);

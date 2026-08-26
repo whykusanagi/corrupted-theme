@@ -19,7 +19,7 @@
 }
 
 .corrupted-toast {
-  background: var(--surface-elevated, #1a0a2e);
+  background: var(--surface-elevated, #1a1a24);
   color: var(--text-primary, #fff);
   border: 1px solid var(--border, rgba(217, 79, 144, 0.3));
   border-radius: var(--radius-md, 6px);

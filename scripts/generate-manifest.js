@@ -102,6 +102,28 @@ function flattenDoc(raw) {
   return t && !t.startsWith('@') ? t : undefined;
 }
 
+/**
+ * The leading prose paragraph of a JSDoc block, flattened to one line.
+ *
+ * Three call sites used to take only `[0]` — the first physical line — which
+ * silently cut every wrapped description mid-sentence. The published `toPNG`
+ * blurb ended "Transparent wherever nothing was", and 17 descriptions across
+ * 13 modules were cut the same way, on the CDN agent surface (llms.txt,
+ * manifest.json) as well as in the human-facing reference. Params and the
+ * module-level description already flattened; functions, namespace methods
+ * and class methods did not. Found by blind documentation validation.
+ */
+function leadingProse(doc) {
+  const lines = [];
+  for (const rawLine of (doc || '').split('\n')) {
+    const line = rawLine.replace(/^\s*\*\s?/, '').trim();
+    if (line.startsWith('@')) break;                          // tags end the prose
+    if (!line) { if (lines.length) break; continue; }          // blank line ends it
+    lines.push(line);
+  }
+  return lines.join(' ').replace(/\s+/g, ' ').trim() || undefined;
+}
+
 export function parseModule(source) {
   const header = source.match(/\/\*\*([\s\S]*?)\*\//)?.[1] ?? '';
   const lines = header.split('\n').map((l) => l.replace(/^\s*\*\s?/, ''));
@@ -162,8 +184,7 @@ export function parseModule(source) {
         description: flattenDoc(pm[4]),
       }));
     const returns = parseReturns(doc);
-    const summary = (doc.split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim())
-      .filter((l) => l && !l.startsWith('@'))[0]) || undefined;
+    const summary = leadingProse(doc);
     fnDetail[m[2]] = {
       signature: `${m[2]}(${m[3].replace(/\s+/g, ' ').trim()})`,
       summary,
@@ -243,8 +264,7 @@ export function parseModule(source) {
       if (['if', 'for', 'while', 'switch', 'catch', 'return'].includes(mm[2])) continue;
       const doc = mm[1] ?? '';
       const returns = parseReturns(doc);
-      const summary = (doc.split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim())
-        .filter((l) => l && !l.startsWith('@'))[0]) || undefined;
+      const summary = leadingProse(doc);
       const nsParams = [...doc.matchAll(methodParamRe)]
         .map((pm) => ({
           name: pm[2], type: pm[1].trim(),
@@ -300,8 +320,7 @@ export function parseModule(source) {
         .map((pm) => ({ name: pm[2], type: pm[1].trim(), description: flattenDoc(pm[4]) }))
         .filter((pp) => !pp.name.startsWith('options.'));
       const returns = parseReturns(doc);
-      const summary = (doc.split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim())
-        .filter((l) => l && !l.startsWith('@'))[0]) || undefined;
+      const summary = leadingProse(doc);
       detail[name] = {
         static: isStatic || undefined,
         signature: `${isStatic ? `${c.name}.` : ''}${name}(${args})`,
@@ -404,11 +423,11 @@ export function buildManifest() {
     cdn: { base: CDN_BASE, hosts: ['cdn.whykusanagi.xyz', 'cdn.nikkers.cc'] },
     conventions: {
       api: 'new Component(element, options) with start()/stop()/destroy(); transitions use play(options, onComplete)/stop() where onComplete fires when the transition finishes; animation blocks use play() → Promise that resolves when the animation completes',
-      modules: 'Every JS export is an ES module — import from the cdnUrl with <script type="module">. Module imports are CORS-mode requests: keep them same-origin per docs/CDN_CONSUMPTION.md, or use the npm package. Browser-global IIFE builds exist only as dist/*.global.js (see CHANGELOG for the list + SRI)',
+      modules: 'Every JS export is an ES module — import from the cdnUrl with <script type="module">. Module imports are CORS-mode requests: keep them same-origin per docs/CDN_CONSUMPTION.md, or use the npm package. Browser-global IIFE builds exist for exactly four exports — dist/toast.global.js, dist/clipboard-helpers.global.js, dist/timer-registry.global.js, dist/corrupted-text.global.js. Every other export is ES-module only',
       scriptLoadingPitfall: 'NEVER load a src/ file with a classic <script src> tag — it throws "Cannot use import statement outside a module" and the class stays undefined. Use <script type="module"> or a dist/*.global.js build; there is no third way',
       oneShots: 'One-shot overlay components (GlitchTitleCard, TerminalTakeover) accept start(onComplete); ambient components (StreamTicker, BinaryParticles, ChromaticPulse) run until stop()',
       nsfw: 'All NSFW content is opt-in via nsfw: false default (lewdMode is a deprecated alias)',
-      colors: 'Canonical corruption palette only: #00ffff cyan (stable), #ff00ff magenta, #8b5cf6 purple, #d94f90 magenta2, #ff0000 red, #00ff00 green',
+      colors: 'Two tiers. THEME COLOURS carry corruption state and are the aesthetic: #ffffff white (stable, decoded, final readable state), #ff00ff magenta (primary corruption), #8b5cf6 violet (deep/intimate corruption). SUPPORTING: #d94f90 magenta2 (high-energy), #000000 black (void/background), #00ff00 green (system/matrix). ACCENTS are a compositional tool and NEVER a state signal: #00ffff cyan and #ff0000 red — use them to lift something off the background, not to mean anything. Cyan is not, and never was, the stable-text colour. BACKGROUNDS are not palette colours: use the surface ramp #0a0a0a bg, #0f0f1a bg-secondary, #12121a surface, #1a1a24 surface-elevated',
       determinism: 'Components exposing renderFrame(frameIdx, fps) + seed render byte-identical frames (see docs/RENDER_TO_VIDEO.md)',
       patterns: 'Corruption patterns 1-4 defined in CORRUPTED_THEME_SPEC.md; final states are always readable',
     },

@@ -226,7 +226,7 @@ export class TitleDecoder {
           this._element.style.textShadow = `
             0 0 20px ${this.options.color},
             2px 0 10px #ff0000,
-            -2px 0 10px #0000ff
+            -2px 0 10px #00ffff
           `;
         } else {
           this._element.style.textShadow = `0 0 20px ${this.options.color}`;

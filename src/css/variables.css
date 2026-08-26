@@ -8,8 +8,16 @@
   --accent-dark: #b61b70;      /* Darker pink for depth */
 
   /* ========== BACKGROUNDS ========== */
-  --bg: #0a0a0a;               /* Pure black base */
-  --bg-secondary: #0f0f1a;     /* Deep purple-black */
+  /* One dark ramp, four steps. Demo pages had been inventing their own darks
+     per page (#050505, #0b0b0e, #111111, #171717, #1b1b1b, #1a0a24 … eleven
+     one-offs across the site), which is why panels never quite matched. Reach
+     for a step here instead of picking a new hex. Mirrored in
+     src/data/colors.json under `surfaces`. */
+  --bg: #0a0a0a;               /* Page ground */
+  --bg-secondary: #0f0f1a;     /* Deep purple-black, section ground */
+  --surface: #12121a;          /* Panel/card sitting on the ground */
+  --surface-elevated: #1a1a24; /* Raised: hover, active tile, popover */
+  --checker: #17171f;          /* Transparency checkerboard square */
   --overlay: rgba(0, 0, 0, 0.85);  /* Dark overlay */
 
   /* ========== GLASS MORPHISM EFFECTS ========== */
@@ -64,6 +72,11 @@
   --z-base: 0;
   --z-elevated: 1;
   --z-navbar: 1000;
+  /* Height of the site chrome. Pages that float controls below the navbar
+     position against this instead of hardcoding a pixel guess — six of them
+     used `top: 88px` against a bar that was actually 66.6px on some pages
+     and 68.2px on others, because its height came from inherited line-height. */
+  --navbar-h: 68px;
   --z-modal: 1000;
 }
 

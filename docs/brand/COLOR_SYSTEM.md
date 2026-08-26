@@ -109,27 +109,27 @@ Used for tertiary accents, links, and status indicators.
 
 ### Semantic State Colors
 
-#### Success (`#2ed573`)
+#### Success (`#00ff00`)
 
 | Hex Value | RGB | HSL | Contrast on Dark |
 |-----------|-----|-----|------------------|
-| `#2ed573` | `46, 213, 115` | `145°, 67%, 51%` | **7.9:1** (AAA) |
+| `#00ff00` | `0, 255, 0` | `120°, 100%, 50%` | **14.4:1** (AAA) |
 
 **Usage**: Success messages, completed states, checkmarks (🟢)
 
-#### Warning (`#ffa502`)
+#### Warning (`#d94f90`)
 
 | Hex Value | RGB | HSL | Contrast on Dark |
 |-----------|-----|-----|------------------|
-| `#ffa502` | `255, 165, 2` | `39°, 100%, 50%` | **8.2:1** (AAA) |
+| `#d94f90` | `217, 79, 144` | `332°, 64%, 58%` | **5.2:1** (AA) |
 
 **Usage**: Warning messages, caution states, attention needed (🟡)
 
-#### Error (`#ff4757`)
+#### Error (`#ff0000`)
 
 | Hex Value | RGB | HSL | Contrast on Dark |
 |-----------|-----|-----|------------------|
-| `#ff4757` | `255, 71, 87` | `355°, 100%, 64%` | **6.4:1** (AA) |
+| `#ff0000` | `255, 0, 0` | `0°, 100%, 50%` | **5.0:1** (AA) |
 
 **Usage**: Error messages, danger states, critical alerts (🔴)
 

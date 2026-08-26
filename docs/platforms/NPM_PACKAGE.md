@@ -88,7 +88,7 @@ pnpm add @whykusanagi/corrupted-theme
 
 ```html
 <!-- Full theme (8.2KB gzipped) -->
-<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.3.2/dist/theme.css">
+<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.3.3/dist/theme.css">
 ```
 
 > **Preferred CDN**: Use the live-site CDN for zero-latency delivery and SRI-verified assets. See [`docs/CDN_CONSUMPTION.md`](../CDN_CONSUMPTION.md) for details.
@@ -684,7 +684,8 @@ Example: 0.3.2
 
 | Version | Date | Changes | Migration |
 |---------|------|---------|-----------|
-| **0.3.2** | 2026-07-27 | Data + generative components — CorruptedGlobe, CorruptedGraph (own force layout, bipartite mode), MicroGfx (spec Pattern 5, seeded instrument posters), AudioSpectrum (real AnalyserNode), canvas-seek (frame-deterministic canvas + dissolve envelope), lipsync; palette split into theme colours (magenta/violet/white) and accents (cyan/red); `corruptTextSemantic` honours `context` | N/A — additive; component *defaults* moved to white, pass `color` to keep the old look |
+| **0.3.3** | 2026-08-25 | CorruptedFlares — 25 geometric micro-VFX flare loops for compositing over video, artwork or an overlay layer (spec Pattern 6: Ambient Mark Decay); colour driven by each mark's own corruption age with a mandatory settled end state; `plate: false`, `toPNG()`, `drawAt()` for offline capture. Palette gains a four-step surface ramp and first-class element colours, and `npm run audit:colors` enforces both repo-wide | N/A — additive; CorruptedFlares was not in published 0.3.2, so its option changes break no caller |
+| 0.3.2 | 2026-07-27 | Data + generative components — CorruptedGlobe, CorruptedGraph (own force layout, bipartite mode), MicroGfx (spec Pattern 5, seeded instrument posters), AudioSpectrum (real AnalyserNode), canvas-seek (frame-deterministic canvas + dissolve envelope), lipsync; palette split into theme colours (magenta/violet/white) and accents (cyan/red); `corruptTextSemantic` honours `context` | N/A — additive; component *defaults* moved to white, pass `color` to keep the old look |
 | 0.3.1 | 2026-07-10 | Nine advanced animation-block classes (CorruptedTextOverlay, CharacterFlowParticles, DataVisualizationDashboard, OminousTemple, TacticalTerrainMap, FloatingCardStack, ModuleLoadingList, SegmentedProgressBar, ImageGallerySlideshow); escapeHtml hardening across HTML-building classes; CountdownWidget `eventName` allowlist | N/A — additive; `eventName` now rejects `.` and `/` |
 | 0.3.0 | 2026-07-05 | Large component expansion — stream overlay suite (5), CorruptedMandala, 4 canvas transitions + 12 composites, 17 animation-blocks classes, terminal-vocab (SFW/NSFW split); anime.js-derived ScrollDecode / CorruptedTimeline / GlitchStaggerGrid (spec Pattern 4) + corruption-easings tokens; deterministic render-to-video (seededRandom + seekAnimations); agent surface (manifest.json + llms.txt); dependabot CI | N/A — additive; `lewdMode` deprecated → `nsfw` |
 | 0.2.1 | 2026-05-23 | Bundle-fix patch: `dist/theme.min.css` now inlines all `@import`s (restores `.card` etc. on CDN); `toast.css` + `seamless-background.css` reachable from main bundle; JSON imports converted to codegen ES modules for Safari/Firefox compat | N/A — drop-in replacement |
@@ -709,7 +710,7 @@ npm update @whykusanagi/corrupted-theme
 npm install @whykusanagi/corrupted-theme@^0.3.2
 
 # Update to specific version
-npm install @whykusanagi/corrupted-theme@0.3.2
+npm install @whykusanagi/corrupted-theme@0.3.3
 
 # Update to latest (including major - may have breaking changes)
 npm install @whykusanagi/corrupted-theme@latest

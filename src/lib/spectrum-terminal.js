@@ -741,7 +741,7 @@ export class SpectrumTerminal {
         const toolbarH = 40;
 
         // Toolbar background
-        this.ctx.fillStyle = 'rgba(0, 136, 255, 0.1)';
+        this.ctx.fillStyle = 'rgba(139, 92, 246, 0.1)';
         this.ctx.fillRect(40, toolbarY, this.canvas.width - 80, toolbarH);
 
         // Toolbar border
@@ -759,7 +759,7 @@ export class SpectrumTerminal {
             const itemProgress = Math.max(0, Math.min(1, (progress - i * 0.2) * 4));
 
             if (itemProgress > 0) {
-                this.ctx.fillStyle = i === 0 ? '#ff0088' : '#8b5cf6';
+                this.ctx.fillStyle = i === 0 ? '#d94f90' : '#8b5cf6';
                 this.ctx.fillText(this.ui.statusItems[i].text, x, toolbarY + 25);
                 x += 300;
             }
@@ -776,8 +776,8 @@ export class SpectrumTerminal {
         const radius = 800 * progress;
 
         const gradient = this.ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, radius);
-        gradient.addColorStop(0, `rgba(0, 136, 255, ${0.3 * (1 - progress)})`);
-        gradient.addColorStop(1, 'rgba(0, 136, 255, 0)');
+        gradient.addColorStop(0, `rgba(139, 92, 246, ${0.3 * (1 - progress)})`);
+        gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
 
         this.ctx.fillStyle = gradient;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);

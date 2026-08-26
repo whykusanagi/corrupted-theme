@@ -7,7 +7,9 @@
     "palette",
     "themeColors",
     "accents",
-    "semanticUse"
+    "semanticUse",
+    "surfaces",
+    "elementalColors"
   ],
   "additionalProperties": false,
   "properties": {
@@ -115,6 +117,77 @@
           "green"
         ]
       }
+    },
+    "surfaces": {
+      "description": "Chrome/background tokens. Not palette colours \u2014 they carry no corruption state; they are the dark ground the palette sits on. Mirrored by --bg/--bg-secondary/--surface/--surface-raised in variables.css.",
+      "type": "object",
+      "required": [
+        "bg",
+        "bgSecondary",
+        "surface",
+        "surfaceElevated",
+        "checker"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "bg": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "bgSecondary": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "surface": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "checker": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "surfaceElevated": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
+    },
+    "elementalColors": {
+      "description": "NIKKE element colours \u2014 a published component surface consumed downstream. Game data, not theme colours.",
+      "type": "object",
+      "required": [
+        "water",
+        "wind",
+        "iron",
+        "electric",
+        "fire"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "water": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "wind": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "iron": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "electric": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        },
+        "fire": {
+          "type": "string",
+          "pattern": "^#[0-9a-fA-F]{6}$"
+        }
+      }
+    },
+    "elementalNotes": {
+      "type": "string"
     }
   }
 }

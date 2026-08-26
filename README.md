@@ -81,7 +81,7 @@ npm install @whykusanagi/corrupted-theme
 ```html
 <!-- Pinned version (recommended for production) -->
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css">
 
 <!-- Floating @latest (use only for sites you control and update together) -->
 <link rel="stylesheet"
@@ -105,9 +105,9 @@ Both domains serve the same content. Use the domain that matches your site's roo
 **Pinned version** (production-safe — breaking changes never auto-propagate):
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.2/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/corrupted-text.min.js"></script>
 ```
 
 **Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):
@@ -120,10 +120,31 @@ For production hardening, add SRI hashes (published in `CHANGELOG.md` for each r
 
 Browse every animation on the demo site, which deploys from `main`: [corrupted.whykusanagi.xyz/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
 
-## What's New in 0.3.2
+## What's New in 0.3.3
 
-**0.3.2** adds six data-and-generative components, and applies the spec's
-palette rule across the library.
+**0.3.3** adds `corrupted-flares`, and gives the palette rules a guard that
+can actually enforce them.
+
+| Export | What it does |
+|---|---|
+| `corrupted-flares` | 25 short geometric flare loops — sparkles, rings, reticles, bursts — for compositing over video, artwork or an OBS layer. `draw()` paints no background and restores your context; `drawAt()` is frame-locked off `canvas-seek`. Each flare is coloured by its own corruption age and settles to a static white mark |
+
+**Colour is a state signal, not decoration.** Flares colour every mark by how
+far it is through its own decay — violet at the corruption event, magenta
+mid-decay, white once settled — reusing Pattern 4's ramp. After `loops`
+cycles the board holds a readable white end state and the animation stops.
+
+**The palette guard now sees what it was missing.** `npm run audit:colors`
+sweeps every source for colours outside palette ∪ surfaces ∪ elemental ∪ a
+justified exception. It reads `rgba()` as well as hex, and element hexes are
+legal only in the files that own the NIKKE element system — so theme chrome
+borrowing game data fails the build. That is how `.badge.error` had been the
+fire element and `.badge.success` the wind element. Backgrounds also get their
+own four-step ramp (`--surface`, `--surface-elevated`, `--checker`) instead of
+eleven one-off darks.
+
+It builds on **0.3.2**, which added six data-and-generative components and
+applied the spec's palette rule across the library.
 
 | Export | What it does |
 |---|---|
@@ -162,11 +183,11 @@ Every file under `src/` is an ES module. Load one of two ways:
 ```html
 <!-- Module import (npm or CDN) -->
 <script type="module">
-  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.2/src/lib/scroll-decode.js';
+  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.3/src/lib/scroll-decode.js';
 </script>
 
 <!-- Browser global for no-build sites (IIFE builds only; SRI in CHANGELOG.md) -->
-<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.2/dist/toast.global.js"></script>
+<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.3/dist/toast.global.js"></script>
 ```
 
 A classic `<script src>` pointing at a `src/` file throws
@@ -1433,8 +1454,32 @@ Override only the tokens you need. The defaults intentionally mirror the showcas
   --text-secondary: #b8afc8;
   --transition-normal: 0.3s ease;
   --transition-fast: 0.15s ease;
+
+  /* Backgrounds — one dark ramp, four steps. Backgrounds are not palette
+     colours: they carry no corruption state, they are the ground the palette
+     sits on. Reach for a step rather than inventing a new dark. */
+  --bg: #0a0a0a;               /* Page ground */
+  --bg-secondary: #0f0f1a;     /* Section ground */
+  --surface: #12121a;          /* Panel or card sitting on the ground */
+  --surface-elevated: #1a1a24; /* Raised: hover, active tile, popover */
+  --checker: #17171f;          /* Transparency checkerboard square */
+
+  /* Site chrome height. Position anything you float below the navbar against
+     this — `top: calc(var(--navbar-h) + 20px)` — rather than a pixel guess. */
+  --navbar-h: 68px;
+
+  /* Semantic status. Success is the system/matrix green, warning is the
+     corrupting magenta2, error is the alarm red, info is violet. They are
+     deliberately NOT a Tailwind-style palette. */
+  --success: #00ff00;
+  --warning: #d94f90;
+  --error: #ff0000;
+  --info: #8b5cf6;
 }
 ```
+
+`.badge`, `.alert`, `.progress-bar` and `.text-highlight` all take the same
+four status modifiers — `.success`, `.warning`, `.error`, `.info`.
 Utilities (`src/css/utilities.css`) provide spacing (`.p-xl`, `.gap-md`), layout (`.flex`, `.grid`), and elevation helpers so you rarely write bespoke CSS.
 
 ## Coding Standards

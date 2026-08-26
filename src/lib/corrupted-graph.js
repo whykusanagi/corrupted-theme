@@ -40,7 +40,7 @@ const TAU = Math.PI * 2;
 const DEFAULT_NODE_COLORS = ['#ffffff', '#ff00ff', '#8b5cf6', '#d94f90'];
 const EDGE_COLOR = 'rgba(139,92,246,0.30)';
 const EDGE_DIM   = 'rgba(139,92,246,0.05)';
-const DIM_NODE   = 'rgba(120,110,140,0.16)';
+const DIM_NODE   = 'rgba(139,92,246,0.16)';
 const HIGHLIGHT  = '#00ffff';
 /* A lit edge is a cable: violet halo + magenta core, both theme colours. */
 const CABLE_GLOW = '#8b5cf6';

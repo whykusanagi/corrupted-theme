@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CorruptedFlares — corrupted-theme</title>
+<!--
+  CorruptedFlares: 5×5 anime-style micro VFX grid in theme colours.
+  Sparkles / rings / reticles / bursts with glitch snap timing and
+  cyan+red chromatic fringes only (accent rule).
+
+  Colour is a state signal (Core Tenet 4): each cell ramps violet →
+  magenta → white by its OWN corruption age, not a shared board clock.
+  After `loops` cycles the board settles to a static, readable white —
+  the endpoint Core Tenet 2 requires. Tick "never settle" for the
+  purely decorative variant.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Courier New', monospace;
+    min-height: 100vh;
+  }
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(260px, 320px);
+    gap: 28px;
+    max-width: 1100px;
+    margin: 96px auto 40px;
+    padding: 0 24px;
+    align-items: start;
+  }
+  .board {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg);
+    box-shadow: 0 0 40px rgba(255, 0, 255, 0.08);
+  }
+  .panel h3 {
+    margin: 0 0 6px;
+    font-size: .95rem;
+    color: #ff00ff;
+    text-shadow: 0 0 12px rgba(255, 0, 255, 0.45);
+  }
+  .panel p {
+    margin: 0 0 16px;
+    font-size: .76rem;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  label.f {
+    font-size: .7rem;
+    color: var(--text-muted);
+    display: block;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  input[type=range] { width: 100%; accent-color: #ff00ff; }
+  .meta {
+    font-size: .72rem;
+    color: #ffffff;
+    opacity: 0.75;
+    margin-top: 8px;
+  }
+  .swatches { display: flex; gap: 6px; margin: 10px 0 16px; }
+  .swatches span {
+    width: 18px; height: 18px; border-radius: 3px;
+    box-shadow: 0 0 8px currentColor;
+  }
+  .recipes {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 10px;
+    font-size: .68rem;
+    color: var(--text-muted);
+    max-height: 220px;
+    overflow: auto;
+    padding-right: 4px;
+  }
+  .recipes code { color: #d94f90; }
+  @media (max-width: 860px) {
+    .stage { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-clone"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html" class="active">
+            <i class="fas fa-wand-magic-sparkles"></i> Effects
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="corrupted-flares.html" class="active"><i class="fas fa-wand-magic-sparkles"></i> Corrupted Flares</a>
+            <a href="corrupted-flares-in-situ.html"><i class="fas fa-image"></i> Flares In Situ</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
+            <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="stream-overlays.html">
+            <i class="fas fa-broadcast-tower"></i> Stream & Video
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="canvas-seek.html"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="stage">
+    <div class="board" id="board"></div>
+    <div class="panel">
+      <h3>CorruptedFlares</h3>
+      <p>
+        Full 5×5 micro-flare board. Same geometric juice as anime overlay packs,
+        but colour carries state rather than decoration: each cell is tinted by
+        its <em>own</em> corruption age — violet at the event, magenta
+        mid-decay, white once settled. Cyan and red only fringe as chromatic
+        aberration; loops snap and stutter instead of easing clean.
+      </p>
+
+      <div class="swatches" aria-hidden="true">
+        <span style="background:#8b5cf6;color:#8b5cf6"></span>
+        <span style="background:#ff00ff;color:#ff00ff"></span>
+        <span style="background:#ffffff;color:#ffffff"></span>
+        <span style="background:#00ffff;color:#00ffff;width:10px"></span>
+        <span style="background:#ff0000;color:#ff0000;width:10px"></span>
+      </div>
+      <p style="font-size:.68rem;margin-top:-8px">
+        violet → magenta → white · cyan/red fringe only
+      </p>
+
+      <div>
+        <label class="f" for="speed">Speed</label>
+        <input id="speed" type="range" min="0.35" max="2.5" step="0.05" value="1">
+      </div>
+      <div style="margin-top:12px">
+        <!-- Any value here is safe: snap() clamps its own step count against
+             the 100ms flicker floor, so speed+loopMs cannot breach it. -->
+        <label class="f" for="loop">Loop ms</label>
+        <input id="loop" type="range" min="700" max="2800" step="50" value="1400">
+      </div>
+      <div style="margin-top:12px">
+        <label class="f" for="loops">Loops before settling</label>
+        <input id="loops" type="range" min="1" max="8" step="1" value="3">
+      </div>
+      <div class="row" style="margin-top:10px">
+        <label style="font-size:.7rem;color:var(--text-muted);display:flex;gap:6px;align-items:center">
+          <input type="checkbox" id="forever"> Never settle (decorative)
+        </label>
+      </div>
+      <div class="row">
+        <label style="font-size:.7rem;color:var(--text-muted);display:flex;gap:6px;align-items:center">
+          <input type="checkbox" id="plate"> Transparent (overlay / OBS)
+        </label>
+      </div>
+
+      <div class="row" style="margin-top:16px">
+        <button class="btn btn-primary" id="reseed" type="button">Reseed</button>
+        <button class="btn btn-secondary" id="toggle" type="button">Pause</button>
+        <button class="btn btn-secondary" id="settle" type="button">Settle</button>
+        <button class="btn btn-secondary" id="png" type="button">PNG @2x</button>
+      </div>
+      <div class="meta" id="meta">seed —</div>
+
+      <h3 style="margin-top:22px">Recipes</h3>
+      <div class="recipes" id="recipes"></div>
+    </div>
+  </div>
+
+<script type="module">
+  import { CorruptedFlares, FLARE_GRID } from '../src/lib/corrupted-flares.js';
+
+  const board = document.getElementById('board');
+  const meta = document.getElementById('meta');
+  const recipesEl = document.getElementById('recipes');
+
+  FLARE_GRID.forEach((name, i) => {
+    const div = document.createElement('div');
+    div.innerHTML = `${String(i + 1).padStart(2, '0')} <code>${name}</code>`;
+    recipesEl.appendChild(div);
+  });
+
+  let seed = (Math.random() * 1e9) | 0;
+  let flares = null;
+
+  const $ = (id) => document.getElementById(id);
+  const loopsOf = () => ($('forever').checked ? Infinity : Number($('loops').value));
+
+  function status() {
+    if (!flares) return;
+    const n = $('forever').checked ? '∞' : $('loops').value;
+    meta.textContent = `seed ${seed} · ${FLARE_GRID.length} recipes · ${n} loops`
+      + (flares.isSettled ? ' · settled' : '');
+    // A settled board isn't paused, it's finished — the button rewinds it.
+    $('toggle').textContent = flares.isRunning ? 'Pause' : (flares.isSettled ? 'Replay' : 'Play');
+  }
+
+  function mount() {
+    if (flares) flares.destroy();
+    board.replaceChildren();
+    const avail = board.clientWidth - 40;
+    const cellSize = avail > 0
+      ? Math.max(72, Math.min(112, Math.floor((avail - 4 * 10) / 5)))
+      : 112;
+    flares = new CorruptedFlares(board, {
+      seed,
+      cellSize,
+      speed: Number($('speed').value),
+      loopMs: Number($('loop').value),
+      loops: loopsOf(),
+      plate: !$('plate').checked,
+      onSettled: status,
+    });
+    // Checkerboard behind the board so transparency is visible, not implied.
+    board.style.background = $('plate').checked
+      ? 'repeating-conic-gradient(var(--surface-elevated) 0% 25%, var(--checker) 0% 50%) 50% / 18px 18px'
+      : 'var(--bg)';
+    flares.start();
+    status();
+  }
+
+  mount();
+
+  // Live-tunable: these only affect the next painted frame.
+  $('speed').addEventListener('input', (e) => {
+    if (flares) flares.options.speed = Number(e.target.value);
+  });
+  $('loop').addEventListener('input', (e) => {
+    if (flares) flares.options.loopMs = Number(e.target.value);
+  });
+  // Loop count changes where the board settles, so restart it from the event.
+  $('loops').addEventListener('input', () => {
+    if (!flares) return;
+    flares.options.loops = loopsOf();
+    flares.restart();
+    status();
+  });
+  $('forever').addEventListener('change', () => {
+    if (!flares) return;
+    flares.options.loops = loopsOf();
+    $('loops').disabled = $('forever').checked;
+    flares.restart();
+    status();
+  });
+  $('settle').addEventListener('click', () => {
+    if (!flares) return;
+    flares.settle();
+    status();
+  });
+  $('plate').addEventListener('change', mount);
+  $('png').addEventListener('click', async () => {
+    if (!flares) return;
+    const blob = await flares.toPNG({ scale: 2 });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `corrupted-flares-${seed}.png`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+  $('reseed').addEventListener('click', () => {
+    seed = (Math.random() * 1e9) | 0;
+    mount();
+  });
+  $('toggle').addEventListener('click', () => {
+    if (!flares) return;
+    if (flares.isRunning) flares.stop();
+    // A settled board has nothing left to resume — rewind it instead.
+    else if (flares.isSettled) flares.restart();
+    else flares.start();
+    status();   // owns the button label
+  });
+
+  let resizeTimer = null;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(mount, 150);
+  });
+</script>
+</body>
+</html>

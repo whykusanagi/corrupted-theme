@@ -13,8 +13,11 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
 <link rel="stylesheet" href="../src/css/theme.css">
 <style>
-  body { margin: 0; padding: var(--spacing-xl); background: var(--bg); color: var(--text); }
-  h1 { font-family: 'Courier New', monospace; color: #00ffff; text-shadow: 0 0 12px rgba(0,255,255,0.5); }
+  /* Padding belongs on the content wrapper, not <body> — body padding insets
+     the site navbar away from the viewport edge. */
+  body { margin: 0; padding: 0; background: var(--bg); color: var(--text); }
+  .page { padding: var(--spacing-xl); }
+  h1 { font-family: 'Courier New', monospace; color: #ffffff; text-shadow: 0 0 12px rgba(255,0,255,0.5); }
   .intro { color: var(--text-secondary); max-width: 70ch; }
   .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(420px, 1fr)); gap: var(--spacing-lg); margin-top: var(--spacing-xl); }
   .demo-card { display: flex; flex-direction: column; gap: var(--spacing-sm); }
@@ -42,10 +45,12 @@
           <div class="submenu">
             <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
             <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
-            <a href="showcase-complete.html#components"><i class="fas fa-shapes"></i> Standard</a>
-            <a href="showcase-complete.html#navigation"><i class="fas fa-bars"></i> Navigation</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-clone"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets</a>
             <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
-            <a href="showcase-complete.html#v030-components"><i class="fas fa-wave-square"></i> What's New</a>
           </div>
         </li>
         <li class="has-submenu">
@@ -63,44 +68,45 @@
           </div>
         </li>
         <li class="has-submenu">
-          <a href="index.html" class="active">
-            <i class="fas fa-flask"></i> Examples
+          <a href="index.html">
+            <i class="fas fa-wand-magic-sparkles"></i> Effects
             <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
           </a>
           <div class="submenu">
-            <a href="animations.html" class="active"><i class="fas fa-th"></i> Animation Gallery (0.3.0)</a>
-            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
-            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
-            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
-            <a href="scroll-decode.html"><i class="fas fa-scroll"></i> Scroll Decode</a>
-            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
-            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
-            <a href="anime-blocks-advanced.html"><i class="fas fa-clapperboard"></i> Advanced Blocks (0.3.1)</a>
+            <a href="corrupted-flares.html"><i class="fas fa-wand-magic-sparkles"></i> Corrupted Flares</a>
+            <a href="corrupted-flares-in-situ.html"><i class="fas fa-image"></i> Flares In Situ</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
             <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
             <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
-            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
-            <a href="audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
-            <a href="canvas-seek.html"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
-            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
-            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
-            <a href="advanced/decrypt-reveal.html"><i class="fas fa-key"></i> Decrypt Reveal</a>
-            <a href="advanced/phrase-cycle.html"><i class="fas fa-history"></i> Phrase Cycle</a>
-            <a href="advanced/glsl-vortex.html"><i class="fas fa-hurricane"></i> GLSL Vortex</a>
-            <a href="advanced/particles-bg.html"><i class="fas fa-atom"></i> Particles BG</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
             <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
-            <a href="basic/typing-animation.html"><i class="fas fa-keyboard"></i> Buffer Corruption</a>
-            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets Showcase</a>
-            <a href="nikke-team-builder.html"><i class="fas fa-users"></i> Nikke Team Builder</a>
-            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
-            <a href="card.html"><i class="fas fa-square"></i> Cards</a>
-            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
-            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="stream-overlays.html" class="active">
+            <i class="fas fa-broadcast-tower"></i> Stream & Video
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="canvas-seek.html"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="animations.html" class="active"><i class="fas fa-th"></i> Animation Gallery</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
           </div>
         </li>
         <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
       </ul>
     </div>
   </nav>
+
+<div class="page">
 
 <h1>▓▒░ ANIMATION GALLERY</h1>
 <p class="intro">
@@ -110,9 +116,14 @@
 </p>
 
 <div class="grid" id="grid"></div>
+</div>
 
 <script>
   const DEMOS = [
+    { title: 'CorruptedFlares', tag: 'NEW · 0.3.3 · Pattern 6', src: 'corrupted-flares.html',
+      desc: '25 geometric flare loops on a 5×5 board. Each cell is coloured by its own corruption age — violet at the event, magenta mid-decay, white settled — and the board stops once every cell has settled.' },
+    { title: 'Flares In Situ', tag: 'NEW · 0.3.3 · Pattern 6', src: 'corrupted-flares-in-situ.html',
+      desc: 'The same flares used the way they are meant to be: composited over artwork with draw(), painting no background and restoring the context they were handed.' },
     { title: 'CorruptedGlobe', tag: 'NEW · 0.3.2', src: 'corrupted-globe.html',
       desc: 'Orthographic wireframe globe with animated great-circle arcs. Arcs lift off the surface in 3D so limb occlusion stays correct; weight drives width and the palette ramp.' },
     { title: 'CorruptedGraph', tag: 'NEW · 0.3.2', src: 'corrupted-graph.html',

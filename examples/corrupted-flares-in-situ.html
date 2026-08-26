@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CorruptedFlares in situ — corrupted-theme</title>
+<!--
+  Flares placed the way a site or stream actually uses them: ambient hero VFX,
+  heading accents, card corners, thumbnail overlay, transparent OBS strip.
+  Every placement below uses CorruptedFlares.draw() onto a canvas the page
+  owns — no cell plates, no grid. That is the production API; the 5x5 board
+  in corrupted-flares.html is the showcase.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Courier New', monospace;
+  }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px 80px; }
+  section { margin-top: 56px; }
+  h2.sec {
+    font-size: .74rem; letter-spacing: .14em; text-transform: uppercase;
+    color: #fff; border-bottom: 1px solid var(--border);
+    padding-bottom: 8px; margin: 0 0 6px;
+  }
+  .note { font-size: .7rem; color: var(--text-muted); line-height: 1.6; margin: 0 0 18px; max-width: 70ch; }
+  .note code { color: #d94f90; }
+
+  /* 1 — hero */
+  .hero {
+    position: relative; height: 320px; margin-top: calc(var(--navbar-h) + 20px);
+    border: 1px solid var(--border); border-radius: var(--radius-lg);
+    overflow: hidden; background: radial-gradient(120% 90% at 50% 0%, var(--bg-secondary) 0%, var(--bg) 70%);
+    display: grid; place-items: center;
+  }
+  .hero canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero-copy { position: relative; text-align: center; }
+  .hero-copy h1 {
+    margin: 0; font-size: 2.3rem; letter-spacing: .04em; color: #fff;
+    text-shadow: 0 0 10px #ff00ff, 0 0 20px #ff00ff, 0 0 34px #8b5cf6;
+  }
+  .hero-copy p { margin: 10px 0 0; font-size: .78rem; color: var(--text-muted); letter-spacing: .1em; }
+
+  /* 2 — heading accent */
+  .accent-row { display: flex; align-items: center; gap: 12px; }
+  .accent-row canvas { width: 34px; height: 34px; flex: none; }
+  .accent-row h3 { margin: 0; font-size: 1.05rem; color: #fff; letter-spacing: .02em; }
+
+  /* 3 — cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; }
+  .card-x {
+    position: relative; border: 1px solid var(--border); border-radius: var(--radius-md);
+    background: var(--surface); padding: 18px; overflow: hidden; min-height: 128px;
+  }
+  .card-x canvas { position: absolute; top: -8px; right: -8px; width: 84px; height: 84px; }
+  .card-x h4 { margin: 0 0 6px; font-size: .84rem; color: #ff00ff; }
+  .card-x p { margin: 0; font-size: .68rem; color: var(--text-muted); line-height: 1.55; }
+
+  /* 4 — thumbnail */
+  .thumbs { display: flex; gap: 18px; flex-wrap: wrap; }
+  .thumb {
+    position: relative; width: 300px; height: 169px; border-radius: 8px; overflow: hidden;
+    background: linear-gradient(135deg, #3a1a4a 0%, #12203a 60%, var(--bg) 100%);
+    display: grid; place-items: center;
+  }
+  .thumb canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .thumb span {
+    position: relative; font-size: 1.5rem; font-weight: 700; color: #fff; letter-spacing: .06em;
+    text-shadow: 0 0 12px rgba(0,0,0,.8);
+  }
+
+  /* 5 — OBS strip */
+  .obs {
+    border-radius: 8px; padding: 14px;
+    background: repeating-conic-gradient(var(--surface-elevated) 0% 25%, var(--checker) 0% 50%) 50% / 18px 18px;
+  }
+  .obs canvas { display: block; width: 100%; height: 130px; }
+
+  .ctl { display: flex; gap: 10px; align-items: center; margin-top: 14px; font-size: .7rem; color: var(--text-muted); }
+
+  /* 6 — recipe catalogue */
+  table.cat { width: 100%; border-collapse: collapse; font-size: .7rem; }
+  table.cat th {
+    text-align: left; font-weight: normal; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: .1em; font-size: .6rem;
+    border-bottom: 1px solid var(--border); padding: 0 10px 8px;
+  }
+  table.cat td { padding: 7px 10px; border-bottom: 1px solid var(--checker); vertical-align: middle; }
+  table.cat tr:hover td { background: var(--surface); }
+  table.cat canvas { display: block; width: 44px; height: 44px; }
+  table.cat .nm { color: #d94f90; white-space: nowrap; }
+  table.cat .use { color: var(--text-muted); line-height: 1.5; }
+  .tag {
+    display: inline-block; padding: 2px 7px; border-radius: 3px;
+    font-size: .58rem; letter-spacing: .06em; white-space: nowrap; border: 1px solid;
+  }
+  .tag.instrument { color: #ffffff; border-color: var(--text-muted); }
+  .tag.corruption { color: #ff00ff; border-color: rgba(255, 0, 255, 0.45); }
+  .tag.sparkle    { color: #8b5cf6; border-color: rgba(139, 92, 246, 0.45); }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; margin: 0 0 16px; font-size: .66rem; color: var(--text-muted); }
+  @media (max-width: 700px) {
+    table.cat .use { display: none; }
+  }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-clone"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html" class="active">
+            <i class="fas fa-wand-magic-sparkles"></i> Effects
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="corrupted-flares.html"><i class="fas fa-wand-magic-sparkles"></i> Corrupted Flares</a>
+            <a href="corrupted-flares-in-situ.html" class="active"><i class="fas fa-image"></i> Flares In Situ</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
+            <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="stream-overlays.html">
+            <i class="fas fa-broadcast-tower"></i> Stream & Video
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="canvas-seek.html"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="wrap">
+    <div class="hero">
+      <canvas id="hero-fx"></canvas>
+      <div class="hero-copy">
+        <h1>CELESTE</h1>
+        <p>CORRUPTED // NEURAL // ABYSS</p>
+      </div>
+    </div>
+    <p class="note" style="margin-top:14px">
+      <b>1 · Ambient hero VFX.</b> Sparse flares drifting behind the title, tinted by
+      corruption age. Density is deliberately low — this is atmosphere, not the subject.
+    </p>
+
+    <section>
+      <h2 class="sec">2 · Heading accent</h2>
+      <p class="note">A single reticle beside a section title. Instrument register, reads as a system marker.</p>
+      <div class="accent-row">
+        <canvas id="acc1"></canvas>
+        <h3>Recent Streams</h3>
+      </div>
+      <div class="accent-row" style="margin-top:18px">
+        <canvas id="acc2"></canvas>
+        <h3>Commission Status</h3>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="sec">3 · Card corner accents</h2>
+      <p class="note">Flare bleeding in from the corner. Glow crosses the card edge because <code>draw()</code> does not clip.</p>
+      <div class="cards" id="cards"></div>
+    </section>
+
+    <section>
+      <h2 class="sec">4 · Thumbnail / video overlay</h2>
+      <p class="note">Composited straight over artwork, the way a thumbnail or video overlay needs it. Fully transparent between marks.</p>
+      <div class="thumbs" id="thumbs"></div>
+    </section>
+
+    <section>
+      <h2 class="sec">5 · OBS overlay strip</h2>
+      <p class="note">
+        <code>plate:false</code> over a checkerboard so you can see the alpha. This is what
+        an OBS browser source or an alpha WebM capture receives.
+      </p>
+      <div class="obs"><canvas id="obs-fx"></canvas></div>
+      <div class="ctl">
+        <label><input type="checkbox" id="ramp" checked> corruption-age tint</label>
+        <label><input type="checkbox" id="slow"> half speed</label>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="sec">6 · All 25 recipes</h2>
+      <p class="note">
+        Every key in <code>FLARE_RECIPES</code>, live. Grouped by which visual register
+        it belongs to — the register matters more than the shape when picking one for a
+        placement.
+      </p>
+      <div class="legend">
+        <span><span class="tag instrument">instrument</span> &nbsp;same language as MicroGfx readouts — reads as a system measuring something</span>
+        <span><span class="tag corruption">corruption</span> &nbsp;says something about degradation</span>
+        <span><span class="tag sparkle">sparkle</span> &nbsp;theme-neutral; pretty, but could belong to any VFX pack</span>
+      </div>
+      <table class="cat">
+        <thead>
+          <tr><th style="width:60px"></th><th style="width:150px">Recipe</th><th style="width:110px">Register</th><th>Reads as / use for</th></tr>
+        </thead>
+        <tbody id="cat-body"></tbody>
+      </table>
+    </section>
+  </div>
+
+<script type="module">
+  import { CorruptedFlares } from '../src/lib/corrupted-flares.js';
+
+  const DPR = Math.min(window.devicePixelRatio || 1, 2);
+  const LOOP = 1800;
+
+  /** Size a canvas to its CSS box at device resolution. */
+  function fit(c) {
+    const r = c.getBoundingClientRect();
+    c.width = Math.max(1, Math.round(r.width * DPR));
+    c.height = Math.max(1, Math.round(r.height * DPR));
+    const ctx = c.getContext('2d');
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    return { ctx, w: r.width, h: r.height };
+  }
+
+  /**
+   * A scatter of flares over a canvas. Each mark keeps its own phase so the
+   * field never pulses in unison — that reads as a strobe, which the spec's
+   * photosensitivity guidance rules out.
+   */
+  function field(canvas, marks, opts = {}) {
+    let box = fit(canvas);
+    addEventListener('resize', () => { box = fit(canvas); });
+    return (now) => {
+      const { ctx, w, h } = box;
+      ctx.clearRect(0, 0, w, h);
+      for (const m of marks) {
+        const t = (((now * (opts.rate ?? 1) + m.offset) % LOOP) / LOOP);
+        ctx.save();
+        ctx.translate(m.x * w, m.y * h);
+        CorruptedFlares.draw(ctx, m.name, t, {
+          size: m.size,
+          color: opts.ramp === false ? '#ff00ff' : CorruptedFlares.rampColorAt(t),
+          index: m.i,
+          loopMs: LOOP,
+        });
+        ctx.restore();
+      }
+    };
+  }
+
+  const mk = (list) => list.map((m, i) => ({ ...m, i, offset: i * 337 % LOOP }));
+
+  const painters = [];
+
+  // 1 — hero: sparse, weighted to the on-brand reticle/corruption set
+  painters.push(field(document.getElementById('hero-fx'), mk([
+    { name: 'reticleSpin',   x: .12, y: .24, size: 64 },
+    { name: 'starBurst',     x: .86, y: .18, size: 52 },
+    { name: 'glitchStar',    x: .74, y: .74, size: 44 },
+    { name: 'sparkleField',  x: .22, y: .78, size: 78 },
+    { name: 'dataStrip',     x: .50, y: .88, size: 60 },
+    { name: 'chromaticBurst',x: .93, y: .52, size: 46 },
+    { name: 'brokenArc',     x: .06, y: .56, size: 40 },
+  ])));
+
+  // 2 — heading accents
+  painters.push(field(document.getElementById('acc1'), mk([{ name: 'targetLock', x: .5, y: .5, size: 32 }])));
+  painters.push(field(document.getElementById('acc2'), mk([{ name: 'dashedRingSpin', x: .5, y: .5, size: 32 }])));
+
+  // 3 — cards
+  const CARDS = [
+    ['Neural Feed',   'Live corruption buffer from the abyss.',        'voidHole'],
+    ['Signal Lost',   'Terminal states and dropped packets.',          'signalLost'],
+    ['Data Strip',    'Instrument readout, degrading.',                'dataStrip'],
+    ['Static Flash',  'Chaos resolving into a stable mark.',           'staticFlash'],
+  ];
+  const cardsEl = document.getElementById('cards');
+  for (const [title, body, recipe] of CARDS) {
+    const d = document.createElement('div');
+    d.className = 'card-x';
+    const c = document.createElement('canvas');
+    d.appendChild(c);
+    const h = document.createElement('h4'); h.textContent = title; d.appendChild(h);
+    const p = document.createElement('p'); p.textContent = body; d.appendChild(p);
+    cardsEl.appendChild(d);
+    painters.push(field(c, mk([{ name: recipe, x: .5, y: .5, size: 72 }])));
+  }
+
+  // 4 — thumbnails
+  const THUMBS = [
+    ['STREAM', [['starBurst', .18, .28, 58], ['reticleSpin', .82, .24, 48], ['sparkleField', .32, .76, 64], ['glitchStar', .70, .72, 40]]],
+    ['VOD',    [['targetLock', .16, .70, 54], ['chromaticBurst', .84, .34, 52], ['sparkCross', .52, .18, 44], ['dataStrip', .74, .84, 46]]],
+  ];
+  const thumbsEl = document.getElementById('thumbs');
+  for (const [label, marks] of THUMBS) {
+    const d = document.createElement('div');
+    d.className = 'thumb';
+    const c = document.createElement('canvas');
+    d.appendChild(c);
+    const s = document.createElement('span'); s.textContent = label; d.appendChild(s);
+    thumbsEl.appendChild(d);
+    painters.push(field(c, mk(marks.map(([name, x, y, size]) => ({ name, x, y, size })))));
+  }
+
+  // 5 — OBS strip
+  const obsMarks = mk([
+    { name: 'reticleSpin', x: .08, y: .5, size: 62 },
+    { name: 'glitchStar',  x: .24, y: .34, size: 46 },
+    { name: 'dataStrip',   x: .40, y: .62, size: 58 },
+    { name: 'voidHole',    x: .56, y: .38, size: 50 },
+    { name: 'signalLost',  x: .72, y: .60, size: 54 },
+    { name: 'staticFlash', x: .90, y: .42, size: 52 },
+  ]);
+  const obsCanvas = document.getElementById('obs-fx');
+  const obsOpts = { ramp: true, rate: 1 };
+  const obsPaint = field(obsCanvas, obsMarks, obsOpts);
+  painters.push((now) => obsPaint(now));
+  document.getElementById('ramp').addEventListener('change', (e) => { obsOpts.ramp = e.target.checked; });
+  document.getElementById('slow').addEventListener('change', (e) => { obsOpts.rate = e.target.checked ? 0.5 : 1; });
+
+  // 6 — catalogue. Register is the design classification, not a code concept:
+  // it says whether a shape carries theme identity or is generic VFX.
+  const CATALOGUE = [
+    ['reticleSpin',    'instrument', 'Active scan. Section headings, "live" badges, loading.'],
+    ['targetLock',     'instrument', 'Lock acquired. Selection, focus, confirm states.'],
+    ['dashedRingSpin', 'instrument', 'Idle telemetry. Small heading accents — holds shape when tiny.'],
+    ['signalLost',     'instrument', 'Connection dropped. Error and offline states.'],
+    ['scanSlash',      'instrument', 'A sweep pass. Transitions, section wipes.'],
+    ['dataStrip',      'instrument', 'Readout losing segments. Data panels, stat blocks.'],
+
+    ['glitchStar',     'corruption', 'A sparkle that will not hold still. General corrupted accent.'],
+    ['chromaticBurst', 'corruption', 'RGB split blowing outward. Impact, alerts, hits.'],
+    ['pixelShatter',   'corruption', 'Breaking into fragments. Deletion, loss, exits.'],
+    ['voidHole',       'corruption', 'Collapse then bloom. The most narrative one — reveals.'],
+    ['staticFlash',    'corruption', 'Noise resolving to a mark. The one true chaos → order recipe.'],
+    ['glyphFlash',     'corruption', 'Katakana surfacing. Foreign/unreadable corruption.'],
+    ['brokenArc',      'corruption', 'A ring with a hole in it. Partial data, incomplete loads.'],
+    ['hexCorrupt',     'corruption', 'Structure with a crushed vertex. Damaged container.'],
+
+    ['starBurst',      'sparkle',    'Classic four-point sparkle. The source-pack look.'],
+    ['sparkleField',   'sparkle',    'Scattered small stars. Ambient hero fill.'],
+    ['bloomDot',       'sparkle',    'Soft light bloom. Gentle emphasis, hover.'],
+    ['diamondPulse',   'sparkle',    'Solid rotating diamond. Heavy, blunt accent.'],
+    ['sparkCross',     'sparkle',    'Lens-flare cross. Highlight on a bright point.'],
+    ['ringPulse',      'sparkle',    'Expanding ring. Ping, notification, emit.'],
+    ['dualRing',       'sparkle',    'Two offset rings. Slower, layered ping.'],
+    ['rippleDecay',    'sparkle',    'Three decaying ripples. Ambient, continuous.'],
+    ['orbitDots',      'sparkle',    'Dots on an orbit. Loading, processing.'],
+    ['shardBurst',     'sparkle',    'Shards thrown outward. Impact without the glitch.'],
+    ['xPop',           'sparkle',    'A snapping X. Dismiss, close, reject.'],
+  ];
+
+  const catBody = document.getElementById('cat-body');
+  CATALOGUE.forEach(([name, register, use], i) => {
+    const tr = document.createElement('tr');
+
+    const tdC = document.createElement('td');
+    const c = document.createElement('canvas');
+    tdC.appendChild(c);
+    tr.appendChild(tdC);
+
+    const tdN = document.createElement('td');
+    tdN.className = 'nm';
+    const code = document.createElement('code');
+    code.textContent = name;
+    tdN.appendChild(code);
+    tr.appendChild(tdN);
+
+    const tdR = document.createElement('td');
+    const tag = document.createElement('span');
+    tag.className = `tag ${register}`;
+    tag.textContent = register;
+    tdR.appendChild(tag);
+    tr.appendChild(tdR);
+
+    const tdU = document.createElement('td');
+    tdU.className = 'use';
+    tdU.textContent = use;
+    tr.appendChild(tdU);
+
+    catBody.appendChild(tr);
+    painters.push(field(c, [{ name, x: .5, y: .5, size: 40, i, offset: (i * 211) % LOOP }]));
+  });
+
+  // Sanity: the table must cover every recipe the package ships, or it silently
+  // rots the next time a recipe is added or renamed.
+  const listed = new Set(CATALOGUE.map(([n]) => n));
+  const shipped = new Set(CorruptedFlares.recipeNames);
+  const missing = [...shipped].filter((n) => !listed.has(n));
+  const stale = [...listed].filter((n) => !shipped.has(n));
+  if (missing.length || stale.length) {
+    console.warn('[flares-in-situ] catalogue out of sync', { missing, stale });
+  }
+
+  function frame(now) {
+    for (const p of painters) p(now);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+</script>
+</body>
+</html>

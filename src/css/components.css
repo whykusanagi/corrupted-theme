@@ -133,22 +133,35 @@
   color: var(--text-secondary);
 }
 
+/* Status colours come from the palette: green is the system/matrix callback,
+   magenta2 is the high-energy corrupting state, red is the alarm accent.
+   These previously borrowed the NIKKE element hexes (#22c55e wind,
+   #ef4444 fire), which tied theme chrome to game data. */
 .badge.success {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #22c55e;
+  background: rgba(0, 255, 0, 0.12);
+  border-color: rgba(0, 255, 0, 0.3);
+  color: #00ff00;
 }
 
 .badge.warning {
-  background: rgba(234, 179, 8, 0.15);
-  border-color: rgba(234, 179, 8, 0.3);
-  color: #eab308;
+  background: rgba(217, 79, 144, 0.15);
+  border-color: rgba(217, 79, 144, 0.35);
+  color: #d94f90;
 }
 
 .badge.error {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #ef4444;
+  background: rgba(255, 0, 0, 0.14);
+  border-color: rgba(255, 0, 0, 0.35);
+  color: #ff0000;
+}
+
+/* Completes the status set. `.alert.info` already existed; the badge family
+   stopped at error, so a four-state row had no info variant to reach for.
+   Violet, matching .alert.info. */
+.badge.info {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.35);
+  color: #8b5cf6;
 }
 
 /* ========== LINKS ========== */
@@ -268,21 +281,21 @@ textarea {
 }
 
 .text-highlight.success {
-  background: rgba(34, 197, 94, 0.15);
-  border-color: rgba(34, 197, 94, 0.3);
-  color: #22c55e;
+  background: rgba(0, 255, 0, 0.12);
+  border-color: rgba(0, 255, 0, 0.3);
+  color: #00ff00;
 }
 
 .text-highlight.warning {
-  background: rgba(234, 179, 8, 0.15);
-  border-color: rgba(234, 179, 8, 0.3);
-  color: #eab308;
+  background: rgba(217, 79, 144, 0.15);
+  border-color: rgba(217, 79, 144, 0.35);
+  color: #d94f90;
 }
 
 .text-highlight.error {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #ef4444;
+  background: rgba(255, 0, 0, 0.14);
+  border-color: rgba(255, 0, 0, 0.35);
+  color: #ff0000;
 }
 
 /* Code-like inline text with syntax highlighting appearance */
@@ -353,23 +366,23 @@ pre .code-inline {
 }
 
 .alert.success {
-  border-left-color: #22c55e;
-  background: rgba(34, 197, 94, 0.1);
+  border-left-color: #00ff00;
+  background: rgba(0, 255, 0, 0.1);
 }
 
 .alert.warning {
-  border-left-color: #eab308;
-  background: rgba(234, 179, 8, 0.1);
+  border-left-color: #d94f90;
+  background: rgba(217, 79, 144, 0.12);
 }
 
 .alert.error {
-  border-left-color: #ef4444;
-  background: rgba(239, 68, 68, 0.1);
+  border-left-color: #ff0000;
+  background: rgba(255, 0, 0, 0.1);
 }
 
 .alert.info {
-  border-left-color: #3b82f6;
-  background: rgba(59, 130, 246, 0.1);
+  border-left-color: #8b5cf6;
+  background: rgba(139, 92, 246, 0.12);
 }
 
 /* ========== TAG/LABEL ========== */
@@ -488,15 +501,15 @@ pre .code-inline {
 }
 
 .badge-get {
-  background: rgba(0, 102, 204, 0.15);
-  color: #0066cc;
-  border-color: #0066cc;
+  background: rgba(0, 255, 255, 0.12);
+  color: #00ffff;
+  border-color: #00ffff;
 }
 
 .badge-post {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
-  border-color: #22c55e;
+  background: rgba(0, 255, 0, 0.12);
+  color: #00ff00;
+  border-color: #00ff00;
 }
 
 /* ========== MODALS ========== */
@@ -689,15 +702,15 @@ pre .code-inline {
 }
 
 .progress-bar.success {
-  background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+  background: linear-gradient(135deg, #00ff00 0%, rgba(0, 255, 0, 0.5) 100%);
 }
 
 .progress-bar.warning {
-  background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
+  background: linear-gradient(135deg, #d94f90 0%, rgba(217, 79, 144, 0.5) 100%);
 }
 
 .progress-bar.error {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #ff0000 0%, rgba(255, 0, 0, 0.5) 100%);
 }
 
 /* ========== TOOLTIPS ========== */
@@ -791,6 +804,29 @@ nav.navbar {
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(15px);
   padding: 0;
+
+  /* The navbar is site chrome, not page content, but it lives inside <body>
+     on every demo page — so anything a page declares on `body` reaches it.
+     Three leaks were shipping: a page font-family (10 of 40 pages rendered
+     the nav in Courier New, the rest in the UI stack), `display: grid`
+     centring the bar mid-page, and body padding insetting it. Each is
+     re-declared here so a demo's own styling cannot move the chrome. */
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  /* Every inheritable property that changes the bar's size or alignment. The
+     bar measured 68.2px where body line-height was 1.7 and 66.6px where a page
+     set 1.6 — so "unified navigation" was still two different navbars. Pinned
+     to --navbar-h so it is one height on all 40 pages. */
+  line-height: 1.7;
+  font-size: 1rem;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  min-height: var(--navbar-h);
+  width: 100%;
+  box-sizing: border-box;
+  justify-self: stretch;  /* grid parent: ignore place-items: center */
+  align-self: start;
+  flex: 0 0 auto;         /* flex parent: never shrink or centre */
 }
 
 .navbar-content {
@@ -959,6 +995,10 @@ nav.navbar {
   color: var(--text);
   text-decoration: none;
   transition: all var(--transition-fast);
+  /* Two-word entries ("Stream Overlays", "Deterministic Frames") wrapped onto
+     a second line against the 200px floor, which read as two menu items. The
+     panel sizes to its longest label instead. */
+  white-space: nowrap;
 }
 
 .navbar-links .submenu a:hover {
@@ -1289,33 +1329,33 @@ nav.navbar {
 }
 
 .api-method.get {
-  background: rgba(0, 102, 204, 0.15);
-  color: #0066cc;
-  border: 1px solid #0066cc;
+  background: rgba(0, 255, 255, 0.12);
+  color: #00ffff;
+  border: 1px solid #00ffff;
 }
 
 .api-method.post {
-  background: rgba(34, 197, 94, 0.15);
-  color: #22c55e;
-  border: 1px solid #22c55e;
+  background: rgba(0, 255, 0, 0.12);
+  color: #00ff00;
+  border: 1px solid #00ff00;
 }
 
 .api-method.put {
-  background: rgba(234, 179, 8, 0.15);
-  color: #eab308;
-  border: 1px solid #eab308;
+  background: rgba(217, 79, 144, 0.15);
+  color: #d94f90;
+  border: 1px solid #d94f90;
 }
 
 .api-method.delete {
-  background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
-  border: 1px solid #ef4444;
+  background: rgba(255, 0, 0, 0.14);
+  color: #ff0000;
+  border: 1px solid #ff0000;
 }
 
 .api-method.patch {
-  background: rgba(168, 85, 247, 0.15);
-  color: #a855f7;
-  border: 1px solid #a855f7;
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+  border: 1px solid #8b5cf6;
 }
 
 .api-path {
@@ -1358,7 +1398,7 @@ nav.navbar {
 }
 
 .api-param-required {
-  color: #ef4444;
+  color: #ff0000;
   font-size: 0.75rem;
   font-weight: 600;
   margin-left: var(--spacing-xs);
@@ -1703,19 +1743,19 @@ nav.navbar {
 
 /* Toast variants */
 .toast.success {
-  border-left-color: #22c55e;
+  border-left-color: #00ff00;
 }
 
 .toast.warning {
-  border-left-color: #eab308;
+  border-left-color: #d94f90;
 }
 
 .toast.error {
-  border-left-color: #ef4444;
+  border-left-color: #ff0000;
 }
 
 .toast.info {
-  border-left-color: #3b82f6;
+  border-left-color: #8b5cf6;
 }
 
 /* ========== BUTTON GROUPS ========== */
@@ -2373,7 +2413,7 @@ nav.navbar {
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
-  background: var(--glass, rgba(26, 10, 46, 0.6));
+  background: var(--glass, rgba(20, 12, 40, 0.6));
   border: 1px solid var(--border, rgba(217, 79, 144, 0.3));
   border-radius: var(--radius-md, 6px);
 }
@@ -2384,7 +2424,7 @@ nav.navbar {
 }
 
 .event-bar__label {
-  color: var(--text-secondary, #aaa);
+  color: var(--text-secondary, #b8afc8);
   font-size: 0.9rem;
   font-family: var(--font-mono, 'Courier New', monospace);
   flex-shrink: 0;
@@ -2449,7 +2489,7 @@ nav.navbar {
 .clock-widget__date {
   font-family: var(--font-mono, 'Courier New', monospace);
   font-size: 0.85rem;
-  color: var(--text-secondary, #aaa);
+  color: var(--text-secondary, #b8afc8);
   letter-spacing: 1px;
 }
 

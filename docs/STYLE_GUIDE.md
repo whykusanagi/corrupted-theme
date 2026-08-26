@@ -229,10 +229,10 @@ Defined in `/cmd/celeste/tui/styles.go`:
 - **Glassmorphic** (`#1a1a2e`) - Overlays
 
 ### Functional Colors
-- **Success**: Green (`#22c55e`)
-- **Error**: Red (`#ef4444`)
-- **Warning**: Yellow (`#eab308`)
-- **Info**: Cyan (`#06b6d4`)
+- **Success**: Green (`#00ff00`) — the system/matrix colour
+- **Error**: Red (`#ff0000`) — the alarm accent
+- **Warning**: Magenta2 (`#d94f90`) — the corrupting state; the theme has no yellow
+- **Info**: Violet (`#8b5cf6`)
 
 ### Corruption/Glitch Colors
 - **Red Corruption** (`#ff4757`)

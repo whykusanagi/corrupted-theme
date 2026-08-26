@@ -250,3 +250,71 @@ test('surface tokens match the CSS custom properties that mirror them', () => {
       `${prop} drifted from colors.json surfaces.${key}`);
   }
 });
+
+/**
+ * Semantic status colours, as actually shipped in components.css. Docs that
+ * name these must agree.
+ *
+ * The palette correction changed the CSS and left the documentation behind:
+ * ACCESSIBILITY.md taught `--success: #10b981`, COLOR_SYSTEM.md taught
+ * `#2ed573`, STYLE_GUIDE.md taught `#22c55e` — three different wrong greens,
+ * none of them what ships, all of them in files that go out with the npm
+ * package. This sweep never looked at `docs/`, so nothing caught it.
+ *
+ * Deliberately narrow: brand docs legitimately show illustrative palettes and
+ * example swatches, and policing every hex in prose would be noise. What is
+ * NOT negotiable is a doc stating a different value for a token the package
+ * actually defines.
+ */
+const SHIPPED_STATUS = {
+  success: '#00ff00',
+  warning: '#d94f90',
+  error: '#ff0000',
+  info: '#8b5cf6',
+};
+
+test('docs do not contradict the shipped semantic status colours', () => {
+  const docs = [];
+  (function walk(dir) {
+    for (const e of readdirSync(path.join(ROOT, dir))) {
+      const rel = path.join(dir, e);
+      if (statSync(path.join(ROOT, rel)).isDirectory()) {
+        if (e !== 'planning') walk(rel);   // planning/ is archived, untracked
+        continue;
+      }
+      if (e.endsWith('.md')) docs.push(rel);
+    }
+  })('docs');
+
+  const wrong = [];
+  for (const rel of docs) {
+    const src = readFileSync(path.join(ROOT, rel), 'utf8');
+    for (const [name, hex] of Object.entries(SHIPPED_STATUS)) {
+      // `--success: #xxxxxx` — a token declaration claiming a value
+      for (const m of src.matchAll(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`, 'g'))) {
+        if (expand(m[1]) !== hex) wrong.push(`${rel}: --${name} documented as ${m[1]}, ships as ${hex}`);
+      }
+      // `#### Success (\`#xxxxxx\`)` / `**Success**: Green (\`#xxxxxx\`)`
+      const label = name[0].toUpperCase() + name.slice(1);
+      for (const m of src.matchAll(new RegExp(`\\*\\*${label}\\*\\*[^\\n]*?\`(#[0-9a-fA-F]{6})\``, 'g'))) {
+        if (expand(m[1]) !== hex) wrong.push(`${rel}: ${label} documented as ${m[1]}, ships as ${hex}`);
+      }
+      for (const m of src.matchAll(new RegExp(`#+ ${label} \\(\`(#[0-9a-fA-F]{6})\`\\)`, 'g'))) {
+        if (expand(m[1]) !== hex) wrong.push(`${rel}: ${label} heading documented as ${m[1]}, ships as ${hex}`);
+      }
+    }
+  }
+  assert.deepEqual([...new Set(wrong)], [],
+    'shipped docs teach a status colour the package does not use — a reader '
+    + 'following them gets the wrong hex');
+});
+
+test('every shipped status colour actually exists in components.css', () => {
+  const css = stripComments(readFileSync(path.join(ROOT, 'src/css/components.css'), 'utf8'));
+  for (const [name, hex] of Object.entries(SHIPPED_STATUS)) {
+    // `.badge.info` was missing entirely while `.alert.info` existed, so a
+    // four-state status row had no info variant to reach for.
+    assert.match(css, new RegExp(`\\.badge\\.${name}\\s*\\{[^}]*color:\\s*${hex}`, 'i'),
+      `.badge.${name} must exist and use ${hex}`);
+  }
+});

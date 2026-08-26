@@ -108,9 +108,10 @@ All Celeste color combinations meet **WCAG AAA** standards (7:1 minimum):
   --btn-border: rgba(217, 79, 144, 0.3);  /* 3.5:1 against bg (AA ✅) */
 
   /* Status colors */
-  --success: #10b981;        /* 6.8:1 ratio (AAA ✅) */
-  --warning: #f59e0b;        /* 9.2:1 ratio (AAA ✅) */
-  --error: #ef4444;          /* 5.1:1 ratio (AA ✅) */
+  --success: #00ff00;        /* 14.4:1 ratio (AAA ✅) — green, the system/matrix colour */
+  --warning: #d94f90;        /* 5.2:1 ratio (AA ✅) — magenta2, the corrupting state */
+  --error: #ff0000;          /* 5.0:1 ratio (AA ✅) — red, the alarm accent */
+  --info: #8b5cf6;           /* 4.7:1 ratio (AA ✅) — violet */
 }
 ```
 

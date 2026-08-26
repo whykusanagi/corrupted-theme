@@ -1454,8 +1454,32 @@ Override only the tokens you need. The defaults intentionally mirror the showcas
   --text-secondary: #b8afc8;
   --transition-normal: 0.3s ease;
   --transition-fast: 0.15s ease;
+
+  /* Backgrounds — one dark ramp, four steps. Backgrounds are not palette
+     colours: they carry no corruption state, they are the ground the palette
+     sits on. Reach for a step rather than inventing a new dark. */
+  --bg: #0a0a0a;               /* Page ground */
+  --bg-secondary: #0f0f1a;     /* Section ground */
+  --surface: #12121a;          /* Panel or card sitting on the ground */
+  --surface-elevated: #1a1a24; /* Raised: hover, active tile, popover */
+  --checker: #17171f;          /* Transparency checkerboard square */
+
+  /* Site chrome height. Position anything you float below the navbar against
+     this — `top: calc(var(--navbar-h) + 20px)` — rather than a pixel guess. */
+  --navbar-h: 68px;
+
+  /* Semantic status. Success is the system/matrix green, warning is the
+     corrupting magenta2, error is the alarm red, info is violet. They are
+     deliberately NOT a Tailwind-style palette. */
+  --success: #00ff00;
+  --warning: #d94f90;
+  --error: #ff0000;
+  --info: #8b5cf6;
 }
 ```
+
+`.badge`, `.alert`, `.progress-bar` and `.text-highlight` all take the same
+four status modifiers — `.success`, `.warning`, `.error`, `.info`.
 Utilities (`src/css/utilities.css`) provide spacing (`.p-xl`, `.gap-md`), layout (`.flex`, `.grid`), and elevation helpers so you rarely write bespoke CSS.
 
 ## Coding Standards

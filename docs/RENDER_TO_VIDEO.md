@@ -8,6 +8,45 @@ the same frame index always produces identical pixels:
 |---|---|---|
 | `seededRandom(seed)` | `@whykusanagi/corrupted-theme/random-utils` | mulberry32 PRNG; seed with the frame index so randomized content (phrases, particles) repeats exactly per frame |
 | `seekAnimations(root, timeSeconds)` | `@whykusanagi/corrupted-theme/time-utils` | pauses every CSS animation under `root` and seeks it to an absolute time via negative `animation-delay`; each animation resolves to its own phase (`t % duration`) |
+| `createFrameClock({ fps, seed })` | `@whykusanagi/corrupted-theme/canvas-seek` | the canvas equivalent of `seekAnimations`. `clock.seek(frame)` fixes a frame; `clock.rngAt(key)` derives randomness from (seed, frame, key), so any frame renders byte-identically in isolation and out of order |
+| `createDissolve({ revealMs, holdMs, dissolveMs })` | `@whykusanagi/corrupted-theme/canvas-seek` | the reveal → hold → dissolve envelope; `at(tMs)` returns the phase and its progress |
+
+## Canvas components: drive them off a frame clock
+
+`seekAnimations` only reaches CSS animations. Canvas components need a clock of
+their own, and the ones that support deterministic export take one:
+
+| Call | Component | Notes |
+|---|---|---|
+| `renderFrame(frameIdx, fps)` | most canvas components | paints exactly the frame at that index |
+| `renderAt(clock)` | `CorruptedFlares` | paints the frame the clock is sitting on, so a scrubbed preview and a captured frame agree |
+| `CorruptedFlares.drawAt(ctx, name, clock, opts)` | `CorruptedFlares` | frame-locked single mark, composited into a context you own. Same clock + same frame → identical pixels |
+| `toPNG({ scale })` | `CorruptedFlares` | repaints at the target resolution and resolves to a `Blob`, alpha preserved. Vector-crisp at any export size, and it does not disturb the live canvas |
+
+For an overlay pass, construct with `plate: false` so the board is transparent
+between marks and composites straight over your footage:
+
+```js
+import { createFrameClock } from '@whykusanagi/corrupted-theme/canvas-seek';
+import { CorruptedFlares } from '@whykusanagi/corrupted-theme/corrupted-flares';
+
+const clock = createFrameClock({ fps: 30, seed: 42 });
+const flares = new CorruptedFlares(stage, { seed: 42, plate: false });
+
+window.renderFrame = (i) => {
+  clock.seek(i);
+  flares.renderAt(clock);          // whole board
+  // …or place individual marks yourself:
+  ctx.save();
+  ctx.translate(x, y);
+  CorruptedFlares.drawAt(ctx, 'glitchStar', clock, { size: 80, ramp: true });
+  ctx.restore();
+};
+```
+
+Note that a board created with a finite `loops` count settles and stops. For a
+capture longer than `loops × loopMs` either raise `loops`, or pass
+`loops: Infinity` if you want it corrupting for the whole take.
 
 ## Recipe
 

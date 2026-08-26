@@ -708,7 +708,11 @@ export const FLARE_GRID = [
  *   border. Set `false` for a fully transparent board you can composite over
  *   video, artwork or an OBS scene — this also drops the per-cell clip, so
  *   glow bleeds between cells the way an overlay should.
- * @param {() => void} [options.onSettled] - Fired once the whole board settles
+ * @param {() => void} [options.onSettled] - Fired each time the whole board
+ *   reaches its settled end state. Re-arms across `restart()`, so a caller
+ *   flipping a button between Pause and Replay gets the event every cycle,
+ *   not only the first. Not fired by `settle()`, which is a direct jump
+ *   rather than the animation arriving there.
  */
 export class CorruptedFlares {
   constructor(container, options = {}) {

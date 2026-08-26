@@ -155,6 +155,15 @@
   color: #ff0000;
 }
 
+/* Completes the status set. `.alert.info` already existed; the badge family
+   stopped at error, so a four-state row had no info variant to reach for.
+   Violet, matching .alert.info. */
+.badge.info {
+  background: rgba(139, 92, 246, 0.15);
+  border-color: rgba(139, 92, 246, 0.35);
+  color: #8b5cf6;
+}
+
 /* ========== LINKS ========== */
 
 .link {

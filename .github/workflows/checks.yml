@@ -20,7 +20,14 @@ jobs:
 
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
-          node-version: '20'
+          # 22, not 20. The build chain reaches Set.prototype.difference via a
+          # transitive cssnano/postcss-merge-longhand dependency, which is Node
+          # 22+. package-lock.json is gitignored and CI runs `npm install`, so
+          # every run resolves dependencies fresh — a transitive release can and
+          # did move the floor without anything in this repo changing. The
+          # `engines` field stays ">=18" because it constrains CONSUMERS, who
+          # never run this build.
+          node-version: '22'
 
       - name: Install dependencies
         run: npm install

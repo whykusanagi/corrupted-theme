@@ -177,8 +177,16 @@ function sources() {
  * `.badge.success` be wind: the guard saw a known colour and passed. Spec rule
  * 1 says theme chrome never borrows an element hex, so the guard has to be able
  * to tell a badge from a border. Scope is that distinction.
+ *
+ * Matches a whole final path segment, never a substring: the previous form
+ * `/(^|\/)(nikke-|colors\.(json|data\.js))|nikke-team-builder\.html$/` bound its
+ * alternation loosely, so only the last branch carried the `$` and a file merely
+ * *ending* in `nikke-team-builder.html` would have been granted element-colour
+ * rights. Flagged by CodeQL as `js/regex/missing-regexp-anchor`. Anchoring the
+ * segment also made that third branch redundant — `nikke-team-builder.html` is
+ * already a `nikke-*` file.
  */
-const ELEMENT_OWNERS = /(^|\/)(nikke-|colors\.(json|data\.js))|nikke-team-builder\.html$/;
+const ELEMENT_OWNERS = /(?:^|\/)(?:nikke-[^/]*|colors\.(?:json|data\.js))$/;
 
 test('no colour outside the palette, surfaces or the exceptions list', () => {
   const base = [

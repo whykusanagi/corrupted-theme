@@ -326,3 +326,24 @@ test('every shipped status colour actually exists in components.css', () => {
       `.badge.${name} must exist and use ${hex}`);
   }
 });
+
+test('toast status colours match the badge family', () => {
+  // toast.css had success on CYAN and info on MAGENTA2. Cyan is an accent and
+  // never a state signal, and magenta2 is `.badge.warning` — so the same colour
+  // meant "warning" on a badge and "info" on a toast. Neither was catchable by
+  // the hex sweep above: both colours are perfectly legal, they were just in
+  // the wrong ROLE. Legality is not the same as correctness.
+  //
+  // Only the three variants the Toast API actually exposes — success, error,
+  // info. There is no warning() method, so there is no warning variant.
+  const toast = stripComments(readFileSync(path.join(ROOT, 'src/css/toast.css'), 'utf8'));
+  for (const state of ['success', 'error', 'info']) {
+    const rule = new RegExp(`\\.corrupted-toast--${state}\\s*\\{([^}]*)\\}`).exec(toast);
+    assert.ok(rule, `.corrupted-toast--${state} must exist`);
+    const hex = /#[0-9a-fA-F]{6}/.exec(rule[1]);
+    assert.ok(hex, `.corrupted-toast--${state} must carry a literal fallback colour`);
+    assert.equal(expand(hex[0]), SHIPPED_STATUS[state],
+      `toast ${state} is ${hex[0]} but .badge.${state} is ${SHIPPED_STATUS[state]} — `
+      + 'one meaning, one colour, across every component that signals it');
+  }
+});

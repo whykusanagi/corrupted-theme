@@ -40,6 +40,17 @@
 }
 
 /* Variant border accents */
-.corrupted-toast--success { border-color: var(--corrupted-cyan,     #00ffff); }
-.corrupted-toast--error   { border-color: var(--corrupted-red,      #ff0000); }
-.corrupted-toast--info    { border-color: var(--corrupted-magenta2, #d94f90); }
+/* Status colours match the .badge / .alert family exactly — success is the
+   system green, error the alarm red, info violet. Two were off:
+
+   - success was cyan. Cyan is an ACCENT: a compositional tool, never a state
+     signal (CORRUPTED_THEME_SPEC.md, Colour Palette). A toast is nothing but a
+     state signal, so that was the one place it could not be used.
+   - info was magenta2, which is `.badge.warning`. The same colour meant
+     "warning" on a badge and "info" on a toast.
+
+   There is no --warning variant because the Toast API has no warning() method;
+   success/error/info are the whole surface. */
+.corrupted-toast--success { border-color: var(--corrupted-green,   #00ff00); }
+.corrupted-toast--error   { border-color: var(--corrupted-red,     #ff0000); }
+.corrupted-toast--info    { border-color: var(--corrupted-purple,  #8b5cf6); }

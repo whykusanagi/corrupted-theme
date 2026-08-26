@@ -72,6 +72,11 @@
   --z-base: 0;
   --z-elevated: 1;
   --z-navbar: 1000;
+  /* Height of the site chrome. Pages that float controls below the navbar
+     position against this instead of hardcoding a pixel guess — six of them
+     used `top: 88px` against a bar that was actually 66.6px on some pages
+     and 68.2px on others, because its height came from inherited line-height. */
+  --navbar-h: 68px;
   --z-modal: 1000;
 }
 

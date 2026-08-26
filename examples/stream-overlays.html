@@ -20,7 +20,7 @@
 <link rel="stylesheet" href="../src/css/stream-overlays.css">
 <style>
   body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Courier New', monospace; }
-  .controls { position: fixed; top: 88px; left: 16px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
+  .controls { position: fixed; top: calc(var(--navbar-h) + 20px); left: 16px; z-index: 100; display: flex; flex-direction: column; gap: 8px; }
   .controls button { min-width: 220px; text-align: left; }
   /* Selected state is a theme colour — accents carry no state meaning (§1). */
   .controls button.active { border-color: #ff00ff; color: #ff00ff; }

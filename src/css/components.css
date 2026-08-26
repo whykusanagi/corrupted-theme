@@ -803,6 +803,16 @@ nav.navbar {
      centring the bar mid-page, and body padding insetting it. Each is
      re-declared here so a demo's own styling cannot move the chrome. */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  /* Every inheritable property that changes the bar's size or alignment. The
+     bar measured 68.2px where body line-height was 1.7 and 66.6px where a page
+     set 1.6 — so "unified navigation" was still two different navbars. Pinned
+     to --navbar-h so it is one height on all 40 pages. */
+  line-height: 1.7;
+  font-size: 1rem;
+  letter-spacing: normal;
+  text-transform: none;
+  text-align: left;
+  min-height: var(--navbar-h);
   width: 100%;
   box-sizing: border-box;
   justify-self: stretch;  /* grid parent: ignore place-items: center */

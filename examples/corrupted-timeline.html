@@ -18,7 +18,7 @@
   body { margin: 0; background: var(--bg); color: var(--text); overflow: hidden; }
   #stage { position: relative; width: 100vw; height: 100vh;
     background: radial-gradient(ellipse at 50% 40%, rgba(217, 79, 144, 0.15), transparent 60%), var(--bg-secondary); }
-  .controls { position: fixed; top: 88px; left: 16px; z-index: 300; display: flex; gap: 8px; }
+  .controls { position: fixed; top: calc(var(--navbar-h) + 20px); left: 16px; z-index: 300; display: flex; gap: 8px; }
   #status { position: fixed; bottom: 16px; left: 16px; z-index: 300;
     font-family: 'Courier New', monospace; color: var(--text-muted); font-size: 0.85rem; }
 </style>

@@ -69,6 +69,64 @@ typographic and compositional tool, not a state signal.
 **Cyan is not, and never was, a stable-text colour.** It appeared in that
 role by mistake and spread; see the 1.2 entry in Version History.
 
+**Surfaces — the dark ramp.** Backgrounds are not palette colours: they carry
+no corruption state, they are the ground the palette sits on. Four steps,
+declared once in `variables.css` and mirrored in `colors.json` under
+`surfaces`. Reach for a step rather than picking a new dark.
+
+```css
+--bg: #0a0a0a;               /* Page ground */
+--bg-secondary: #0f0f1a;     /* Deep purple-black, section ground */
+--surface: #12121a;          /* Panel/card sitting on the ground */
+--surface-elevated: #1a1a24; /* Raised: hover, active tile, popover */
+--checker: #17171f;          /* Transparency checkerboard square */
+```
+
+### Element Colours (NIKKE)
+
+A **defined, published component** — `.element-badge` / `.element-water` … in
+`nikke-utilities.css`, plus `--nikke-element-*` custom properties — consumed
+by downstream NIKKE tools. The hexes are a compatibility surface: changing one
+breaks callers.
+
+```css
+--nikke-element-water:    #0066cc;
+--nikke-element-wind:     #22c55e;
+--nikke-element-iron:     #f59e0b;
+--nikke-element-electric: #a855f7;
+--nikke-element-fire:     #ef4444;
+```
+
+**They are game data, not theme colours.** Three rules follow:
+
+1. They never carry corruption state. Status/alert/badge styling uses the
+   palette — green for system, magenta2 for corrupting, red for alarm. Theme
+   chrome borrowing an element hex is how `.badge.error` and `fire` ended up
+   the same colour.
+2. They never replace a theme colour in a composition.
+3. A layout must still read as on-theme with every element badge removed.
+
+Rarity/tier/burst palettes beyond the five elements stay downstream and are
+deliberately absent from `colors.json`.
+
+### Enforcement
+
+`tests/data/color-sweep.test.js` sweeps every `src/` and `examples/` source and
+fails on any colour that is not the palette, a surface token, or a justified
+entry in its `ALLOWED` list (third-party brands, declared component artwork,
+frozen public API defaults). Add a deliberate exception with a reason rather
+than widening the matcher.
+
+Two things the guard has to get right to be worth having:
+
+- It reads `rgb()` and `rgba()`, not only hex. A remap that fixes `color` and
+  leaves the matching `background: rgba(...)` on the old value is invisible
+  otherwise, which is exactly how it shipped the first time.
+- **Element colours are legal only in the files that own the element system.**
+  Allowing them everywhere is what let `.badge.error` be fire and
+  `.badge.success` be wind: the guard saw a known colour and passed. Rule 1
+  above is only enforceable if the guard can tell a badge from a border.
+
 ### 2. Text Shadow Effects
 
 **Cyberpunk Glow:**
@@ -495,6 +553,60 @@ declarative, with no dependency and no per-pixel JavaScript.
 
 ---
 
+### Pattern 6: Ambient Mark Decay
+
+Corruption carried by **non-textual geometric marks** — sparkles, rings,
+reticles, bursts — scattered across a surface, each running its own corruption
+clock. Patterns 1-3 corrupt text, Pattern 4 corrupts a grid of text cells,
+Pattern 5 corrupts a static surface. Pattern 6 is the first that corrupts
+nothing: the marks *are* the corruption, laid over content the theme does not
+own.
+
+- **Direction:** chaos → order, per mark, independently. A mark appears at its
+  corruption event and decays toward a settled state on its own timeline. The
+  surface as a whole has no single phase.
+- **Colour is the mark's own age**, using Pattern 4's ramp unchanged —
+  `wavefront #8b5cf6` violet at the corruption event, `mid #ff00ff` magenta
+  mid-decay, `settled #ffffff` white once stable. This is Core Tenet 4 applied
+  literally: a mark's colour tells you where in its decay it is, and nothing
+  else. Deriving colour from a *shared* clock is the failure mode this pattern
+  exists to name — it makes every mark the same colour regardless of state,
+  which is decoration wearing a state signal's clothes.
+- **Readable endpoint is mandatory** (Core Tenet 2). After a bounded number of
+  loops each mark freezes in white at its fully-formed moment, and the
+  animation loop *stops* once every mark has settled. An unbounded variant may
+  be offered, but it is decorative and must be opt-in — a surface that never
+  settles never reaches the stable state the theme promises.
+- **Compositing-first.** The primary API draws one mark into a caller's
+  context at the current transform: it paints no background, restores what it
+  touched, and never assumes it owns the canvas. A grid or board of marks is a
+  showcase format, not the pattern. Anything that forces an opaque plate
+  cannot be composited over video or an overlay layer, which is most of what
+  this pattern is for.
+- **Timing snaps rather than smooths.** Quantized motion is the register —
+  stutter, dropout, chromatic fringe — with cyan and red appearing only as
+  split-channel fringes, never as a mark's identity.
+- **The flicker floor is enforced by the implementation, not the caller.** Any
+  quantization step derives its own maximum step count from the effective loop
+  duration so no frame falls under the 100ms photosensitivity limit, whatever
+  speed or duration a caller passes. Relying on an example's slider ranges is
+  not enforcement.
+- **Determinism:** a seed fixes mark selection, phase and any per-mark noise,
+  so the same seed and frame index produce byte-identical output. Offline
+  frame capture is a first-class consumer.
+- **Use for:** VFX passes over artwork or video, stream and OBS overlays,
+  thumbnail accents, transition stingers, offline frame export.
+- **Accessibility:** the 100ms floor above, plus reduced motion paints the
+  *settled* end state rather than a random mid-animation frame — a static
+  fallback that is still the readable result, not an arbitrary one.
+
+**Reference implementation:** `CorruptedFlares`
+(`@whykusanagi/corrupted-theme/corrupted-flares`, 0.3.3). Shape vocabulary
+borrows from anime VFX packs, where colour is arbitrary; the theme's
+contribution is making it mean something.
+
+---
+
 ## Content Classification: SFW vs NSFW
 
 **⚠️ DEFINITIVE REFERENCE:** See `CORRUPTION_BUFFER_IMPLEMENTATIONS.md` for complete implementation details across all projects.
@@ -914,6 +1026,21 @@ corrupted.start();
 ---
 
 ## Version History
+
+- **1.3** (2026-08-25): Ambient corruption, and a palette guard that works
+  - Added **Pattern 6: Ambient Mark Decay** — non-textual geometric marks,
+    each decaying on its own clock, composited over content the theme does
+    not own. Reuses Pattern 4's ramp; adds a mandatory readable endpoint and
+    an implementation-enforced flicker floor.
+  - **Surfaces** are now a declared four-step dark ramp rather than whatever
+    dark each page invented. Backgrounds carry no corruption state.
+  - **Element colours (NIKKE)** documented as a published compatibility
+    surface and as game data — never corruption state, never theme chrome.
+  - **Enforcement**: `tests/data/color-sweep.test.js` sweeps every source for
+    colour outside palette ∪ surfaces ∪ elemental ∪ a justified exception. It
+    reads `rgb()`/`rgba()` as well as hex, and element hexes are legal only in
+    the files that own the element system, so the rule above is checkable
+    rather than aspirational.
 
 - **1.2** (2026-07-27): Static corruption
   - Added **Pattern 5: Static Material Degradation** — the first

@@ -1,6 +1,6 @@
 {
   "name": "@whykusanagi/corrupted-theme",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "type": "module",
   "description": "A dark, glassmorphic design system with pink/purple accents. Perfect for creating modern, visually striking web applications.",
   "main": "src/css/theme.css",
@@ -152,7 +152,8 @@
     "generate-sri": "bash scripts/generate-sri.sh",
     "prepublishOnly": "npm run data:generate && npm run build && npm run manifest:generate && npm test",
     "nav:sync": "node scripts/sync-nav.js",
-    "lint:security": "eslint ."
+    "lint:security": "eslint .",
+    "audit:colors": "node --test tests/data/color-sweep.test.js"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

@@ -7,6 +7,90 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-08-25
+
+> One new component and one correction that runs deeper than it looks: the
+> palette rules the spec has stated since v1.1 now have a guard that can
+> actually enforce them. Additive — no export removed or renamed.
+
+### Added
+
+- **Spec Pattern 6: Ambient Mark Decay** — non-textual geometric marks, each
+  decaying on its own clock, composited over content the theme does not own.
+  `CorruptedFlares` is its reference implementation. Spec is now at 1.3.
+- **`corrupted-flares`** — a library of 25 short geometric flare loops
+  (sparkles, rings, reticles, bursts) plus a 5×5 showcase board. The primary
+  surface is `CorruptedFlares.draw(ctx, name, t, opts)` and its frame-locked
+  twin `drawAt(ctx, name, clock, opts)`: single flares composited onto a canvas
+  you own, painting no background and restoring the context, so they drop
+  straight onto video, artwork or a transparent OBS layer.
+  - Colour comes from each cell's **own** corruption age — violet at the
+    corruption event, magenta mid-decay, white once settled — reusing Pattern
+    4's exact ramp. Colour is a state signal (Core Tenet 4), not a hue cycle.
+  - `loops` (default 3) gives the readable endpoint Core Tenet 2 requires:
+    after N cycles a cell freezes white and the rAF loop stops, so a settled
+    board costs nothing. `loops: Infinity` restores the decorative variant.
+  - `plate: false` makes the board fully transparent and compositable.
+  - `toPNG({ scale })` repaints at the target resolution and returns a
+    `Promise<Blob>` with alpha preserved, without disturbing the live canvas.
+  - `settle()` / `restart()` / `isSettled` / `isRunning` are public. Reduced
+    motion paints the settled end state rather than a random frame.
+  - The spec's 100ms flicker floor is enforced inside `snap()` from the
+    effective loop duration, rather than left to whoever picks the options.
+- **Surface tokens** — `--surface`, `--surface-elevated` and `--checker` join
+  `--bg` and `--bg-secondary` as one four-step dark ramp, declared in
+  `variables.css` and mirrored in `colors.json` under `surfaces`. Eleven
+  one-off darks existed across demo pages, which is why panels never matched.
+  `toast.css` already referenced `--surface-elevated`, a token that did not
+  exist.
+- **`elementalColors`** is now first class in `colors.json` (schemaVersion
+  1.1) and documented in the spec: the five NIKKE element hexes are a
+  published compatibility surface, and they are game data, never corruption
+  state.
+- **`tests/data/color-sweep.test.js`** + `npm run audit:colors` — a repo-wide
+  colour guard over every `src/` and `examples/` source. It reads `rgb()` and
+  `rgba()` as well as hex, and element hexes are legal only in the files that
+  own the element system, so theme chrome borrowing game data now fails the
+  build. `palette-compliance.test.js` only ever checked the JSON plus six
+  named files, which is how everything below shipped.
+- **`RELEASE_DEMOS`** in `scripts/sync-nav.js`, enforced by
+  `tests/data/nav-sync.test.js` — the demos the nav must surface for the
+  current release. Bump it each release instead of appending forever.
+
+### Changed
+
+- **Status chrome no longer borrows element or Tailwind hexes.** `.badge`,
+  `.alert`, `.progress-bar`, `.api-method`, `.text-highlight` and the demo
+  status pills mapped to a parallel Tailwind palette — `.badge.error` was
+  literally the fire element, `.badge.success` was wind. All remapped:
+  success → green (system), warning → magenta2 (corrupting), error → red
+  (alarm), info → violet, GET → cyan (accent).
+- **Cyan is no longer settled text in the examples.** The 0.3.2 correction
+  swept `src/` but not `examples/`; `scroll-decode` rendered decoded output in
+  cyan and `glitch-stagger-grid` settled cells in it. Both settle white now.
+- **Navigation restructured.** The Examples menu had grown to 29 entries
+  because every release appended and nothing was removed. It is now Effects
+  and Stream & Video, each capped with a "Browse all →" into the gallery.
+- **Navbar chrome is isolated from page styles.** The bar lives inside `<body>`
+  on every demo, so a page's `font-family`, `display: grid` or body padding
+  reached it — 10 of 40 pages rendered the nav in Courier New, and some
+  centred it mid-page. Each leak is re-declared on `nav.navbar`.
+- `TacticalTerrainMap`, `NeuralDeserializer`, `SpectrumTerminal`,
+  `TitleDecoder` and `initCountdown` had off-palette warning oranges, a blue
+  RGB-split channel and a grey text default; all mapped onto the palette.
+- `gearNotch` gave way to `dataStrip` in the flare set — barcode ticks with
+  deterministic dropouts. The gear read as mechanical/steampunk rather than
+  data corruption.
+
+### Fixed
+
+- The `--glass` fallback in `components.css` had drifted off the token it
+  stands in for, so a page loading `components.css` without `variables.css`
+  got a different purple.
+- `examples/card.html` status pills coloured themselves with
+  `--color-success` / `--color-warning`, which are defined nowhere in the
+  package — they rendered with no colour at all.
+
 ## [0.3.2] - 2026-07-27
 
 > Six new components for data and generative visuals, plus the palette

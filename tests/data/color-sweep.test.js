@@ -347,3 +347,86 @@ test('toast status colours match the badge family', () => {
       + 'one meaning, one colour, across every component that signals it');
   }
 });
+
+/**
+ * Colours that may appear in `docs/` despite being off-palette, each with the
+ * reason it is not a defect. Everything else in the documentation must be a
+ * palette, surface or element colour.
+ *
+ * The docs carried 153 off-palette occurrences across 15 files — a complete
+ * parallel palette from another project, copy-pasted before `colors.json`
+ * existed. This sweep never looked at `docs/`, which is why it survived three
+ * releases. These 12 are what is left after the correction.
+ */
+const DOCS_ALLOWED = {
+  // Prose naming the values that were REMOVED. A page explaining "this used to
+  // say #00d4ff and that was wrong" has to be able to write #00d4ff.
+  '#0a0612': 'named in prose as a retired background',
+  '#140c28': 'retired background in prose; also the hex base of --glass rgba(20,12,40)',
+  '#00d4ff': 'named in prose as the retired cyan',
+  '#2ed573': 'named in prose as a retired status green',
+  '#ffa502': 'named in prose as a retired status amber',
+  '#ff4757': 'named in prose as a retired status red',
+
+  // Hex bases of the real rgba() glass tokens.
+  '#1c1230': 'hex base of --glass-light rgba(28, 18, 48, 0.5)',
+  '#0a0514': 'hex base of --glass-darker rgba(10, 5, 20, 0.6)',
+
+  // xterm-256 cube values. The terminal cannot represent violet or magenta2,
+  // so the ANSI mapping table documents the nearest code it can reach.
+  '#875fff': 'ANSI 99 — nearest cube colour to violet #8b5cf6',
+  '#d75f87': 'ANSI 168 — nearest cube colour to magenta2 #d94f90',
+
+  // Retheming examples, explicitly labelled as the reader's own shades.
+  '#a78bfa': 'custom-theme example: "your own lighter shade"',
+  '#7c3aed': 'custom-theme example: "your own darker shade"',
+
+  // Deliberate counterexamples. Fixing these destroys the lesson.
+  '#888888': 'GLASSMORPHISM.md — grey text shown as a contrast failure',
+  '#10b981': 'ACCESSIBILITY.md / ANTI_PATTERNS.md — "colour only" bad example',
+  '#ff6b9d': 'ANTI_PATTERNS.md — "wrong pink (too bright)"',
+  '#9b4dca': 'ANTI_PATTERNS.md — "wrong purple (too dark)"',
+  '#00bfff': 'ANTI_PATTERNS.md — "wrong cyan (too light)"',
+
+  // Shipped defaults that are a design question, not a docs bug.
+  '#ff8c00': 'ASCIIBorder / SegmentedProgressBar default — a real shipped colour; changing it is breaking under CLAUDE.md §12',
+  '#4c2967': 'CountdownWidget usage example borderColor',
+};
+
+test('shipped docs carry no unexplained off-palette colour', () => {
+  const legal = new Set([
+    ...Object.values(colors.palette).map(expand),
+    ...Object.values(colors.surfaces).map(expand),
+    ...Object.values(colors.elementalColors).map(expand),
+    ...Object.keys(DOCS_ALLOWED).map(expand),
+    ...chromeTokens(),
+  ]);
+
+  const files = [];
+  (function walk(dir) {
+    for (const e of readdirSync(path.join(ROOT, dir))) {
+      const rel = path.join(dir, e);
+      if (statSync(path.join(ROOT, rel)).isDirectory()) {
+        if (e !== 'planning') walk(rel);   // archived, and never shipped
+        continue;
+      }
+      if (e.endsWith('.md')) files.push(rel);
+    }
+  })('docs');
+
+  const offenders = new Map();
+  for (const rel of files) {
+    const src = readFileSync(path.join(ROOT, rel), 'utf8');
+    for (const m of src.matchAll(/#[0-9a-fA-F]{6}\b/g)) {
+      const hex = expand(m[0]);
+      if (legal.has(hex)) continue;
+      if (!offenders.has(hex)) offenders.set(hex, new Set());
+      offenders.get(hex).add(rel);
+    }
+  }
+  assert.ok(files.length >= 10, `only ${files.length} docs scanned — walker drifted`);
+  assert.deepEqual(
+    [...offenders.entries()].map(([hex, f]) => `${hex} in ${[...f].slice(0, 2).join(', ')}`), [],
+    'a shipped doc teaches a colour the package does not have — map it to the '
+    + 'palette, or add it to DOCS_ALLOWED with the reason it is not a defect');
+});

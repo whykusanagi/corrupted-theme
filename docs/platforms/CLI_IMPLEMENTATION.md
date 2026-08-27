@@ -188,7 +188,7 @@ import "github.com/charmbracelet/lipgloss"
 // Define reusable styles
 var (
     accentColor = lipgloss.Color("#d94f90")
-    bgColor     = lipgloss.Color("#0a0612")
+    bgColor     = lipgloss.Color("#0a0a0a")
 
     titleStyle = lipgloss.NewStyle().
         Foreground(accentColor).
@@ -228,43 +228,43 @@ var Colors = struct {
     AccentDark   lipgloss.Color  // #b61b70 (dark pink)
 
     SecondaryPurple lipgloss.Color  // #8b5cf6 (purple)
-    SecondaryCyan   lipgloss.Color  // #00d4ff (cyan)
+    SecondaryCyan   lipgloss.Color  // #00ffff (cyan accent — never a state signal)
 
     // Background colors
-    BgDark      lipgloss.Color  // #0a0612 (dark purple-black)
-    BgMedium    lipgloss.Color  // #140c28 (medium purple)
-    BgLight     lipgloss.Color  // #1c1230 (light purple)
+    BgDark      lipgloss.Color  // #0a0a0a (--bg, page ground)
+    BgMedium    lipgloss.Color  // #0f0f1a (--bg-secondary)
+    BgLight     lipgloss.Color  // #12121a (--surface)
 
     // Text colors
     TextPrimary   lipgloss.Color  // #ffffff (white)
-    TextSecondary lipgloss.Color  // #a0a0a0 (gray)
-    TextMuted     lipgloss.Color  // #606060 (dark gray)
+    TextSecondary lipgloss.Color  // #b8afc8 (--text-secondary)
+    TextMuted     lipgloss.Color  // #7a7085 (--text-muted)
 
     // Status colors
-    Success lipgloss.Color  // #10b981 (green)
+    Success lipgloss.Color  // #00ff00 (green — system/success)
     Warning lipgloss.Color  // #f59e0b (orange)
     Error   lipgloss.Color  // #ef4444 (red)
-    Info    lipgloss.Color  // #3b82f6 (blue)
+    Info    lipgloss.Color  // #8b5cf6 (violet — info)
 }{
     Accent:       lipgloss.Color("#d94f90"),
     AccentLight:  lipgloss.Color("#e86ca8"),
     AccentDark:   lipgloss.Color("#b61b70"),
 
     SecondaryPurple: lipgloss.Color("#8b5cf6"),
-    SecondaryCyan:   lipgloss.Color("#00d4ff"),
+    SecondaryCyan:   lipgloss.Color("#00ffff"),
 
-    BgDark:   lipgloss.Color("#0a0612"),
-    BgMedium: lipgloss.Color("#140c28"),
-    BgLight:  lipgloss.Color("#1c1230"),
+    BgDark:   lipgloss.Color("#0a0a0a"),
+    BgMedium: lipgloss.Color("#0f0f1a"),
+    BgLight:  lipgloss.Color("#12121a"),
 
     TextPrimary:   lipgloss.Color("#ffffff"),
-    TextSecondary: lipgloss.Color("#a0a0a0"),
-    TextMuted:     lipgloss.Color("#606060"),
+    TextSecondary: lipgloss.Color("#b8afc8"),
+    TextMuted:     lipgloss.Color("#7a7085"),
 
-    Success: lipgloss.Color("#10b981"),
-    Warning: lipgloss.Color("#f59e0b"),
-    Error:   lipgloss.Color("#ef4444"),
-    Info:    lipgloss.Color("#3b82f6"),
+    Success: lipgloss.Color("#00ff00"),
+    Warning: lipgloss.Color("#d94f90"),
+    Error:   lipgloss.Color("#ff0000"),
+    Info:    lipgloss.Color("#8b5cf6"),
 }
 ```
 

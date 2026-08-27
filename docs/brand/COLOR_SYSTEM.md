@@ -1,21 +1,40 @@
-# Celeste Brand System - Color System
+# Colour System
 
-**Version**: 0.3.1
-**Last Updated**: 2026-07-09
-**WCAG Compliance**: AA (4.5:1 minimum)
-**Status**: 🔴 **CRITICAL FOUNDATION DOCUMENT**
+**Package**: `@whykusanagi/corrupted-theme` 0.3.3
+**Last Updated**: 2026-08-26
+**WCAG Compliance**: AA for body text. Not every colour reaches AAA — see the compliance matrix.
 
-> **0.2.0 canonical source**: The 6-color corruption palette and semantic use mapping are now defined in **`src/data/colors.json`** (published with the npm package). That JSON file is the machine-readable single source of truth. See [`docs/CROSS_LANGUAGE_CONTRACT.md`](../CROSS_LANGUAGE_CONTRACT.md) for the schema. The values in this document match colors.json exactly.
+> **Sources of truth.** The palette, surfaces and element colours come from
+> **`src/data/colors.json`**, which ships with the npm package and is the
+> machine-readable original; see [`docs/CROSS_LANGUAGE_CONTRACT.md`](../CROSS_LANGUAGE_CONTRACT.md)
+> for its schema. Everything else on this page — glass, gradients, shadows,
+> borders — is defined in **`src/css/variables.css`**. Where this document and
+> those two disagree, they win.
+>
+> This page previously documented a separate palette that shipped nowhere:
+> a `#0a0612`/`#140c28` background ramp, a `#00d4ff` cyan used as a status
+> signal, and `#2ed573`/`#ffa502`/`#ff4757` semantic states. It also certified
+> that its values matched `colors.json` exactly, which was not true. Corrected
+> 2026-08-26 and now checked by `tests/data/contrast-claims.test.js` and
+> `tests/data/color-sweep.test.js`.
 
 ---
 
 ## Overview
 
-Celeste's color palette is designed for **premium corruption aesthetics** with:
-- **Neon-soaked accents** (pink, purple, cyan)
-- **Deep dark backgrounds** (purple-black gradients)
+The palette is built for corruption aesthetics, in two tiers:
+
+- **Theme colours — magenta, violet, white.** These are the aesthetic and they
+  encode corruption state. A composition should read as on-theme using only
+  these three.
+- **Accents — cyan and red.** A compositional and typographic tool: highlight
+  something, or lift text off a dark ground. **Never a state signal.**
+
+Supporting the theme tier: magenta2 (high-energy), black (void), green (a rare
+matrix callback). Backgrounds sit outside both tiers — they carry no state.
+
 - **Glassmorphic surfaces** (semi-transparent with blur)
-- **WCAG AA accessibility** (4.5:1 contrast minimum for text)
+- **WCAG AA for body text** (4.5:1 minimum), AAA where white, cyan or green is used
 
 ---
 
@@ -70,9 +89,13 @@ Used for secondary emphasis, section headers, and corruption phrases.
 
 | Token Name | Hex Value | RGB | HSL | Use Case |
 |------------|-----------|-----|-----|----------|
-| `secondary-purple` | `#8b5cf6` | `139, 92, 246` | `258°, 90%, 66%` | Headers, emphasis |
-| `secondary-purple-light` | `#a78bfa` | `167, 139, 250` | `255°, 92%, 76%` | Hover state |
-| `secondary-purple-dark` | `#7c3aed` | `124, 58, 237` | `262°, 83%, 58%` | Active state |
+| `--corrupted-purple` | `#8b5cf6` | `139, 92, 246` | `258°, 90%, 66%` | Headers, emphasis, deep corruption |
+
+There are no `-light` / `-dark` violet variants. The package declares one
+violet; earlier revisions of this page listed `#a78bfa` and `#7c3aed` as hover
+and active states, and neither exists in `colors.json` or `variables.css`. For
+interactive states, vary opacity or use `--accent-light` / `--accent-dark`,
+which are real.
 
 **WCAG Contrast Ratios**:
 - ✅ `#8b5cf6` on `#0a0a0a` (`--bg`): **4.7:1** (AA)
@@ -84,15 +107,22 @@ Used for secondary emphasis, section headers, and corruption phrases.
 - Glassmorphic overlay tints
 - Progress bar filled sections
 
-#### Cyan Glow (`#00d4ff`)
+#### Cyan (`#00ffff`) — accent
 
-Used for tertiary accents, links, and status indicators.
+An **accent**: a compositional and typographic tool for lifting something off a
+dark ground. It is not a state signal, and it is not the stable-text colour —
+white is. Cyan appeared in that role by mistake and propagated; see the 1.2
+entry in the spec's version history.
 
 | Token Name | Hex Value | RGB | HSL | Use Case |
 |------------|-----------|-----|-----|----------|
-| `secondary-cyan` | `#00d4ff` | `0, 212, 255` | `190°, 100%, 50%` | Links, info |
-| `secondary-cyan-light` | `#33e0ff` | `51, 224, 255` | `189°, 100%, 60%` | Hover state |
-| `secondary-cyan-dark` | `#00a3cc` | `0, 163, 204` | `192°, 100%, 40%` | Active state |
+| `--corrupted-cyan` | `#00ffff` | `0, 255, 255` | `180°, 100%, 50%` | Highlight, separation, RGB-split fringes |
+
+Legitimate uses: the cyan channel of a chromatic-aberration pair (it works
+*because* the other channel is `#ff0000`), glass borders and glows, the opt-in
+`.corrupted-ghost-cyan` and `.glass-container-cyan` variants, and structural
+grid chrome. Illegitimate: anything that means "info", "active", "processing"
+or "success". No `-light` / `-dark` variants exist.
 
 **WCAG Contrast Ratios**:
 - ✅ `#00ffff` on `#0a0a0a` (`--bg`): **15.8:1** (AAA)
@@ -139,31 +169,22 @@ Used for tertiary accents, links, and status indicators.
 
 ### Base Backgrounds
 
-#### Deep Void (`#0a0612`)
+**Backgrounds are not palette colours.** They carry no corruption state; they
+are the ground the palette sits on. One ramp, four steps plus a checker, all
+declared in `variables.css` and mirrored in `colors.json` under `surfaces`.
+Reach for a step rather than inventing a new dark — pages inventing their own
+is how eleven one-off darks accumulated before the ramp existed.
 
-The primary page background - deepest purple-black.
+| Token | Hex Value | RGB | HSL | Use |
+|-------|-----------|-----|-----|-----|
+| `--bg` | `#0a0a0a` | `10, 10, 10` | `0°, 0%, 4%` | Page/body ground, terminal background |
+| `--bg-secondary` | `#0f0f1a` | `15, 15, 26` | `240°, 27%, 8%` | Section ground |
+| `--surface` | `#12121a` | `18, 18, 26` | `240°, 18%, 9%` | Panel or card sitting on the ground |
+| `--surface-elevated` | `#1a1a24` | `26, 26, 36` | `240°, 16%, 12%` | Raised: hover, active tile, popover |
+| `--checker` | `#17171f` | `23, 23, 31` | `240°, 15%, 11%` | Transparency checkerboard square |
 
-| Token Name | Hex Value | RGB | HSL |
-|------------|-----------|-----|-----|
-| `background-primary` | `#0a0612` | `10, 6, 18` | `260°, 50%, 5%` |
-
-**Usage**:
-- Page/body background
-- Terminal background (CLI)
-- Behind glassmorphic elements
-
-#### Dark Surface (`#140c28`)
-
-Secondary background for cards and sections.
-
-| Token Name | Hex Value | RGB | HSL |
-|------------|-----------|-----|-----|
-| `background-secondary` | `#140c28` | `20, 12, 40` | `257°, 54%, 10%` |
-
-**Usage**:
-- Card backgrounds (non-glass)
-- Section containers
-- Elevated surfaces
+Earlier revisions of this page documented a separate two-step ramp — "Deep
+Void" `#0a0612` and "Dark Surface" `#140c28`. Neither ships.
 
 ---
 
@@ -175,7 +196,7 @@ Standard glassmorphism with 70% opacity.
 
 | Token Name | RGBA Value | Hex Base | Opacity |
 |------------|------------|----------|---------|
-| `surface-glass-default` | `rgba(20, 12, 40, 0.7)` | `#140c28` | 70% |
+| `--glass` | `rgba(20, 12, 40, 0.7)` | `#140c28` | 70% |
 
 **CSS Properties**:
 ```css
@@ -190,7 +211,7 @@ Standard glassmorphism with 70% opacity.
 
 **WCAG Compliance**:
 - When used with white text: **Contrast depends on background behind glass**
-- Recommended: Use on dark backgrounds only (#0a0612 or darker)
+- Recommended: use on the surface ramp only (`--bg` `#0a0a0a` through `--surface-elevated` `#1a1a24`)
 - Always test with actual content behind the glass
 
 #### Light Glass (`rgba(28, 18, 48, 0.5)`)
@@ -199,20 +220,20 @@ Lighter glassmorphism for hover states and nested elements.
 
 | Token Name | RGBA Value | Hex Base | Opacity |
 |------------|------------|----------|---------|
-| `surface-glass-light` | `rgba(28, 18, 48, 0.5)` | `#1c1230` | 50% |
+| `--glass-light` | `rgba(28, 18, 48, 0.5)` | `#1c1230` | 50% |
 
 **Usage**:
 - Hover state for glass cards
 - Nested glass elements (card within card)
 - Subtle overlays
 
-#### Darker Glass (`rgba(12, 8, 28, 0.8)`)
+#### Darker Glass (`rgba(10, 5, 20, 0.6)`)
 
 Darker glassmorphism for elevated/modal elements.
 
 | Token Name | RGBA Value | Hex Base | Opacity |
 |------------|------------|----------|---------|
-| `surface-glass-darker` | `rgba(12, 8, 28, 0.8)` | `#0c081c` | 80% |
+| `--glass-darker` | `rgba(10, 5, 20, 0.6)` | `#0a0514` | 60% |
 
 **Usage**:
 - Modals and dialogs
@@ -247,30 +268,38 @@ Darker glassmorphism for elevated/modal elements.
 
 Used for the translation-failure corruption aesthetic in Japanese/Romaji text.
 
-| Token Name | Hex Value | Use Case |
-|------------|-----------|----------|
-| `corruption-magenta` | `#d94f90` | Japanese glitches (ニャー, かわいい) |
-| `corruption-purple` | `#c084fc` | Full Japanese phrases (壊れちゃう...) |
-| `corruption-cyan` | `#00d4ff` | Romaji phrases (nyaa~, ara ara~) |
-| `corruption-red` | `#ff4757` | English lewd phrases, block chars (█▓▒░) |
+Corruption is carried by the theme colours — magenta, violet, magenta2 — and
+resolves to white. **Accents are not corruption colours.** Earlier revisions
+assigned cyan to Romaji and red to lewd phrases, which gave both accents a
+semantic role the palette explicitly withholds from them.
+
+| Token | Hex Value | Use Case |
+|-------|-----------|----------|
+| `--corrupted-magenta` | `#ff00ff` | Primary corruption — Japanese glitches (ニャー, かわいい) |
+| `--corrupted-purple` | `#8b5cf6` | Deep/intimate corruption — full Japanese phrases (壊れちゃう...) |
+| `--corrupted-magenta2` | `#d94f90` | High-energy / playful corruption — Romaji (nyaa~, ara ara~) |
+| `--corrupted-white` | `#ffffff` | Settled, decoded, final readable state |
+
+Cyan and red appear in corrupted text only as **chromatic fringes** — the two
+channels of an RGB split — never as the identity of a phrase.
 
 **Implementation**:
 ```go
-// cmd/celeste/tui/streaming.go
+// celeste-cli, terminal renderer
 var (
-    corruptMagenta = lipgloss.NewStyle().Foreground(lipgloss.Color("#d94f90"))
-    corruptRed     = lipgloss.NewStyle().Foreground(lipgloss.Color("#ff4757"))
-    corruptPurple  = lipgloss.NewStyle().Foreground(lipgloss.Color("#8b5cf6"))
-    corruptCyan    = lipgloss.NewStyle().Foreground(lipgloss.Color("#00d4ff"))
+    corruptMagenta  = lipgloss.NewStyle().Foreground(lipgloss.Color("#ff00ff"))
+    corruptPurple   = lipgloss.NewStyle().Foreground(lipgloss.Color("#8b5cf6"))
+    corruptMagenta2 = lipgloss.NewStyle().Foreground(lipgloss.Color("#d94f90"))
+    settled         = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffffff"))
 )
 ```
 
 **CSS Implementation**:
 ```css
-.corrupted-text.magenta { color: var(--color-corruption-magenta); }
-.corrupted-text.purple { color: var(--color-corruption-purple); }
-.corrupted-text.cyan { color: var(--color-corruption-cyan); }
-.corrupted-text.red { color: var(--color-corruption-red); }
+.corrupted-text.magenta  { color: var(--corrupted-magenta); }
+.corrupted-text.purple   { color: var(--corrupted-purple); }
+.corrupted-text.magenta2 { color: var(--corrupted-magenta2); }
+.corrupted-text.settled  { color: var(--corrupted-white); }
 ```
 
 ---
@@ -337,9 +366,9 @@ All shadows use pink-tinted glow for consistency with accent color.
 ```css
 background: linear-gradient(
   180deg,
-  #0a0612 0%,    /* Deep void */
-  #140c28 50%,   /* Dark surface */
-  #1a0f38 100%   /* Purple tint */
+  #0a0a0a 0%,    /* --bg, page ground */
+  #0f0f1a 50%,   /* --bg-secondary */
+  #12121a 100%   /* --surface */
 );
 ```
 
@@ -451,14 +480,22 @@ background: linear-gradient(
 
 ### ANSI 256-Color Codes
 
-| Celeste Color | Hex | Closest ANSI Code | Hex Approximation |
-|---------------|-----|-------------------|-------------------|
-| Accent Pink | `#d94f90` | 168 | `#d75f87` |
-| Purple Neon | `#8b5cf6` | 141 | `#af87ff` |
-| Cyan Glow | `#00d4ff` | 45 | `#00d7ff` |
-| Success Green | `#2ed573` | 77 | `#5fd75f` |
-| Warning Yellow | `#ffa502` | 214 | `#ffaf00` |
-| Error Red | `#ff4757` | 203 | `#ff5f5f` |
+Nearest xterm-256 code for each theme colour, by squared RGB distance. Five of
+the seven land exactly; magenta2 and violet are the only ones the 256-colour
+cube cannot hit.
+
+| Theme Colour | Hex | Closest ANSI Code | Hex Approximation |
+|--------------|-----|-------------------|-------------------|
+| White — settled | `#ffffff` | 231 | `#ffffff` (exact) |
+| Magenta — primary corruption | `#ff00ff` | 201 | `#ff00ff` (exact) |
+| Violet — deep corruption | `#8b5cf6` | 99 | `#875fff` |
+| Magenta2 — high-energy | `#d94f90` | 168 | `#d75f87` |
+| Green — system | `#00ff00` | 46 | `#00ff00` (exact) |
+| Cyan — accent | `#00ffff` | 51 | `#00ffff` (exact) |
+| Red — accent / alarm | `#ff0000` | 196 | `#ff0000` (exact) |
+
+Lip Gloss takes a truecolor hex directly and downgrades it for weaker
+terminals, so prefer the real hex and let it do the approximation.
 
 **Usage in Go (Lip Gloss)**:
 ```go
@@ -502,35 +539,39 @@ style := lipgloss.NewStyle().Foreground(lipgloss.Color("168"))
   --color-accent-light: #e86ca8;
   --color-accent-dark: #b61b70;
 
-  /* Secondary Colors */
-  --color-secondary-purple: #8b5cf6;
-  --color-secondary-cyan: #00d4ff;
+  /* Corruption palette — theme colours carry state */
+  --corrupted-white: #ffffff;
+  --corrupted-magenta: #ff00ff;
+  --corrupted-purple: #8b5cf6;
+  --corrupted-magenta2: #d94f90;
+  --corrupted-black: #000000;
+  --corrupted-green: #00ff00;
 
-  /* Backgrounds */
-  --color-background-primary: #0a0612;
-  --color-background-secondary: #140c28;
+  /* Accents — compositional only, never a state signal */
+  --corrupted-cyan: #00ffff;
+  --corrupted-red: #ff0000;
+
+  /* Backgrounds — one ramp, four steps plus a checker */
+  --bg: #0a0a0a;
+  --bg-secondary: #0f0f1a;
+  --surface: #12121a;
+  --surface-elevated: #1a1a24;
+  --checker: #17171f;
 
   /* Glass Surfaces */
-  --color-surface-glass-default: rgba(20, 12, 40, 0.7);
-  --color-surface-glass-light: rgba(28, 18, 48, 0.5);
-  --color-surface-glass-darker: rgba(12, 8, 28, 0.8);
+  --glass: rgba(20, 12, 40, 0.7);
+  --glass-light: rgba(28, 18, 48, 0.5);
+  --glass-darker: rgba(10, 5, 20, 0.6);
 
   /* Text */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: rgba(255, 255, 255, 0.7);
-  --color-text-tertiary: rgba(255, 255, 255, 0.5);
-  --color-text-disabled: rgba(255, 255, 255, 0.3);
+  --text: #f5f1f8;
+  --text-secondary: #b8afc8;
 
-  /* Semantic States */
-  --color-success: #2ed573;
-  --color-warning: #ffa502;
-  --color-error: #ff4757;
-
-  /* Corruption Colors */
-  --color-corruption-magenta: #d94f90;
-  --color-corruption-purple: #c084fc;
-  --color-corruption-cyan: #00d4ff;
-  --color-corruption-red: #ff4757;
+  /* Semantic States — from the palette, not a parallel status set */
+  --success: #00ff00;
+  --warning: #d94f90;
+  --error: #ff0000;
+  --info: #8b5cf6;
 }
 ```
 
@@ -545,24 +586,29 @@ const (
     ColorAccentLight   = "#e86ca8"
     ColorAccentDark    = "#b61b70"
 
-    // Secondary Colors
-    ColorSecondaryPurple = "#8b5cf6"
-    ColorSecondaryCyan   = "#00d4ff"
+    // Theme colours — these carry corruption state
+    ColorWhite    = "#ffffff"
+    ColorMagenta  = "#ff00ff"
+    ColorPurple   = "#8b5cf6"
+    ColorMagenta2 = "#d94f90"
+    ColorBlack    = "#000000"
+    ColorGreen    = "#00ff00"
 
-    // Semantic Colors
-    ColorSuccess = "#2ed573"
-    ColorWarning = "#ffa502"
-    ColorError   = "#ff4757"
+    // Accents — compositional only, never a state signal
+    ColorCyan = "#00ffff"
+    ColorRed  = "#ff0000"
 
-    // Backgrounds
-    ColorBackgroundPrimary   = "#0a0612"
-    ColorBackgroundSecondary = "#140c28"
+    // Semantic states, drawn from the palette above
+    ColorSuccess = "#00ff00"
+    ColorWarning = "#d94f90"
+    ColorError   = "#ff0000"
+    ColorInfo    = "#8b5cf6"
 
-    // Corruption Colors (for styled text)
-    ColorCorruptionMagenta = "#d94f90"
-    ColorCorruptionPurple  = "#c084fc"
-    ColorCorruptionCyan    = "#00d4ff"
-    ColorCorruptionRed     = "#ff4757"
+    // Backgrounds — the surface ramp
+    ColorBg           = "#0a0a0a"
+    ColorBgSecondary  = "#0f0f1a"
+    ColorSurface      = "#12121a"
+    ColorSurfaceRaised = "#1a1a24"
 )
 ```
 

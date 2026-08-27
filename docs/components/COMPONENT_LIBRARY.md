@@ -458,10 +458,10 @@ This document provides a complete inventory of all Celeste design system compone
   font-size: 0.75rem;
 }
 
-.api-method.get { background: #22c55e; color: white; }
-.api-method.post { background: #3b82f6; color: white; }
-.api-method.put { background: #f59e0b; color: white; }
-.api-method.delete { background: #ef4444; color: white; }
+.api-method.get { background: #00ffff; color: black; }
+.api-method.post { background: #00ff00; color: black; }
+.api-method.put { background: #d94f90; color: white; }
+.api-method.delete { background: #ff0000; color: white; }
 ```
 
 **Usage**:

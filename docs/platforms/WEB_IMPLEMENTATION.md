@@ -248,8 +248,8 @@ Override design tokens for custom theming:
 :root {
   /* Change accent color from pink to purple */
   --color-accent: #8b5cf6;
-  --color-accent-light: #a78bfa;
-  --color-accent-dark: #7c3aed;
+  --accent-light: #a78bfa;   /* your own lighter shade */
+  --accent-dark: #7c3aed;    /* your own darker shade */
 
   /* Adjust glass opacity */
   --glass-opacity: 0.8;  /* Default is 0.7 */
@@ -772,7 +772,7 @@ All Celeste components meet **WCAG 2.1 Level AA** standards:
   min-height: 100vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #0a0612 0%, #1a0a2e 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #12121a 100%);
 }
 
 .hero-card {
@@ -1031,7 +1031,7 @@ document.querySelector('.form').addEventListener('submit', (e) => {
 }
 
 .toast-success {
-  border-left: 4px solid #10b981;  /* Green accent */
+  border-left: 4px solid #00ff00;  /* Green — success */
 }
 </style>
 ```

@@ -261,15 +261,16 @@ All design tokens are exposed as CSS custom properties in `variables.css`:
 :root {
   /* Colors */
   --color-accent: #d94f90;
-  --color-accent-light: #e86ca8;
-  --color-accent-dark: #b61b70;
-  --color-secondary-purple: #8b5cf6;
-  --color-secondary-cyan: #00d4ff;
+  --accent-light: #e86ca8;
+  --accent-dark: #b61b70;
+  --corrupted-purple: #8b5cf6;
+  --corrupted-cyan: #00ffff;
 
-  /* Backgrounds */
-  --color-bg-dark: #0a0612;
-  --color-bg-medium: #140c28;
-  --color-bg-light: #1c1230;
+  /* Backgrounds — one ramp, four steps */
+  --bg: #0a0a0a;
+  --bg-secondary: #0f0f1a;
+  --surface: #12121a;
+  --surface-elevated: #1a1a24;
 
   /* Glass effects */
   --glass-bg: rgba(20, 12, 40, 0.7);
@@ -373,10 +374,10 @@ Create a custom theme by overriding CSS variables:
 ```css
 /* custom-theme.css */
 :root {
-  /* Change primary color from pink to purple */
-  --color-accent: #8b5cf6;
-  --color-accent-light: #a78bfa;
-  --color-accent-dark: #7c3aed;
+  /* Change the primary accent from magenta2 to violet */
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;   /* your own lighter shade */
+  --accent-dark: #7c3aed;    /* your own darker shade */
 
   /* Adjust glass opacity */
   --glass-bg: rgba(20, 12, 40, 0.85);  /* More opaque */
@@ -396,36 +397,15 @@ import '@whykusanagi/corrupted-theme/dist/theme.css';
 import './custom-theme.css';  // Overrides
 ```
 
-### Dark/Light Mode Toggle
+### Theming
 
-```css
-/* Light mode overrides */
-[data-theme="light"] {
-  --color-bg-dark: #f5f5f5;
-  --color-bg-medium: #e5e5e5;
-  --color-text-primary: #000000;
-  --glass-bg: rgba(255, 255, 255, 0.7);
-}
+The package ships a single dark theme. There is no `[data-theme="light"]`
+selector in any stylesheet — an earlier revision of this page documented one,
+along with light-mode colour overrides, and none of it existed.
 
-/* Dark mode (default) */
-[data-theme="dark"] {
-  /* Uses root defaults */
-}
-```
-
-```javascript
-// Toggle theme
-function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  const next = current === 'dark' ? 'light' : 'dark';
-  document.documentElement.setAttribute('data-theme', next);
-  localStorage.setProperty('theme', next);
-}
-
-// Persist theme
-const savedTheme = localStorage.getItem('theme') || 'dark';
-document.documentElement.setAttribute('data-theme', savedTheme);
-```
+To retheme, override the tokens in `variables.css` (see the custom-theme
+example above). To build a light variant, redefine the surface ramp and the
+text tokens; nothing in the package will do it for you.
 
 ### Component-Level Customization
 
@@ -770,7 +750,7 @@ npm install @whykusanagi/corrupted-theme
 /* Before */
 .custom-element {
   color: #d94f90;
-  background: #0a0612;
+  background: #0a0a0a;
 }
 
 /* After */

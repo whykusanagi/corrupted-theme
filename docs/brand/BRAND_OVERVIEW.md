@@ -107,7 +107,7 @@ Celeste's visual identity is rooted in the concept of a **multilingual AI experi
 
 **Use Cases**: GitHub profiles, social media, documentation, presentations
 **Brand Consistency Requirements**:
-- Use official color palette (#d94f90, #8b5cf6, #00d4ff)
+- Use the official palette: magenta `#ff00ff`, violet `#8b5cf6`, white `#ffffff` are the theme colours; magenta2 `#d94f90` supports them; cyan `#00ffff` and red `#ff0000` are accents only
 - Apply translation-failure corruption to technical terms
 - Include corruption-themed emojis (👁️, ♥, ✧, ☾)
 - Maintain 25-40% corruption intensity for readability
@@ -123,7 +123,7 @@ Celeste's visual identity is rooted in the concept of a **multilingual AI experi
 │  1. Color System                        │
 │     - Accent: #d94f90 (Celeste Pink)   │
 │     - Secondary: #8b5cf6 (Purple Neon)  │
-│     - Tertiary: #00d4ff (Cyan Glow)     │
+│     - Accent:   #00ffff (cyan)          │
 │     - Glass: rgba(20, 12, 40, 0.7)      │
 ├─────────────────────────────────────────┤
 │  2. Typography                          │
@@ -266,7 +266,7 @@ All text corruption uses **linguistic mixing**, not symbolic substitution:
 --color-accent-dark:   #b61b70;  /* Active state */
 
 --color-secondary:     #8b5cf6;  /* Purple Neon */
---color-tertiary:      #00d4ff;  /* Cyan Glow */
+--corrupted-cyan:      #00ffff;  /* accent, never a state signal */
 
 --color-glass:         rgba(20, 12, 40, 0.7);
 --color-glass-light:   rgba(28, 18, 48, 0.5);

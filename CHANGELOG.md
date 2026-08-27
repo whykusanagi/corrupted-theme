@@ -91,6 +91,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `--color-success` / `--color-warning`, which are defined nowhere in the
   package — they rendered with no colour at all.
 
+### Subresource Integrity
+
+SHA-384 hashes for the CDN artifacts, verified against what
+`cdn.whykusanagi.xyz` and `cdn.nikkers.cc` actually serve at `@0.3.3`.
+
+| File | Integrity |
+|------|-----------|
+| `dist/clipboard-helpers.global.js` | `sha384-UuSlpAWcN5KD5lAax35jyrpHK8Napkyph12QjqPdUgtDoUOiw9fnluFSSTih2f3M` |
+| `dist/corrupted-text.global.js` | `sha384-bqSoNlkNdxHXdCQK9u5r1T0AdxckV/Dme1PbZiIUenfYiUtkDKBeoQEG1Lrs2HY6` |
+| `dist/manifest.json` | `sha384-vsxvBJClXOusq1PXmpwQFDngXFc7uMeSpFlOGmLQ5SH/O19G1PTrs6L8NFRQvI70` |
+| `dist/nikke-utilities.css` | `sha384-dxF1Y2qQTqxNRq1OIO+kiY6OzW4XORs5xEqDnywJYmnRSssdhb/2Sx2ijTxhja/G` |
+| `dist/theme.min.css` | `sha384-04q9N4dM+0xRBPkMGZYUR1OEIBS0j3gc0fFj1XRSmQqNTgNmv7bJg+0PazCmcNX1` |
+| `dist/timer-registry.global.js` | `sha384-IiU5Z1bTQXBlf9+GN1QAGf9iYAZAJk/LPo2wDktaxKEqZ6H507QZ+EKe9TUzGh+G` |
+| `dist/toast.global.js` | `sha384-E6pgdAS3p1sh+1jLBw3pUw07jUbpNPFFHo0o+D/CWY7yqSDB7T51x/Zr2dTJmpI4` |
+
+```html
+<link rel="stylesheet"
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css"
+      integrity="sha384-04q9N4dM+0xRBPkMGZYUR1OEIBS0j3gc0fFj1XRSmQqNTgNmv7bJg+0PazCmcNX1"
+      crossorigin="anonymous">
+```
+
 ## [0.3.2] - 2026-07-27
 
 > Six new components for data and generative visuals, plus the palette

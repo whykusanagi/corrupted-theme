@@ -239,7 +239,7 @@ func RenderOption(label string, selected bool) string {
             Render("[•] " + label)  // Pink + bullet
     }
     return lipgloss.NewStyle().
-        Foreground(lipgloss.Color("#606060")).
+        Foreground(lipgloss.Color("#7a7085")).
         Render("[ ] " + label)  // Gray + empty bracket
 }
 
@@ -331,7 +331,7 @@ func RenderProgress(percent float64, width int) string {
 }
 
 .alert-success {
-  border-color: #10b981;  /* Green */
+  border-color: #00ff00;  /* Green — success */
 }
 
 .alert-error {
@@ -347,13 +347,13 @@ func RenderAlert(message string, severity string) string {
 
     switch severity {
     case "success":
-        color = lipgloss.Color("#10b981")  // Green
+        color = lipgloss.Color("#00ff00")  // Green — success
     case "error":
         color = lipgloss.Color("#ef4444")  // Red
     case "warning":
         color = lipgloss.Color("#f59e0b")  // Orange
     default:
-        color = lipgloss.Color("#3b82f6")  // Blue
+        color = lipgloss.Color("#8b5cf6")  // Violet — info
     }
 
     return lipgloss.NewStyle().
@@ -408,7 +408,7 @@ func RenderAlert(message string, severity string) string {
 }
 
 .stat-change {
-  color: #10b981;  /* Green for positive */
+  color: #00ff00;  /* Green for positive */
   font-size: 0.875rem;
 }
 ```
@@ -424,7 +424,7 @@ func RenderStatCard(label string, value int, change float64) string {
         Bold(true).
         Render(fmt.Sprintf("%d", value))
 
-    changeColor := lipgloss.Color("#10b981")  // Green
+    changeColor := lipgloss.Color("#00ff00")  // Green
     if change < 0 {
         changeColor = lipgloss.Color("#ef4444")  // Red
     }

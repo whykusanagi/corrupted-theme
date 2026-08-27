@@ -248,8 +248,8 @@ Override design tokens for custom theming:
 :root {
   /* Change accent color from pink to purple */
   --color-accent: #8b5cf6;
-  --color-accent-light: #a78bfa;
-  --color-accent-dark: #7c3aed;
+  --accent-light: #a78bfa;   /* your own lighter shade */
+  --accent-dark: #7c3aed;    /* your own darker shade */
 
   /* Adjust glass opacity */
   --glass-opacity: 0.8;  /* Default is 0.7 */
@@ -656,11 +656,11 @@ All Celeste components meet **WCAG 2.1 Level AA** standards:
 #### Color Contrast
 
 ```css
-/* ✅ All combinations tested */
---color-bg: #0a0612;         /* Dark background */
---color-text: #ffffff;       /* White text: 21:1 ratio (AAA) */
---color-accent: #d94f90;     /* Pink accent: 7.2:1 ratio (AAA) */
---color-muted: #a0a0a0;      /* Muted text: 10.5:1 ratio (AAA) */
+/* Measured against --bg. Not all reach AAA — magenta2 is AA. */
+--color-bg: #0a0a0a;         /* Dark background — the shipped --bg */
+--color-text: #ffffff;       /* White text: 19.8:1 (AAA) */
+--color-accent: #d94f90;     /* Magenta2: 5.2:1 (AA — not AAA) */
+--color-muted: #b8afc8;      /* Muted text: 9.4:1 (AAA) — the shipped --text-secondary */
 ```
 
 #### Keyboard Navigation
@@ -772,7 +772,7 @@ All Celeste components meet **WCAG 2.1 Level AA** standards:
   min-height: 100vh;
   display: flex;
   align-items: center;
-  background: linear-gradient(135deg, #0a0612 0%, #1a0a2e 100%);
+  background: linear-gradient(135deg, #0a0a0a 0%, #12121a 100%);
 }
 
 .hero-card {
@@ -1031,7 +1031,7 @@ document.querySelector('.form').addEventListener('submit', (e) => {
 }
 
 .toast-success {
-  border-left: 4px solid #10b981;  /* Green accent */
+  border-left: 4px solid #00ff00;  /* Green — success */
 }
 </style>
 ```

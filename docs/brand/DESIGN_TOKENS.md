@@ -1,7 +1,7 @@
-# Celeste Brand System - Design Tokens
+# Design Tokens
 
-**Version**: 0.3.1
-**Last Updated**: 2026-07-09
+**Package**: `@whykusanagi/corrupted-theme` 0.3.3
+**Last Updated**: 2026-08-26
 **Token Format**: W3C Design Tokens Community Group (DTCG)
 **Status**: 🔴 **CRITICAL FOUNDATION DOCUMENT**
 
@@ -20,7 +20,7 @@ Design tokens are **platform-agnostic design decisions** stored in a structured 
 
 **Celeste's Implementation**:
 - **Master file**: `design-tokens.json` (W3C DTCG format — full token set)
-- **Canonical color subset (0.2.0)**: `src/data/colors.json` — the 6-color corruption palette and semantic mapping, published with the npm package as a machine-readable source of truth. Values are identical to the color tokens below. See [`docs/CROSS_LANGUAGE_CONTRACT.md`](../CROSS_LANGUAGE_CONTRACT.md) for the schema.
+- **Canonical colour source**: `src/data/colors.json` — palette, surfaces and element colours, published with the npm package and machine-readable. See [`docs/CROSS_LANGUAGE_CONTRACT.md`](../CROSS_LANGUAGE_CONTRACT.md) for its schema. Where the tokens below disagree with it, `colors.json` wins. (This page previously certified the two were identical while documenting a palette that shipped nowhere.)
 - **Generated files**:
   - `tokens.css` (CSS custom properties for web)
   - `tokens.go` (Go constants for CLI)
@@ -162,24 +162,24 @@ const (
         "$description": "Purple Neon - secondary accent"
       },
       "cyan": {
-        "$value": "#00d4ff",
+        "$value": "#00ffff",
         "$type": "color",
-        "$description": "Cyan Glow - tertiary accent"
+        "$description": "Cyan - accent. A compositional tool, never a state signal."
       },
       "red": {
-        "$value": "#ff4757",
+        "$value": "#ff0000",
         "$type": "color",
-        "$description": "Error/danger state"
+        "$description": "Red - accent. Reads as alarm, but is not reserved for it."
       },
       "green": {
-        "$value": "#2ed573",
+        "$value": "#00ff00",
         "$type": "color",
-        "$description": "Success state"
+        "$description": "Green - system/matrix callback; also the success state"
       },
-      "yellow": {
-        "$value": "#ffa502",
+      "magenta2": {
+        "$value": "#d94f90",
         "$type": "color",
-        "$description": "Warning state"
+        "$description": "High-energy corruption; also the warning state. The theme has no yellow."
       }
     }
   }
@@ -221,14 +221,14 @@ const (
   "color": {
     "background": {
       "primary": {
-        "$value": "#0a0612",
+        "$value": "#0a0a0a",
         "$type": "color",
-        "$description": "Page background (deep purple-black)"
+        "$description": "Page ground (--bg). Backgrounds carry no corruption state."
       },
       "secondary": {
-        "$value": "#140c28",
+        "$value": "#0f0f1a",
         "$type": "color",
-        "$description": "Card/section background"
+        "$description": "Section ground (--bg-secondary). See also --surface #12121a and --surface-elevated #1a1a24."
       }
     }
   }
@@ -278,19 +278,19 @@ const (
         "$description": "Japanese glitches (ニャー, かわいい)"
       },
       "purple": {
-        "$value": "#c084fc",
+        "$value": "#8b5cf6",
         "$type": "color",
-        "$description": "Full Japanese phrases (壊れちゃう...)"
+        "$description": "Deep/intimate corruption - full Japanese phrases"
       },
-      "cyan": {
-        "$value": "#00d4ff",
+      "magenta2": {
+        "$value": "#d94f90",
         "$type": "color",
-        "$description": "Romaji phrases (nyaa~, ara ara~)"
+        "$description": "High-energy corruption - Romaji phrases (nyaa~, ara ara~)"
       },
-      "red": {
-        "$value": "#ff4757",
+      "white": {
+        "$value": "#ffffff",
         "$type": "color",
-        "$description": "English lewd phrases, block chars"
+        "$description": "Settled, decoded, final readable state"
       }
     }
   }
@@ -854,7 +854,7 @@ const (
     ColorAccentDark    = "#b61b70"
 
     ColorSecondaryPurple = "#8b5cf6"
-    ColorSecondaryCyan   = "#00d4ff"
+    ColorCyan            = "#00ffff"
 
     // Spacing (for terminal, use character counts)
     SpacingXS = 1 // 1 space
@@ -895,7 +895,7 @@ export const tokens = {
     },
     secondary: {
       purple: '#8b5cf6',
-      cyan: '#00d4ff',
+      cyan: '#00ffff',
     },
   },
   spacing: {

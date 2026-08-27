@@ -1450,7 +1450,7 @@ Override only the tokens you need. The defaults intentionally mirror the showcas
   --glass: rgba(15, 10, 25, 0.65);
   --glass-light: rgba(24, 14, 42, 0.45);
   --glass-darker: rgba(10, 5, 20, 0.65);
-  --text: #f4e9ff;
+  --text: #f5f1f8;
   --text-secondary: #b8afc8;
   --transition-normal: 0.3s ease;
   --transition-fast: 0.15s ease;

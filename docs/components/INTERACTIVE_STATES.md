@@ -240,7 +240,7 @@ Component Lifecycle
 **Purpose**: Indicates validation error or failed action
 
 **Visual characteristics**:
-- **Border**: Red (`#ff4757`) with 70% opacity
+- **Border**: Red (`#ff0000`) with 70% opacity
 - **Background**: Red tint (optional)
 - **Shake animation**: On error trigger
 - **Error message**: Below element
@@ -281,7 +281,7 @@ Component Lifecycle
 **Purpose**: Indicates successful action or valid input
 
 **Visual characteristics**:
-- **Border**: Green (`#2ed573`) with 70% opacity
+- **Border**: Green (`#00ff00`) with 70% opacity
 - **Background**: Green tint (optional)
 - **Check icon**: Animated checkmark
 - **Success message**: Below element
@@ -492,7 +492,7 @@ spinner := frames[frame % len(frames)]
 **Implementation**:
 ```go
 style := lipgloss.NewStyle().
-    Foreground(lipgloss.Color("#ff4757"))
+    Foreground(lipgloss.Color("#ff0000"))
 
 return "🔴 " + style.Render("Error: " + message)
 ```
@@ -509,7 +509,7 @@ return "🔴 " + style.Render("Error: " + message)
 **Implementation**:
 ```go
 style := lipgloss.NewStyle().
-    Foreground(lipgloss.Color("#2ed573"))
+    Foreground(lipgloss.Color("#00ff00"))
 
 return "🟢 " + style.Render("Success: " + message)
 ```

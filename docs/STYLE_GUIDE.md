@@ -219,14 +219,14 @@ Characters randomly get replaced with Japanese equivalents during "corruption":
 Defined in `/cmd/celeste/tui/styles.go`:
 
 ### Primary Colors
-- **Pink/Magenta** (`#d94f90`, `#ff4da6`) - Primary accent, headers
-- **Purple Void** (`#8b5cf6`, `#c084fc`) - Secondary elements
-- **Cyan Glitch** (`#00d4ff`) - Digital effects
+- **Magenta2** (`#d94f90`) - Primary accent, headers
+- **Violet** (`#8b5cf6`) - Deep corruption, secondary elements
+- **Cyan** (`#00ffff`) - Accent only: highlights and RGB-split fringes, never a state signal
 
 ### Background Colors
 - **Deep Void** (`#0a0a0a`) - Main background
 - **Void Secondary** (`#0f0f1a`) - Secondary background
-- **Glassmorphic** (`#1a1a2e`) - Overlays
+- **Glassmorphic** (`#1a1a24`, `--surface-elevated`) - Overlays
 
 ### Functional Colors
 - **Success**: Green (`#00ff00`) — the system/matrix colour
@@ -235,10 +235,10 @@ Defined in `/cmd/celeste/tui/styles.go`:
 - **Info**: Violet (`#8b5cf6`)
 
 ### Corruption/Glitch Colors
-- **Red Corruption** (`#ff4757`)
-- **Pink Corruption** (`#ff6b9d`)
-- **Purple Corruption** (`#c084fc`)
-- **Cyan Glitch** (`#00d4ff`)
+- **Red** (`#ff0000`) - accent
+- **Magenta** (`#ff00ff`) - primary corruption
+- **Violet** (`#8b5cf6`) - deep corruption
+- **Cyan** (`#00ffff`) - accent
 
 ---
 

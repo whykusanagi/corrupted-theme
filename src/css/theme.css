@@ -28,6 +28,10 @@
 /* ========== EXTENSION COMPONENTS ========== */
 @import './extensions.css';
 
+/* ========== EDITORIAL & DATA-PAGE PRIMITIVES ========== */
+/* Article masthead, prose blocks, stat tiles, sparklines, award rows (#76). */
+@import './editorial.css';
+
 /* ========== TOAST NOTIFICATIONS (0.2.1+) ========== */
 /* Paired with src/lib/toast.js — required for Toast widget visibility. */
 @import './toast.css';

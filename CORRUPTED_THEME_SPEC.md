@@ -963,10 +963,14 @@ function corruptedCountdown(label, startValue, endValue) {
 - CSS3 Animations
 - CSS3 Text Shadow
 - CSS3 `backdrop-filter` (for glass morphism)
+- CSS `color-mix()` for the editorial primitives' translucent accent fills
+  (`editorial.css`, Chromium 111 / Safari 16.2 / Firefox 113)
 - JavaScript `setInterval`
 
 **Fallbacks:**
 - **No backdrop-filter**: Use solid background
+- **No `color-mix()`**: the editorial tints and dimmed sparkline bars drop out;
+  text, borders and layout are unaffected
 - **No CSS animations**: Show static corrupted text
 - **No JavaScript**: Show final text immediately
 

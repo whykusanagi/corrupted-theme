@@ -65,6 +65,12 @@
   --text-secondary: #b8afc8;   /* Secondary text */
   --text-muted: #7a7085;       /* Muted/disabled text */
 
+  /* ========== TYPE FAMILIES ========== */
+  /* Referenced by components.css since 0.2.x but never declared, so every use
+     fell through to its 'Courier New' fallback. Consumers each invented their
+     own (--mono, --upd-mono) in the meantime. */
+  --font-mono: ui-monospace, 'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace;
+
   /* ========== GRADIENTS ========== */
   --gradient-accent: linear-gradient(135deg, #d94f90 0%, #b61b70 100%);
   --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #d94f90 100%);

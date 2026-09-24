@@ -367,6 +367,7 @@ const DOCS_ALLOWED = {
   '#2ed573': 'named in prose as a retired status green',
   '#ffa502': 'named in prose as a retired status amber',
   '#ff4757': 'named in prose as a retired status red',
+  '#e0a106': 'named in prose as the downstream .ct-warn amber the editorial spec retires',
 
   // Hex bases of the real rgba() glass tokens.
   '#1c1230': 'hex base of --glass-light rgba(28, 18, 48, 0.5)',

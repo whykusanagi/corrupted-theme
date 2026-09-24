@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Build toolchain majors** (dev-only; consumers unaffected): `cssnano` 8 → 9,
+  `postcss-cli` 11 → 12, `postcss-import` 16 → 17. All three now require Node
+  22 to *build* — cssnano 9 specifically `^22.22.3 || ^24.15.0 || >=26`. CI
+  already builds on 22; `engines` stays `>=18` because it constrains consumers,
+  who never run the build. `dist/theme.min.css` output is equivalent: the only
+  differences are `calc(var(--z-modal) - 1)` minifying as
+  `calc(-1 + var(--z-modal))`, and the `.ratio-*` custom properties keeping a
+  `calc()` wrapper.
+- **CI actions**: `actions/setup-node` v6 → v7.0.0 and
+  `gitleaks/gitleaks-action` v2 → v3.0.0. The gitleaks bump is a fix, not
+  housekeeping — v2 ran on the Node 20 Actions runtime, which GitHub removed on
+  2026-09-16. Both remain SHA-pinned.
+
 ## [0.3.3] - 2026-08-25
 
 > One new component and one correction that runs deeper than it looks: the

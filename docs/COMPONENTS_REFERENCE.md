@@ -15,6 +15,7 @@ This document provides a comprehensive reference for all components available in
    - [Modals](#modals) | [Tooltips](#tooltips) | [Dropdowns](#dropdowns) | [Tabs](#tabs) | [Collapse](#collapse) | [Carousel](#carousel)
 4. [Lifecycle Management](#lifecycle-management)
 5. [Data Display](#data-display)
+   - [Editorial & Data Pages](#editorial--data-pages)
 6. [Navigation](#navigation)
 7. [API Documentation](#api-documentation)
 8. [Nikke Components](#nikke-components)
@@ -411,6 +412,245 @@ gallery1.destroy(); // Only destroys gallery1
   <div class="list-group-item disabled">Disabled Item</div>
 </div>
 ```
+
+---
+
+## Editorial & Data Pages
+
+`src/css/editorial.css`, bundled in `theme.css` and exported as `./editorial`
+(unreleased; next version after 0.3.3). These are long-form article and recap-page primitives: a masthead,
+prose blocks, stat tiles, bar sparklines and award rows. Every class is
+`ct-`-prefixed. Live demo: [`examples/editorial.html`](../examples/editorial.html).
+Design decisions: [`docs/specs/EDITORIAL_PRIMITIVES.md`](specs/EDITORIAL_PRIMITIVES.md).
+
+The **markup is the contract**, not just the class list. Several blocks only
+style correctly in the wrapper shown here, as noted below.
+
+**Knobs.** These are custom properties with defaults. Set them on any ancestor
+or inline.
+
+| Property | Default | Controls |
+|---|---|---|
+| `--ct-measure` | `47rem` | Width of running text inside `.ct-body` |
+| `--ct-measure-wide` | `62rem` | Width of `.ct-table` inside `.ct-body` |
+| `--ct-cols` | `2` | Column count of `.ct-cols` |
+| `--ct-grid-min` | `260px` | Minimum cell width of `.ct-grid` |
+| `--ct-spark-h` | `72px` | Height of `.ct-spark` |
+| `--ct-tone` | `--accent` | Callout tick and title colour |
+
+### Article frame
+
+```html
+<article class="ct-article">
+  <header class="ct-masthead">
+    <div class="ct-kicker"><span class="ct-kicker-dot" aria-hidden="true"></span>Patch notes</div>
+    <h1 class="ct-title">Season recap</h1>
+    <p class="ct-dek">One-line standfirst.</p>
+    <time class="ct-dateline" datetime="2026-09-24">2026.09.24</time>
+  </header>
+  <div class="ct-body">
+    <!-- blocks below -->
+  </div>
+</article>
+```
+
+The kicker dot pulses only when the reader hasn't asked for reduced motion.
+`.ct-title` is gradient text with a forced-colours fallback.
+
+### Prose and numbered sections
+
+Direct children of `.ct-body` are clamped to `--ct-measure`. Tables widen to
+`--ct-measure-wide`. Figures, section headings, stat rows, columns, grids,
+tiles, sparklines and awards run full width.
+
+```html
+<div class="ct-section-h">
+  <span class="ct-section-n" aria-hidden="true">01</span>
+  <h2 class="ct-section-t">What changed</h2>
+</div>
+<p class="ct-p">Body text with <strong>emphasis</strong> and a <span class="ct-hi">highlight</span>.</p>
+<ul class="ct-list"><li>List item</li></ul>
+<h3 class="ct-h3">Sub-heading</h3>
+```
+
+- The number goes in a sibling span **outside** the `<h2>`, so the heading's
+  accessible name is just its title. A bare `<h2>` in `.ct-body` gets no
+  section styling.
+- Adding `decode-on-scroll` to `.ct-section-t` or `.ct-h3` hooks them into
+  `scroll-decode.js`. It is optional, and nothing in the CSS depends on it.
+
+### Table
+
+```html
+<figure class="ct-table">
+  <div class="ct-table-scroll" tabindex="0" role="region" aria-label="Unit changes">
+    <table>
+      <thead><tr><th scope="col">Unit</th><th scope="col" style="text-align:right">Δ</th></tr></thead>
+      <tbody><tr><td>Example</td><td style="text-align:right">+4%</td></tr></tbody>
+    </table>
+  </div>
+  <figcaption>Caption.</figcaption>
+</figure>
+```
+
+The scroll wrapper stops a wide table from pushing the page sideways. It needs
+`tabindex`, `role` and a label so keyboard users can scroll it.
+
+### Figure
+
+```html
+<figure class="ct-figure"><img src="…" alt="…"><figcaption>Caption.</figcaption></figure>
+```
+
+### Callout
+
+```html
+<aside class="ct-callout ct-info">
+  <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Note</div>
+  <p>Body.</p>
+</aside>
+```
+
+Tones: `ct-key` (accent), `ct-info` (violet), `ct-warn` (red). The title's
+words carry the meaning and the tone is only emphasis, so none of these is a
+status colour. Override with `style="--ct-tone: …"`.
+
+### Quote
+
+```html
+<blockquote class="ct-quote">
+  <div class="ct-quote-text">Quoted text.</div>
+  <footer class="ct-quote-attr">— Name</footer>
+</blockquote>
+```
+
+### Columns and grid
+
+```html
+<div class="ct-cols" style="--ct-cols:3">
+  <div class="ct-col">…</div><div class="ct-col">…</div><div class="ct-col">…</div>
+</div>
+
+<div class="ct-grid" style="--ct-grid-min:220px">
+  <div class="ct-cell">
+    <div class="ct-cell-eyebrow">Eyebrow</div>
+    <h4 class="ct-cell-title">Title</h4>
+    <div class="ct-badges"><span class="ct-badge">Tag</span></div>
+    <p class="ct-p">Any blocks.</p>
+  </div>
+</div>
+```
+
+`.ct-cols` stacks to one column at 720px and below.
+
+### Stat row
+
+```html
+<div class="ct-stat-row">
+  <div class="ct-stat">
+    <div class="ct-stat-value">1,204</div>
+    <div class="ct-stat-label">Pulls</div>
+    <div class="ct-stat-sub">Optional context</div>
+  </div>
+</div>
+```
+
+A `.ct-stat` must sit inside a `.ct-stat-row`. A loose one is unsupported.
+
+### Stat tiles
+
+```html
+<div class="ct-tiles">
+  <div class="ct-tile">
+    <div class="ct-tile-label">Peak viewers</div>
+    <div class="ct-tile-value">3,410</div>
+    <div class="ct-tile-delta is-up">▲ 12% vs last season</div>
+  </div>
+</div>
+```
+
+The delta's **text** carries the direction (`▲`, `+`). `.is-up` adds emphasis
+but never the meaning. Green is not used, because the palette reserves it for
+"system". Tiles sit in two columns, and one at 560px and below.
+
+### Bar sparkline
+
+```html
+<figure class="ct-spark-wrap">
+  <figcaption class="ct-spark-cap" id="viewers-cap">Viewers per stream</figcaption>
+  <div class="ct-spark" role="img" aria-labelledby="viewers-cap" aria-describedby="viewers-data">
+    <span class="ct-spark-bar" style="--v:.42"></span>
+    <span class="ct-spark-bar is-empty" style="--v:0"></span>
+    <span class="ct-spark-bar" style="--v:1"></span>
+  </div>
+  <div class="ct-spark-axis"><span>Jul</span><span>Sep</span></div>
+  <p class="visually-hidden" id="viewers-data">Jul 420, Aug none, Sep 1000.</p>
+</figure>
+```
+
+- Bar height is a unitless `--v` from 0 to 1. This replaces the inline
+  `height:%` that the downstream copies used. From JS, use
+  `bar.style.setProperty('--v', n)`.
+- The last bar is full accent. `.is-flat` dims every bar, and `.is-empty` is a
+  2px stub.
+- The bars carry nothing for assistive tech, so the chart needs `role="img"`
+  and a text alternative.
+- **CSP:** the inline `style` attribute needs `style-src-attr 'unsafe-inline'`.
+  Under a strict policy, set `--v` through the CSSOM instead.
+
+### Award rows
+
+```html
+<div class="ct-awards">
+  <div class="ct-award">
+    <div class="ct-award-cat">Most chat messages</div>
+    <div class="ct-award-winner">handle_here</div>
+    <div class="ct-award-detail">One line on why.</div>
+    <div class="ct-award-stat">2,981</div>
+  </div>
+</div>
+```
+
+The stat spans the right column, and moves under the detail at 560px and
+below.
+
+### Label contrast
+
+Small labels (stat and tile labels, sparkline caption and axis, figcaptions,
+the kicker, quote attribution) use `--text-secondary`, not `--text-muted`.
+Measured on `--surface-elevated`, the darkest surface these blocks sit on:
+
+| Token | Pair | Ratio |
+|---|---|---|
+| `--text-secondary` | `#b8afc8` on `#1a1a24` | 8.2:1, used |
+| `--text-muted` | `#7a7085` on `#1a1a24` | 3.7:1, below AA for small text, so not used |
+
+### Migrating from a downstream copy
+
+| Downstream | Theme |
+|---|---|
+| `.upd-wrap` / `-header` / `-kicker` + `.dot` / `-h1` / `-sub` / `-datestamp` | `.ct-article` / `.ct-masthead` / `.ct-kicker` + `.ct-kicker-dot` / `.ct-title` / `.ct-dek` / `.ct-dateline` |
+| `.tiles` `.tile` `.k` `.v` `.d` (`.d.mut`) | `.ct-tiles` `.ct-tile` `.ct-tile-label` `.ct-tile-value` `.ct-tile-delta` (neutral is now the default) |
+| `.spark-wrap` `.spark-cap` `.spark` `.b` `.b.empty` `.spark.flat` `.spark-x` | `.ct-spark-wrap` `.ct-spark-cap` `.ct-spark` `.ct-spark-bar` `.is-empty` `.ct-spark.is-flat` `.ct-spark-axis` |
+| `style="height:42%"` on a bar | `style="--v:.42"` |
+| `.awards-list` `.award-row` `.award-cat` / `-winner` / `-detail` / `-stat` | `.ct-awards` `.ct-award` `.ct-award-cat` / `-winner` / `-detail` / `-stat` |
+| `--mono`, `--upd-mono` | `--font-mono` |
+| `--surface-2` `--line` `--faint` `--muted` `--upd-pink` | `--surface-elevated` `--border` `--text-secondary`* `--text-secondary` `--accent-light` |
+
+\* `--faint` mapped to `--text-muted` downstream, which fails AA for these
+label sizes (see above).
+
+The `.ct-*` block names are unchanged from nikke's `content-blocks.ts`.
+Delete the page's copy of the styles and keep the markup, except for these
+changes:
+
+- The `.ct-info` tone is now violet, not cyan.
+- The `.ct-warn` tone is now red, not amber.
+- Add `aria-hidden="true"` to `.ct-section-n`.
+- Add `tabindex`, `role` and `aria-label` to `.ct-table-scroll`.
+
+`.ct-media`, `.ct-attrs` and `.ct-entity` are **not** in the theme yet. Keep
+them local for now.
 
 ---
 

@@ -9,7 +9,10 @@ Be respectful and constructive in all interactions. We welcome contributors of a
 ## Getting Started
 
 ### Prerequisites
-- Node.js 14.0.0 or higher
+- Node.js 22.22.3 or higher (or 24.15+) to **build and test**. The build
+  toolchain (cssnano 9, postcss-cli 12) requires it; older Node prints
+  `EBADENGINE` warnings on install and may fail to build. The package itself
+  still supports Node 18+ for consumers, who never run the build.
 - npm or yarn
 - A code editor (VS Code recommended)
 
@@ -22,6 +25,10 @@ cd corrupted-theme
 
 # Install dependencies
 npm install
+
+# Build and run the full suite (pretest generates the data module and
+# dist/manifest.json, so this works on a fresh clone)
+npm run build && npm test
 
 # Watch for CSS changes during development
 npm run watch

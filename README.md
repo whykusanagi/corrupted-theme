@@ -19,10 +19,11 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 12. [Animations & Experience Layer](#animations--experience-layer)
 13. [Lifecycle Management](#lifecycle-management)
 14. [Nikke Utilities](#nikke-utilities)
-15. [Extension Components](#extension-components)
-16. [Customization & Tokens](#customization--tokens)
-17. [Coding Standards](#coding-standards)
-18. [Development Workflow](#development-workflow)
+15. [Editorial & Data Pages](#editorial--data-pages)
+16. [Extension Components](#extension-components)
+17. [Customization & Tokens](#customization--tokens)
+18. [Coding Standards](#coding-standards)
+19. [Development Workflow](#development-workflow)
 19. [Testing & QA Expectations](#testing--qa-expectations)
 20. [Support](#support)
 21. [Celeste Widget Integration](#celeste-widget-integration-optional)
@@ -1355,6 +1356,35 @@ These ensure no orphaned timers or listeners remain after `destroy()`.
 </div>
 ```
 All Nikke-specific helpers live alongside the main utilities (`src/css/nikke-utilities.css`) and observe the same token set, so there are no visual disconnects between game-specific and general UI.
+
+## Editorial & Data Pages
+
+Long-form article and recap-page primitives: a masthead, numbered sections,
+tables, callouts, quotes, columns, grids, stat rows, stat tiles, bar
+sparklines and award rows. They ship in `theme.css` (and as
+`@whykusanagi/corrupted-theme/editorial`), every class is `ct-`-prefixed,
+and the markup is the contract.
+
+```html
+<article class="ct-article">
+  <header class="ct-masthead">
+    <div class="ct-kicker"><span class="ct-kicker-dot" aria-hidden="true"></span>Season recap</div>
+    <h1 class="ct-title">Signal Decay, Season 3</h1>
+  </header>
+  <div class="ct-body">
+    <div class="ct-section-h">
+      <span class="ct-section-n" aria-hidden="true">01</span>
+      <h2 class="ct-section-t">The numbers</h2>
+    </div>
+    <p class="ct-p">Running text is held to a readable measure.</p>
+  </div>
+</article>
+```
+
+Full markup for every block, the `--ct-*` knobs, and a migration table from
+the downstream copies are in
+[`docs/COMPONENTS_REFERENCE.md`](docs/COMPONENTS_REFERENCE.md#editorial--data-pages).
+Demo: [`examples/editorial.html`](examples/editorial.html).
 
 ## Extension Components
 

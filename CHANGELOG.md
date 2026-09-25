@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Editorial & data-page primitives** (`src/css/editorial.css`, bundled in
+  `theme.css`, exported as `./editorial`) — #76. The article masthead, prose
+  blocks (sections, tables, figures, callouts, quotes, columns, grids, stat
+  rows), stat tiles, bar sparklines and award rows that four consumers had
+  been re-deriving by hand, harvested from nikke and stream-blog so one copy
+  ships in the theme. +2.1 KB gzipped on `dist/theme.min.css`.
+  - Every class is `ct-`-prefixed. The `.ct-*` block names are unchanged from
+    nikke; the masthead and data-display classes are renamed from their
+    downstream names (`.upd-*`, `.tile`, `.spark`, `.award-row`), with a
+    migration table in `docs/COMPONENTS_REFERENCE.md`.
+  - Colour is tokens only. Callout tones are accent, violet (`ct-info`, was
+    cyan downstream) and red (`ct-warn`, was an off-palette amber); a tile's
+    direction lives in its text, not in green.
+  - Small labels use `--text-secondary`: `--text-muted` measures 3.7–4.2:1 on
+    these surfaces, under AA for text that size.
+  - Sparkline bars take a unitless `--v` (0–1) instead of inline `height:%`.
+  - Fixes bugs the downstream copies carried: `.ct-cols` never going
+    multi-column, empty sparkline bars never rendering as empty, and the
+    global `footer` rule drawing a divider inside every quote attribution.
+  - Demo: `examples/editorial.html`, which `tests/data/editorial.test.js`
+    requires to exercise every class the module defines.
+- **`--font-mono`** token. `components.css` has referenced it since 0.2.x but
+  it was never declared, so `.event-bar`, `.logo-banner` and `.clock-widget`
+  text fell back to Courier New; they now get the declared monospace stack.
+
 ### Changed
 
 - **Build toolchain majors** (dev-only; consumers unaffected): `cssnano` 8 → 9,
@@ -17,6 +44,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   differences are `calc(var(--z-modal) - 1)` minifying as
   `calc(-1 + var(--z-modal))`, and the `.ratio-*` custom properties keeping a
   `calc()` wrapper.
+- **`npm test` works on a fresh clone.** `pretest` now also runs
+  `manifest:generate`; `documented-defaults.test.js` imports
+  `dist/manifest.json`, which only `prepublishOnly` used to create, so a
+  contributor's first `npm test` died before running a single test.
+  CONTRIBUTING.md's Node prerequisite goes from 14 to the 22.22.3 the build
+  toolchain actually needs.
 - **CI actions**: `actions/setup-node` v6 → v7.0.0 and
   `gitleaks/gitleaks-action` v2 → v3.0.0. The gitleaks bump is a fix, not
   housekeeping — v2 ran on the Node 20 Actions runtime, which GitHub removed on

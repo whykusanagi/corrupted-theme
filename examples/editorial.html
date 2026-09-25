@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editorial &amp; Data Pages — corrupted-theme</title>
+<!--
+  Editorial & data-page primitives (src/css/editorial.css, #76).
+
+  Every class the module defines appears on this page at least once —
+  tests/data/editorial.test.js enforces that, so this page doubles as the
+  living markup contract. Content is placeholder: a fictional season recap.
+
+  The only JS is the optional enhancement: section titles carrying
+  `decode-on-scroll` are handed to ScrollDecode. Without it (or with reduced
+  motion) they are plain headings; the CSS depends on nothing here.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; }
+  main { padding-top: var(--navbar-h); }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html" class="active">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-clone"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="editorial.html" class="active"><i class="fas fa-newspaper"></i> Editorial & Data</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html">
+            <i class="fas fa-wand-magic-sparkles"></i> Effects
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="corrupted-flares.html"><i class="fas fa-wand-magic-sparkles"></i> Corrupted Flares</a>
+            <a href="corrupted-flares-in-situ.html"><i class="fas fa-image"></i> Flares In Situ</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
+            <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="stream-overlays.html">
+            <i class="fas fa-broadcast-tower"></i> Stream & Video
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="canvas-seek.html"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container">
+    <article class="ct-article">
+      <header class="ct-masthead">
+        <div class="ct-kicker"><span class="ct-kicker-dot" aria-hidden="true"></span>Season recap</div>
+        <h1 class="ct-title">Signal Decay, Season 3</h1>
+        <p class="ct-dek">Thirteen weeks, forty-one streams, and one very long raid night.</p>
+        <time class="ct-dateline" datetime="2026-09-24">2026.09.24</time>
+      </header>
+
+      <div class="ct-body">
+        <p class="ct-p">Every block on this page comes from <code>editorial.css</code>. The running text is
+          held to a readable measure; the tables, grids and charts below break out to full width.
+          Emphasis stays <strong>white</strong>, and a <span class="ct-hi">highlight</span> uses the light accent.</p>
+
+        <div class="ct-stat-row">
+          <div class="ct-stat">
+            <div class="ct-stat-value">41</div>
+            <div class="ct-stat-label">Streams</div>
+            <div class="ct-stat-sub">+6 on season 2</div>
+          </div>
+          <div class="ct-stat">
+            <div class="ct-stat-value">118h</div>
+            <div class="ct-stat-label">Hours live</div>
+          </div>
+          <div class="ct-stat">
+            <div class="ct-stat-value">3,410</div>
+            <div class="ct-stat-label">Peak viewers</div>
+            <div class="ct-stat-sub">Week 11, raid night</div>
+          </div>
+        </div>
+
+        <div class="ct-section-h">
+          <span class="ct-section-n" aria-hidden="true">01</span>
+          <h2 class="ct-section-t decode-on-scroll">The numbers</h2>
+        </div>
+
+        <div class="ct-tiles">
+          <div class="ct-tile">
+            <div class="ct-tile-label">Average viewers</div>
+            <div class="ct-tile-value">1,184</div>
+            <div class="ct-tile-delta is-up">▲ 12% vs season 2</div>
+          </div>
+          <div class="ct-tile">
+            <div class="ct-tile-label">Chat messages</div>
+            <div class="ct-tile-value">212k</div>
+            <div class="ct-tile-delta">▼ 3% vs season 2</div>
+          </div>
+        </div>
+
+        <figure class="ct-spark-wrap">
+          <figcaption class="ct-spark-cap" id="viewers-cap">Average viewers per week</figcaption>
+          <div class="ct-spark" role="img" aria-labelledby="viewers-cap" aria-describedby="viewers-data">
+            <span class="ct-spark-bar" style="--v:.38"></span>
+            <span class="ct-spark-bar" style="--v:.44"></span>
+            <span class="ct-spark-bar" style="--v:.41"></span>
+            <span class="ct-spark-bar" style="--v:.52"></span>
+            <span class="ct-spark-bar is-empty" style="--v:0"></span>
+            <span class="ct-spark-bar" style="--v:.58"></span>
+            <span class="ct-spark-bar" style="--v:.61"></span>
+            <span class="ct-spark-bar" style="--v:.57"></span>
+            <span class="ct-spark-bar" style="--v:.66"></span>
+            <span class="ct-spark-bar" style="--v:.72"></span>
+            <span class="ct-spark-bar" style="--v:1"></span>
+            <span class="ct-spark-bar" style="--v:.81"></span>
+            <span class="ct-spark-bar" style="--v:.88"></span>
+          </div>
+          <div class="ct-spark-axis"><span>Wk 1</span><span>Wk 13</span></div>
+          <p class="visually-hidden" id="viewers-data">Weeks 1 to 13, relative to the week 11 peak:
+            38, 44, 41, 52, no stream, 58, 61, 57, 66, 72, 100, 81, 88 percent.</p>
+        </figure>
+
+        <figure class="ct-spark-wrap">
+          <figcaption class="ct-spark-cap" id="flat-cap">Stream length, flat variant (no current bar)</figcaption>
+          <div class="ct-spark is-flat" role="img" aria-labelledby="flat-cap">
+            <span class="ct-spark-bar" style="--v:.6"></span>
+            <span class="ct-spark-bar" style="--v:.75"></span>
+            <span class="ct-spark-bar" style="--v:.5"></span>
+            <span class="ct-spark-bar" style="--v:.9"></span>
+            <span class="ct-spark-bar" style="--v:.7"></span>
+          </div>
+        </figure>
+
+        <figure class="ct-table">
+          <div class="ct-table-scroll" tabindex="0" role="region" aria-label="Top games by hours">
+            <table>
+              <thead>
+                <tr><th scope="col">Game</th><th scope="col" style="text-align:right">Streams</th>
+                  <th scope="col" style="text-align:right">Hours</th><th scope="col" style="text-align:right">Avg viewers</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>Abyssal Conquest</td><td style="text-align:right">14</td><td style="text-align:right">46</td><td style="text-align:right">1,302</td></tr>
+                <tr><td>Just Chatting</td><td style="text-align:right">11</td><td style="text-align:right">29</td><td style="text-align:right">1,040</td></tr>
+                <tr><td>Rhythm block</td><td style="text-align:right">9</td><td style="text-align:right">24</td><td style="text-align:right">1,211</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <figcaption>Scrolls sideways on a phone instead of pushing the page wider.</figcaption>
+        </figure>
+
+        <aside class="ct-callout ct-key">
+          <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Key takeaway</div>
+          <p>Raid nights drove the peak, but the <strong>average</strong> climbed every week after the schedule change.</p>
+        </aside>
+
+        <div class="ct-section-h">
+          <span class="ct-section-n" aria-hidden="true">02</span>
+          <h2 class="ct-section-t decode-on-scroll">Awards</h2>
+        </div>
+
+        <div class="ct-awards">
+          <div class="ct-award">
+            <div class="ct-award-cat">Most chat messages</div>
+            <div class="ct-award-winner">null_pointer_exe</div>
+            <div class="ct-award-detail">Present for 39 of 41 streams, and responsible for most of the running jokes.</div>
+            <div class="ct-award-stat">9,812</div>
+          </div>
+          <div class="ct-award">
+            <div class="ct-award-cat">Longest watch streak</div>
+            <div class="ct-award-winner">glitchwitch</div>
+            <div class="ct-award-detail">Did not miss a single stream, including the 3am one.</div>
+            <div class="ct-award-stat">41 / 41</div>
+          </div>
+        </div>
+
+        <div class="ct-section-h">
+          <h2 class="ct-section-t decode-on-scroll">Unnumbered section</h2>
+        </div>
+
+        <p class="ct-p">Section numbers are optional. The heading is still a real <code>&lt;h2&gt;</code>; the
+          number sits outside it so a screen reader announces the title alone.</p>
+
+        <h3 class="ct-h3 decode-on-scroll">What worked</h3>
+        <ul class="ct-list">
+          <li>A fixed schedule — three nights a week, same time.</li>
+          <li>Shorter streams with a clear end, rather than open-ended sessions.</li>
+          <li>Recap posts like this one, built from the same markup on every site.</li>
+        </ul>
+
+        <aside class="ct-callout ct-info">
+          <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Note</div>
+          <p>The tone colours the corner tick and the title only. The word in the title carries the meaning.</p>
+        </aside>
+
+        <aside class="ct-callout ct-warn">
+          <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Schedule change</div>
+          <p>Season 4 moves to Thursdays. The Tuesday slot is retired.</p>
+        </aside>
+
+        <blockquote class="ct-quote">
+          <div class="ct-quote-text">The corruption was never the point. The point is what is still readable when it settles.</div>
+          <footer class="ct-quote-attr">— Stream 29, closing words</footer>
+        </blockquote>
+
+        <div class="ct-cols" style="--ct-cols:2">
+          <div class="ct-col">
+            <h3 class="ct-h3">Before</h3>
+            <p class="ct-p">Open-ended streams, no fixed end, and a schedule that changed week to week.</p>
+          </div>
+          <div class="ct-col">
+            <h3 class="ct-h3">After</h3>
+            <p class="ct-p">Three fixed nights, a hard stop, and a recap at the end of every season.</p>
+          </div>
+        </div>
+
+        <div class="ct-grid" style="--ct-grid-min:220px">
+          <div class="ct-cell">
+            <div class="ct-cell-eyebrow">Segment</div>
+            <h4 class="ct-cell-title">Raid night</h4>
+            <div class="ct-badges"><span class="ct-badge">Weekly</span><span class="ct-badge">Co-op</span></div>
+            <p class="ct-p">Highest peak of the season, every time it ran.</p>
+          </div>
+          <div class="ct-cell">
+            <div class="ct-cell-eyebrow">Segment</div>
+            <h4 class="ct-cell-title">Chat decides</h4>
+            <p class="ct-p">Viewers pick the next game from a shortlist of three.</p>
+          </div>
+          <div class="ct-cell">
+            <div class="ct-cell-eyebrow">Segment</div>
+            <h4 class="ct-cell-title">Rhythm block</h4>
+            <p class="ct-p">Short, loud, and the best chat-per-minute of the week.</p>
+          </div>
+        </div>
+
+        <figure class="ct-figure" style="max-width:420px">
+          <img src="assets/celeste-avatar.png" alt="Celeste avatar, used here as placeholder figure art">
+          <figcaption>Figures break out of the text measure by default; this square one is capped inline.</figcaption>
+        </figure>
+      </div>
+    </article>
+  </main>
+
+  <script type="module">
+    import { ScrollDecode } from '../src/lib/scroll-decode.js';
+    // Optional: the CSS never depends on this, and reduced motion skips it.
+    document.querySelectorAll('.decode-on-scroll').forEach((el) => new ScrollDecode(el).start());
+  </script>
+</body>
+</html>

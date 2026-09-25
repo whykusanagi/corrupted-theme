@@ -57,6 +57,7 @@ export const NAV = [
       { label: 'Cards', icon: 'fa-clone', target: 'examples/card.html' },
       { label: 'Forms', icon: 'fa-edit', target: 'examples/form.html' },
       { label: 'Layouts', icon: 'fa-columns', target: 'examples/layout.html' },
+      { label: 'Editorial & Data', icon: 'fa-newspaper', target: 'examples/editorial.html' },
       { label: 'Widgets', icon: 'fa-th-large', target: 'examples/components/showcase.html' },
       { label: 'API Docs', icon: 'fa-code', target: 'examples/showcase-complete.html#api-docs' },
     ],

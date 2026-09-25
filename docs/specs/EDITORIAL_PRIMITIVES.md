@@ -1,6 +1,6 @@
 # Spec: Editorial & data-page primitives
 
-**Status:** Draft, awaiting decisions D1–D6
+**Status:** Implemented on the recommended defaults for D1–D6 (see §10)
 **Tracks:** [#76](https://github.com/whykusanagi/corrupted-theme/issues/76)
 **Target:** next feature release after 0.3.3
 **Module:** `src/css/editorial.css` → export `./editorial`
@@ -419,3 +419,33 @@ other.
   port.
 - **Q5.** Should this ship as 0.3.4 or 0.4.0? It is additive with no removals,
   so 0.3.x matches how 0.3.3 shipped `corrupted-flares`.
+
+## 10. Implementation record
+
+Built on every recommendation above; nothing in §9 was answered otherwise
+before implementation, so Q1–Q5 stay open for review on the PR.
+
+Where the build departed from this spec:
+
+- **Labels.** §6.1's measurement came in under AA: `--text-muted` is 3.7:1
+  on `--surface-elevated` and 4.1:1 on glass. Every small label listed in
+  §6.1 uses `--text-secondary` (8.2:1), plus figcaptions, the kicker and
+  quote attribution.
+- **Tile delta.** `.is-down` is dropped. The only non-neutral colour that
+  passes AA on a tile is the accent, and down is the neutral default already,
+  so `.is-up` is the only modifier.
+- **Spark ordering.** The yap port declared `.b.empty` before
+  `.b:not(:last-child)` at equal specificity, so empty bars were only ever
+  dimmed. The module orders them the other way round and a test pins it.
+- **Quote attribution.** Found in the browser pass: `theme.css` styles every
+  `<footer>` as a page footer (border-top, 1.5rem padding), and that leaked
+  into `<footer class="ct-quote-attr">` as a divider and an inset. nikke has
+  the same leak. `.ct-quote-attr` resets it, and a test pins the reset.
+- **Table headers** default to `text-align: start`. User-agent styles centre
+  `th`, and nikke only avoided that by always emitting an inline alignment.
+- **Badges** get bottom margin, so a badge row no longer touches the block
+  after it inside a `.ct-cell`.
+- **Size.** +10.9 KB minified / **+2.1 KB gzipped**, under the §3.5 bound.
+
+Guards: `tests/data/editorial.test.js` (14 tests). The ones covering downstream
+bugs were each checked to fail when that bug is reintroduced.

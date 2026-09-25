@@ -151,7 +151,7 @@
     "test": "node --test --test-reporter=spec 'tests/**/*.test.js'",
     "publish-cdn": "bash scripts/publish-to-cdn.sh",
     "generate-sri": "bash scripts/generate-sri.sh",
-    "prepublishOnly": "npm run data:generate && npm run build && npm run manifest:generate && npm test",
+    "prepublishOnly": "npm run build && npm test",
     "nav:sync": "node scripts/sync-nav.js",
     "lint:security": "eslint .",
     "audit:colors": "node --test tests/data/color-sweep.test.js"

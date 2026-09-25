@@ -417,17 +417,23 @@ gallery1.destroy(); // Only destroys gallery1
 
 ## Editorial & Data Pages
 
-`src/css/editorial.css`, bundled in `theme.css` and exported as `./editorial`
-(unreleased; next version after 0.3.3). These are long-form article and recap-page primitives: a masthead,
-prose blocks, stat tiles, bar sparklines and award rows. Every class is
-`ct-`-prefixed. Live demo: [`examples/editorial.html`](../examples/editorial.html).
+`src/css/editorial.css`, bundled in `theme.css` and exported as `./editorial`,
+from **0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
+doesn't contain these classes. These are long-form article and recap-page
+primitives: a masthead, prose blocks, entity cards, stat tiles, bar sparklines
+and award rows. Every class is `ct-`-prefixed. Live demo: [`examples/editorial.html`](../examples/editorial.html).
 Design decisions: [`docs/specs/EDITORIAL_PRIMITIVES.md`](specs/EDITORIAL_PRIMITIVES.md).
 
 The **markup is the contract**, not just the class list. Several blocks only
-style correctly in the wrapper shown here, as noted below.
+style correctly in the wrapper shown here, as noted below. Put `.ct-article`
+in a width-limited wrapper such as the theme's `.container`. It needs no body
+class: the blocks paint their own surfaces over the theme's page background.
 
-**Knobs.** These are custom properties with defaults. Set them on any ancestor
-or inline.
+**Knobs.** These are custom properties with defaults. Set them on any ancestor,
+inline, or in your own stylesheet (`.my-3-up { --ct-cols: 3; }`). Under a
+strict Content-Security-Policy, inline `style` attributes are blocked. Use a
+class in your stylesheet instead, or see
+[Content-Security-Policy](CDN_CONSUMPTION.md#content-security-policy).
 
 | Property | Default | Controls |
 |---|---|---|
@@ -436,7 +442,7 @@ or inline.
 | `--ct-cols` | `2` | Column count of `.ct-cols` |
 | `--ct-grid-min` | `260px` | Minimum cell width of `.ct-grid` |
 | `--ct-spark-h` | `72px` | Height of `.ct-spark` |
-| `--ct-tone` | `--accent` | Callout tick and title colour |
+| `--ct-tone` | `var(--accent)` | Callout tick and title colour |
 
 ### Article frame
 
@@ -476,6 +482,9 @@ tiles, sparklines and awards run full width.
 - The number goes in a sibling span **outside** the `<h2>`, so the heading's
   accessible name is just its title. A bare `<h2>` in `.ct-body` gets no
   section styling.
+- The number is optional. An unnumbered section keeps the wrapper and drops
+  the span:
+  `<div class="ct-section-h"><h2 class="ct-section-t">Heading</h2></div>`.
 - Adding `decode-on-scroll` to `.ct-section-t` or `.ct-h3` hooks them into
   `scroll-decode.js`. It is optional, and nothing in the CSS depends on it.
 
@@ -494,7 +503,10 @@ tiles, sparklines and awards run full width.
 ```
 
 The scroll wrapper stops a wide table from pushing the page sideways. It needs
-`tabindex`, `role` and a label so keyboard users can scroll it.
+`tabindex`, `role` and a label so keyboard users can scroll it. Header cells
+start-align by default. The inline `text-align:right` on number columns is a
+plain style attribute, so under a strict CSP use a class of your own.
+Row headers (`<th scope="row">`) are fine.
 
 ### Figure
 
@@ -511,9 +523,11 @@ The scroll wrapper stops a wide table from pushing the page sideways. It needs
 </aside>
 ```
 
-Tones: `ct-key` (accent), `ct-info` (violet), `ct-warn` (red). The title's
-words carry the meaning and the tone is only emphasis, so none of these is a
-status colour. Override with `style="--ct-tone: …"`.
+Tones: `ct-key` (accent), `ct-info` (violet), `ct-warn` (red). The colour
+only tints the corner tick, the scanline and the title. The title's *words*
+carry the meaning, so red here is emphasis, not an error state. With no tone
+class, a callout uses the accent. Override with `--ct-tone`. The title is a
+styled `<div>`, not a heading, so it doesn't add to the page outline.
 
 ### Quote
 
@@ -541,7 +555,10 @@ status colour. Override with `style="--ct-tone: …"`.
 </div>
 ```
 
-`.ct-cols` stacks to one column at 720px and below.
+`.ct-cols` stacks to one column at 720px and below. Grid cells fit as many
+as `--ct-grid-min` allows and wrap. `.ct-cell-title` is shown as `<h4>`, but
+the style is on the class, so use whichever heading level fits your outline
+(an `<h3>` under a section's `<h2>`).
 
 ### Stat row
 
@@ -556,6 +573,9 @@ status colour. Override with `style="--ct-tone: …"`.
 ```
 
 A `.ct-stat` must sit inside a `.ct-stat-row`. A loose one is unsupported.
+The row fits as many 170px-minimum stats per line as the width allows and
+wraps the rest, so three stats sit side by side on desktop and stack on a
+phone.
 
 ### Stat tiles
 
@@ -569,9 +589,10 @@ A `.ct-stat` must sit inside a `.ct-stat-row`. A loose one is unsupported.
 </div>
 ```
 
-The delta's **text** carries the direction (`▲`, `+`). `.is-up` adds emphasis
-but never the meaning. Green is not used, because the palette reserves it for
-"system". Tiles sit in two columns, and one at 560px and below.
+The delta's **text** carries the direction (`▲ 12%`, `▼ 3%`, `+4`). `.is-up`
+adds emphasis but never the meaning. There is deliberately **no `.is-down`**:
+a fall uses the neutral default. Green is not used, because the palette
+reserves it for "system". Tiles sit in two columns, and one at 560px and below.
 
 ### Bar sparkline
 
@@ -588,11 +609,16 @@ but never the meaning. Green is not used, because the palette reserves it for
 </figure>
 ```
 
-- Bar height is a unitless `--v` from 0 to 1. This replaces the inline
-  `height:%` that the downstream copies used. From JS, use
+- Bar height is a unitless `--v` from 0 to 1, as a fraction of the chart's
+  largest value (the largest bar is `1`). From JS, use
   `bar.style.setProperty('--v', n)`.
-- The last bar is full accent. `.is-flat` dims every bar, and `.is-empty` is a
-  2px stub.
+- The last bar is full accent, because it's read as "now". `.is-flat` dims
+  every bar when there's no "now". `.is-empty` is a 2px stub and needs no
+  `--v`. An empty last bar still reads as empty.
+- The axis spreads its `<span>`s edge to edge. Two (first and last) is the
+  usual form, and more are spaced evenly.
+- `.visually-hidden` is the theme's screen-reader-only utility
+  (`components.css`, bundled in `theme.css`).
 - The bars carry nothing for assistive tech, so the chart needs `role="img"`
   and a text alternative.
 - **CSP:** the inline `style` attribute needs `style-src-attr 'unsafe-inline'`.
@@ -642,8 +668,12 @@ below.
 ```
 
 - `.ct-media-portrait` is a fixed 68px square that never shrinks, so a long
-  title wraps beside it instead of squeezing it. `.ct-media-wide` fills its
-  column.
+  title wraps beside it instead of squeezing it. That includes unbroken
+  handles and IDs: titles wrap anywhere. `.ct-media-wide` fills its column.
+- Use `.ct-media` for images inside cards and grids. Use `.ct-figure` for an
+  article image with a caption that breaks out of the text measure.
+- `alt=""` is right when the name or value sits next to the image, as in the
+  entity head and the attribute strip. Otherwise, describe the image.
 - The entity card's arrangement is fixed on purpose, so two authors writing
   the same card get the same card. Without `.ct-entity`, a `.ct-cell` stacks
   whatever it's given.
@@ -654,7 +684,8 @@ below.
 
 Small labels (stat and tile labels, sparkline caption and axis, figcaptions,
 the kicker, quote attribution) use `--text-secondary`, not `--text-muted`.
-Measured on `--surface-elevated`, the darkest surface these blocks sit on:
+Measured on `--surface-elevated`, the *lightest* surface these blocks sit on and so
+the worst case for light text:
 
 | Token | Pair | Ratio |
 |---|---|---|

@@ -497,6 +497,20 @@ Where the build departed from this spec:
   reference doc named internal repos and file paths, and the header flows
   into the generated manifest and llms.txt. They now describe what the blocks
   do. The migration table moved from the shipped reference doc to §8.1 here.
+- **Zero-context docs (checklist E5).** Two blind agents built a recap page
+  and a strict-CSP article from the shipped docs alone. Both rendered
+  correctly: no unknown classes, no overflow at 375px, and CSP columns set
+  through the CSSOM. They reported 22 doc gaps. The real ones are fixed:
+  - the contrast note called `--surface-elevated` the *darkest* surface
+    (it's the lightest, which is why it's the worst case);
+  - there was no `.visually-hidden` source;
+  - `--v` scaling and axis spacing were never stated;
+  - no-`.is-down` was implicit;
+  - there was no unnumbered-section example;
+  - heading level, figure-vs-media and alt guidance were missing;
+  - the CSP guidance sat only under sparklines, and missed table alignment
+    and the stylesheet-class option;
+  - the release version was unclear.
 - **§5.4 CSP note** added to `docs/CDN_CONSUMPTION.md`. **Spec 1.4** records
   the `color-mix()` requirement in its Version History.
 

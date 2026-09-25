@@ -35,13 +35,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
  * Enforced by `tests/data/nav-sync.test.js`.
  */
 export const RELEASE_DEMOS = {
-  version: '0.3.3',
+  version: '0.3.4',
   pages: [
-    'examples/corrupted-flares.html',
-    'examples/corrupted-flares-in-situ.html',
-    'examples/micro-gfx.html',
-    'examples/corrupted-globe.html',
-    'examples/corrupted-graph.html',
+    'examples/editorial.html',
   ],
 };
 

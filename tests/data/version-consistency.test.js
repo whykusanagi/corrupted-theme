@@ -94,15 +94,6 @@ test('the governance checklist records the current version', () => {
   assert.equal(m[1], VERSION);
 });
 
-test('the flares module header matches the release it ships in', () => {
-  // Module @version headers record when a file last changed, so most legitimately
-  // lag. The one added this release must not.
-  const src = readFileSync(path.join(ROOT, 'src/lib/corrupted-flares.js'), 'utf8');
-  const m = /@version\s+(\d+\.\d+\.\d+)/.exec(src);
-  assert.ok(m, 'corrupted-flares.js must carry an @version');
-  assert.equal(m[1], VERSION);
-});
-
 test('the spec header matches its own newest Version History entry', () => {
   // The header said 1.2 while the history already recorded 1.3 — the spec
   // contradicting itself about what version it is.

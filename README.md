@@ -82,7 +82,7 @@ npm install @whykusanagi/corrupted-theme
 ```html
 <!-- Pinned version (recommended for production) -->
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/theme.min.css">
 
 <!-- Floating @latest (use only for sites you control and update together) -->
 <link rel="stylesheet"
@@ -106,9 +106,9 @@ Both domains serve the same content. Use the domain that matches your site's roo
 **Pinned version** (production-safe — breaking changes never auto-propagate):
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/corrupted-text.min.js"></script>
 ```
 
 **Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):
@@ -120,6 +120,18 @@ Both domains serve the same content. Use the domain that matches your site's roo
 For production hardening, add SRI hashes (published in `CHANGELOG.md` for each release; regenerate with `npm run generate-sri`). See [docs/CDN_CONSUMPTION.md](docs/CDN_CONSUMPTION.md) for the same-origin rule, CSP guidance, CORS allowlist, and JSON data fetching.
 
 Browse every animation on the demo site, which deploys from `main`: [corrupted.whykusanagi.xyz/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
+
+## What's New in 0.3.4
+
+**0.3.4** adds editorial and data-page primitives: one shared stylesheet for
+the article and recap layouts that sites had each been rebuilding by hand.
+
+| Export | What it does |
+|---|---|
+| `editorial` | Article masthead, prose blocks (sections, tables, figures, callouts, quotes, columns, grids, stat rows, media, attribute strips, entity cards), stat tiles, bar sparklines and award rows. Every class is `ct-`-prefixed; colour is palette tokens only. Bundled in `theme.min.css` (+2.3 KB gzipped). See [Editorial & Data Pages](#editorial--data-pages) |
+
+It also declares `--font-mono`, which components had referenced since 0.2.x
+without it ever being defined.
 
 ## What's New in 0.3.3
 
@@ -184,11 +196,11 @@ Every file under `src/` is an ES module. Load one of two ways:
 ```html
 <!-- Module import (npm or CDN) -->
 <script type="module">
-  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.3/src/lib/scroll-decode.js';
+  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.4/src/lib/scroll-decode.js';
 </script>
 
 <!-- Browser global for no-build sites (IIFE builds only; SRI in CHANGELOG.md) -->
-<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.3/dist/toast.global.js"></script>
+<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.4/dist/toast.global.js"></script>
 ```
 
 A classic `<script src>` pointing at a `src/` file throws

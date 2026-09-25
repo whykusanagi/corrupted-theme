@@ -24,6 +24,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Small labels use `--text-secondary`: `--text-muted` measures 3.7–4.2:1 on
     these surfaces, under AA for text that size.
   - Sparkline bars take a unitless `--v` (0–1) instead of inline `height:%`.
+  - Award rows and the sparkline axis follow the original season-recap
+    styles: roomier rows, a glowing category label, tighter winner type and a
+    fluid stat column with tabular figures.
   - Fixes bugs the downstream copies carried: `.ct-cols` never going
     multi-column, empty sparkline bars never rendering as empty, the global
     `footer` rule drawing a divider inside every quote attribution, and a

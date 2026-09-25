@@ -451,8 +451,14 @@ changes:
 - **Q4.** Before PR A, check the `.tile`/`.spark`/`.award-*` rules against the
   original `nikke-analysis/recap/recap.css`. This spec only saw the `yap.css`
   port.
-  *Open. Blocked in the cloud session: the environment's network policy
-  denies nikkers.cc, and the repo was not reachable. See §11.*
+  *Resolved 2026-09-24.* Checked locally against `recap.css`. The `yap.css`
+  port had drifted on award rows (padding `18px 0` vs `30px 2px`, no column
+  gap, no category glow or weight, winner tracking and line-height, a fixed
+  `1.6rem` stat in `--accent` instead of fluid `--accent-light` with tabular
+  figures) and on the spark axis gap (5px vs 3px). The theme now follows the
+  original. Tiles and bars already matched, apart from the palette and
+  contrast changes in D4. The spark height stays `--ct-spark-h` (72px
+  default); the season recap sets `44px`.
 - **Q5.** Should this ship as 0.3.4 or 0.4.0? It is additive with no removals,
   so 0.3.x matches how 0.3.3 shipped `corrupted-flares`.
   *Answered: 0.3.4.*

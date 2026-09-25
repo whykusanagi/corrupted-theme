@@ -667,7 +667,7 @@
 .ct-spark-axis {
   display: flex;
   justify-content: space-between;
-  margin-top: 5px;
+  margin-top: 3px;
   font-family: var(--font-mono);
   font-size: 0.6rem;
   color: var(--text-secondary);
@@ -675,7 +675,8 @@
 
 /* ========== AWARD ROWS ========== */
 /* Small category, enormous winner — reads as a graphic on stream rather than
-   a paragraph to be read aloud. */
+   a paragraph to be read aloud. Spacing, glow and stat sizing follow the
+   season-recap original; the stat column is tabular so figures line up. */
 
 .ct-awards {
   display: grid;
@@ -687,7 +688,9 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto auto auto;
-  padding: 18px 0;
+  gap: 3px 32px;
+  align-items: baseline;
+  padding: 30px 2px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -696,18 +699,20 @@
   grid-row: 1;
   font-family: var(--font-mono);
   font-size: 0.64rem;
+  font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--accent);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 .ct-award-winner {
   grid-column: 1;
   grid-row: 2;
-  margin-top: 6px;
   font-size: clamp(1.9rem, 4.6vw, 2.9rem);
   font-weight: 800;
-  line-height: 1.05;
+  letter-spacing: -0.03em;
+  line-height: 1;
   overflow-wrap: anywhere;
   color: var(--text);
 }
@@ -727,13 +732,14 @@
   grid-row: 2 / 4;
   align-self: center;
   justify-self: end;
-  padding-left: 16px;
   font-family: var(--font-mono);
-  font-size: 1.6rem;
+  font-size: clamp(1.3rem, 3vw, 2rem);
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
   text-align: right;
   white-space: nowrap;
-  color: var(--accent);
+  color: var(--accent-light);
 }
 
 /* ========== RESPONSIVE ========== */
@@ -756,7 +762,6 @@
     grid-row: auto;
     justify-self: start;
     margin-top: 4px;
-    padding-left: 0;
     font-size: 1.4rem;
     text-align: left;
   }

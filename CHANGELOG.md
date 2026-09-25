@@ -44,6 +44,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   differences are `calc(var(--z-modal) - 1)` minifying as
   `calc(-1 + var(--z-modal))`, and the `.ratio-*` custom properties keeping a
   `calc()` wrapper.
+- **`npm test` works on a fresh clone.** `pretest` now also runs
+  `manifest:generate`; `documented-defaults.test.js` imports
+  `dist/manifest.json`, which only `prepublishOnly` used to create, so a
+  contributor's first `npm test` died before running a single test.
+  CONTRIBUTING.md's Node prerequisite goes from 14 to the 22.22.3 the build
+  toolchain actually needs.
 - **CI actions**: `actions/setup-node` v6 → v7.0.0 and
   `gitleaks/gitleaks-action` v2 → v3.0.0. The gitleaks bump is a fix, not
   housekeeping — v2 ran on the Node 20 Actions runtime, which GitHub removed on

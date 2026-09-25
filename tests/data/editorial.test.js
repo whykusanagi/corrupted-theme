@@ -116,7 +116,8 @@ test('the reference doc shows markup for every component family', () => {
   const section = doc.slice(doc.indexOf('## Editorial'));
   assert.ok(section.length > 0 && doc.includes('## Editorial'));
   for (const root of ['ct-article', 'ct-section-h', 'ct-table', 'ct-callout', 'ct-cols', 'ct-grid',
-    'ct-stat-row', 'ct-quote', 'ct-tiles', 'ct-spark', 'ct-awards']) {
+    'ct-stat-row', 'ct-quote', 'ct-tiles', 'ct-spark', 'ct-awards', 'ct-media',
+    'ct-entity-head', 'ct-attrs']) {
     assert.match(section, new RegExp(`class="${root}[ "]`), `no markup example for .${root}`);
   }
 });
@@ -129,4 +130,41 @@ test('quote attribution resets the global page-footer styles it would inherit', 
   const attr = code.match(/\.ct-quote-attr\s*\{([^}]*)\}/)[1];
   assert.match(attr, /padding:\s*0;/);
   assert.match(attr, /border-top:\s*0;/);
+});
+
+test('names that cannot break on spaces still wrap inside cards and award rows', () => {
+  // An entity card next to a fixed 68px portrait overflowed a 375px screen
+  // with a long handle: min-width:0 lets the box shrink, but the word itself
+  // needs permission to break.
+  for (const sel of ['.ct-cell-title', '.ct-award-winner']) {
+    const body = code.match(new RegExp(`\\${sel}\\s*\\{([^}]*)\\}`))[1];
+    assert.match(body, /overflow-wrap:\s*anywhere/, sel);
+  }
+  assert.match(code, /\.ct-entity-id\s*\{\s*min-width:\s*0;/);
+});
+
+test('every ct- class in the reference doc examples exists in the module', () => {
+  // The demo is checked both ways above; the docs are what a consumer copies
+  // from, so a class that only exists in prose is a silent no-op for them.
+  const doc = read('docs/COMPONENTS_REFERENCE.md');
+  const section = doc.slice(doc.indexOf('## Editorial'), doc.indexOf('\n## ', doc.indexOf('## Editorial') + 5));
+  const used = new Set();
+  for (const [, list] of section.matchAll(/class="([^"]*)"/g)) {
+    for (const c of list.split(/\s+/)) if (c.startsWith('ct-') || c.startsWith('is-')) used.add(c);
+  }
+  assert.ok(used.size > 20, `parsed only ${used.size} classes — extractor drifted?`);
+  assert.deepEqual([...used].filter((c) => !classes.has(c)), []);
+});
+
+test('decorative glyphs are hidden from assistive tech in the demo and the docs', () => {
+  // Spec §6.4: the section number, the // marker and the kicker dot are
+  // decoration. Announced, they read as "zero one slash slash" before a title.
+  const doc = read('docs/COMPONENTS_REFERENCE.md');
+  const sources = [read('examples/editorial.html'), doc.slice(doc.indexOf('## Editorial'))];
+  for (const src of sources) {
+    for (const cls of ['ct-section-n', 'ct-slash', 'ct-kicker-dot']) {
+      const tags = src.match(new RegExp(`<span class="${cls}"[^>]*>`, 'g')) ?? [];
+      for (const t of tags) assert.match(t, /aria-hidden="true"/, t);
+    }
+  }
 });

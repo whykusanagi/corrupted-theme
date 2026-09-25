@@ -84,6 +84,18 @@ connect-src 'self' https://cdn.whykusanagi.xyz https://cdn.nikkers.cc;
 If you're using only your matching same-origin CDN, you only need to
 list the one you actually use.
 
+**Inline `style` attributes.** A few documented patterns put a custom
+property in a `style` attribute: sparkline bar heights
+(`<span class="ct-spark-bar" style="--v:.42">`), and the `--ct-cols`,
+`--ct-grid-min` and `--ct-tone` knobs in `editorial.css`. A policy without
+`'unsafe-inline'` for styles blocks those attributes. Either allow them
+narrowly with `style-src-attr 'unsafe-inline'`, or set the property from a
+script you already trust:
+
+```js
+bar.style.setProperty('--v', 0.42);   // CSSOM writes are not blocked by style-src-attr
+```
+
 ## Cross-Origin Embedding (Third Parties)
 
 The R2 bucket has a curated CORS allowlist for cross-origin embeds.

@@ -1,6 +1,6 @@
 # Spec: Editorial & data-page primitives
 
-**Status:** Implemented on the recommended defaults for D1–D6 (see §10)
+**Status:** Implemented (#79, plus Q2). Release-time items are listed in §11
 **Tracks:** [#76](https://github.com/whykusanagi/corrupted-theme/issues/76)
 **Target:** next feature release after 0.3.3
 **Module:** `src/css/editorial.css` → export `./editorial`
@@ -221,11 +221,11 @@ ones under a container (`.ct-body .tile`) so they cannot leak.
   (+`-value`, `-label`, `-sub`)
 - Data display: `.ct-tiles`/`.ct-tile`, `.ct-spark*`, `.ct-awards`/`.ct-award*`
 
+- *Added after Q2:* `.ct-media` (`-img`, `-wide`, `-portrait`), `.ct-attrs`
+  (`.ct-attr`, `-l`, `-icon`, `-v`) and `.ct-entity` (`-head`, `-id`).
+
 **Deferred:**
 
-- `.ct-media`, `.ct-attrs`, `.ct-entity`: generic in their CSS, but so far only
-  used for NIKKE unit cards, and yap skipped them on purpose. Promote them when
-  a second consumer needs them (Q2).
 - The rest of `updates.ts` (`.upd-card`, `-banner`, `-timeline`, `-devlog`,
   `-patchcard` …): page-specific.
 - `yap-*` (`.yap-nav`, `.yap-stats`, `.yap-video`) and `.dd-cards`:
@@ -404,21 +404,58 @@ The acceptance test is #76's: **the alias block in `yap.css` no longer
 exists**, and a post authored for either site renders identically on the
 other.
 
+### 8.1 Class and variable mapping
+
+Moved here from `docs/COMPONENTS_REFERENCE.md`, which ships in the npm
+package. It names the downstream sites, which the release checklist's
+provenance gate (E4) keeps off shipped surfaces.
+
+| Downstream | Theme |
+|---|---|
+| `.upd-wrap` / `-header` / `-kicker` + `.dot` / `-h1` / `-sub` / `-datestamp` | `.ct-article` / `.ct-masthead` / `.ct-kicker` + `.ct-kicker-dot` / `.ct-title` / `.ct-dek` / `.ct-dateline` |
+| `.tiles` `.tile` `.k` `.v` `.d` (`.d.mut`) | `.ct-tiles` `.ct-tile` `.ct-tile-label` `.ct-tile-value` `.ct-tile-delta` (neutral is now the default) |
+| `.spark-wrap` `.spark-cap` `.spark` `.b` `.b.empty` `.spark.flat` `.spark-x` | `.ct-spark-wrap` `.ct-spark-cap` `.ct-spark` `.ct-spark-bar` `.is-empty` `.ct-spark.is-flat` `.ct-spark-axis` |
+| `style="height:42%"` on a bar | `style="--v:.42"` |
+| `.awards-list` `.award-row` `.award-cat` / `-winner` / `-detail` / `-stat` | `.ct-awards` `.ct-award` `.ct-award-cat` / `-winner` / `-detail` / `-stat` |
+| `--mono`, `--upd-mono` | `--font-mono` |
+| `--surface-2` `--line` `--faint` `--muted` `--upd-pink` | `--surface-elevated` `--border` `--text-secondary`* `--text-secondary` `--accent-light` |
+
+\* `--faint` mapped to `--text-muted` downstream, which fails AA for these
+label sizes (see *Label contrast* in `docs/COMPONENTS_REFERENCE.md`).
+
+The `.ct-*` block names are unchanged from nikke's `content-blocks.ts`.
+Delete the page's copy of the styles and keep the markup, except for these
+changes:
+
+- The `.ct-info` tone is now violet, not cyan.
+- The `.ct-warn` tone is now red, not amber.
+- Add `aria-hidden="true"` to `.ct-section-n`.
+- Add `tabindex`, `role` and `aria-label` to `.ct-table-scroll`.
+
 ## 9. Open questions
 
 - **Q1.** Do you accept the D2 renames and the D4 tone changes? Both change
   what consumers see or write, so they are yours to call.
+  *Shipped as recommended in #79, which the maintainer merged. Still worth an
+  explicit yes before downstream sites migrate, since that is when the
+  renames start costing anything.*
 - **Q2.** Should `.ct-media`/`.ct-attrs`/`.ct-entity` come in now for parity
   with nikke, or wait for a second consumer?
+  *Answered: now. Added with the same token and contrast rules as the rest.*
 - **Q3.** Should the renderer (`renderContentBlocks`) become a theme JS module?
   If so, it gives a data contract (JSON blocks → HTML) for the Go/Python sides
   under `docs/CROSS_LANGUAGE_CONTRACT.md`. That is out of scope here, but it
   would make "content authored for one site pastes into the other" literal.
+  *Open. It needs a decision, and a security review, because it builds HTML
+  from data.*
 - **Q4.** Before PR A, check the `.tile`/`.spark`/`.award-*` rules against the
   original `nikke-analysis/recap/recap.css`. This spec only saw the `yap.css`
   port.
+  *Open. Blocked in the cloud session: the environment's network policy
+  denies nikkers.cc, and the repo was not reachable. See §11.*
 - **Q5.** Should this ship as 0.3.4 or 0.4.0? It is additive with no removals,
   so 0.3.x matches how 0.3.3 shipped `corrupted-flares`.
+  *Answered: 0.3.4.*
 
 ## 10. Implementation record
 
@@ -447,5 +484,53 @@ Where the build departed from this spec:
   after it inside a `.ct-cell`.
 - **Size.** +10.9 KB minified / **+2.1 KB gzipped**, under the §3.5 bound.
 
-Guards: `tests/data/editorial.test.js` (14 tests). The ones covering downstream
-bugs were each checked to fail when that bug is reintroduced.
+- **Size with Q2:** 92,516 B minified / 17,380 B gzipped, which is +12.1 KB /
+  **+2.3 KB** over 0.3.3. That is still under the §3.5 bound.
+- **Q2 blocks** add the black-tinted backgrounds as `--corrupted-black`
+  mixes, and move attribute labels to `--text-secondary`.
+- **Entity title overflow.** Found in the browser pass: a long handle beside
+  the fixed 68px portrait overflowed a 375px screen. `.ct-entity-id` had
+  `min-width: 0`, but the word itself could not break. `.ct-cell-title` now has
+  `overflow-wrap: anywhere`, as `.ct-award-winner` already did. nikke has the
+  same bug.
+- **Provenance (release checklist E4).** The module header, CHANGELOG and
+  reference doc named internal repos and file paths, and the header flows
+  into the generated manifest and llms.txt. They now describe what the blocks
+  do. The migration table moved from the shipped reference doc to §8.1 here.
+- **§5.4 CSP note** added to `docs/CDN_CONSUMPTION.md`. **Spec 1.4** records
+  the `color-mix()` requirement in its Version History.
+
+Guards: `tests/data/editorial.test.js` (17 tests). The ones covering
+downstream bugs were each checked to fail when that bug is reintroduced. §6's
+requirements each have an assertion: 6.1 through the contrast ratios the
+reference doc states (checked by `contrast-claims.test.js`), 6.2 and 6.3
+directly, and 6.4 over the demo and the docs.
+
+## 11. Hand-off: what the cloud session could not finish
+
+These need the maintainer's machine, credentials or network access.
+
+1. **Release checklist.** `docs/governance/RELEASE_CONTENT_CHECKLIST.md` is
+   gitignored, so the cloud session reconstructed its gates from past release
+   commits. Run the real file end to end before publishing.
+2. **Release-time edits for 0.3.4:**
+   - bump `package.json`;
+   - date the `[Unreleased]` CHANGELOG section;
+   - update `RELEASE_DEMOS` in `scripts/sync-nav.js` and run `npm run nav:sync`;
+   - update hero badges and footers (`version-consistency.test.js` lists
+     them), and the `docs/platforms/NPM_PACKAGE.md` history row (A5).
+   - **Trap:** `version-consistency.test.js` asserts that
+     `corrupted-flares.js`'s `@version` equals the package version. It fails
+     the moment the version is bumped. Retarget or retire that test for 0.3.4;
+     `editorial.css` is CSS and carries no `@version`.
+3. **Publish:** `npm publish`, then `npm run publish-cdn` (wrangler), then
+   the SRI table (`npm run generate-sri`) and gate G8 against what the CDN
+   actually serves.
+4. **Q4.** Compare `.ct-tile*`, `.ct-spark*` and `.ct-award*` against the
+   original `recap.css`. Either allow nikkers.cc in the cloud environment's
+   network settings, or do it locally.
+5. **Downstream migration (§8).** After publishing, bump the vendored file or
+   CDN pin in each site, delete its copy, and apply §8.1.
+6. **Pre-existing E4 hit, not from this work:**
+   `docs/MIGRATION_CONTAINER_0.2.0.md` has a `/* updates.ts:32 */` comment.
+   It passed the 0.3.3 gate; decide whether it stays.

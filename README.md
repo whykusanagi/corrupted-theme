@@ -1360,8 +1360,8 @@ All Nikke-specific helpers live alongside the main utilities (`src/css/nikke-uti
 ## Editorial & Data Pages
 
 Long-form article and recap-page primitives: a masthead, numbered sections,
-tables, callouts, quotes, columns, grids, stat rows, stat tiles, bar
-sparklines and award rows. They ship in `theme.css` (and as
+tables, callouts, quotes, columns, grids, entity cards, stat rows, stat
+tiles, bar sparklines and award rows. They ship in `theme.css` (and as
 `@whykusanagi/corrupted-theme/editorial`), every class is `ct-`-prefixed,
 and the markup is the contract.
 

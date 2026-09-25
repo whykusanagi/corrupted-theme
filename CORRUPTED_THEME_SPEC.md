@@ -1,6 +1,6 @@
 # Corrupted Theme Specification
 
-**Version:** 1.3
+**Version:** 1.4
 **Author:** whykusanagi
 **Status:** Production
 **License:** MIT (for contribution to corrupted-theme package)
@@ -1030,6 +1030,15 @@ corrupted.start();
 ---
 
 ## Version History
+
+- **1.4** (2026-09-25): Editorial primitives
+  - **Browser Compatibility** lists `color-mix()`, which the editorial
+    primitives (`editorial.css`) use for translucent accent fills so they
+    follow a consumer's `--accent` override. Without it only those tints
+    drop out.
+  - No pattern or palette rule changes. The editorial blocks follow the
+    existing rules: colour from the palette only, accents carry no state,
+    infinite motion only under `prefers-reduced-motion: no-preference`.
 
 - **1.3** (2026-08-25): Ambient corruption, and a palette guard that works
   - Added **Pattern 6: Ambient Mark Decay** — non-textual geometric marks,

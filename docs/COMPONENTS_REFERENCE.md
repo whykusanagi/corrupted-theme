@@ -614,6 +614,42 @@ but never the meaning. Green is not used, because the palette reserves it for
 The stat spans the right column, and moves under the detail at 560px and
 below.
 
+### Media, attribute strip and entity card
+
+```html
+<figure class="ct-media ct-media-wide"><img class="ct-media-img" src="…" alt="…"></figure>
+
+<div class="ct-grid">
+  <div class="ct-cell ct-entity">
+    <div class="ct-entity-head">
+      <figure class="ct-media ct-media-portrait"><img class="ct-media-img" src="…" alt=""></figure>
+      <div class="ct-entity-id">
+        <div class="ct-cell-eyebrow">Role</div>
+        <h4 class="ct-cell-title">Name</h4>
+        <div class="ct-badges"><span class="ct-badge">Tag</span></div>
+      </div>
+    </div>
+    <div class="ct-attrs">
+      <div class="ct-attr">
+        <div class="ct-attr-l">Label</div>
+        <img class="ct-attr-icon" src="…" alt="">
+        <div class="ct-attr-v">Value</div>
+      </div>
+    </div>
+    <p class="ct-p">Any blocks.</p>
+  </div>
+</div>
+```
+
+- `.ct-media-portrait` is a fixed 68px square that never shrinks, so a long
+  title wraps beside it instead of squeezing it. `.ct-media-wide` fills its
+  column.
+- The entity card's arrangement is fixed on purpose, so two authors writing
+  the same card get the same card. Without `.ct-entity`, a `.ct-cell` stacks
+  whatever it's given.
+- `.ct-attr-icon` is optional. It's a plain URL that the calling page
+  resolves, so the block knows nothing about what the values mean.
+
 ### Label contrast
 
 Small labels (stat and tile labels, sparkline caption and axis, figcaptions,
@@ -625,32 +661,12 @@ Measured on `--surface-elevated`, the darkest surface these blocks sit on:
 | `--text-secondary` | `#b8afc8` on `#1a1a24` | 8.2:1, used |
 | `--text-muted` | `#7a7085` on `#1a1a24` | 3.7:1, below AA for small text, so not used |
 
-### Migrating from a downstream copy
+### Migrating from a hand-copied version
 
-| Downstream | Theme |
-|---|---|
-| `.upd-wrap` / `-header` / `-kicker` + `.dot` / `-h1` / `-sub` / `-datestamp` | `.ct-article` / `.ct-masthead` / `.ct-kicker` + `.ct-kicker-dot` / `.ct-title` / `.ct-dek` / `.ct-dateline` |
-| `.tiles` `.tile` `.k` `.v` `.d` (`.d.mut`) | `.ct-tiles` `.ct-tile` `.ct-tile-label` `.ct-tile-value` `.ct-tile-delta` (neutral is now the default) |
-| `.spark-wrap` `.spark-cap` `.spark` `.b` `.b.empty` `.spark.flat` `.spark-x` | `.ct-spark-wrap` `.ct-spark-cap` `.ct-spark` `.ct-spark-bar` `.is-empty` `.ct-spark.is-flat` `.ct-spark-axis` |
-| `style="height:42%"` on a bar | `style="--v:.42"` |
-| `.awards-list` `.award-row` `.award-cat` / `-winner` / `-detail` / `-stat` | `.ct-awards` `.ct-award` `.ct-award-cat` / `-winner` / `-detail` / `-stat` |
-| `--mono`, `--upd-mono` | `--font-mono` |
-| `--surface-2` `--line` `--faint` `--muted` `--upd-pink` | `--surface-elevated` `--border` `--text-secondary`* `--text-secondary` `--accent-light` |
-
-\* `--faint` mapped to `--text-muted` downstream, which fails AA for these
-label sizes (see above).
-
-The `.ct-*` block names are unchanged from nikke's `content-blocks.ts`.
-Delete the page's copy of the styles and keep the markup, except for these
-changes:
-
-- The `.ct-info` tone is now violet, not cyan.
-- The `.ct-warn` tone is now red, not amber.
-- Add `aria-hidden="true"` to `.ct-section-n`.
-- Add `tabindex`, `role` and `aria-label` to `.ct-table-scroll`.
-
-`.ct-media`, `.ct-attrs` and `.ct-entity` are **not** in the theme yet. Keep
-them local for now.
+Sites that carried their own copy of these blocks can delete it and keep
+most of their markup. The class and variable mapping, and the handful of
+markup changes, are in
+[`docs/specs/EDITORIAL_PRIMITIVES.md`](specs/EDITORIAL_PRIMITIVES.md) §8.
 
 ---
 

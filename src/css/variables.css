@@ -67,8 +67,8 @@
 
   /* ========== TYPE FAMILIES ========== */
   /* Referenced by components.css since 0.2.x but never declared, so every use
-     fell through to its 'Courier New' fallback. Consumers each invented their
-     own (--mono, --upd-mono) in the meantime. */
+     fell through to its 'Courier New' fallback, and consumer sites each
+     invented their own name for it in the meantime. */
   --font-mono: ui-monospace, 'JetBrains Mono', Menlo, Monaco, 'Courier New', monospace;
 
   /* ========== GRADIENTS ========== */

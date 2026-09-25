@@ -84,6 +84,30 @@ connect-src 'self' https://cdn.whykusanagi.xyz https://cdn.nikkers.cc;
 If you're using only your matching same-origin CDN, you only need to
 list the one you actually use.
 
+**Inline `style` attributes.** Some documented `editorial.css` patterns use a
+`style` attribute:
+
+- sparkline bar heights (`<span class="ct-spark-bar" style="--v:.42">`);
+- the `--ct-cols`, `--ct-grid-min` and `--ct-tone` knobs;
+- number-column alignment in tables (`style="text-align:right"`).
+
+A policy without `'unsafe-inline'` for styles blocks all of these. You have
+three options, in order of preference:
+
+1. **A class in your own same-origin stylesheet.** This covers knobs and
+   alignment, and needs no JS: `.three-up { --ct-cols: 3; }` and
+   `.num { text-align: right; }`.
+2. **A CSSOM write from an external script.** Inline `<script>` is blocked
+   too. This suits per-element data such as bar heights:
+
+   ```js
+   // app.js, loaded with <script src>. CSSOM writes are not blocked by style-src-attr.
+   document.querySelectorAll('[data-v]').forEach((bar) => bar.style.setProperty('--v', bar.dataset.v));
+   ```
+
+3. **Allow attributes narrowly** with `style-src-attr 'unsafe-inline'`.
+   This keeps style *elements* locked down.
+
 ## Cross-Origin Embedding (Third Parties)
 
 The R2 bucket has a curated CORS allowlist for cross-origin embeds.

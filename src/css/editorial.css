@@ -1,10 +1,8 @@
 /**
- * Editorial & data-page primitives — article masthead, prose blocks, stat tiles, bar sparklines and award rows.
+ * Editorial & data-page primitives — article masthead, prose blocks, entity cards, stat tiles, bar sparklines and award rows.
  *
- * Harvested from the copies consumers had been re-deriving by hand
- * (nikke/src/lib/content-blocks.ts, nikke/src/pages/updates.ts,
- * stream-blog/public/assets/yap.css), so a post authored for one site renders
- * the same on another. Spec and decisions: docs/specs/EDITORIAL_PRIMITIVES.md.
+ * One shared copy of the long-form article and recap-page blocks, so a post
+ * authored for one site renders the same on another.
  *
  * Requires the ./variables tokens (bundled in theme.css). Every class is
  * `ct-`-prefixed because this sheet ships in the global theme bundle.
@@ -133,7 +131,8 @@
 .ct-body > .ct-grid,
 .ct-body > .ct-tiles,
 .ct-body > .ct-spark-wrap,
-.ct-body > .ct-awards { max-width: none; }
+.ct-body > .ct-awards,
+.ct-body > .ct-attrs { max-width: none; }
 
 /* ========== PROSE ========== */
 
@@ -436,11 +435,94 @@
   margin: 0 0 0.5rem;
   font-size: 1rem;
   font-weight: 700;
+  overflow-wrap: anywhere;   /* handles and IDs have no spaces to break on */
   color: var(--text);
 }
 
 .ct-cell .ct-p { font-size: 0.9rem; margin-bottom: 0.6em; }
 .ct-cell .ct-p:last-child { margin-bottom: 0; }
+
+/* ========== MEDIA ========== */
+/* An image on its own. `wide` fills its column; `portrait` is a fixed square
+   that never shrinks, so an entity head keeps the same shape whatever the
+   title length — the layout guarantee lives here, not in how content is
+   authored. */
+
+.ct-media { position: relative; margin: 0; }
+
+.ct-media-img {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.ct-media-wide .ct-media-img { width: 100%; height: auto; }
+
+.ct-media-portrait { flex: none; }
+
+.ct-media-portrait .ct-media-img {
+  width: 68px;
+  height: 68px;
+  object-fit: cover;
+  background: color-mix(in srgb, var(--corrupted-black) 30%, transparent);
+}
+
+/* ========== ATTRIBUTE STRIP ========== */
+/* Labelled values, each with an optional icon. The icon is a plain URL the
+   calling page resolves; nothing here knows what the values mean, which is
+   what keeps the block domain-neutral. */
+
+.ct-attrs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 0.5rem;
+  margin: 0.9rem 0;
+}
+
+.ct-attr {
+  padding: 0.55rem 0.4rem;
+  text-align: center;
+  background: color-mix(in srgb, var(--corrupted-black) 28%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.ct-attr-l {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ct-attr-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  margin: 0.3rem auto 0.2rem;
+}
+
+.ct-attr-v {
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* ========== ENTITY CARD ========== */
+/* A .ct-cell whose head is composed for you: portrait media beside the
+   eyebrow/title/badges, then the attribute strip, then any blocks. Fixing
+   the arrangement is the point — two authors writing the same card should
+   get the same card. */
+
+.ct-entity-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.85rem;
+}
+
+.ct-entity-id { min-width: 0; }
+.ct-entity .ct-cell-title { margin-bottom: 0; }
+.ct-entity .ct-badges { margin-top: 0.45rem; }
 
 /* ========== BADGES ========== */
 
@@ -575,8 +657,8 @@
 }
 
 /* After the rules above, at equal or higher specificity, so an empty bar
-   reads as empty wherever it falls. The yap port had these in the other
-   order, so an empty bar was only ever dimmed. */
+   reads as empty wherever it falls. In the other order an empty bar is only
+   ever dimmed. */
 .ct-spark .ct-spark-bar.is-empty {
   background: var(--border);
   opacity: 0.5;

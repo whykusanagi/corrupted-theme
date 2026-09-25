@@ -12,13 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Editorial & data-page primitives** (`src/css/editorial.css`, bundled in
   `theme.css`, exported as `./editorial`) — #76. The article masthead, prose
   blocks (sections, tables, figures, callouts, quotes, columns, grids, stat
-  rows), stat tiles, bar sparklines and award rows that four consumers had
-  been re-deriving by hand, harvested from nikke and stream-blog so one copy
-  ships in the theme. +2.1 KB gzipped on `dist/theme.min.css`.
-  - Every class is `ct-`-prefixed. The `.ct-*` block names are unchanged from
-    nikke; the masthead and data-display classes are renamed from their
-    downstream names (`.upd-*`, `.tile`, `.spark`, `.award-row`), with a
-    migration table in `docs/COMPONENTS_REFERENCE.md`.
+  rows, media, attribute strips, entity cards), stat tiles, bar sparklines and
+  award rows that consumer sites had each been re-deriving by hand, so one
+  copy ships in the theme. +2.3 KB gzipped on `dist/theme.min.css`.
+  - Every class is `ct-`-prefixed, because the sheet ships in the global
+    bundle and generic names like `.tile` or `.spark` would restyle any
+    consumer element that shares them.
   - Colour is tokens only. Callout tones are accent, violet (`ct-info`, was
     cyan downstream) and red (`ct-warn`, was an off-palette amber); a tile's
     direction lives in its text, not in green.
@@ -26,8 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     these surfaces, under AA for text that size.
   - Sparkline bars take a unitless `--v` (0–1) instead of inline `height:%`.
   - Fixes bugs the downstream copies carried: `.ct-cols` never going
-    multi-column, empty sparkline bars never rendering as empty, and the
-    global `footer` rule drawing a divider inside every quote attribution.
+    multi-column, empty sparkline bars never rendering as empty, the global
+    `footer` rule drawing a divider inside every quote attribution, and a
+    long handle in an entity card overflowing a phone screen.
+  - `docs/CDN_CONSUMPTION.md` covers the `style-src-attr` a strict CSP
+    needs for the inline `--v` / `--ct-*` custom properties.
+  - Spec 1.4: Browser Compatibility lists `color-mix()`.
   - Demo: `examples/editorial.html`, which `tests/data/editorial.test.js`
     requires to exercise every class the module defines.
 - **`--font-mono`** token. `components.css` has referenced it since 0.2.x but

@@ -168,7 +168,7 @@ the only setting: it's chosen by a class on any ancestor.
 |---|---|---|
 | 0 | `#ef4444` / `#fca5a5` | `--corrupted-red` `#ff0000` |
 | 1 | `#f97316` / `#fdba74` | `--corrupted-magenta` `#ff00ff` |
-| 2 | `#eab308` / `#fde047` | `--accent` `#d94f90` |
+| 2 | `#eab308` / `#fde047` | `--corrupted-magenta2` `#d94f90` |
 | 3 | `#22c55e` / `#86efac` | `--corrupted-purple` `#8b5cf6` |
 | 4 | `#3b82f6` / `#93c5fd` | `--corrupted-cyan` `#00ffff` |
 | 5 | `#6b7280` / `#cbd5e1` | `--text-secondary` `#b8afc8` (was `--text-muted`: §11) |
@@ -281,8 +281,9 @@ as follows (full per-class table in the implementation plan):
 
 ## 11. Implementation record
 
-Built on this branch as three commits — §3 consolidation, then §4 and §5, then
-the §9 guards and the generated surfaces. Suite: 425 → 427 tests, all green.
+Built on this branch over several commits — §3 consolidation, §4 and §5, the
+§9 guards and the generated surfaces, then three rounds of review. Suite:
+425 → 430 tests, all green.
 
 Where the build departed from this spec, and why:
 
@@ -332,6 +333,37 @@ browser pass):
   and the token-only guard reads keywords.
 - The docs half of the colour sweep had been widened globally while the CSS
   half was scoped. Both are scoped now.
+
+**A third review round, the one that rendered the sheet,** found six more and
+four smaller ones:
+
+- `.ct-card.is-muted` dimmed by group opacity, which composites *every*
+  descendant: a 0.62rem accent badge inside a muted card measured 2.9:1, and
+  no alpha that still reads as dimmed keeps it at AA. Muting is now a tone
+  change — grey `--ct-tone`, a fainter border, a dimmed image — and the text
+  keeps full contrast. The guard that was watching this measured only grey
+  text, so it now measures every ink a card can hold, against both the glass
+  and the raised surface.
+- `--accent` on `--surface-elevated` is 4.50:1 at badge size: the line, not
+  clear of it. Badge ink and the numbered-list counter are lightened 80%
+  toward white, which also keeps them tied to `--ct-tone`.
+- `.ct-masthead-aside` was absolutely positioned with nothing reserving room,
+  so any title longer than the demo's ran under it. With an aside present the
+  masthead is a two-column grid.
+- The docs promised `<ul class="ct-rows">` worked; `theme.css` indents every
+  list, spaces every item and puts a marker on it, so a badge rendered with a
+  bullet inside. The blocks reset it now, which makes the promise true.
+- `.ct-list.is-grid` and `.ct-gallery` read `--ct-grid-min`, so a card grid
+  that set it squeezed any chip list nested in a card to one chip per row.
+  They have `--ct-chip-min` and `--ct-thumb-min` of their own.
+- `.ct-detail`, `.ct-chart-cap` and `.ct-delta` inherited `p { margin-bottom:
+  1rem }` whenever the documented `<p>` form was used, adding 16px of dead
+  space to the bottom of every card built from the reference.
+- Smaller: the corrupted map's step 2 uses `--corrupted-magenta2` rather than
+  the consumer-overridable `--accent`; `.ct-section-meta` wraps instead of
+  being `display:none` on a phone, which was hiding it from screen readers
+  too; `.ct-meter` has a flat-colour fallback and a forced-colours rule; and
+  the demo moved its post chrome out of `.ct-body` to match the reference.
 
 **Weight.** `dist/theme.min.css` goes from 80,416 B to 100,326 B minified,
 15,080 B to 18,743 B gzipped: **+3.6 KB gzipped**, past the +2.8 KB that #76

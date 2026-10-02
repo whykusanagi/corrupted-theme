@@ -153,7 +153,7 @@ test('colour comes from tokens only — no literal hex, rgb() or hsl()', () => {
   const rest = css.replace(block[0], '').replace(/\/\*[\s\S]*?\*\//g, '');
   // Keywords count: the ink mixes said `white`, which no hex/rgb/hsl matcher
   // sees, and a consumer overriding --corrupted-white got nothing.
-  const illegal = rest.match(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(|(?<![\w-])(?:white|black|red|green|blue|cyan|magenta|yellow|orange|gray|grey)(?![\w-])/g) ?? [];
+  const illegal = rest.match(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(|(?<![\w-])(?:white|black|red|green|blue|cyan|magenta|yellow|orange|gray|grey|silver|purple|violet|pink|teal|navy|lime|gold|aqua|fuchsia|maroon|olive)(?![\w-])|\boklch\(|\boklab\(|\bhwb\(|\blab\(|\blch\(/g) ?? [];
   assert.deepEqual(illegal, []);
   const rankCode = block[1].replace(/\/\*[\s\S]*?\*\//g, '');
   assert.deepEqual(rankCode.match(/\brgba?\(|\bhsla?\(/g) ?? [], []);

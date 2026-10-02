@@ -53,8 +53,8 @@
   --ct-rank-0-ink: color-mix(in srgb, var(--corrupted-red) 55%, var(--corrupted-white));
   --ct-rank-1: var(--corrupted-magenta);
   --ct-rank-1-ink: color-mix(in srgb, var(--corrupted-magenta) 55%, var(--corrupted-white));
-  --ct-rank-2: var(--accent);
-  --ct-rank-2-ink: color-mix(in srgb, var(--accent) 55%, var(--corrupted-white));
+  --ct-rank-2: var(--corrupted-magenta2);
+  --ct-rank-2-ink: color-mix(in srgb, var(--corrupted-magenta2) 55%, var(--corrupted-white));
   --ct-rank-3: var(--corrupted-purple);
   --ct-rank-3-ink: color-mix(in srgb, var(--corrupted-purple) 55%, var(--corrupted-white));
   --ct-rank-4: var(--corrupted-cyan);
@@ -73,6 +73,24 @@
   padding: 1.5rem 0 2.5rem;
   margin-bottom: 2.5rem;
   border-bottom: 1px solid var(--border);
+}
+
+/* An absolutely positioned aside overlapped any title longer than the demo's.
+   With an aside present the masthead becomes two columns and the title column
+   is the one that wraps; without one, nothing changes. */
+.ct-masthead:has(.ct-masthead-aside) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 1.75rem;
+  align-items: start;
+}
+
+.ct-masthead:has(.ct-masthead-aside) > * { grid-column: 1; }
+
+.ct-masthead:has(.ct-masthead-aside) > .ct-masthead-aside {
+  position: static;
+  grid-column: 2;
+  grid-row: 1 / -1;
 }
 
 .ct-masthead::after {
@@ -255,7 +273,7 @@
 
 .ct-list.is-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--ct-grid-min, 180px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--ct-chip-min, 150px), 1fr));
   gap: 0.45rem;
   padding-left: 0;
   list-style: none;
@@ -291,7 +309,7 @@
   top: 0.05em;
   font-family: var(--font-mono);
   font-size: 0.72rem;
-  color: var(--accent);
+  color: color-mix(in srgb, var(--accent) 80%, var(--corrupted-white));
 }
 
 /* ========== SECTION HEADINGS ========== */
@@ -573,6 +591,24 @@
 .ct-col > *:first-child { margin-top: 0; }
 .ct-col > .ct-p:last-child { margin-bottom: 0; }
 
+/* These blocks are documented as working on a <ul>: theme.css styles every
+   list with left padding, a bottom margin per item and a marker, which would
+   indent the rows inside their own rule and put a bullet in every badge. */
+.ct-rows,
+.ct-grid,
+.ct-badges,
+.ct-gallery,
+.ct-post-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.ct-row,
+.ct-badge,
+.ct-gallery > li,
+.ct-post-list > li,
+.ct-grid > li { margin-bottom: 0; }
+
 .ct-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(var(--ct-grid-min, 260px), 1fr));
@@ -604,10 +640,22 @@
 .ct-card > * { position: relative; }
 
 .ct-card.is-raised { background: var(--surface-elevated); }
-/* 0.7, not lower: opacity composites the text too, and --text-secondary on
-   this card lands at 4.84:1 (elevated) / 5.00:1 (glass) here. At 0.58 it was
-   3.77:1 — a card dimmed out of AA. Pinned in contrast-claims. */
-.ct-card.is-muted { opacity: 0.7; }
+/* Muting is a tone change, never opacity. Group opacity composites every
+   descendant: at 0.7 a 0.62rem accent badge inside the card measured 2.9:1
+   and the labels 4.8:1, and no opacity that still reads as "dimmed" keeps
+   small accent text at AA. The card reads inactive through its tick, its
+   border and its imagery, and all of its text keeps full contrast. */
+.ct-card.is-muted {
+  --ct-tone: var(--text-secondary);
+  background: color-mix(in srgb, var(--glass) 55%, transparent);
+  border-color: color-mix(in srgb, var(--border) 55%, transparent);
+}
+
+/* The title drops a step rather than fading: --text-secondary is 8.2:1 on the
+   worst surface here, so the card reads inactive and stays readable. */
+.ct-card.is-muted .ct-card-title { color: var(--text-secondary); }
+
+.ct-card.is-muted .ct-media-img { opacity: 0.55; }
 
 .ct-label {
   margin-bottom: 0.45rem;
@@ -649,6 +697,7 @@
    never carries the meaning; .is-down would match the neutral default, and
    green is reserved for "system". */
 .ct-delta {
+  margin-bottom: 0;   /* these may be a <p>, which theme.css gives a bottom margin */
   margin-top: 5px;
   font-family: var(--font-mono);
   font-size: 0.76rem;
@@ -658,6 +707,7 @@
 .ct-delta.is-up { color: var(--accent-light); }
 
 .ct-detail {
+  margin-bottom: 0;   /* these may be a <p>, which theme.css gives a bottom margin */
   margin-top: 0.2em;
   font-size: 0.72rem;
   color: var(--text-secondary);
@@ -770,7 +820,9 @@
   font-size: 0.62rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--ct-tone, var(--accent));
+  /* Lightened against the border's full tone: --accent itself measures 4.50:1
+     on --surface-elevated at this size, which is the line, not clear of it. */
+  color: color-mix(in srgb, var(--ct-tone, var(--accent)) 80%, var(--corrupted-white));
   background: transparent;
   border: 1px solid var(--ct-tone, var(--accent));
   border-radius: 3px;
@@ -875,6 +927,10 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: calc(var(--v, 0) * 100%);
+  /* Flat fill first: if color-mix() is unsupported the whole gradient is
+     invalid and the fill would vanish, unlike a spark bar which keeps
+     --accent. */
+  background: var(--ct-tone, var(--accent));
   background: linear-gradient(90deg, var(--ct-tone, var(--accent)), color-mix(in srgb, var(--ct-tone, var(--accent)) 58%, var(--corrupted-white)));
 }
 
@@ -951,6 +1007,7 @@
 .ct-chart canvas { display: block; width: 100%; height: auto; }
 
 .ct-chart-cap {
+  margin-bottom: 0;   /* these may be a <p>, which theme.css gives a bottom margin */
   margin-top: 0.65rem;
   font-size: 0.82rem;
   text-align: center;
@@ -1066,7 +1123,7 @@
    image, leaving enhancement to the consuming site. */
 .ct-gallery {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--ct-grid-min, 180px), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(var(--ct-thumb-min, 180px), 1fr));
   gap: 0.75rem;
   margin: 1.8em auto;
 }
@@ -1149,7 +1206,10 @@
 /* ========== RESPONSIVE ========== */
 
 @media (max-width: 720px) {
-  .ct-section-h { gap: 0.8rem; }
+  /* Wraps rather than hiding: display:none took the context away from screen
+     readers as well as from the screen. */
+  .ct-section-h { flex-wrap: wrap; gap: 0.8rem; }
+  .ct-section-meta { flex-basis: 100%; margin-left: 0; text-align: left; }
   .ct-section-t { font-size: 1.35rem; }
   .ct-section-meta { display: none; }
   .ct-cols { grid-template-columns: 1fr; }
@@ -1205,5 +1265,11 @@
     color: CanvasText;
     -webkit-text-fill-color: CanvasText;
     text-shadow: none;
+  }
+
+  /* Backgrounds are dropped in forced colours, so a meter would read empty. */
+  .ct-meter::before {
+    forced-color-adjust: none;
+    background: CanvasText;
   }
 }

@@ -203,7 +203,8 @@ test('editorial rank inks and small labels meet AA on their own surfaces', () =>
   for (let step = 0; step <= 5; step += 1) {
     const edge = resolvedHex(vars, declaration(rankBlock, `--ct-rank-${step}`));
     const ink = resolvedHex(vars, declaration(rankBlock, `--ct-rank-${step}-ink`));
-    const surface = over(edge, PAGE_GROUND, 0.15);
+    // Worst case is a rank badge on a raised card, not on the page ground.
+    const surface = over(edge, resolvedHex(vars, rootToken(vars, '--surface-elevated')), 0.15);
     const measured = ratio(ink, surface);
     if (measured < 4.5) {
       failures.push(`standard step ${step}: ${ink} on ${surface} is ${measured.toFixed(2)}:1`);
@@ -219,7 +220,7 @@ test('editorial rank inks and small labels meet AA on their own surfaces', () =>
       `corrupted step ${step} ink must stay a 55% edge/white mix`);
     const edge = resolvedHex(vars, edgeValue);
     const ink = mix(edge, resolvedHex(vars, rootToken(vars, '--corrupted-white')), 55);
-    const surface = over(edge, PAGE_GROUND, 0.15);
+    const surface = over(edge, resolvedHex(vars, rootToken(vars, '--surface-elevated')), 0.15);
     const measured = ratio(ink, surface);
     if (measured < 4.5) {
       failures.push(`corrupted step ${step}: ${ink} on ${surface} is ${measured.toFixed(2)}:1`);
@@ -238,24 +239,38 @@ test('editorial rank inks and small labels meet AA on their own surfaces', () =>
     }
   }
 
-  // .is-muted dims the whole card, text included, so the label has to be
-  // measured through it: at 0.58 it was 3.77:1 and the guard above still
-  // passed, because it was reading the undimmed surface.
-  const mutedRule = editorial.match(/\.ct-card\.is-muted\s*\{([^}]*)\}/)?.[1];
-  assert.ok(mutedRule, '.ct-card.is-muted is not declared');
-  const alpha = Number(declaration(mutedRule, 'opacity'));
-  assert.ok(alpha > 0 && alpha <= 1, `opacity ${alpha} is not a fraction`);
+  // A card may be raised, so every ink it can hold is measured against BOTH
+  // its surfaces. --accent on --surface-elevated is 4.50:1 at badge size,
+  // which is the line rather than clear of it, hence the lightened badge ink.
+  const accent = resolvedHex(vars, rootToken(vars, '--accent'));
+  const white = resolvedHex(vars, rootToken(vars, '--corrupted-white'));
+  const text = resolvedHex(vars, rootToken(vars, '--text'));
+  const inks = [
+    ['.ct-badge', mix(accent, white, 80)],
+    ['.ct-list.is-numbered counter', mix(accent, white, 80)],
+    ['.ct-label / .ct-detail', secondary],
+    ['.ct-value', text],
+    ['.ct-delta.is-up', resolvedHex(vars, rootToken(vars, '--accent-light'))],
+  ];
   for (const [name, card] of [
     ['glass', rgbaOverPage(rootToken(vars, '--glass'))],
     ['raised', resolvedHex(vars, rootToken(vars, '--surface-elevated'))],
   ]) {
-    const surface = over(card, PAGE_GROUND, alpha);
-    const ink = over(secondary, surface, alpha);
-    const measured = ratio(ink, surface);
-    if (measured < 4.5) {
-      failures.push(`.ct-card.is-muted on ${name}: ${ink} on ${surface} is ${measured.toFixed(2)}:1`);
+    for (const [what, ink] of inks) {
+      const measured = ratio(ink, card);
+      if (measured < 4.5) {
+        failures.push(`${what} on ${name}: ${ink} on ${card} is ${measured.toFixed(2)}:1`);
+      }
     }
   }
+
+  // .is-muted must NOT use opacity: it composites every descendant, and at any
+  // alpha that still reads as dimmed a 0.62rem accent badge inside the card
+  // falls under AA (2.9:1 at 0.7). Muting is a tone change instead.
+  const mutedRule = editorial.match(/\.ct-card\.is-muted\s*\{([^}]*)\}/)?.[1];
+  assert.ok(mutedRule, '.ct-card.is-muted is not declared');
+  assert.doesNotMatch(mutedRule, /(^|[\s;])opacity\s*:/,
+    '.ct-card.is-muted must not dim its own text — mute with --ct-tone and the border');
 
   assert.deepEqual(failures, [], 'editorial text contrast fell below WCAG AA');
 });

@@ -135,7 +135,9 @@ Three rules follow:
 
 1. The standard map's literals are legal only inside `editorial.css`, and only
    inside the block it marks `RANK-SCALE-LITERALS`. The rest of that sheet may
-   carry no literal colour at all.
+   carry no literal colour at all. Ten of the twelve appear nowhere else in the
+   package; `#ef4444` and `#22c55e` are also the fire and wind element colours,
+   which keep their own separate exception.
 2. A step's meaning lives in its text and its position, never in its colour
    alone, and every ink meets AA against its own 15% background.
 3. Game-specific rarity, burst and tier *values* still stay downstream. A site

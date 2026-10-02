@@ -449,6 +449,8 @@ class in your stylesheet instead, or see
 | `--ct-cols` | `2` | Column count of `.ct-cols` |
 | `--ct-cols-tracks` | unset | Explicit `.ct-cols` tracks, such as `1.55fr 1fr` |
 | `--ct-grid-min` | `260px` | Minimum cell width of `.ct-grid` |
+| `--ct-chip-min` | `150px` | Minimum chip width of `.ct-list.is-grid` |
+| `--ct-thumb-min` | `180px` | Minimum thumbnail width of `.ct-gallery` |
 | `--ct-row-cols` | `auto minmax(0, 1fr) auto` | Dense `.ct-row` tracks |
 | `--ct-spark-h` | `72px` | Height of `.ct-spark` |
 | `--ct-tone` | `var(--accent)` | Tone colour: callout and card tick, avatar frame, badge, meter fill, legend swatch, `.ct-kv` value |
@@ -631,6 +633,10 @@ styled `<div>`, not a heading, so it doesn't add to the page outline.
 </div>
 ```
 
+A chip list and a gallery have knobs of their own (`--ct-chip-min`,
+`--ct-thumb-min`) precisely so a card grid can set `--ct-grid-min` without
+squeezing a list nested inside one of its cards.
+
 **Which to use:** `.ct-cols` is for a fixed arrangement you are composing — two
 columns of prose, a 1.55fr/1fr split. `.ct-grid` is for a set of like things
 whose count you do not control, such as a row of cards; it fits as many per row
@@ -720,7 +726,9 @@ red, orange, yellow, green, blue, neutral grey. It is the one place this
 package uses colours outside its palette, because a tier list that reads as a
 tier list anywhere is worth more here than palette purity. Put
 `.ct-ranks-corrupted` on any ancestor and the same six steps run hot to cold
-through the theme instead: red, magenta, accent, violet, cyan, neutral.
+through the theme instead: red, magenta, magenta2, violet, cyan, neutral. That
+map is palette tokens throughout, so overriding `--accent` cannot move one of
+its steps off the palette.
 
 **Each step is two custom properties** — `--ct-rank-N` for the edge (border,
 and the background at 15%) and `--ct-rank-N-ink` for the text. Override them
@@ -728,8 +736,8 @@ on any ancestor for a third map of your own:
 
 ```css
 .my-grades {
-  --ct-rank-0: var(--corrupted-green);
-  --ct-rank-0-ink: color-mix(in srgb, var(--corrupted-green) 55%, white);
+  --ct-rank-0: var(--corrupted-purple);
+  --ct-rank-0-ink: color-mix(in srgb, var(--corrupted-purple) 55%, var(--corrupted-white));
 }
 ```
 

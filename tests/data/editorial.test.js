@@ -189,6 +189,18 @@ test('.ct-rank reads rank colours from --ct-rank-* only', () => {
   }
 });
 
+test('a rank badge outranks the badge default', () => {
+  // The first cut put the badge's outline look behind
+  // `.ct-badge:not(.is-solid):not(.is-dashed)` — three classes — and the rank
+  // colours on a bare `.ct-rank`. The chain won, so every rank badge rendered
+  // with an accent border and no fill while the source looked correct. Both
+  // halves of the fix are pinned here.
+  assert.doesNotMatch(code, /\.ct-badge:not\(/, 'the badge default must not sit behind a :not() chain');
+  const paint = code.match(/([^{}]*\.ct-rank[^{}]*)\{[^}]*background:[^}]*\}/);
+  assert.ok(paint, 'no rule paints .ct-rank');
+  assert.match(paint[1], /\.ct-badge\.ct-rank/, 'the rank paint rule must carry .ct-badge');
+});
+
 test('every animation runs only under prefers-reduced-motion: no-preference', () => {
   const guarded = code.match(/@media\s*\(prefers-reduced-motion:\s*no-preference\)\s*\{([\s\S]*?\})\s*\}/g) ?? [];
   const inside = guarded.join('\n');

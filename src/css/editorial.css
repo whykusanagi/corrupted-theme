@@ -756,6 +756,10 @@
   margin: 0.4rem 0 0.6rem;
 }
 
+/* Outline is the default, declared on the base rule rather than behind a
+   `:not()` chain: the chain scored three classes and quietly outranked the
+   rank scale below, so every rank badge painted an accent border and no fill.
+   Found in the browser — the source read fine. */
 .ct-badge {
   padding: 0.15rem 0.45rem;
   font-family: var(--font-mono);
@@ -763,13 +767,16 @@
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--ct-tone, var(--accent));
+  background: transparent;
+  border: 1px solid var(--ct-tone, var(--accent));
   border-radius: 3px;
 }
 
-.ct-badge.is-outline,
-.ct-badge:not(.is-solid):not(.is-dashed) {
+/* The class a page uses to say "outline" out loud, and to come back to it
+   from a variant. */
+.ct-badge.is-outline {
   background: transparent;
-  border: 1px solid var(--ct-tone, var(--accent));
+  border-style: solid;
 }
 
 .ct-badge.is-solid {
@@ -783,12 +790,15 @@
   border: 1px dashed var(--ct-tone, var(--accent));
 }
 
-.ct-rank {
+/* A rank badge paints from the scale instead of --ct-tone. The selector
+   carries .ct-badge so it outranks the badge's own default; the data-rank
+   rules below set only custom properties, which keeps them order-safe. */
+.ct-badge.ct-rank {
   --ct-rank-edge: var(--ct-rank-5);
   --ct-rank-ink: var(--ct-rank-5-ink);
   color: var(--ct-rank-ink);
   background: color-mix(in srgb, var(--ct-rank-edge) 15%, transparent);
-  border: 1px solid var(--ct-rank-edge);
+  border-color: var(--ct-rank-edge);
 }
 
 .ct-rank[data-rank="0"] { --ct-rank-edge: var(--ct-rank-0); --ct-rank-ink: var(--ct-rank-0-ink); }

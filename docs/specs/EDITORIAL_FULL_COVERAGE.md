@@ -308,6 +308,12 @@ Where the build departed from this spec, and why:
 - **`.ct-rank` composes with `.ct-badge`** rather than restating the badge box:
   `class="ct-badge ct-rank" data-rank="2"`.
 
+**Weight.** `dist/theme.min.css` goes from 80,416 B to 100,326 B minified,
+15,080 B to 18,743 B gzipped: **+3.6 KB gzipped**, past the +2.8 KB that #76
+§3.5 estimated for its own narrower scope. The trade is stated in §1 — a site
+that adopts this deletes its post-content stylesheet outright, and the recap
+page alone was carrying about a hundred classes of its own.
+
 Still open from §9: the cross-site coverage audit (§9.6), each site's own
 `ct-`-rule test (§9.7), the two-width visual pass (§9.8), and a re-run of the
 zero-context docs validation now that the vocabulary has roughly doubled.

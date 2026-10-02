@@ -5,7 +5,7 @@ All notable changes to the Corrupted Theme project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.4] - 2026-09-24
+## [0.3.4] - 2026-10-02
 
 ### Added
 
@@ -14,7 +14,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   blocks (sections, tables, figures, callouts, quotes, columns, card grids,
   media, attribute strips, entity cards), bar sparklines and
   award rows that consumer sites had each been re-deriving by hand, so one
-  copy ships in the theme. +2.3 KB gzipped on `dist/theme.min.css`.
+  copy ships in the theme. +19.4 KB minified / +3.6 KB gzipped on
+  `dist/theme.min.css` — more than #76 estimated, because the scope grew to
+  every class a post or data page uses, which is what lets a site delete its
+  own stylesheet for post content rather than keep a shrinking one.
   - Every class is `ct-`-prefixed, because the sheet ships in the global
     bundle and generic names like `.tile` or `.spark` would restyle any
     consumer element that shares them.
@@ -27,11 +30,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Award rows and the sparkline axis follow the original season-recap
     styles: roomier rows, a glowing category label, tighter winner type and a
     fluid stat column with tabular figures.
-  - Phase B extends the shared editorial vocabulary with bylines, masthead
-    fact blocks, labelled dividers, section metadata, grid/numbered lists,
-    badge variants, rank badges, meters, dense rows, inline key/value facts,
-    chart frames, legends, compact numeric tables, callout icons/asides,
-    galleries and post index/nav/footer chrome.
+  - The vocabulary covers a whole page, not just an article: bylines, a
+    masthead fact block, labelled dividers, section metadata, chip and
+    numbered lists, badge variants, rank badges, meters, dense ruled rows,
+    inline key/value facts, chart frames with legends, compact numeric
+    tables, callout icons and asides, galleries, and the post index, nav and
+    footer. One card shape (`.ct-card`) and one small label (`.ct-label`)
+    serve all of them.
   - Rank badges use a sanctioned off-palette standard rank scale, quarantined
     in the one `editorial.css` rank-scale block and guarded by the colour
     sweep. The corrupted rank map stays on theme tokens; step 5 uses

@@ -33,6 +33,77 @@ function selectorClasses(source) {
 
 const classes = selectorClasses(code);
 
+function topLevelRules(source) {
+  const rules = [];
+  let depth = 0;
+  let start = 0;
+  for (let i = 0; i < source.length; i += 1) {
+    const ch = source[i];
+    if (ch === '{') {
+      if (depth === 0) {
+        const prelude = source.slice(start, i).trim();
+        const close = findRuleEnd(source, i);
+        if (prelude && !prelude.startsWith('@')) {
+          rules.push({
+            selector: prelude.replace(/\s+/g, ' '),
+            body: source.slice(i + 1, close),
+          });
+        }
+      }
+      depth += 1;
+    } else if (ch === '}') {
+      depth -= 1;
+      if (depth === 0) start = i + 1;
+    }
+  }
+  return rules;
+}
+
+function findRuleEnd(source, open) {
+  let depth = 0;
+  for (let i = open; i < source.length; i += 1) {
+    if (source[i] === '{') depth += 1;
+    if (source[i] === '}') {
+      depth -= 1;
+      if (depth === 0) return i;
+    }
+  }
+  throw new Error(`unterminated CSS rule starting at ${open}`);
+}
+
+function normalizeDeclarations(body) {
+  const declarations = body
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .split(';')
+    .map((decl) => decl.replace(/\s+/g, ' ').trim())
+    .filter(Boolean)
+    .sort();
+  return declarations.join(';');
+}
+
+/**
+ * A rule that defines a component *shape*: every selector in its list is a
+ * class, or a class with a state on it. Anything with a descendant, a child,
+ * a pseudo or an attribute is styling a part or a case, not declaring a shape.
+ *
+ * Only shapes are compared for duplication. The failure this guards against is
+ * a re-introduced variant — §3 merged .ct-tile, .ct-stat and .ct-cell, which
+ * were three names for one card. Comparing every rule instead would flag
+ * `.ct-body a` against `.ct-delta.is-up` for both being the light accent, and
+ * the only way to satisfy it is to group rules that have nothing to do with
+ * each other, which is worse CSS than the duplication it removes.
+ */
+function isShapeRule(selector) {
+  return selector.split(',').every((part) => /^\.[\w-]+(\.[\w-]+)*$/.test(part.trim()));
+}
+
+function ruleBodyForSelector(selector) {
+  const rule = topLevelRules(code)
+    .find((r) => r.selector.split(',').map((part) => part.trim()).includes(selector));
+  assert.ok(rule, `${selector} is not declared`);
+  return rule.body;
+}
+
 test('every class is ct- prefixed, or an is-*/has-* state on a ct- element', () => {
   // The sheet ships in the global bundle: a bare .tile or .spark would style
   // any consumer element that happens to share the name.
@@ -52,6 +123,22 @@ test('every class is ct- prefixed, or an is-*/has-* state on a ct- element', () 
 test('keyframes are ct- prefixed', () => {
   for (const [, name] of code.matchAll(/@keyframes\s+([\w-]+)/g)) {
     assert.ok(name.startsWith('ct-'), `@keyframes ${name}`);
+  }
+});
+
+test('no two component shapes carry the same declaration block', () => {
+  // Spec §9.2. Media-query rules are skipped by topLevelRules: two of those
+  // saying `grid-template-columns: 1fr` is the responsive pattern, not a
+  // duplicate.
+  const seen = new Map();
+  for (const rule of topLevelRules(css)) {
+    if (!isShapeRule(rule.selector)) continue;
+    const body = normalizeDeclarations(rule.body);
+    if (!body) continue;
+    assert.ok(!seen.has(body),
+      `duplicate shape: ${seen.get(body)} and ${rule.selector} — merge them, `
+      + 'or give one a reason to differ');
+    seen.set(body, rule.selector);
   }
 });
 
@@ -184,10 +271,10 @@ test('names that cannot break on spaces still wrap inside cards and award rows',
   // with a long handle: min-width:0 lets the box shrink, but the word itself
   // needs permission to break.
   for (const sel of ['.ct-card-title', '.ct-award-winner']) {
-    const body = code.match(new RegExp(`\\${sel}\\s*\\{([^}]*)\\}`))[1];
+    const body = ruleBodyForSelector(sel);
     assert.match(body, /overflow-wrap:\s*anywhere/, sel);
   }
-  assert.match(code, /\.ct-entity-id\s*\{\s*min-width:\s*0;/);
+  assert.match(ruleBodyForSelector('.ct-entity-id'), /min-width:\s*0;/);
 });
 
 test('every ct- class in the reference doc examples exists in the module', () => {

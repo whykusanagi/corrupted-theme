@@ -50,6 +50,45 @@ function over(fg, bg, alpha) {
   return '#' + mix.map((v) => v.toString(16).padStart(2, '0')).join('');
 }
 
+function mix(fg, bg, percent) {
+  const f = channels(fg); const b = channels(bg);
+  const alpha = percent / 100;
+  const mixed = f.map((v, i) => Math.round(v * alpha + b[i] * (1 - alpha)));
+  return '#' + mixed.map((v) => v.toString(16).padStart(2, '0')).join('');
+}
+
+function rgbaOverPage(value) {
+  const match = value.match(/rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\s*\)/);
+  assert.ok(match, `expected rgba() token, got ${value}`);
+  const hex = '#' + match.slice(1, 4)
+    .map((v) => Number(v).toString(16).padStart(2, '0'))
+    .join('');
+  return over(hex, PAGE_GROUND, Number(match[4]));
+}
+
+function cssFile(rel) {
+  return readFileSync(path.join(ROOT, rel), 'utf8');
+}
+
+function rootToken(source, name) {
+  const match = source.match(new RegExp(`^\\s*${name}:\\s*([^;]+);`, 'm'));
+  assert.ok(match, `${name} is not declared`);
+  return match[1].trim();
+}
+
+function declaration(block, name) {
+  const match = block.match(new RegExp(`^\\s*${name}:\\s*([^;]+);`, 'm'));
+  assert.ok(match, `${name} is not declared`);
+  return match[1].trim();
+}
+
+function resolvedHex(source, value) {
+  const varName = value.match(/^var\((--[\w-]+)\)$/)?.[1];
+  const resolved = varName ? rootToken(source, varName) : value;
+  assert.match(resolved, /^#[0-9a-fA-F]{6}$/, `${value} did not resolve to a six-digit hex`);
+  return resolved.toLowerCase();
+}
+
 /* ── claim extraction ──────────────────────────────────────────────────── */
 
 const HEX = /#[0-9a-fA-F]{6}/g;
@@ -152,6 +191,54 @@ test('docs do not claim blanket AAA compliance the palette cannot meet', () => {
   assert.deepEqual(offenders, [],
     'magenta2 (5.2:1) and violet (4.7:1) are AA against --bg, so no document '
     + 'may claim every combination reaches AAA');
+});
+
+test('editorial rank inks and small labels meet AA on their own surfaces', () => {
+  const editorial = cssFile('src/css/editorial.css');
+  const vars = cssFile('src/css/variables.css');
+  const rankBlock = editorial.match(/:root\s*\{([^}]*--ct-rank-0[^}]*)\}/)?.[1];
+  assert.ok(rankBlock, 'standard rank tokens are not declared in :root');
+
+  const failures = [];
+  for (let step = 0; step <= 5; step += 1) {
+    const edge = resolvedHex(vars, declaration(rankBlock, `--ct-rank-${step}`));
+    const ink = resolvedHex(vars, declaration(rankBlock, `--ct-rank-${step}-ink`));
+    const surface = over(edge, PAGE_GROUND, 0.15);
+    const measured = ratio(ink, surface);
+    if (measured < 4.5) {
+      failures.push(`standard step ${step}: ${ink} on ${surface} is ${measured.toFixed(2)}:1`);
+    }
+  }
+
+  const corruptedBlock = editorial.match(/\.ct-ranks-corrupted\s*\{([^}]*)\}/)?.[1];
+  assert.ok(corruptedBlock, 'corrupted rank tokens are not declared');
+  for (let step = 0; step <= 5; step += 1) {
+    const edgeValue = declaration(corruptedBlock, `--ct-rank-${step}`);
+    const inkValue = declaration(corruptedBlock, `--ct-rank-${step}-ink`);
+    assert.match(inkValue, new RegExp(`^color-mix\\(in srgb, ${edgeValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} 55%, white\\)$`),
+      `corrupted step ${step} ink must stay a 55% edge/white mix`);
+    const edge = resolvedHex(vars, edgeValue);
+    const ink = mix(edge, '#ffffff', 55);
+    const surface = over(edge, PAGE_GROUND, 0.15);
+    const measured = ratio(ink, surface);
+    if (measured < 4.5) {
+      failures.push(`corrupted step ${step}: ${ink} on ${surface} is ${measured.toFixed(2)}:1`);
+    }
+  }
+
+  const labelSurface = rgbaOverPage(rootToken(vars, '--glass'));
+  const secondary = resolvedHex(vars, rootToken(vars, '--text-secondary'));
+  for (const selector of ['.ct-label', '.ct-detail']) {
+    const rule = editorial.match(new RegExp(`\\${selector}\\s*\\{([^}]*)\\}`))?.[1];
+    assert.ok(rule, `${selector} is not declared`);
+    assert.equal(declaration(rule, 'color'), 'var(--text-secondary)');
+    const measured = ratio(secondary, labelSurface);
+    if (measured < 4.5) {
+      failures.push(`${selector}: ${secondary} on ${labelSurface} is ${measured.toFixed(2)}:1`);
+    }
+  }
+
+  assert.deepEqual(failures, [], 'editorial text contrast fell below WCAG AA');
 });
 
 test('every --corrupted-* token referenced is defined in variables.css', () => {

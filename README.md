@@ -1489,7 +1489,9 @@ Click-to-reveal overlay for sensitive content.
 See `examples/extensions-showcase.html` for interactive demos and `docs/COMPONENTS_REFERENCE.md` for complete API documentation.
 
 ## Customization & Tokens
-Override only the tokens you need. The defaults intentionally mirror the showcase.
+Override only the tokens you need. **The values below are an example override,
+not the defaults** — the shipped `--accent` is `#d94f90`. `src/css/variables.css`
+is the source of truth for every default.
 ```css
 :root {
   --accent: #ff5fb0;

@@ -423,15 +423,18 @@ gallery1.destroy(); // Only destroys gallery1
 doesn't contain these classes. These are long-form article and recap-page
 primitives: a masthead, prose blocks, card grids, entity cards, rank badges,
 bar sparklines, meters, ruled rows, chart frames, award rows and the post
-index. Every class is `ct-`-prefixed; a variant or state on one of them is an
-`is-*` or `has-*` modifier (`.ct-card.is-raised`, `.ct-card.has-tick`), never a
-class of its own. Live demo: [`examples/editorial.html`](../examples/editorial.html).
+index. Every class is `ct-`-prefixed. A *state* is an `is-*` or `has-*` modifier on a
+`ct-` element (`.ct-card.is-raised`, `.ct-card.has-tick`); a named *variant*
+with vocabulary of its own keeps a `ct-` name (`.ct-warn`, `.ct-callout-aside`,
+`.ct-ranks-corrupted`). Live demo: [`examples/editorial.html`](../examples/editorial.html).
 Design decisions: [`docs/specs/EDITORIAL_PRIMITIVES.md`](specs/EDITORIAL_PRIMITIVES.md).
 
 The **markup is the contract**, not just the class list. Several blocks only
 style correctly in the wrapper shown here, as noted below. Put `.ct-article`
 in a width-limited wrapper such as the theme's `.container`. It needs no body
-class: the blocks paint their own surfaces over the theme's page background.
+class: the blocks paint their own surfaces over the theme's page background,
+which `typography.css` sets on `html` and `body` (bundled in `theme.css`; if
+you import `./editorial` on its own, that background is yours to set).
 
 **Knobs.** These are custom properties with defaults. Set them on any ancestor,
 inline, or in your own stylesheet (`.my-3-up { --ct-cols: 3; }`). Under a
@@ -442,7 +445,7 @@ class in your stylesheet instead, or see
 | Property | Default | Controls |
 |---|---|---|
 | `--ct-measure` | `47rem` | Width of running text inside `.ct-body` |
-| `--ct-measure-wide` | `62rem` | Width of `.ct-table` inside `.ct-body` |
+| `--ct-measure-wide` | `62rem` | Width of the wide tier inside `.ct-body` (see below) |
 | `--ct-cols` | `2` | Column count of `.ct-cols` |
 | `--ct-cols-tracks` | unset | Explicit `.ct-cols` tracks, such as `1.55fr 1fr` |
 | `--ct-grid-min` | `260px` | Minimum cell width of `.ct-grid` |
@@ -452,6 +455,8 @@ class in your stylesheet instead, or see
 | `--ct-value-size` | `1.5rem` | Size of `.ct-value` |
 | `--ct-avatar-size` | `64px` | Size of `.ct-avatar` |
 | `--v` | `0` | Unitless sparkline bar or meter value, 0 to 1 |
+| `--ct-rank-0` … `--ct-rank-5` | the standard map | Rank step edge colour (border, and background at 15%) |
+| `--ct-rank-0-ink` … `--ct-rank-5-ink` | the standard map | Rank step text colour |
 
 ### How wide each block is
 
@@ -460,12 +465,13 @@ length for running text — and centred. Wider blocks opt out, in two steps:
 
 | Width | Blocks |
 |---|---|
-| `--ct-measure` (47rem), the default for everything else | `.ct-p`, `.ct-list`, `.ct-h3`, `.ct-callout`, `.ct-quote`, `.ct-media`, `.ct-meter`, `.ct-kv`, `.ct-post-nav`, `.ct-post-foot` |
+| `--ct-measure` (47rem), the default for everything else | `.ct-p`, `.ct-list`, `.ct-h3`, `.ct-callout`, `.ct-quote`, `.ct-media`, `.ct-meter`, `.ct-kv` |
 | `--ct-measure-wide` (62rem) | `.ct-table`, `.ct-rows`, `.ct-chart`, `.ct-gallery`, `.ct-post-list`, `.ct-divider` |
 | full width of the wrapper | `.ct-figure`, `.ct-section-h`, `.ct-cols`, `.ct-grid`, `.ct-spark-wrap`, `.ct-awards`, `.ct-attrs` |
 
 Only **direct children** of `.ct-body` are affected; a block nested inside a
-card or a column fills its parent. The wrapper you put `.ct-article` in sets
+card or a column fills its parent, and `.ct-post-nav` / `.ct-post-foot` sit
+outside `.ct-body` entirely, so they span the wrapper. The wrapper you put `.ct-article` in sets
 the outer limit — the theme's `.container` caps at 1200px, so the measure
 applies inside that, and the full-width tier means "as wide as the wrapper
 allows", not the viewport.
@@ -535,7 +541,7 @@ and awards run full width.
 <figure class="ct-table is-compact">
   <div class="ct-table-scroll" tabindex="0" role="region" aria-label="Unit changes">
     <table>
-      <thead><tr><th scope="col">Unit</th><th scope="col">Δ</th></tr></thead>
+      <thead><tr><th scope="col">Unit</th><th scope="col" class="ct-num">Δ</th></tr></thead>
       <tbody><tr class="is-self"><td>Example</td><td class="ct-num">+4%</td></tr></tbody>
     </table>
   </div>
@@ -575,8 +581,10 @@ Row headers (`<th scope="row">`) are fine.
 ```
 
 `.ct-callout-aside` is a two-column grid: a content wrapper, then the `<time>`.
-An icon goes **inside that wrapper**, not beside it — a direct child becomes a
-grid item and takes a column of its own. A two-ended window is two `<time>`
+An icon goes **inside that wrapper**, after the title and before the body text,
+not beside it — a direct child becomes a grid item and takes a column of its
+own. The glyph is yours: the class only sets the size, the tone colour and the
+float. A two-ended window is two `<time>`
 elements in one wrapper, so the grid still sees a single cell:
 
 ```html
@@ -759,9 +767,9 @@ rows are a list rather than a table, say so — `<ul class="ct-rows">` with
 `<li class="ct-row">` works as it stands, and nothing in the CSS depends on the
 element being a `<div>`. The same is true of `.ct-grid` and `.ct-badges`.
 
-Below 560px a row reflows: the lead and the text share the first line, a middle
-cell such as a meter takes a line of its own, and the trailing figure sits at
-the end. The `--ct-row-cols` tracks apply above that width.
+At 560px and below a row reflows: the lead and the text share the first line, a
+middle cell such as a meter takes a line of its own, and the trailing figure
+goes to the end of the last line. The `--ct-row-cols` tracks apply above that width.
 
 `.ct-delta` is shown inside a card because that is where it usually goes, but it
 is a standalone line of type — it works next to a table, a sparkline or a
@@ -797,7 +805,8 @@ legend item, so the two agree:
 ```
 
 A single-series chart can leave the polyline on `currentColor`, which inherits
-the frame's text colour. The `.ct-chart` frame styles any `<svg>` or `<canvas>`
+the frame's text colour — note that an un-toned legend swatch is `--accent`
+instead, so give that series a colour on both if they need to agree. The `.ct-chart` frame styles any `<svg>` or `<canvas>`
 to fill its width; what you draw inside it is yours.
 
 ### Award rows

@@ -107,7 +107,39 @@ breaks callers.
 3. A layout must still read as on-theme with every element badge removed.
 
 Rarity/tier/burst palettes beyond the five elements stay downstream and are
-deliberately absent from `colors.json`.
+deliberately absent from `colors.json` — but see the rank scale below: the
+*shape* of an ordered scale does ship, without any one game's values.
+
+### Rank Scale (ordered data)
+
+`editorial.css` ships one ordered six-step scale — `--ct-rank-0` … `--ct-rank-5`
+and a matching `-ink` for each — behind a single primitive,
+`.ct-rank[data-rank="0…5"]`. A tier list, a grade, a rarity and a ranked badge
+are the same shape, so they get one implementation and each site maps its own
+values onto steps in data.
+
+Two maps ship, selected by a class on any ancestor:
+
+- **Standard** (the default) keeps the familiar tier-list rainbow — red,
+  orange, yellow, green, blue, neutral — so a tier list reads as a tier list on
+  any site. **Its twelve hexes are off-palette by design**: the second
+  sanctioned exception beside the element colours, and sanctioned for the same
+  reason, that they are data values a reader already knows how to read rather
+  than theme chrome.
+- **Corrupted** (`.ct-ranks-corrupted`) runs hot to cold through the palette:
+  red, magenta, magenta2, violet, cyan, neutral. Red and cyan are the two *ends*
+  of a scale here, which is the compositional use of an accent — not a
+  corruption-state signal.
+
+Three rules follow:
+
+1. The standard map's literals are legal only inside `editorial.css`, and only
+   inside the block it marks `RANK-SCALE-LITERALS`. The rest of that sheet may
+   carry no literal colour at all.
+2. A step's meaning lives in its text and its position, never in its colour
+   alone, and every ink meets AA against its own 15% background.
+3. Game-specific rarity, burst and tier *values* still stay downstream. A site
+   maps them onto steps; it does not add a step.
 
 ### Enforcement
 
@@ -126,6 +158,11 @@ Two things the guard has to get right to be worth having:
   Allowing them everywhere is what let `.badge.error` be fire and
   `.badge.success` be wind: the guard saw a known colour and passed. Rule 1
   above is only enforceable if the guard can tell a badge from a border.
+- **The standard rank scale is scoped the same way**, to `editorial.css`, and
+  `tests/data/editorial.test.js` additionally requires those literals to sit
+  inside one marked block. Scoping is what keeps a sanctioned exception from
+  becoming a licence: a loose allowlist would let any file reach for a friendly
+  orange and pass.
 
 ### 2. Text Shadow Effects
 
@@ -1036,9 +1073,13 @@ corrupted.start();
     primitives (`editorial.css`) use for translucent accent fills so they
     follow a consumer's `--accent` override. Without it only those tints
     drop out.
-  - No pattern or palette rule changes. The editorial blocks follow the
-    existing rules: colour from the palette only, accents carry no state,
-    infinite motion only under `prefers-reduced-motion: no-preference`.
+  - Added the **Rank Scale** as the second sanctioned off-palette exception,
+    with its scoping rule and its AA requirement. The theme ships the shape of
+    an ordered scale; a game's rarity values still stay downstream.
+  - No pattern changes, and no change to what the palette *means*. The
+    editorial blocks follow the existing rules: colour from tokens, accents
+    carry no state, infinite motion only under
+    `prefers-reduced-motion: no-preference`.
 
 - **1.3** (2026-08-25): Ambient corruption, and a palette guard that works
   - Added **Pattern 6: Ambient Mark Decay** — non-textual geometric marks,

@@ -125,10 +125,11 @@ Browse every animation on the demo site, which deploys from `main`: [corrupted.w
 
 **0.3.4** adds editorial and data-page primitives: one shared stylesheet for
 the article and recap layouts that sites had each been rebuilding by hand.
+Markup and data stay with the site; every rule for post content lives here.
 
 | Export | What it does |
 |---|---|
-| `editorial` | Article masthead, prose blocks (sections, tables, figures, callouts, quotes, columns, grids, stat rows, media, attribute strips, entity cards), stat tiles, bar sparklines and award rows. Every class is `ct-`-prefixed; colour is palette tokens only. Bundled in `theme.min.css` (+2.3 KB gzipped). See [Editorial & Data Pages](#editorial--data-pages) |
+| `editorial` | One vocabulary for a blog or data page: article masthead, prose blocks (sections, tables, figures, callouts, quotes, columns, card grids, media, attribute strips, entity cards), bar sparklines, meters, ruled rows, chart frames with legends, galleries, award rows, a post index, and `.ct-rank` for any ordered scale. Every class is `ct-`-prefixed; colour is palette tokens only, the one sanctioned exception being the standard rank scale. Bundled in `theme.min.css`. See [Editorial & Data Pages](#editorial--data-pages) |
 
 It also declares `--font-mono`, which components had referenced since 0.2.x
 without it ever being defined.

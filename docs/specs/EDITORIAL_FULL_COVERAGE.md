@@ -1,6 +1,7 @@
 # Spec: Editorial full coverage — one vocabulary for every blog and data page
 
-**Status:** Draft, awaiting review
+**Status:** Theme side implemented — see §11. The cross-site gate (§9.6–§9.8)
+is still open, and so is the release itself.
 **Extends:** [`EDITORIAL_PRIMITIVES.md`](EDITORIAL_PRIMITIVES.md) (#76)
 **Target:** 0.3.4 (not yet published; this spec grows its scope)
 **Module:** `src/css/editorial.css` → export `./editorial`
@@ -111,7 +112,7 @@ A glitch glyph beside a title uses the theme's existing `.glitch-word`.
 | **new** `.ct-card-title` | Card heading | — |
 | **new** `.ct-card-corner` | Absolutely positioned top-right mono marker (a rank number) | — |
 | **new** `.ct-value` | Headline figure: mono and tabular | `--ct-value-size` (default `1.5rem`) |
-| **new** `.ct-delta` | Change against a baseline. The direction is written in the text; colour only reinforces it | `.is-up` → `--accent-light`, `.is-down` → `--text-muted`. Never green. |
+| **new** `.ct-delta` | Change against a baseline. The direction is written in the text; colour only reinforces it | `.is-up` → `--accent-light`. No `.is-down`: see §11. Never green. |
 | **new** `.ct-detail` | Supporting sentence | — |
 | `.ct-entity` (exists) | Card whose header is an avatar plus a name | — |
 
@@ -170,7 +171,7 @@ the only setting: it's chosen by a class on any ancestor.
 | 2 | `#eab308` / `#fde047` | `--accent` `#d94f90` |
 | 3 | `#22c55e` / `#86efac` | `--corrupted-purple` `#8b5cf6` |
 | 4 | `#3b82f6` / `#93c5fd` | `--corrupted-cyan` `#00ffff` |
-| 5 | `#6b7280` / `#cbd5e1` | `--text-muted` `#7a7085` |
+| 5 | `#6b7280` / `#cbd5e1` | `--text-secondary` `#b8afc8` (was `--text-muted`: §11) |
 
 - Each step is exposed as `--ct-rank-N` (edge) and `--ct-rank-N-ink` (text).
   The background is always the edge at 15%. For the corrupted map, the ink is
@@ -274,3 +275,39 @@ as follows (full per-class table in the implementation plan):
   migrations, each pinning `0.3.4`.
 - The #76 spec's §8.1 mapping gets updated for §3 (tile, stat and cell names
   change).
+
+## 11. Implementation record
+
+Built on this branch as three commits — §3 consolidation, then §4 and §5, then
+the §9 guards and the generated surfaces. Suite: 425 → 427 tests, all green.
+
+Where the build departed from this spec, and why:
+
+- **`.ct-delta.is-down` is dropped.** §4.3 mapped it to `--text-muted`, which
+  `tests/data/editorial.test.js` forbids in this sheet by name: it measures
+  3.7–4.2:1 on these surfaces, under AA at label sizes. Down is also the
+  neutral default, so the rule would have duplicated the base. Direction stays
+  in the text (`▼`, `−`), as #76 already had it.
+- **Corrupted rank step 5 is `--text-secondary`**, for the same reason. It is a
+  border and a 15% fill rather than text, but the guard is a flat ban on the
+  token and a flat ban is worth more than this one step.
+- **The self row stays `tr.is-self`**, scoped by `.ct-table`, rather than
+  gaining a filler class to satisfy the state-scoping guard. The guard now
+  reads the whole selector instead of the compound the state sits on: an
+  ancestor is scope enough, and the markup contract should not pay for a
+  regex.
+- **Cyan and green are now guarded separately.** §5 needs cyan as one end of
+  the corrupted ramp, so the blanket ban became: green nowhere in the sheet,
+  cyan in exactly one rule (`.ct-ranks-corrupted`). The callout tones are still
+  pinned individually.
+- **The twelve standard-map literals** sit in one block marked
+  `RANK-SCALE-LITERALS`, and three guards key off it: the sheet carries no
+  literal outside it, that block carries exactly those twelve, and no other
+  file may carry them (`color-sweep`'s scoped owner, the same mechanism the
+  element colours use). `CORRUPTED_THEME_SPEC.md` records the exception.
+- **`.ct-rank` composes with `.ct-badge`** rather than restating the badge box:
+  `class="ct-badge ct-rank" data-rank="2"`.
+
+Still open from §9: the cross-site coverage audit (§9.6), each site's own
+`ct-`-rule test (§9.7), the two-width visual pass (§9.8), and a re-run of the
+zero-context docs validation now that the vocabulary has roughly doubled.

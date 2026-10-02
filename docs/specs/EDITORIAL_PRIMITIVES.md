@@ -413,8 +413,8 @@ provenance gate (E4) keeps off shipped surfaces.
 | Downstream | Theme |
 |---|---|
 | `.upd-wrap` / `-header` / `-kicker` + `.dot` / `-h1` / `-sub` / `-datestamp` | `.ct-article` / `.ct-masthead` / `.ct-kicker` + `.ct-kicker-dot` / `.ct-title` / `.ct-dek` / `.ct-dateline` |
-| `.tiles` `.tile` `.k` `.v` `.d` (`.d.mut`) | `.ct-tiles` `.ct-tile` `.ct-tile-label` `.ct-tile-value` `.ct-tile-delta` (neutral is now the default) |
-| `.spark-wrap` `.spark-cap` `.spark` `.b` `.b.empty` `.spark.flat` `.spark-x` | `.ct-spark-wrap` `.ct-spark-cap` `.ct-spark` `.ct-spark-bar` `.is-empty` `.ct-spark.is-flat` `.ct-spark-axis` |
+| `.tiles` `.tile` `.k` `.v` `.d` (`.d.mut`) | `.ct-grid` `.ct-card.is-raised` `.ct-label` `.ct-value` `.ct-delta` (neutral is now the default) |
+| `.spark-wrap` `.spark-cap` `.spark` `.b` `.b.empty` `.spark.flat` `.spark-x` | `.ct-spark-wrap` `.ct-label` `.ct-spark` `.ct-spark-bar` `.is-empty` `.ct-spark.is-flat` `.ct-spark-axis` |
 | `style="height:42%"` on a bar | `style="--v:.42"` |
 | `.awards-list` `.award-row` `.award-cat` / `-winner` / `-detail` / `-stat` | `.ct-awards` `.ct-award` `.ct-award-cat` / `-winner` / `-detail` / `-stat` |
 | `--mono`, `--upd-mono` | `--font-mono` |
@@ -423,7 +423,14 @@ provenance gate (E4) keeps off shipped surfaces.
 \* `--faint` mapped to `--text-muted` downstream, which fails AA for these
 label sizes (see *Label contrast* in `docs/COMPONENTS_REFERENCE.md`).
 
-The `.ct-*` block names are unchanged from nikke's `content-blocks.ts`.
+> **Names consolidated before release.** `EDITORIAL_FULL_COVERAGE.md` §3
+> merged this spec's card and label shapes while they were still unpublished:
+> `.ct-tile`, `.ct-stat` and `.ct-cell` are one `.ct-card`, four label classes
+> are one `.ct-label`, and `.ct-media-portrait` is `.ct-avatar`. The table above
+> and the list below are current; §10's record below describes the build as it
+> happened and keeps the names it used then.
+
+Most `.ct-*` block names are unchanged from nikke's `content-blocks.ts`.
 Delete the page's copy of the styles and keep the markup, except for these
 changes:
 

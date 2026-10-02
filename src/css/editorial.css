@@ -1174,6 +1174,10 @@
   .ct-row > :nth-child(2) { flex: 1 1 55%; }
   .ct-row > :last-child { margin-left: auto; }
 
+  /* A middle child — a meter, say — would be left as a sliver between the
+     title and the trailing figure, so it takes a line of its own. */
+  .ct-row > :not(:nth-child(-n + 2)):not(:last-child) { flex: 1 1 100%; }
+
   .ct-award { grid-template-columns: 1fr; gap: 5px; }
   .ct-award-stat {
     grid-column: 1;

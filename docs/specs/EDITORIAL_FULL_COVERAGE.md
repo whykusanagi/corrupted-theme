@@ -339,6 +339,15 @@ browser pass):
 that adopts this deletes its post-content stylesheet outright, and the recap
 page alone was carrying about a hundred classes of its own.
 
+**§9.8, the two-width visual pass: done.** The browser extension could not
+resize the window, so the demo was loaded into a same-origin iframe at 375px
+and 320px — media queries evaluate against the iframe's viewport, so the
+layout is the real one. At both widths the page has no horizontal scroll and
+nothing overflows except the table, which scrolls inside `.ct-table-scroll` by
+design. It also showed what the numbers did not: a meter in the middle of a
+`.ct-row` was squeezed to a sliver between the title and the figure, so below
+560px a middle child now takes its own line.
+
 Still open from §9: the cross-site coverage audit (§9.6), each site's own
-`ct-`-rule test (§9.7), the two-width visual pass (§9.8), and a re-run of the
-zero-context docs validation now that the vocabulary has roughly doubled.
+`ct-`-rule test (§9.7), and a re-run of the zero-context docs validation now
+that the vocabulary has roughly doubled.

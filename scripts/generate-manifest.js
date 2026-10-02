@@ -429,7 +429,7 @@ export function buildManifest() {
       nsfw: 'All NSFW content is opt-in via nsfw: false default (lewdMode is a deprecated alias)',
       colors: 'Two tiers. THEME COLOURS carry corruption state and are the aesthetic: #ffffff white (stable, decoded, final readable state), #ff00ff magenta (primary corruption), #8b5cf6 violet (deep/intimate corruption). SUPPORTING: #d94f90 magenta2 (high-energy), #000000 black (void/background), #00ff00 green (system/matrix). ACCENTS are a compositional tool and NEVER a state signal: #00ffff cyan and #ff0000 red — use them to lift something off the background, not to mean anything. Cyan is not, and never was, the stable-text colour. BACKGROUNDS are not palette colours: use the surface ramp #0a0a0a bg, #0f0f1a bg-secondary, #12121a surface, #1a1a24 surface-elevated',
       determinism: 'Components exposing renderFrame(frameIdx, fps) + seed render byte-identical frames (see docs/RENDER_TO_VIDEO.md)',
-      patterns: 'Corruption patterns 1-4 defined in CORRUPTED_THEME_SPEC.md; final states are always readable',
+      patterns: 'Corruption patterns 1-6 defined in CORRUPTED_THEME_SPEC.md (1 character decoding, 2 phrase flickering, 3 hybrid, 4 staggered grid, 5 static material degradation, 6 ambient mark decay); final states are always readable',
     },
     generatedAt: null, // stamped by the caller (deterministic module output)
     exports: entries,

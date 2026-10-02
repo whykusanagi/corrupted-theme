@@ -420,8 +420,11 @@ gallery1.destroy(); // Only destroys gallery1
 `src/css/editorial.css`, bundled in `theme.css` and exported as `./editorial`,
 from **0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
 doesn't contain these classes. These are long-form article and recap-page
-primitives: a masthead, prose blocks, entity cards, card grids, bar sparklines
-and award rows. Every class is `ct-`-prefixed. Live demo: [`examples/editorial.html`](../examples/editorial.html).
+primitives: a masthead, prose blocks, card grids, entity cards, rank badges,
+bar sparklines, meters, ruled rows, chart frames, award rows and the post
+index. Every class is `ct-`-prefixed; a variant or state on one of them is an
+`is-*` or `has-*` modifier (`.ct-card.is-raised`, `.ct-card.has-tick`), never a
+class of its own. Live demo: [`examples/editorial.html`](../examples/editorial.html).
 Design decisions: [`docs/specs/EDITORIAL_PRIMITIVES.md`](specs/EDITORIAL_PRIMITIVES.md).
 
 The **markup is the contract**, not just the class list. Several blocks only
@@ -448,6 +451,23 @@ class in your stylesheet instead, or see
 | `--ct-value-size` | `1.5rem` | Size of `.ct-value` |
 | `--ct-avatar-size` | `64px` | Size of `.ct-avatar` |
 | `--v` | `0` | Unitless sparkline bar or meter value, 0 to 1 |
+
+### How wide each block is
+
+A direct child of `.ct-body` is clamped to the measure — the comfortable line
+length for running text — and centred. Wider blocks opt out, in two steps:
+
+| Width | Blocks |
+|---|---|
+| `--ct-measure` (47rem), the default for everything else | `.ct-p`, `.ct-list`, `.ct-h3`, `.ct-callout`, `.ct-quote`, `.ct-media`, `.ct-kv`, `.ct-post-nav`, `.ct-post-foot` |
+| `--ct-measure-wide` (62rem) | `.ct-table`, `.ct-rows`, `.ct-chart`, `.ct-gallery`, `.ct-post-list`, `.ct-divider` |
+| full width of the wrapper | `.ct-figure`, `.ct-section-h`, `.ct-cols`, `.ct-grid`, `.ct-spark-wrap`, `.ct-awards`, `.ct-attrs` |
+
+Only **direct children** of `.ct-body` are affected; a block nested inside a
+card or a column fills its parent. The wrapper you put `.ct-article` in sets
+the outer limit — the theme's `.container` caps at 1200px, so the measure
+applies inside that, and the full-width tier means "as wide as the wrapper
+allows", not the viewport.
 
 ### Article frame
 
@@ -779,6 +799,15 @@ a lightbox.
 
 ### Post index and post chrome
 
+`.ct-post-nav` and `.ct-post-foot` go inside `.ct-article`, after `.ct-body`;
+the nav may also be repeated before it. `.ct-post-list` is an index page's
+content, so it sits inside `.ct-body` like any other block.
+
+The nav's links are in reading order — back to the index, then the previous
+post, then the next — and the order is yours to change; nothing in the CSS
+depends on it. `.ct-post-title` is shown as `<h3>` because an index usually has
+an `<h2>` above the list; use whatever level keeps the page's outline in order.
+
 ```html
 <nav class="ct-post-nav" aria-label="Post navigation">
   <a href="/posts/">Back to index</a>
@@ -798,6 +827,25 @@ a lightbox.
   <span class="ct-byline">Filed by the archive bot.</span>
 </footer>
 ```
+
+### Accessibility, in one place
+
+Each example below carries these inline; this is the summary.
+
+| Element | What the markup must carry |
+|---|---|
+| `.ct-kicker-dot`, `.ct-section-n`, `.ct-slash`, `.ct-callout-icon` | `aria-hidden="true"` — they are decoration, and are announced as noise otherwise |
+| `.ct-divider` | `aria-hidden="true"` on the element: its label is drawn from `data-label` by CSS, and a real heading follows it |
+| `.ct-table-scroll` | `tabindex="0"`, `role="region"` and an `aria-label`, so the sideways scroll is reachable by keyboard |
+| `.ct-spark`, `.ct-meter` | `role="img"` and a text alternative — the bars carry nothing for assistive tech. A `.ct-meter` that reports a number can instead be `role="progressbar"` with `aria-valuenow`/`aria-valuemin`/`aria-valuemax` |
+| `.ct-row` with ellipsised text | the full value in `title` on the cell that truncates |
+| dates | `<time datetime="YYYY-MM-DD">` |
+| images | `alt`; empty `alt=""` for a decorative portrait beside a name that is already text |
+| `.ct-rank` | the step in the text (`S`, `B`, `Rank 2`), never colour alone |
+| `.ct-delta` | the direction in the text (`▲`, `▼`, `+`, `−`), never colour alone |
+
+Nothing here needs a `role` or label on `.ct-callout` itself: it is a styled
+block, and its title carries the meaning.
 
 ### Label contrast
 

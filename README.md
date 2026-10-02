@@ -1372,9 +1372,10 @@ All Nikke-specific helpers live alongside the main utilities (`src/css/nikke-uti
 
 ## Editorial & Data Pages
 
-Long-form article and recap-page primitives: a masthead, numbered sections,
-tables, callouts, quotes, columns, grids, entity cards, stat rows, stat
-tiles, bar sparklines and award rows. From 0.3.4 they ship in `theme.css`
+One vocabulary for a blog or data page: a masthead, numbered sections, prose,
+tables, callouts, quotes, columns, card grids, entity cards, bar sparklines,
+meters, ruled rows, chart frames with legends, award rows, rank badges and the
+post index. From 0.3.4 they ship in `theme.css`
 (and as `@whykusanagi/corrupted-theme/editorial`), every class is `ct-`-prefixed,
 and the markup is the contract.
 

@@ -91,7 +91,7 @@ A glitch glyph beside a title uses the theme's existing `.glitch-word`.
 | **new** `.ct-section-meta` | Right-aligned mono count or context in a section header ("Us vs region") | — |
 | **new** `.ct-label` | The one small mono uppercase label, used by cards, charts, legends and captions | — |
 | `.ct-h3`, `.ct-p`, `.ct-list`, `.ct-hi`, `.ct-slash` (exist) | Prose | — |
-| `.ct-list` gains `.is-grid`, `.is-numbered` | Chip grid (track lists, unit rosters); counted items | `--ct-grid-min` |
+| `.ct-list` gains `.is-grid`, `.is-numbered` | Chip grid (track lists, unit rosters); counted items | `--ct-chip-min` |
 
 ### 4.3 Cards
 
@@ -145,7 +145,7 @@ A glitch glyph beside a title uses the theme's existing `.glitch-word`.
 | `.ct-callout` (exists) gains `.ct-callout-icon`, `.ct-callout-aside` | Notice, narrative aside, maintenance banner with a time window. The title is optional | `--ct-tone` via `.ct-key`, `.ct-info`, `.ct-warn` |
 | `.ct-quote` (exists) | Pull quote; also the no-JS fallback for embedded posts (the embed's own class stays in the markup as its script hook) | — |
 | `.ct-figure`, `.ct-media` (exist) | Images with captions | — |
-| **new** `.ct-gallery` | Grid of linked images. There is no lightbox: images link to their full size | `--ct-grid-min` |
+| **new** `.ct-gallery` | Grid of linked images. There is no lightbox: images link to their full size | `--ct-thumb-min` |
 | `.ct-cols` (exists) | Side-by-side columns | `--ct-cols` (count) or **new** `--ct-cols-tracks` (explicit ratios, such as `1.55fr 1fr`) |
 | `.ct-grid` (exists) | Responsive auto-fill grid | `--ct-grid-min` |
 

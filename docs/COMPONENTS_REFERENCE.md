@@ -522,7 +522,7 @@ and awards run full width.
 </div>
 <p class="ct-p">Body text with <strong>emphasis</strong> and a <span class="ct-hi">highlight</span>.</p>
 <ul class="ct-list"><li>List item</li></ul>
-<ul class="ct-list is-grid" style="--ct-grid-min:150px"><li>Chip item</li><li>Chip item</li></ul>
+<ul class="ct-list is-grid" style="--ct-chip-min:150px"><li>Chip item</li><li>Chip item</li></ul>
 <ol class="ct-list is-numbered"><li>First step.</li><li>Second step.</li></ol>
 <h3 class="ct-h3">Sub-heading</h3>
 ```
@@ -876,7 +876,7 @@ below.
 ### Gallery
 
 ```html
-<div class="ct-gallery" style="--ct-grid-min:140px">
+<div class="ct-gallery" style="--ct-thumb-min:140px">
   <a href="full-size-1.jpg"><img src="thumb-1.jpg" alt="Description"></a>
   <a href="full-size-2.jpg"><img src="thumb-2.jpg" alt="Description"></a>
 </div>

@@ -142,6 +142,49 @@ test('no two component shapes carry the same declaration block', () => {
   }
 });
 
+test('a knob in an example is a knob the sheet reads', () => {
+  // The chip list and the gallery stopped reading --ct-grid-min and got knobs
+  // of their own; four documented examples kept setting the old one, which is
+  // a setting that silently does nothing in the reader's page.
+  const doc = read('docs/COMPONENTS_REFERENCE.md');
+  const section = doc.slice(doc.indexOf('## Editorial'), doc.indexOf('\n## ', doc.indexOf('## Editorial') + 5));
+  const read_ = new Set([...code.matchAll(/var\(\s*(--ct-[\w-]+)/g)].map((m) => m[1]));
+  const tabled = new Set([...section.matchAll(/^\| `(--ct-[\w-]+)`/gm)].map((m) => m[1]));
+
+  // Every knob the table documents is a knob the sheet reads …
+  assert.ok(tabled.size >= 8, `only ${tabled.size} knobs parsed from the table`);
+  assert.deepEqual([...tabled].filter((k) => !read_.has(k)), [],
+    'the knob table documents a custom property the sheet never reads');
+
+  // … and every knob an example sets is one of them, so a renamed knob cannot
+  // leave four examples quietly setting nothing (which is what --ct-grid-min
+  // did to the chip list and the gallery when they got knobs of their own).
+  const set = new Set();
+  for (const src of [read('examples/editorial.html'), section]) {
+    for (const [, style] of src.matchAll(/style="([^"]*)"/g)) {
+      for (const [, name] of style.matchAll(/(--ct-[\w-]+)\s*:/g)) set.add(name);
+    }
+  }
+  assert.deepEqual([...set].filter((k) => !tabled.has(k)), [],
+    'an example sets a custom property the knob table does not document');
+});
+
+test('no selector is declared twice inside one media query', () => {
+  // A `display: none` left below the rule that replaced it kept .ct-section-meta
+  // hidden on phones — from screen readers too — while the file read as fixed.
+  const blocks = [...css.matchAll(/@media([^{]*)\{((?:[^{}]*\{[^{}]*\})*)\s*\}/g)];
+  assert.ok(blocks.length >= 4, `only ${blocks.length} media blocks parsed — the matcher drifted`);
+  for (const [, prelude, body] of blocks) {
+    const seen = new Map();
+    for (const [, sel] of body.matchAll(/([^{}]+)\{[^{}]*\}/g)) {
+      const key = sel.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\s+/g, ' ').trim();
+      if (!key) continue;
+      assert.ok(!seen.has(key), `@media${prelude.trim()} declares ${key} twice — merge them`);
+      seen.set(key, true);
+    }
+  }
+});
+
 test('colour comes from tokens only — no literal hex, rgb() or hsl()', () => {
   // Every literal in the ported rules equalled an existing token; keeping them
   // as tokens is what lets a consumer who overrides --accent get consistent

@@ -151,7 +151,9 @@ test('colour comes from tokens only — no literal hex, rgb() or hsl()', () => {
   const block = css.match(/\/\*\s*RANK-SCALE-LITERALS:START[\s\S]*?\*\/([\s\S]*?)\/\*\s*RANK-SCALE-LITERALS:END\s*\*\//);
   assert.ok(block, 'rank-scale literal block must stay explicitly marked');
   const rest = css.replace(block[0], '').replace(/\/\*[\s\S]*?\*\//g, '');
-  const illegal = rest.match(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/g) ?? [];
+  // Keywords count: the ink mixes said `white`, which no hex/rgb/hsl matcher
+  // sees, and a consumer overriding --corrupted-white got nothing.
+  const illegal = rest.match(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(|(?<![\w-])(?:white|black|red|green|blue|cyan|magenta|yellow|orange|gray|grey)(?![\w-])/g) ?? [];
   assert.deepEqual(illegal, []);
   const rankCode = block[1].replace(/\/\*[\s\S]*?\*\//g, '');
   assert.deepEqual(rankCode.match(/\brgba?\(|\bhsla?\(/g) ?? [], []);

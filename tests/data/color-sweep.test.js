@@ -409,25 +409,33 @@ const DOCS_ALLOWED = {
   // Shipped defaults that are a design question, not a docs bug.
   '#ff8c00': 'ASCIIBorder / SegmentedProgressBar default — a real shipped colour; changing it is breaking under CLAUDE.md §12',
   '#4c2967': 'CountdownWidget usage example borderColor',
-  '#3b82f6': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#fca5a5': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#f97316': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#fdba74': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#eab308': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#fde047': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#86efac': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#93c5fd': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#6b7280': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
-  '#cbd5e1': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
 };
 
+/**
+ * Off-palette colours legal in SOME docs only, keyed by the file that owns the
+ * subject. The CSS sweep scopes its rank-scale exception to editorial.css; the
+ * docs half has to scope too, or the carve-out quietly licenses a friendly
+ * orange on any shipped page — and an allowlist entry is never narrowed later.
+ */
+const DOCS_SCOPED = [
+  {
+    files: /(?:^|\/)EDITORIAL_FULL_COVERAGE\.md$/,
+    reason: 'the standard rank-scale steps, in the spec that sanctions them (editorial §5)',
+    hexes: ['#3b82f6', '#fca5a5', '#f97316', '#fdba74', '#eab308', '#fde047', '#86efac', '#93c5fd', '#6b7280', '#cbd5e1'],
+  },
+];
+
 test('shipped docs carry no unexplained off-palette colour', () => {
-  const legal = new Set([
+  const base = new Set([
     ...Object.values(colors.palette).map(expand),
     ...Object.values(colors.surfaces).map(expand),
     ...Object.values(colors.elementalColors).map(expand),
     ...Object.keys(DOCS_ALLOWED).map(expand),
     ...chromeTokens(),
+  ]);
+  const legalFor = (rel) => new Set([
+    ...base,
+    ...DOCS_SCOPED.filter((scope) => scope.files.test(rel)).flatMap((scope) => scope.hexes.map(expand)),
   ]);
 
   const files = [];
@@ -444,6 +452,7 @@ test('shipped docs carry no unexplained off-palette colour', () => {
 
   const offenders = new Map();
   for (const rel of files) {
+    const legal = legalFor(rel);
     const src = readFileSync(path.join(ROOT, rel), 'utf8');
     for (const m of src.matchAll(/#[0-9a-fA-F]{6}\b/g)) {
       const hex = expand(m[0]);
@@ -456,5 +465,6 @@ test('shipped docs carry no unexplained off-palette colour', () => {
   assert.deepEqual(
     [...offenders.entries()].map(([hex, f]) => `${hex} in ${[...f].slice(0, 2).join(', ')}`), [],
     'a shipped doc teaches a colour the package does not have — map it to the '
-    + 'palette, or add it to DOCS_ALLOWED with the reason it is not a defect');
+    + 'palette, or add it to DOCS_ALLOWED (every doc) or DOCS_SCOPED (one '
+    + 'file) with the reason it is not a defect');
 });

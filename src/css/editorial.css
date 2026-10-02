@@ -50,17 +50,17 @@
    that token for AA; --text-secondary is the nearest legal neutral. */
 .ct-ranks-corrupted {
   --ct-rank-0: var(--corrupted-red);
-  --ct-rank-0-ink: color-mix(in srgb, var(--corrupted-red) 55%, white);
+  --ct-rank-0-ink: color-mix(in srgb, var(--corrupted-red) 55%, var(--corrupted-white));
   --ct-rank-1: var(--corrupted-magenta);
-  --ct-rank-1-ink: color-mix(in srgb, var(--corrupted-magenta) 55%, white);
+  --ct-rank-1-ink: color-mix(in srgb, var(--corrupted-magenta) 55%, var(--corrupted-white));
   --ct-rank-2: var(--accent);
-  --ct-rank-2-ink: color-mix(in srgb, var(--accent) 55%, white);
+  --ct-rank-2-ink: color-mix(in srgb, var(--accent) 55%, var(--corrupted-white));
   --ct-rank-3: var(--corrupted-purple);
-  --ct-rank-3-ink: color-mix(in srgb, var(--corrupted-purple) 55%, white);
+  --ct-rank-3-ink: color-mix(in srgb, var(--corrupted-purple) 55%, var(--corrupted-white));
   --ct-rank-4: var(--corrupted-cyan);
-  --ct-rank-4-ink: color-mix(in srgb, var(--corrupted-cyan) 55%, white);
+  --ct-rank-4-ink: color-mix(in srgb, var(--corrupted-cyan) 55%, var(--corrupted-white));
   --ct-rank-5: var(--text-secondary);
-  --ct-rank-5-ink: color-mix(in srgb, var(--text-secondary) 55%, white);
+  --ct-rank-5-ink: color-mix(in srgb, var(--text-secondary) 55%, var(--corrupted-white));
 }
 
 /* ========== ARTICLE FRAME ========== */
@@ -603,7 +603,10 @@
 .ct-card > * { position: relative; }
 
 .ct-card.is-raised { background: var(--surface-elevated); }
-.ct-card.is-muted { opacity: 0.58; }
+/* 0.7, not lower: opacity composites the text too, and --text-secondary on
+   this card lands at 4.84:1 (elevated) / 5.00:1 (glass) here. At 0.58 it was
+   3.77:1 — a card dimmed out of AA. Pinned in contrast-claims. */
+.ct-card.is-muted { opacity: 0.7; }
 
 .ct-label {
   margin-bottom: 0.45rem;
@@ -871,7 +874,7 @@
   position: absolute;
   inset: 0 auto 0 0;
   width: calc(var(--v, 0) * 100%);
-  background: linear-gradient(90deg, var(--ct-tone, var(--accent)), color-mix(in srgb, var(--ct-tone, var(--accent)) 58%, white));
+  background: linear-gradient(90deg, var(--ct-tone, var(--accent)), color-mix(in srgb, var(--ct-tone, var(--accent)) 58%, var(--corrupted-white)));
 }
 
 .ct-rows {
@@ -1158,6 +1161,19 @@
 }
 
 @media (max-width: 560px) {
+  /* The documented four-track recipe needs ~308px of fixed track and gap; a
+     320px phone has 280px of content box, and at 375px the title column is
+     squeezed to an ellipsis. Below this width a row reflows instead, and the
+     text keeps the room it needs to stay readable. */
+  .ct-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.7rem;
+  }
+
+  .ct-row > :nth-child(2) { flex: 1 1 55%; }
+  .ct-row > :last-child { margin-left: auto; }
+
   .ct-award { grid-template-columns: 1fr; gap: 5px; }
   .ct-award-stat {
     grid-column: 1;
@@ -1172,7 +1188,8 @@
 /* ========== ACCESSIBILITY ========== */
 
 @media (prefers-reduced-motion: reduce) {
-  .ct-callout::after { background: none; }
+  .ct-callout::after,
+  .ct-chart::after { background: none; }
 }
 
 /* Gradient text is transparent fill; in forced colours the background is

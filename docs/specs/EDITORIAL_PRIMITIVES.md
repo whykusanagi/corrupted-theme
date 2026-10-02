@@ -4,6 +4,18 @@
 **Tracks:** [#76](https://github.com/whykusanagi/corrupted-theme/issues/76)
 **Target:** next feature release after 0.3.3
 **Module:** `src/css/editorial.css` → export `./editorial`
+**Superseded in part:** [`EDITORIAL_FULL_COVERAGE.md`](EDITORIAL_FULL_COVERAGE.md)
+
+> **Class names below predate the §3 consolidation.** Before release,
+> `EDITORIAL_FULL_COVERAGE.md` §3 merged this spec's card and label shapes:
+> `.ct-tile`, `.ct-stat` and `.ct-cell` became one `.ct-card`, four label
+> classes became `.ct-label`, `.ct-tile-value`/`.ct-stat-value` became
+> `.ct-value`, `.ct-stat-sub` became `.ct-detail`, `.ct-cell-title` became
+> `.ct-card-title`, `.ct-spark-cap` became `.ct-label`, and
+> `.ct-media-portrait` became `.ct-avatar`. The markup in §5 and §9 still uses
+> the old names and will not style anything — copy from
+> `docs/COMPONENTS_REFERENCE.md`, which is generated against the shipped sheet.
+> §8.1's migration table has been updated; §10's record is kept as written.
 
 ---
 

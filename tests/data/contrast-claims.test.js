@@ -215,10 +215,10 @@ test('editorial rank inks and small labels meet AA on their own surfaces', () =>
   for (let step = 0; step <= 5; step += 1) {
     const edgeValue = declaration(corruptedBlock, `--ct-rank-${step}`);
     const inkValue = declaration(corruptedBlock, `--ct-rank-${step}-ink`);
-    assert.match(inkValue, new RegExp(`^color-mix\\(in srgb, ${edgeValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} 55%, white\\)$`),
+    assert.match(inkValue, new RegExp(`^color-mix\\(in srgb, ${edgeValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} 55%, var\\(--corrupted-white\\)\\)$`),
       `corrupted step ${step} ink must stay a 55% edge/white mix`);
     const edge = resolvedHex(vars, edgeValue);
-    const ink = mix(edge, '#ffffff', 55);
+    const ink = mix(edge, resolvedHex(vars, rootToken(vars, '--corrupted-white')), 55);
     const surface = over(edge, PAGE_GROUND, 0.15);
     const measured = ratio(ink, surface);
     if (measured < 4.5) {
@@ -235,6 +235,25 @@ test('editorial rank inks and small labels meet AA on their own surfaces', () =>
     const measured = ratio(secondary, labelSurface);
     if (measured < 4.5) {
       failures.push(`${selector}: ${secondary} on ${labelSurface} is ${measured.toFixed(2)}:1`);
+    }
+  }
+
+  // .is-muted dims the whole card, text included, so the label has to be
+  // measured through it: at 0.58 it was 3.77:1 and the guard above still
+  // passed, because it was reading the undimmed surface.
+  const mutedRule = editorial.match(/\.ct-card\.is-muted\s*\{([^}]*)\}/)?.[1];
+  assert.ok(mutedRule, '.ct-card.is-muted is not declared');
+  const alpha = Number(declaration(mutedRule, 'opacity'));
+  assert.ok(alpha > 0 && alpha <= 1, `opacity ${alpha} is not a fraction`);
+  for (const [name, card] of [
+    ['glass', rgbaOverPage(rootToken(vars, '--glass'))],
+    ['raised', resolvedHex(vars, rootToken(vars, '--surface-elevated'))],
+  ]) {
+    const surface = over(card, PAGE_GROUND, alpha);
+    const ink = over(secondary, surface, alpha);
+    const measured = ratio(ink, surface);
+    if (measured < 4.5) {
+      failures.push(`.ct-card.is-muted on ${name}: ${ink} on ${surface} is ${measured.toFixed(2)}:1`);
     }
   }
 

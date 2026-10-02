@@ -473,7 +473,7 @@ The kicker dot pulses only when the reader hasn't asked for reduced motion.
 stats or recap metadata. `.ct-byline` is also the end-of-log sign-off style.
 
 ```html
-<div class="ct-divider" data-label="Developer log"></div>
+<div class="ct-divider" data-label="Developer log" aria-hidden="true"></div>
 ```
 
 The divider label is decorative text from `data-label`; put a real heading

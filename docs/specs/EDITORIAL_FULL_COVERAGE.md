@@ -57,7 +57,7 @@ job. They are unreleased, so they merge now, at no migration cost:
 | `.ct-tile`, `.ct-tiles` | `.ct-card` in a `.ct-grid` |
 | `.ct-tile-label`, `.ct-stat-label`, `.ct-spark-cap`, `.ct-cell-eyebrow` | `.ct-label` |
 | `.ct-tile-value`, `.ct-stat-value` | `.ct-value` |
-| `.ct-tile-delta` (+ `.is-up`) | `.ct-delta` (+ `.is-up` / `.is-down`) |
+| `.ct-tile-delta` (+ `.is-up`) | `.ct-delta` (+ `.is-up`; no `.is-down`, §11) |
 | `.ct-stat-sub` | `.ct-detail` |
 | `.ct-stat`, `.ct-stat-row` | `.ct-card` in a `.ct-grid` |
 | `.ct-cell`, `.ct-cell-title` | `.ct-card.has-tick`, `.ct-card-title` |
@@ -182,9 +182,11 @@ the only setting: it's chosen by a class on any ancestor.
   used as the two ends of a scale, which is a compositional use of accents,
   not a corruption-state signal.
 - The standard map is off-palette by design. `CORRUPTED_THEME_SPEC.md` gains a
-  sanctioned **rank-scale exception** (like the element colours): these six
-  hexes are legal only in the rank-scale block of `editorial.css`, and
-  `tests/data/color-sweep.test.js` allowlists them there and nowhere else.
+  sanctioned **rank-scale exception** (like the element colours): these twelve
+  hexes — six edges and the six inks beside them — are legal only in the
+  rank-scale block of `editorial.css`, and `tests/data/color-sweep.test.js`
+  allowlists them there and nowhere else. Its docs half scopes them to this
+  file, which is the only shipped doc that names them.
 
 ## 6. Removed or kept out of the theme
 
@@ -204,7 +206,8 @@ the only setting: it's chosen by a class on any ancestor.
 - `.ct-kicker-dot` pulse and chart scanlines stay behind `prefers-reduced-motion`.
 - `.ct-rows` with ellipsised text keep the full value in `title`. The site
   supplies it; the markup contract says so.
-- `.ct-divider`'s label is decorative (`aria-hidden` on the pseudo-element);
+- `.ct-divider`'s label is decorative, and ARIA cannot sit on a pseudo-element,
+  so the markup carries `aria-hidden="true"` on the divider itself;
   a real heading follows it.
 
 ## 8. Migration contract (per page type)
@@ -307,6 +310,28 @@ Where the build departed from this spec, and why:
   element colours use). `CORRUPTED_THEME_SPEC.md` records the exception.
 - **`.ct-rank` composes with `.ct-badge`** rather than restating the badge box:
   `class="ct-badge ct-rank" data-rank="2"`.
+
+**What review caught after the first pass** (two external reviewers, plus a
+browser pass):
+
+- `.ct-rank` painted nothing but its ink. The badge's outline look sat behind
+  `.ct-badge:not(.is-solid):not(.is-dashed)`, three classes, and outranked the
+  scale. Only visible in a browser; the source read correctly.
+- `.ct-card.is-muted` at `opacity: .58` composited its own text to 3.77:1.
+  Now `.7` (4.84–5.00:1), and the contrast guard measures the dimmed surface
+  instead of the undimmed one it was reading before.
+- `.ct-rows`' documented four-track recipe needs ~308px of fixed track, so it
+  overflowed a 320px phone and squeezed the title to an ellipsis at 375px.
+  Rows reflow below 560px.
+- The chart's scanline was not cleared under `prefers-reduced-motion`, though
+  the identical callout one was, and §7 promised both.
+- `.ct-divider`'s label was announced while §7 claimed it was hidden — ARIA
+  cannot sit on a pseudo-element, so the divider element carries it.
+- The ink mixes said the keyword `white`, which no hex matcher sees and which
+  a consumer's `--corrupted-white` could not override. They use the token now,
+  and the token-only guard reads keywords.
+- The docs half of the colour sweep had been widened globally while the CSS
+  half was scoped. Both are scoped now.
 
 **Weight.** `dist/theme.min.css` goes from 80,416 B to 100,326 B minified,
 15,080 B to 18,743 B gzipped: **+3.6 KB gzipped**, past the +2.8 KB that #76

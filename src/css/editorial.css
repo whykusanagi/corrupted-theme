@@ -1211,8 +1211,11 @@
   .ct-section-h { flex-wrap: wrap; gap: 0.8rem; }
   .ct-section-meta { flex-basis: 100%; margin-left: 0; text-align: left; }
   .ct-section-t { font-size: 1.35rem; }
-  .ct-section-meta { display: none; }
   .ct-cols { grid-template-columns: 1fr; }
+
+  /* The two-column masthead is a desktop arrangement; here the aside stacks,
+     so the grid has to be undone or it keeps squeezing the title column. */
+  .ct-masthead:has(.ct-masthead-aside) { display: block; }
   .ct-masthead-aside { position: static; max-width: none; margin-top: 1rem; text-align: center; }
   .ct-callout-aside { grid-template-columns: 1fr; }
 }

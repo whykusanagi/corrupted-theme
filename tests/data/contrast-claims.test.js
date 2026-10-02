@@ -50,6 +50,45 @@ function over(fg, bg, alpha) {
   return '#' + mix.map((v) => v.toString(16).padStart(2, '0')).join('');
 }
 
+function mix(fg, bg, percent) {
+  const f = channels(fg); const b = channels(bg);
+  const alpha = percent / 100;
+  const mixed = f.map((v, i) => Math.round(v * alpha + b[i] * (1 - alpha)));
+  return '#' + mixed.map((v) => v.toString(16).padStart(2, '0')).join('');
+}
+
+function rgbaOverPage(value) {
+  const match = value.match(/rgba\(\s*(\d+),\s*(\d+),\s*(\d+),\s*([.\d]+)\s*\)/);
+  assert.ok(match, `expected rgba() token, got ${value}`);
+  const hex = '#' + match.slice(1, 4)
+    .map((v) => Number(v).toString(16).padStart(2, '0'))
+    .join('');
+  return over(hex, PAGE_GROUND, Number(match[4]));
+}
+
+function cssFile(rel) {
+  return readFileSync(path.join(ROOT, rel), 'utf8');
+}
+
+function rootToken(source, name) {
+  const match = source.match(new RegExp(`^\\s*${name}:\\s*([^;]+);`, 'm'));
+  assert.ok(match, `${name} is not declared`);
+  return match[1].trim();
+}
+
+function declaration(block, name) {
+  const match = block.match(new RegExp(`^\\s*${name}:\\s*([^;]+);`, 'm'));
+  assert.ok(match, `${name} is not declared`);
+  return match[1].trim();
+}
+
+function resolvedHex(source, value) {
+  const varName = value.match(/^var\((--[\w-]+)\)$/)?.[1];
+  const resolved = varName ? rootToken(source, varName) : value;
+  assert.match(resolved, /^#[0-9a-fA-F]{6}$/, `${value} did not resolve to a six-digit hex`);
+  return resolved.toLowerCase();
+}
+
 /* ── claim extraction ──────────────────────────────────────────────────── */
 
 const HEX = /#[0-9a-fA-F]{6}/g;
@@ -152,6 +191,88 @@ test('docs do not claim blanket AAA compliance the palette cannot meet', () => {
   assert.deepEqual(offenders, [],
     'magenta2 (5.2:1) and violet (4.7:1) are AA against --bg, so no document '
     + 'may claim every combination reaches AAA');
+});
+
+test('editorial rank inks and small labels meet AA on their own surfaces', () => {
+  const editorial = cssFile('src/css/editorial.css');
+  const vars = cssFile('src/css/variables.css');
+  const rankBlock = editorial.match(/:root\s*\{([^}]*--ct-rank-0[^}]*)\}/)?.[1];
+  assert.ok(rankBlock, 'standard rank tokens are not declared in :root');
+
+  const failures = [];
+  for (let step = 0; step <= 5; step += 1) {
+    const edge = resolvedHex(vars, declaration(rankBlock, `--ct-rank-${step}`));
+    const ink = resolvedHex(vars, declaration(rankBlock, `--ct-rank-${step}-ink`));
+    // Worst case is a rank badge on a raised card, not on the page ground.
+    const surface = over(edge, resolvedHex(vars, rootToken(vars, '--surface-elevated')), 0.15);
+    const measured = ratio(ink, surface);
+    if (measured < 4.5) {
+      failures.push(`standard step ${step}: ${ink} on ${surface} is ${measured.toFixed(2)}:1`);
+    }
+  }
+
+  const corruptedBlock = editorial.match(/\.ct-ranks-corrupted\s*\{([^}]*)\}/)?.[1];
+  assert.ok(corruptedBlock, 'corrupted rank tokens are not declared');
+  for (let step = 0; step <= 5; step += 1) {
+    const edgeValue = declaration(corruptedBlock, `--ct-rank-${step}`);
+    const inkValue = declaration(corruptedBlock, `--ct-rank-${step}-ink`);
+    assert.match(inkValue, new RegExp(`^color-mix\\(in srgb, ${edgeValue.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')} 55%, var\\(--corrupted-white\\)\\)$`),
+      `corrupted step ${step} ink must stay a 55% edge/white mix`);
+    const edge = resolvedHex(vars, edgeValue);
+    const ink = mix(edge, resolvedHex(vars, rootToken(vars, '--corrupted-white')), 55);
+    const surface = over(edge, resolvedHex(vars, rootToken(vars, '--surface-elevated')), 0.15);
+    const measured = ratio(ink, surface);
+    if (measured < 4.5) {
+      failures.push(`corrupted step ${step}: ${ink} on ${surface} is ${measured.toFixed(2)}:1`);
+    }
+  }
+
+  const labelSurface = rgbaOverPage(rootToken(vars, '--glass'));
+  const secondary = resolvedHex(vars, rootToken(vars, '--text-secondary'));
+  for (const selector of ['.ct-label', '.ct-detail']) {
+    const rule = editorial.match(new RegExp(`\\${selector}\\s*\\{([^}]*)\\}`))?.[1];
+    assert.ok(rule, `${selector} is not declared`);
+    assert.equal(declaration(rule, 'color'), 'var(--text-secondary)');
+    const measured = ratio(secondary, labelSurface);
+    if (measured < 4.5) {
+      failures.push(`${selector}: ${secondary} on ${labelSurface} is ${measured.toFixed(2)}:1`);
+    }
+  }
+
+  // A card may be raised, so every ink it can hold is measured against BOTH
+  // its surfaces. --accent on --surface-elevated is 4.50:1 at badge size,
+  // which is the line rather than clear of it, hence the lightened badge ink.
+  const accent = resolvedHex(vars, rootToken(vars, '--accent'));
+  const white = resolvedHex(vars, rootToken(vars, '--corrupted-white'));
+  const text = resolvedHex(vars, rootToken(vars, '--text'));
+  const inks = [
+    ['.ct-badge', mix(accent, white, 80)],
+    ['.ct-list.is-numbered counter', mix(accent, white, 80)],
+    ['.ct-label / .ct-detail', secondary],
+    ['.ct-value', text],
+    ['.ct-delta.is-up', resolvedHex(vars, rootToken(vars, '--accent-light'))],
+  ];
+  for (const [name, card] of [
+    ['glass', rgbaOverPage(rootToken(vars, '--glass'))],
+    ['raised', resolvedHex(vars, rootToken(vars, '--surface-elevated'))],
+  ]) {
+    for (const [what, ink] of inks) {
+      const measured = ratio(ink, card);
+      if (measured < 4.5) {
+        failures.push(`${what} on ${name}: ${ink} on ${card} is ${measured.toFixed(2)}:1`);
+      }
+    }
+  }
+
+  // .is-muted must NOT use opacity: it composites every descendant, and at any
+  // alpha that still reads as dimmed a 0.62rem accent badge inside the card
+  // falls under AA (2.9:1 at 0.7). Muting is a tone change instead.
+  const mutedRule = editorial.match(/\.ct-card\.is-muted\s*\{([^}]*)\}/)?.[1];
+  assert.ok(mutedRule, '.ct-card.is-muted is not declared');
+  assert.doesNotMatch(mutedRule, /(^|[\s;])opacity\s*:/,
+    '.ct-card.is-muted must not dim its own text — mute with --ct-tone and the border');
+
+  assert.deepEqual(failures, [], 'editorial text contrast fell below WCAG AA');
 });
 
 test('every --corrupted-* token referenced is defined in variables.css', () => {

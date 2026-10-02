@@ -188,6 +188,19 @@ function sources() {
  */
 const ELEMENT_OWNERS = /(?:^|\/)(?:nikke-[^/]*|colors\.(?:json|data\.js))$/;
 
+// Sanctioned rank-scale exception: the standard tier-list map is legal only
+// in editorial.css, where tests/data/editorial.test.js also requires it to be
+// quarantined inside the marked rank-scale block.
+const EDITORIAL_RANK_SCALE_OWNER = /(?:^|\/)editorial\.css$/;
+const STANDARD_RANK_SCALE = [
+  '#ef4444', '#fca5a5',
+  '#f97316', '#fdba74',
+  '#eab308', '#fde047',
+  '#22c55e', '#86efac',
+  '#3b82f6', '#93c5fd',
+  '#6b7280', '#cbd5e1',
+];
+
 test('no colour outside the palette, surfaces or the exceptions list', () => {
   const base = [
     ...Object.values(colors.palette).map(expand),
@@ -196,7 +209,11 @@ test('no colour outside the palette, surfaces or the exceptions list', () => {
     ...chromeTokens(),
   ];
   const elements = Object.values(colors.elementalColors).map(expand);
-  const legalFor = (rel) => new Set(ELEMENT_OWNERS.test(rel) ? [...base, ...elements] : base);
+  const legalFor = (rel) => new Set([
+    ...base,
+    ...(ELEMENT_OWNERS.test(rel) ? elements : []),
+    ...(EDITORIAL_RANK_SCALE_OWNER.test(rel) ? STANDARD_RANK_SCALE.map(expand) : []),
+  ]);
   const offenders = new Map();
   for (const rel of sources()) {
     const legal = legalFor(rel);
@@ -394,13 +411,31 @@ const DOCS_ALLOWED = {
   '#4c2967': 'CountdownWidget usage example borderColor',
 };
 
+/**
+ * Off-palette colours legal in SOME docs only, keyed by the file that owns the
+ * subject. The CSS sweep scopes its rank-scale exception to editorial.css; the
+ * docs half has to scope too, or the carve-out quietly licenses a friendly
+ * orange on any shipped page — and an allowlist entry is never narrowed later.
+ */
+const DOCS_SCOPED = [
+  {
+    files: /(?:^|\/)EDITORIAL_FULL_COVERAGE\.md$/,
+    reason: 'the standard rank-scale steps, in the spec that sanctions them (editorial §5)',
+    hexes: ['#3b82f6', '#fca5a5', '#f97316', '#fdba74', '#eab308', '#fde047', '#86efac', '#93c5fd', '#6b7280', '#cbd5e1'],
+  },
+];
+
 test('shipped docs carry no unexplained off-palette colour', () => {
-  const legal = new Set([
+  const base = new Set([
     ...Object.values(colors.palette).map(expand),
     ...Object.values(colors.surfaces).map(expand),
     ...Object.values(colors.elementalColors).map(expand),
     ...Object.keys(DOCS_ALLOWED).map(expand),
     ...chromeTokens(),
+  ]);
+  const legalFor = (rel) => new Set([
+    ...base,
+    ...DOCS_SCOPED.filter((scope) => scope.files.test(rel)).flatMap((scope) => scope.hexes.map(expand)),
   ]);
 
   const files = [];
@@ -417,6 +452,7 @@ test('shipped docs carry no unexplained off-palette colour', () => {
 
   const offenders = new Map();
   for (const rel of files) {
+    const legal = legalFor(rel);
     const src = readFileSync(path.join(ROOT, rel), 'utf8');
     for (const m of src.matchAll(/#[0-9a-fA-F]{6}\b/g)) {
       const hex = expand(m[0]);
@@ -429,5 +465,6 @@ test('shipped docs carry no unexplained off-palette colour', () => {
   assert.deepEqual(
     [...offenders.entries()].map(([hex, f]) => `${hex} in ${[...f].slice(0, 2).join(', ')}`), [],
     'a shipped doc teaches a colour the package does not have — map it to the '
-    + 'palette, or add it to DOCS_ALLOWED with the reason it is not a defect');
+    + 'palette, or add it to DOCS_ALLOWED (every doc) or DOCS_SCOPED (one '
+    + 'file) with the reason it is not a defect');
 });

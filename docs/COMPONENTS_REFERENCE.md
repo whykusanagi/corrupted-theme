@@ -417,17 +417,24 @@ gallery1.destroy(); // Only destroys gallery1
 
 ## Editorial & Data Pages
 
-`src/css/editorial.css`, bundled in `theme.css` and exported as `./editorial`,
-from **0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
+`src/css/editorial.css`, bundled in `theme.css` — which is what builds into the
+`dist/theme.min.css` the CDN serves — and exported as `./editorial`, from
+**0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
 doesn't contain these classes. These are long-form article and recap-page
-primitives: a masthead, prose blocks, entity cards, stat tiles, bar sparklines
-and award rows. Every class is `ct-`-prefixed. Live demo: [`examples/editorial.html`](../examples/editorial.html).
+primitives: a masthead, prose blocks, card grids, entity cards, rank badges,
+bar sparklines, meters, ruled rows, chart frames, award rows and the post
+index. Every class is `ct-`-prefixed. A *state* is an `is-*` or `has-*` modifier on a
+`ct-` element (`.ct-card.is-raised`, `.ct-card.has-tick`); a named *variant*
+with vocabulary of its own keeps a `ct-` name (`.ct-warn`, `.ct-callout-aside`,
+`.ct-ranks-corrupted`). Live demo: [`examples/editorial.html`](../examples/editorial.html).
 Design decisions: [`docs/specs/EDITORIAL_PRIMITIVES.md`](specs/EDITORIAL_PRIMITIVES.md).
 
 The **markup is the contract**, not just the class list. Several blocks only
 style correctly in the wrapper shown here, as noted below. Put `.ct-article`
 in a width-limited wrapper such as the theme's `.container`. It needs no body
-class: the blocks paint their own surfaces over the theme's page background.
+class: the blocks paint their own surfaces over the theme's page background,
+which `typography.css` sets on `html` and `body` (bundled in `theme.css`; if
+you import `./editorial` on its own, that background is yours to set).
 
 **Knobs.** These are custom properties with defaults. Set them on any ancestor,
 inline, or in your own stylesheet (`.my-3-up { --ct-cols: 3; }`). Under a
@@ -438,21 +445,50 @@ class in your stylesheet instead, or see
 | Property | Default | Controls |
 |---|---|---|
 | `--ct-measure` | `47rem` | Width of running text inside `.ct-body` |
-| `--ct-measure-wide` | `62rem` | Width of `.ct-table` inside `.ct-body` |
+| `--ct-measure-wide` | `62rem` | Width of the wide tier inside `.ct-body` (see below) |
 | `--ct-cols` | `2` | Column count of `.ct-cols` |
+| `--ct-cols-tracks` | unset | Explicit `.ct-cols` tracks, such as `1.55fr 1fr` |
 | `--ct-grid-min` | `260px` | Minimum cell width of `.ct-grid` |
+| `--ct-chip-min` | `150px` | Minimum chip width of `.ct-list.is-grid` |
+| `--ct-thumb-min` | `180px` | Minimum thumbnail width of `.ct-gallery` |
+| `--ct-row-cols` | `auto minmax(0, 1fr) auto` | Dense `.ct-row` tracks |
 | `--ct-spark-h` | `72px` | Height of `.ct-spark` |
-| `--ct-tone` | `var(--accent)` | Callout tick and title colour |
+| `--ct-tone` | `var(--accent)` | Tone colour: callout and card tick, avatar frame, badge, meter fill, legend swatch, `.ct-kv` value |
+| `--ct-value-size` | `1.5rem` | Size of `.ct-value` |
+| `--ct-avatar-size` | `64px` | Size of `.ct-avatar` |
+| `--v` | `0` | Unitless sparkline bar or meter value, 0 to 1 |
+| `--ct-rank-0` … `--ct-rank-5` | the standard map | Rank step edge colour (border, and background at 15%) |
+| `--ct-rank-0-ink` … `--ct-rank-5-ink` | the standard map | Rank step text colour |
+
+### How wide each block is
+
+A direct child of `.ct-body` is clamped to the measure — the comfortable line
+length for running text — and centred. Wider blocks opt out, in two steps:
+
+| Width | Blocks |
+|---|---|
+| `--ct-measure` (47rem), the default for everything else | `.ct-p`, `.ct-list`, `.ct-h3`, `.ct-callout`, `.ct-quote`, `.ct-media`, `.ct-meter`, `.ct-kv` |
+| `--ct-measure-wide` (62rem) | `.ct-table`, `.ct-rows`, `.ct-chart`, `.ct-gallery`, `.ct-post-list`, `.ct-divider` |
+| full width of the wrapper | `.ct-figure`, `.ct-section-h`, `.ct-cols`, `.ct-grid`, `.ct-spark-wrap`, `.ct-awards`, `.ct-attrs` |
+
+Only **direct children** of `.ct-body` are affected; a block nested inside a
+card or a column fills its parent, and `.ct-post-nav` / `.ct-post-foot` sit
+outside `.ct-body` entirely, so they span the wrapper. The wrapper you put `.ct-article` in sets
+the outer limit — the theme's `.container` caps at 1200px, so the measure
+applies inside that, and the full-width tier means "as wide as the wrapper
+allows", not the viewport.
 
 ### Article frame
 
 ```html
 <article class="ct-article">
   <header class="ct-masthead">
+    <div class="ct-masthead-aside">41 streams<br>13 weeks</div>
     <div class="ct-kicker"><span class="ct-kicker-dot" aria-hidden="true"></span>Patch notes</div>
     <h1 class="ct-title">Season recap</h1>
     <p class="ct-dek">One-line standfirst.</p>
     <time class="ct-dateline" datetime="2026-09-24">2026.09.24</time>
+    <div class="ct-byline">By the editorial desk</div>
   </header>
   <div class="ct-body">
     <!-- blocks below -->
@@ -462,26 +498,39 @@ class in your stylesheet instead, or see
 
 The kicker dot pulses only when the reader hasn't asked for reduced motion.
 `.ct-title` is gradient text with a forced-colours fallback.
+`.ct-masthead-aside` is a right-aligned facts block for issue counts, season
+stats or recap metadata. `.ct-byline` is also the end-of-log sign-off style.
+
+```html
+<div class="ct-divider" data-label="Developer log" aria-hidden="true"></div>
+```
+
+The divider label is decorative text from `data-label`; put a real heading
+after it when the split starts a new section.
 
 ### Prose and numbered sections
 
 Direct children of `.ct-body` are clamped to `--ct-measure`. Tables widen to
-`--ct-measure-wide`. Figures, section headings, stat rows, columns, grids,
-tiles, sparklines and awards run full width.
+`--ct-measure-wide`. Figures, section headings, columns, grids, sparklines
+and awards run full width.
 
 ```html
 <div class="ct-section-h">
   <span class="ct-section-n" aria-hidden="true">01</span>
   <h2 class="ct-section-t">What changed</h2>
+  <div class="ct-section-meta">Us vs region</div>
 </div>
 <p class="ct-p">Body text with <strong>emphasis</strong> and a <span class="ct-hi">highlight</span>.</p>
 <ul class="ct-list"><li>List item</li></ul>
+<ul class="ct-list is-grid" style="--ct-grid-min:150px"><li>Chip item</li><li>Chip item</li></ul>
+<ol class="ct-list is-numbered"><li>First step.</li><li>Second step.</li></ol>
 <h3 class="ct-h3">Sub-heading</h3>
 ```
 
+- **A section heading is the `.ct-section-h` wrapper.** A bare `<h2>` in
+  `.ct-body` gets no section styling at all.
 - The number goes in a sibling span **outside** the `<h2>`, so the heading's
-  accessible name is just its title. A bare `<h2>` in `.ct-body` gets no
-  section styling.
+  accessible name is just its title.
 - The number is optional. An unnumbered section keeps the wrapper and drops
   the span:
   `<div class="ct-section-h"><h2 class="ct-section-t">Heading</h2></div>`.
@@ -491,11 +540,11 @@ tiles, sparklines and awards run full width.
 ### Table
 
 ```html
-<figure class="ct-table">
+<figure class="ct-table is-compact">
   <div class="ct-table-scroll" tabindex="0" role="region" aria-label="Unit changes">
     <table>
-      <thead><tr><th scope="col">Unit</th><th scope="col" style="text-align:right">Δ</th></tr></thead>
-      <tbody><tr><td>Example</td><td style="text-align:right">+4%</td></tr></tbody>
+      <thead><tr><th scope="col">Unit</th><th scope="col" class="ct-num">Δ</th></tr></thead>
+      <tbody><tr class="is-self"><td>Example</td><td class="ct-num">+4%</td></tr></tbody>
     </table>
   </div>
   <figcaption>Caption.</figcaption>
@@ -504,8 +553,9 @@ tiles, sparklines and awards run full width.
 
 The scroll wrapper stops a wide table from pushing the page sideways. It needs
 `tabindex`, `role` and a label so keyboard users can scroll it. Header cells
-start-align by default. The inline `text-align:right` on number columns is a
-plain style attribute, so under a strict CSP use a class of your own.
+start-align by default. Use `.ct-num` on the `<th>` and the `<td>` of a figures
+column for tabular right-aligned numbers,
+`.is-compact` for tighter tables, and `tr.is-self` for the reader's own row.
 Row headers (`<th scope="row">`) are fine.
 
 ### Figure
@@ -519,8 +569,28 @@ Row headers (`<th scope="row">`) are fine.
 ```html
 <aside class="ct-callout ct-info">
   <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Note</div>
+  <span class="ct-callout-icon" aria-hidden="true">!</span>
   <p>Body.</p>
 </aside>
+
+<aside class="ct-callout ct-warn ct-callout-aside">
+  <div>
+    <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Maintenance</div>
+    <p>Exports are paused while the archive reindexes.</p>
+  </div>
+  <time datetime="2026-09-22T03:00">03:00 UTC</time>
+</aside>
+```
+
+`.ct-callout-aside` is a two-column grid: a content wrapper, then the `<time>`.
+An icon goes **inside that wrapper**, after the title and before the body text,
+not beside it — a direct child becomes a grid item and takes a column of its
+own. The glyph is yours: the class only sets the size, the tone colour and the
+float. A two-ended window is two `<time>`
+elements in one wrapper, so the grid still sees a single cell:
+
+```html
+<span><time datetime="2026-09-22T02:00">02:00</time>–<time datetime="2026-09-22T04:00">04:00 UTC</time></span>
 ```
 
 Tones: `ct-key` (accent), `ct-info` (violet), `ct-warn` (red). The colour
@@ -545,60 +615,63 @@ styled `<div>`, not a heading, so it doesn't add to the page outline.
   <div class="ct-col">…</div><div class="ct-col">…</div><div class="ct-col">…</div>
 </div>
 
+<div class="ct-cols" style="--ct-cols-tracks:1.55fr 1fr">
+  <div class="ct-col">…</div><div class="ct-col">…</div>
+</div>
+
 <div class="ct-grid" style="--ct-grid-min:220px">
-  <div class="ct-cell">
-    <div class="ct-cell-eyebrow">Eyebrow</div>
-    <h4 class="ct-cell-title">Title</h4>
-    <div class="ct-badges"><span class="ct-badge">Tag</span></div>
+  <div class="ct-card has-tick">
+    <div class="ct-label">Eyebrow</div>
+    <h4 class="ct-card-title">Title</h4>
+    <div class="ct-badges">
+      <span class="ct-badge is-outline">Tag</span>
+      <span class="ct-badge is-solid">Solid</span>
+      <span class="ct-badge is-dashed">Dashed</span>
+    </div>
     <p class="ct-p">Any blocks.</p>
   </div>
 </div>
 ```
 
-`.ct-cols` stacks to one column at 720px and below. Grid cells fit as many
-as `--ct-grid-min` allows and wrap. `.ct-cell-title` is shown as `<h4>`, but
+A chip list and a gallery have knobs of their own (`--ct-chip-min`,
+`--ct-thumb-min`) precisely so a card grid can set `--ct-grid-min` without
+squeezing a list nested inside one of its cards.
+
+**Which to use:** `.ct-cols` is for a fixed arrangement you are composing — two
+columns of prose, a 1.55fr/1fr split. `.ct-grid` is for a set of like things
+whose count you do not control, such as a row of cards; it fits as many per row
+as `--ct-grid-min` allows and wraps. `.ct-cols` stacks to one column at 720px
+and below; a grid needs no breakpoint because it is already fluid. `.ct-card-title` is shown as `<h4>`, but
 the style is on the class, so use whichever heading level fits your outline
 (an `<h3>` under a section's `<h2>`).
 
-### Stat row
+### Cards
 
 ```html
-<div class="ct-stat-row">
-  <div class="ct-stat">
-    <div class="ct-stat-value">1,204</div>
-    <div class="ct-stat-label">Pulls</div>
-    <div class="ct-stat-sub">Optional context</div>
+<div class="ct-grid">
+  <div class="ct-card is-raised">
+    <div class="ct-card-corner">01</div>
+    <div class="ct-label">Peak viewers</div>
+    <div class="ct-value" style="--ct-value-size:1.7rem">3,410</div>
+    <div class="ct-delta is-up">▲ 12% vs last season</div>
+    <p class="ct-detail">Optional context.</p>
   </div>
 </div>
 ```
 
-A `.ct-stat` must sit inside a `.ct-stat-row`. A loose one is unsupported.
-The row fits as many 170px-minimum stats per line as the width allows and
-wraps the rest, so three stats sit side by side on desktop and stack on a
-phone.
-
-### Stat tiles
-
-```html
-<div class="ct-tiles">
-  <div class="ct-tile">
-    <div class="ct-tile-label">Peak viewers</div>
-    <div class="ct-tile-value">3,410</div>
-    <div class="ct-tile-delta is-up">▲ 12% vs last season</div>
-  </div>
-</div>
-```
-
-The delta's **text** carries the direction (`▲ 12%`, `▼ 3%`, `+4`). `.is-up`
-adds emphasis but never the meaning. There is deliberately **no `.is-down`**:
-a fall uses the neutral default. Green is not used, because the palette
-reserves it for "system". Tiles sit in two columns, and one at 560px and below.
+`.ct-card` is the one card surface. Add `.has-tick` for the corner tick,
+`.is-raised` for the lighter tile-style surface, or `.is-muted` for inactive
+entries. The delta's **text** carries the direction (`▲ 12%`, `▼ 3%`, `+4`).
+**A fall is a plain `.ct-delta`** and a rise adds `.is-up`, which brightens it;
+there is no `.is-down`, because the neutral default already is "down" and
+colour never carries the meaning. Green is not used at all — the palette
+reserves it for "system".
 
 ### Bar sparkline
 
 ```html
 <figure class="ct-spark-wrap">
-  <figcaption class="ct-spark-cap" id="viewers-cap">Viewers per stream</figcaption>
+  <figcaption class="ct-label" id="viewers-cap">Viewers per stream</figcaption>
   <div class="ct-spark" role="img" aria-labelledby="viewers-cap" aria-describedby="viewers-data">
     <span class="ct-spark-bar" style="--v:.42"></span>
     <span class="ct-spark-bar is-empty" style="--v:0"></span>
@@ -610,8 +683,10 @@ reserves it for "system". Tiles sit in two columns, and one at 560px and below.
 ```
 
 - Bar height is a unitless `--v` from 0 to 1, as a fraction of the chart's
-  largest value (the largest bar is `1`). From JS, use
-  `bar.style.setProperty('--v', n)`.
+  largest value (the largest bar is `1`). You normalise your own data, which
+  means **two sparklines on a page are not comparable bar for bar** — each is
+  scaled to its own maximum. Say the maximum in the caption if that matters.
+  From JS, use `bar.style.setProperty('--v', n)`.
 - The last bar is full accent, because it's read as "now". `.is-flat` dims
   every bar when there's no "now". `.is-empty` is a 2px stub and needs no
   `--v`. An empty last bar still reads as empty.
@@ -623,6 +698,124 @@ reserves it for "system". Tiles sit in two columns, and one at 560px and below.
   and a text alternative.
 - **CSP:** the inline `style` attribute needs `style-src-attr 'unsafe-inline'`.
   Under a strict policy, set `--v` through the CSSOM instead.
+
+### Ranks and badges
+
+```html
+<div class="ct-badges">
+  <span class="ct-badge ct-rank" data-rank="0">S</span>
+  <span class="ct-badge ct-rank" data-rank="1">A</span>
+  <span class="ct-badge ct-rank" data-rank="2">B</span>
+  <span class="ct-badge ct-rank" data-rank="3">C</span>
+  <span class="ct-badge ct-rank" data-rank="4">D</span>
+  <span class="ct-badge ct-rank" data-rank="5">Archived</span>
+</div>
+
+<div class="ct-ranks-corrupted">
+  <span class="ct-badge ct-rank" data-rank="0">Hot</span>
+  <span class="ct-badge ct-rank" data-rank="5">Cold</span>
+</div>
+```
+
+`.ct-rank` is a `.ct-badge` whose colour comes from its step, so it goes
+wherever a badge goes — a `.ct-badges` row, a `.ct-row`, or a `<td>` in a
+ranked table.
+
+**The two maps.** The default is the familiar tier-list rainbow, step 0 to 5:
+red, orange, yellow, green, blue, neutral grey. It is the one place this
+package uses colours outside its palette, because a tier list that reads as a
+tier list anywhere is worth more here than palette purity. Put
+`.ct-ranks-corrupted` on any ancestor and the same six steps run hot to cold
+through the theme instead: red, magenta, magenta2, violet, cyan, neutral. That
+map is palette tokens throughout, so overriding `--accent` cannot move one of
+its steps off the palette.
+
+**Each step is two custom properties** — `--ct-rank-N` for the edge (border,
+and the background at 15%) and `--ct-rank-N-ink` for the text. Override them
+on any ancestor for a third map of your own:
+
+```css
+.my-grades {
+  --ct-rank-0: var(--corrupted-purple);
+  --ct-rank-0-ink: color-mix(in srgb, var(--corrupted-purple) 55%, var(--corrupted-white));
+}
+```
+
+That mix is how the corrupted map derives every ink: it keeps the text light
+enough to clear 4.5:1 against the step's own 15% background.
+
+**There are exactly six steps.** `data-rank="6"` and anything else unknown
+falls back to step 5's colours rather than failing visibly, so a scale with
+more than six tiers has to map its tiers onto these six — in data, not by
+adding a step.
+
+### Meter, rows and inline values
+
+```html
+<div class="ct-meter" style="--v:.72" role="img" aria-label="72 percent"></div>
+
+<div class="ct-rows" style="--ct-row-cols:4rem minmax(0, 1fr) 8rem 5rem">
+  <div class="ct-row is-self">
+    <span class="ct-badge ct-rank" data-rank="2">B</span>
+    <span title="Full row label for truncated layouts">Full row label for truncated layouts</span>
+    <div class="ct-meter" style="--v:.72;--ct-tone:var(--corrupted-purple)" role="img" aria-label="72 percent"></div>
+    <span>72%</span>
+  </div>
+</div>
+
+<span class="ct-kv">sync <strong>660</strong></span>
+```
+
+Rows ellipsise their second cell. When the text may truncate, put the full
+value in `title`.
+
+`.ct-rows` is presentational: it gives you ruled rows, not semantics. A ranked
+ladder that a screen reader should be able to navigate is a `.ct-table`. If the
+rows are a list rather than a table, say so — `<ul class="ct-rows">` with
+`<li class="ct-row">` works as it stands, and nothing in the CSS depends on the
+element being a `<div>`. The same is true of `.ct-grid` and `.ct-badges`.
+
+At 560px and below a row reflows: the lead and the text share the first line, a
+middle cell such as a meter takes a line of its own, and the trailing figure
+goes to the end of the last line. The `--ct-row-cols` tracks apply above that width.
+
+`.ct-delta` is shown inside a card because that is where it usually goes, but it
+is a standalone line of type — it works next to a table, a sparkline or a
+heading just as well.
+
+### Chart and legend
+
+```html
+<figure class="ct-chart">
+  <svg viewBox="0 0 320 120" role="img" aria-labelledby="chart-title">
+    <title id="chart-title">Viewer trend</title>
+    <polyline points="0,90 80,70 160,44 240,20 320,34" fill="none" stroke="currentColor" stroke-width="4"></polyline>
+  </svg>
+  <div class="ct-chart-cap">Caption below the chart.</div>
+  <div class="ct-legend">
+    <span class="ct-legend-item">Average viewers</span>
+    <span class="ct-legend-item" style="--ct-tone:var(--corrupted-purple)">Raid nights</span>
+  </div>
+  <div class="ct-legend is-key">
+    <span class="ct-legend-item"><span class="ct-label">S</span><span>Top tier.</span></span>
+    <span class="ct-legend-item"><span class="ct-label">B</span><span>Solid performer.</span></span>
+  </div>
+</figure>
+```
+
+`--ct-tone` colours a legend swatch; it does **not** reach inside the `<svg>`.
+Set each series' `stroke` or `fill` yourself and use the same value on its
+legend item, so the two agree:
+
+```html
+<polyline stroke="var(--corrupted-purple)" …></polyline>
+<span class="ct-legend-item" style="--ct-tone:var(--corrupted-purple)">Raid nights</span>
+```
+
+A single-series chart can leave the polyline on `currentColor`, which inherits
+the frame's text colour — note that an un-toned legend swatch is `--accent`
+instead, so give that series a colour on both if they need to agree. The `.ct-chart` frame styles any `<svg>` or `<canvas>`
+to fill its width; what you draw inside it is yours.
 
 ### Award rows
 
@@ -646,12 +839,12 @@ below.
 <figure class="ct-media ct-media-wide"><img class="ct-media-img" src="…" alt="…"></figure>
 
 <div class="ct-grid">
-  <div class="ct-cell ct-entity">
+  <div class="ct-card has-tick ct-entity">
     <div class="ct-entity-head">
-      <figure class="ct-media ct-media-portrait"><img class="ct-media-img" src="…" alt=""></figure>
+      <figure class="ct-media ct-avatar is-round" style="--ct-avatar-size:68px"><img class="ct-media-img" src="…" alt=""></figure>
       <div class="ct-entity-id">
-        <div class="ct-cell-eyebrow">Role</div>
-        <h4 class="ct-cell-title">Name</h4>
+        <div class="ct-label">Role</div>
+        <h4 class="ct-card-title">Name</h4>
         <div class="ct-badges"><span class="ct-badge">Tag</span></div>
       </div>
     </div>
@@ -667,7 +860,7 @@ below.
 </div>
 ```
 
-- `.ct-media-portrait` is a fixed 68px square that never shrinks, so a long
+- `.ct-avatar` is a fixed square that never shrinks, so a long
   title wraps beside it instead of squeezing it. That includes unbroken
   handles and IDs: titles wrap anywhere. `.ct-media-wide` fills its column.
 - Use `.ct-media` for images inside cards and grids. Use `.ct-figure` for an
@@ -675,17 +868,82 @@ below.
 - `alt=""` is right when the name or value sits next to the image, as in the
   entity head and the attribute strip. Otherwise, describe the image.
 - The entity card's arrangement is fixed on purpose, so two authors writing
-  the same card get the same card. Without `.ct-entity`, a `.ct-cell` stacks
+  the same card get the same card. Without `.ct-entity`, a `.ct-card` stacks
   whatever it's given.
 - `.ct-attr-icon` is optional. It's a plain URL that the calling page
   resolves, so the block knows nothing about what the values mean.
 
+### Gallery
+
+```html
+<div class="ct-gallery" style="--ct-grid-min:140px">
+  <a href="full-size-1.jpg"><img src="thumb-1.jpg" alt="Description"></a>
+  <a href="full-size-2.jpg"><img src="thumb-2.jpg" alt="Description"></a>
+</div>
+```
+
+Gallery thumbnails link to their full-size images. The theme does not include
+a lightbox.
+
+### Post index and post chrome
+
+`.ct-post-nav` and `.ct-post-foot` go inside `.ct-article`, after `.ct-body`;
+the nav may also be repeated before it. `.ct-post-list` is an index page's
+content, so it sits inside `.ct-body` like any other block.
+
+The nav's links are in reading order — back to the index, then the previous
+post, then the next — and the order is yours to change; nothing in the CSS
+depends on it. `.ct-post-title` is shown as `<h3>` because an index usually has
+an `<h2>` above the list; use whatever level keeps the page's outline in order.
+
+```html
+<nav class="ct-post-nav" aria-label="Post navigation">
+  <a href="/posts/">Back to index</a>
+  <a href="/posts/previous/">Previous</a>
+  <a href="/posts/next/">Next</a>
+</nav>
+
+<div class="ct-post-list">
+  <a class="ct-card ct-post-card" href="/posts/season-3/">
+    <time class="ct-post-date" datetime="2026-09-24">2026.09.24</time>
+    <h3 class="ct-post-title">Signal Decay, Season 3</h3>
+    <p class="ct-post-excerpt">Recap, awards and ranked segments.</p>
+  </a>
+</div>
+
+<footer class="ct-post-foot">
+  <span class="ct-byline">Filed by the archive bot.</span>
+</footer>
+```
+
+### Accessibility, in one place
+
+Each example below carries these inline; this is the summary.
+
+| Element | What the markup must carry |
+|---|---|
+| `.ct-kicker-dot`, `.ct-section-n`, `.ct-slash`, `.ct-callout-icon` | `aria-hidden="true"` — they are decoration, and are announced as noise otherwise |
+| `.ct-divider` | `aria-hidden="true"` on the element: its label is drawn from `data-label` by CSS, and a real heading follows it |
+| `.ct-table-scroll` | `tabindex="0"`, `role="region"` and an `aria-label`, so the sideways scroll is reachable by keyboard |
+| `.ct-spark`, `.ct-meter` | `role="img"` and a text alternative — the bars carry nothing for assistive tech. A `.ct-meter` that reports a number can instead be `role="progressbar"` with `aria-valuenow`/`aria-valuemin`/`aria-valuemax` |
+| `.ct-row` with ellipsised text | the full value in `title` on the cell that truncates |
+| dates | `<time datetime="YYYY-MM-DD">` |
+| images | `alt`; empty `alt=""` for a decorative portrait beside a name that is already text |
+| `.ct-rank` | the step in the text (`S`, `B`, `Rank 2`), never colour alone |
+| `.ct-delta` | the direction in the text (`▲`, `▼`, `+`, `−`), never colour alone |
+
+Nothing here needs a `role` or label on `.ct-callout` itself: it is a styled
+block, and its title carries the meaning.
+
 ### Label contrast
 
-Small labels (stat and tile labels, sparkline caption and axis, figcaptions,
-the kicker, quote attribution) use `--text-secondary`, not `--text-muted`.
-Measured on `--surface-elevated`, the *lightest* surface these blocks sit on and so
-the worst case for light text:
+**Use `--text-secondary` for small text in these blocks, never `--text-muted`.**
+That covers card labels, the sparkline caption and axis, figcaptions, the
+kicker and quote attribution — and it is what the shipped classes already do,
+so this only matters if you are writing your own rules alongside them.
+
+The measurement, on `--surface-elevated`, the *lightest* surface these blocks
+sit on and so the worst case for light text:
 
 | Token | Pair | Ratio |
 |---|---|---|
@@ -2730,7 +2988,7 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.3.3, 51 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.4, 51 JS exports)
 
 Container expectations: overlay-suite and block components position themselves
 absolutely inside their container, so give the container `position: relative`

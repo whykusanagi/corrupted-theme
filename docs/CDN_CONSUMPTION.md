@@ -24,9 +24,9 @@ third-party warnings.
 
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/corrupted-text.min.js"></script>
 ```
 
 **Pro:** Breaking changes never auto-propagate. **Con:** Manual version
@@ -52,7 +52,7 @@ For production hardening, add SRI hashes:
 
 ```html
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/corrupted-text.min.js"
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/corrupted-text.min.js"
         integrity="sha384-<paste-hash-here>"
         crossorigin="anonymous"></script>
 ```
@@ -89,7 +89,10 @@ list the one you actually use.
 
 - sparkline bar heights (`<span class="ct-spark-bar" style="--v:.42">`);
 - the `--ct-cols`, `--ct-grid-min` and `--ct-tone` knobs;
-- number-column alignment in tables (`style="text-align:right"`).
+- per-step rank colours, if you override `--ct-rank-N` on an element.
+
+Number-column alignment is **not** one of them: use the `.ct-num` class the
+theme ships, on the `<th>` and the `<td>`.
 
 A policy without `'unsafe-inline'` for styles blocks all of these. You have
 three options, in order of preference:
@@ -171,7 +174,7 @@ exports, so npm and CDN import paths stay symmetrical):
 ```html
 <script type="module">
   import { ScrollDecode } from
-    'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.3/src/lib/scroll-decode.js';
+    'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.4/src/lib/scroll-decode.js';
   new ScrollDecode(document.querySelector('h1')).start();
 </script>
 ```

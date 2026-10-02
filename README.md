@@ -82,7 +82,7 @@ npm install @whykusanagi/corrupted-theme
 ```html
 <!-- Pinned version (recommended for production) -->
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/theme.min.css">
 
 <!-- Floating @latest (use only for sites you control and update together) -->
 <link rel="stylesheet"
@@ -106,9 +106,9 @@ Both domains serve the same content. Use the domain that matches your site's roo
 **Pinned version** (production-safe — breaking changes never auto-propagate):
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.3/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/corrupted-text.min.js"></script>
 ```
 
 **Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):
@@ -120,6 +120,19 @@ Both domains serve the same content. Use the domain that matches your site's roo
 For production hardening, add SRI hashes (published in `CHANGELOG.md` for each release; regenerate with `npm run generate-sri`). See [docs/CDN_CONSUMPTION.md](docs/CDN_CONSUMPTION.md) for the same-origin rule, CSP guidance, CORS allowlist, and JSON data fetching.
 
 Browse every animation on the demo site, which deploys from `main`: [corrupted.whykusanagi.xyz/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
+
+## What's New in 0.3.4
+
+**0.3.4** adds editorial and data-page primitives: one shared stylesheet for
+the article and recap layouts that sites had each been rebuilding by hand.
+Markup and data stay with the site; every rule for post content lives here.
+
+| Export | What it does |
+|---|---|
+| `editorial` | One vocabulary for a blog or data page: article masthead, prose blocks (sections, tables, figures, callouts, quotes, columns, card grids, media, attribute strips, entity cards), bar sparklines, meters, ruled rows, chart frames with legends, galleries, award rows, a post index, and `.ct-rank` for any ordered scale. Every class is `ct-`-prefixed; colour is palette tokens only, the one sanctioned exception being the standard rank scale. Bundled in `theme.min.css`. See [Editorial & Data Pages](#editorial--data-pages) |
+
+It also declares `--font-mono`, which components had referenced since 0.2.x
+without it ever being defined.
 
 ## What's New in 0.3.3
 
@@ -184,11 +197,11 @@ Every file under `src/` is an ES module. Load one of two ways:
 ```html
 <!-- Module import (npm or CDN) -->
 <script type="module">
-  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.3/src/lib/scroll-decode.js';
+  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.4/src/lib/scroll-decode.js';
 </script>
 
 <!-- Browser global for no-build sites (IIFE builds only; SRI in CHANGELOG.md) -->
-<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.3/dist/toast.global.js"></script>
+<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.4/dist/toast.global.js"></script>
 ```
 
 A classic `<script src>` pointing at a `src/` file throws
@@ -381,8 +394,12 @@ new TitleDecoder(el, { nsfw: false });             // was: { lewdMode: false }
 ```
 
 ### Required CSS
+
+Only for this full-bleed background recipe. The theme already sets the page
+background and resets `body` margin, so a normal page needs none of this.
+
 ```css
-html, body { min-height: 100vh; background: var(--bg); margin: 0; }
+html, body { min-height: 100vh; background: var(--bg); margin: 0; }  /* min-height is the only part the theme does not do */
 .background-media { position: fixed; inset: 0; object-fit: cover; z-index: var(--z-negative); }
 .glass-backdrop { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(5,0,16,.85), rgba(10,10,10,.9)); z-index: var(--z-background); }
 .app-shell { position: relative; z-index: var(--z-elevated); padding: clamp(1.5rem, 3vw, 3rem); backdrop-filter: blur(0); }
@@ -1359,9 +1376,10 @@ All Nikke-specific helpers live alongside the main utilities (`src/css/nikke-uti
 
 ## Editorial & Data Pages
 
-Long-form article and recap-page primitives: a masthead, numbered sections,
-tables, callouts, quotes, columns, grids, entity cards, stat rows, stat
-tiles, bar sparklines and award rows. From 0.3.4 they ship in `theme.css`
+One vocabulary for a blog or data page: a masthead, numbered sections, prose,
+tables, callouts, quotes, columns, card grids, entity cards, bar sparklines,
+meters, ruled rows, chart frames with legends, award rows, rank badges and the
+post index. From 0.3.4 they ship in `theme.css`
 (and as `@whykusanagi/corrupted-theme/editorial`), every class is `ct-`-prefixed,
 and the markup is the contract.
 
@@ -1471,7 +1489,9 @@ Click-to-reveal overlay for sensitive content.
 See `examples/extensions-showcase.html` for interactive demos and `docs/COMPONENTS_REFERENCE.md` for complete API documentation.
 
 ## Customization & Tokens
-Override only the tokens you need. The defaults intentionally mirror the showcase.
+Override only the tokens you need. **The values below are an example override,
+not the defaults** — the shipped `--accent` is `#d94f90`. `src/css/variables.css`
+is the source of truth for every default.
 ```css
 :root {
   --accent: #ff5fb0;

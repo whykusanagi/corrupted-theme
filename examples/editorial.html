@@ -103,10 +103,12 @@
   <main class="container">
     <article class="ct-article">
       <header class="ct-masthead">
+        <div class="ct-masthead-aside">41 streams<br>13 weeks<br>3 nights / wk</div>
         <div class="ct-kicker"><span class="ct-kicker-dot" aria-hidden="true"></span>Season recap</div>
         <h1 class="ct-title">Signal Decay, Season 3</h1>
         <p class="ct-dek">Thirteen weeks, forty-one streams, and one very long raid night.</p>
         <time class="ct-dateline" datetime="2026-09-24">2026.09.24</time>
+        <div class="ct-byline">By corrupted-theme editorial desk</div>
       </header>
 
       <div class="ct-body">
@@ -114,43 +116,44 @@
           held to a readable measure; the tables, grids and charts below break out to full width.
           Emphasis stays <strong>white</strong>, and a <span class="ct-hi">highlight</span> uses the light accent.</p>
 
-        <div class="ct-stat-row">
-          <div class="ct-stat">
-            <div class="ct-stat-value">41</div>
-            <div class="ct-stat-label">Streams</div>
-            <div class="ct-stat-sub">+6 on season 2</div>
+        <div class="ct-grid">
+          <div class="ct-card">
+            <div class="ct-value" style="--ct-value-size:1.7rem">41</div>
+            <div class="ct-label">Streams</div>
+            <div class="ct-detail">+6 on season 2</div>
           </div>
-          <div class="ct-stat">
-            <div class="ct-stat-value">118h</div>
-            <div class="ct-stat-label">Hours live</div>
+          <div class="ct-card">
+            <div class="ct-value" style="--ct-value-size:1.7rem">118h</div>
+            <div class="ct-label">Hours live</div>
           </div>
-          <div class="ct-stat">
-            <div class="ct-stat-value">3,410</div>
-            <div class="ct-stat-label">Peak viewers</div>
-            <div class="ct-stat-sub">Week 11, raid night</div>
+          <div class="ct-card">
+            <div class="ct-value" style="--ct-value-size:1.7rem">3,410</div>
+            <div class="ct-label">Peak viewers</div>
+            <div class="ct-detail">Week 11, raid night</div>
           </div>
         </div>
 
         <div class="ct-section-h">
           <span class="ct-section-n" aria-hidden="true">01</span>
           <h2 class="ct-section-t decode-on-scroll">The numbers</h2>
+          <div class="ct-section-meta">Us vs region</div>
         </div>
 
-        <div class="ct-tiles">
-          <div class="ct-tile">
-            <div class="ct-tile-label">Average viewers</div>
-            <div class="ct-tile-value">1,184</div>
-            <div class="ct-tile-delta is-up">▲ 12% vs season 2</div>
+        <div class="ct-grid">
+          <div class="ct-card is-raised">
+            <div class="ct-label">Average viewers</div>
+            <div class="ct-value">1,184</div>
+            <div class="ct-delta is-up">▲ 12% vs season 2</div>
           </div>
-          <div class="ct-tile">
-            <div class="ct-tile-label">Chat messages</div>
-            <div class="ct-tile-value">212k</div>
-            <div class="ct-tile-delta">▼ 3% vs season 2</div>
+          <div class="ct-card is-raised">
+            <div class="ct-label">Chat messages</div>
+            <div class="ct-value">212k</div>
+            <div class="ct-delta">▼ 3% vs season 2</div>
           </div>
         </div>
 
         <figure class="ct-spark-wrap">
-          <figcaption class="ct-spark-cap" id="viewers-cap">Average viewers per week</figcaption>
+          <figcaption class="ct-label" id="viewers-cap">Average viewers per week</figcaption>
           <div class="ct-spark" role="img" aria-labelledby="viewers-cap" aria-describedby="viewers-data">
             <span class="ct-spark-bar" style="--v:.38"></span>
             <span class="ct-spark-bar" style="--v:.44"></span>
@@ -172,7 +175,7 @@
         </figure>
 
         <figure class="ct-spark-wrap">
-          <figcaption class="ct-spark-cap" id="flat-cap">Stream length, flat variant (no current bar)</figcaption>
+          <figcaption class="ct-label" id="flat-cap">Stream length, flat variant (no current bar)</figcaption>
           <div class="ct-spark is-flat" role="img" aria-labelledby="flat-cap">
             <span class="ct-spark-bar" style="--v:.6"></span>
             <span class="ct-spark-bar" style="--v:.75"></span>
@@ -182,17 +185,17 @@
           </div>
         </figure>
 
-        <figure class="ct-table">
+        <figure class="ct-table is-compact">
           <div class="ct-table-scroll" tabindex="0" role="region" aria-label="Top games by hours">
             <table>
               <thead>
-                <tr><th scope="col">Game</th><th scope="col" style="text-align:right">Streams</th>
-                  <th scope="col" style="text-align:right">Hours</th><th scope="col" style="text-align:right">Avg viewers</th></tr>
+                <tr><th scope="col">Game</th><th scope="col">Streams</th>
+                  <th scope="col">Hours</th><th scope="col">Avg viewers</th></tr>
               </thead>
               <tbody>
-                <tr><td>Abyssal Conquest</td><td style="text-align:right">14</td><td style="text-align:right">46</td><td style="text-align:right">1,302</td></tr>
-                <tr><td>Just Chatting</td><td style="text-align:right">11</td><td style="text-align:right">29</td><td style="text-align:right">1,040</td></tr>
-                <tr><td>Rhythm block</td><td style="text-align:right">9</td><td style="text-align:right">24</td><td style="text-align:right">1,211</td></tr>
+                <tr class="is-self"><td>Abyssal Conquest</td><td class="ct-num">14</td><td class="ct-num">46</td><td class="ct-num">1,302</td></tr>
+                <tr><td>Just Chatting</td><td class="ct-num">11</td><td class="ct-num">29</td><td class="ct-num">1,040</td></tr>
+                <tr><td>Rhythm block</td><td class="ct-num">9</td><td class="ct-num">24</td><td class="ct-num">1,211</td></tr>
               </tbody>
             </table>
           </div>
@@ -201,7 +204,16 @@
 
         <aside class="ct-callout ct-key">
           <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Key takeaway</div>
+          <span class="ct-callout-icon" aria-hidden="true">!</span>
           <p>Raid nights drove the peak, but the <strong>average</strong> climbed every week after the schedule change.</p>
+        </aside>
+
+        <aside class="ct-callout ct-info ct-callout-aside">
+          <div>
+            <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Maintenance window</div>
+            <p>Archive exports were paused while the season ledger reindexed.</p>
+          </div>
+          <time datetime="2026-09-22T03:00">03:00 UTC</time>
         </aside>
 
         <div class="ct-section-h">
@@ -238,6 +250,101 @@
           <li>Recap posts like this one, built from the same markup on every site.</li>
         </ul>
 
+        <ul class="ct-list is-grid" style="--ct-chip-min:150px">
+          <li>Raid nights</li>
+          <li>Archive clips</li>
+          <li>Chat picks</li>
+          <li>Co-op blocks</li>
+        </ul>
+
+        <ol class="ct-list is-numbered">
+          <li>Publish the recap.</li>
+          <li>Freeze the season ledger.</li>
+          <li>Open nominations for the next block.</li>
+        </ol>
+
+        <div class="ct-divider" data-label="Developer log" aria-hidden="true"></div>
+
+        <div class="ct-section-h">
+          <span class="ct-section-n" aria-hidden="true">03</span>
+          <h2 class="ct-section-t decode-on-scroll">Rank scale</h2>
+          <div class="ct-section-meta">0 best / 5 muted</div>
+        </div>
+
+        <div class="ct-grid" style="--ct-grid-min:220px">
+          <div class="ct-card">
+            <div class="ct-label">Standard map</div>
+            <div class="ct-badges">
+              <span class="ct-badge ct-rank" data-rank="0">Rank 0</span>
+              <span class="ct-badge ct-rank" data-rank="1">Rank 1</span>
+              <span class="ct-badge ct-rank" data-rank="2">Rank 2</span>
+              <span class="ct-badge ct-rank" data-rank="3">Rank 3</span>
+              <span class="ct-badge ct-rank" data-rank="4">Rank 4</span>
+              <span class="ct-badge ct-rank" data-rank="5">Rank 5</span>
+            </div>
+          </div>
+          <div class="ct-card ct-ranks-corrupted">
+            <div class="ct-label">Corrupted map</div>
+            <div class="ct-badges">
+              <span class="ct-badge ct-rank" data-rank="0">Rank 0</span>
+              <span class="ct-badge ct-rank" data-rank="1">Rank 1</span>
+              <span class="ct-badge ct-rank" data-rank="2">Rank 2</span>
+              <span class="ct-badge ct-rank" data-rank="3">Rank 3</span>
+              <span class="ct-badge ct-rank" data-rank="4">Rank 4</span>
+              <span class="ct-badge ct-rank" data-rank="5">Rank 5</span>
+            </div>
+          </div>
+          <div class="ct-card">
+            <div class="ct-label">Badge variants</div>
+            <div class="ct-badges">
+              <span class="ct-badge is-outline">Outline</span>
+              <span class="ct-badge is-solid">Solid</span>
+              <span class="ct-badge is-dashed">Dashed</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ct-section-h">
+          <span class="ct-section-n" aria-hidden="true">04</span>
+          <h2 class="ct-section-t decode-on-scroll">Dense data</h2>
+        </div>
+
+        <div class="ct-rows" style="--ct-row-cols:4rem minmax(0, 1fr) 8rem 5rem">
+          <div class="ct-row">
+            <span class="ct-badge ct-rank" data-rank="0">S</span>
+            <span title="Abyssal Conquest raid night">Abyssal Conquest raid night</span>
+            <div class="ct-meter" style="--v:.94" role="img" aria-label="94 percent"></div>
+            <span>94%</span>
+          </div>
+          <div class="ct-row is-self">
+            <span class="ct-badge ct-rank" data-rank="2">B</span>
+            <span title="Rhythm block with an intentionally long title">Rhythm block with an intentionally long title</span>
+            <div class="ct-meter" style="--v:.62;--ct-tone:var(--corrupted-purple)" role="img" aria-label="62 percent"></div>
+            <span>62%</span>
+          </div>
+        </div>
+
+        <p class="ct-p"><span class="ct-kv">sync <strong>660</strong></span> and <span class="ct-kv" style="--ct-tone:var(--corrupted-red)">alerts <strong>3</strong></span> are inline facts.</p>
+
+        <figure class="ct-chart">
+          <svg viewBox="0 0 320 120" role="img" aria-labelledby="chart-title">
+            <title id="chart-title">Viewer trend line</title>
+            <polyline points="0,90 48,74 96,82 144,58 192,42 240,22 320,34" fill="none" stroke="currentColor" stroke-width="4"></polyline>
+            <g fill="currentColor">
+              <circle cx="48" cy="74" r="4"></circle><circle cx="144" cy="58" r="4"></circle><circle cx="240" cy="22" r="4"></circle>
+            </g>
+          </svg>
+          <div class="ct-chart-cap">Week 11 peaked after the schedule change.</div>
+          <div class="ct-legend">
+            <span class="ct-legend-item">Average viewers</span>
+            <span class="ct-legend-item" style="--ct-tone:var(--corrupted-purple)">Raid nights</span>
+          </div>
+          <div class="ct-legend is-key">
+            <span class="ct-legend-item"><span class="ct-label">S</span><span>Top week or segment.</span></span>
+            <span class="ct-legend-item"><span class="ct-label">B</span><span>Solid performer with room to tune.</span></span>
+          </div>
+        </figure>
+
         <aside class="ct-callout ct-info">
           <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Note</div>
           <p>The tone colours the corner tick and the title only. The word in the title carries the meaning.</p>
@@ -253,7 +360,7 @@
           <footer class="ct-quote-attr">— Stream 29, closing words</footer>
         </blockquote>
 
-        <div class="ct-cols" style="--ct-cols:2">
+        <div class="ct-cols" style="--ct-cols-tracks:1.55fr 1fr">
           <div class="ct-col">
             <h3 class="ct-h3">Before</h3>
             <p class="ct-p">Open-ended streams, no fixed end, and a schedule that changed week to week.</p>
@@ -265,26 +372,27 @@
         </div>
 
         <div class="ct-grid" style="--ct-grid-min:220px">
-          <div class="ct-cell">
-            <div class="ct-cell-eyebrow">Segment</div>
-            <h4 class="ct-cell-title">Raid night</h4>
-            <div class="ct-badges"><span class="ct-badge">Weekly</span><span class="ct-badge">Co-op</span></div>
+          <div class="ct-card has-tick">
+            <div class="ct-card-corner">01</div>
+            <div class="ct-label">Segment</div>
+            <h4 class="ct-card-title">Raid night</h4>
+            <div class="ct-badges"><span class="ct-badge is-outline">Weekly</span><span class="ct-badge is-dashed">Co-op</span></div>
             <p class="ct-p">Highest peak of the season, every time it ran.</p>
           </div>
-          <div class="ct-cell">
-            <div class="ct-cell-eyebrow">Segment</div>
-            <h4 class="ct-cell-title">Chat decides</h4>
+          <div class="ct-card has-tick">
+            <div class="ct-label">Segment</div>
+            <h4 class="ct-card-title">Chat decides</h4>
             <p class="ct-p">Viewers pick the next game from a shortlist of three.</p>
           </div>
-          <div class="ct-cell">
-            <div class="ct-cell-eyebrow">Segment</div>
-            <h4 class="ct-cell-title">Rhythm block</h4>
+          <div class="ct-card has-tick is-muted">
+            <div class="ct-label">Segment</div>
+            <h4 class="ct-card-title">Rhythm block</h4>
             <p class="ct-p">Short, loud, and the best chat-per-minute of the week.</p>
           </div>
         </div>
 
         <div class="ct-section-h">
-          <span class="ct-section-n" aria-hidden="true">03</span>
+          <span class="ct-section-n" aria-hidden="true">05</span>
           <h2 class="ct-section-t decode-on-scroll">Regulars</h2>
         </div>
 
@@ -292,15 +400,15 @@
           then any blocks. Two authors writing the same card get the same card.</p>
 
         <div class="ct-grid" style="--ct-grid-min:280px">
-          <div class="ct-cell ct-entity">
+          <div class="ct-card has-tick ct-entity">
             <div class="ct-entity-head">
-              <figure class="ct-media ct-media-portrait">
+              <figure class="ct-media ct-avatar is-round" style="--ct-avatar-size:68px">
                 <img class="ct-media-img" src="assets/celeste-avatar.png" alt="" loading="lazy" decoding="async">
               </figure>
               <div class="ct-entity-id">
-                <div class="ct-cell-eyebrow">Moderator</div>
-                <h4 class="ct-cell-title">glitchwitch</h4>
-                <div class="ct-badges"><span class="ct-badge">41 / 41</span></div>
+                <div class="ct-label">Moderator</div>
+                <h4 class="ct-card-title">glitchwitch</h4>
+                <div class="ct-badges"><span class="ct-badge is-solid">41 / 41</span></div>
               </div>
             </div>
             <div class="ct-attrs">
@@ -311,14 +419,14 @@
             </div>
             <p class="ct-p">Never missed a stream, including the 3am one.</p>
           </div>
-          <div class="ct-cell ct-entity">
+          <div class="ct-card has-tick ct-entity">
             <div class="ct-entity-head">
-              <figure class="ct-media ct-media-portrait">
+              <figure class="ct-media ct-avatar">
                 <img class="ct-media-img" src="assets/celeste-avatar.png" alt="" loading="lazy" decoding="async">
               </figure>
               <div class="ct-entity-id">
-                <div class="ct-cell-eyebrow">Chatter</div>
-                <h4 class="ct-cell-title">a_name_long_enough_to_wrap_the_title_line</h4>
+                <div class="ct-label">Chatter</div>
+                <h4 class="ct-card-title">a_name_long_enough_to_wrap_the_title_line</h4>
               </div>
             </div>
             <div class="ct-attrs">
@@ -337,7 +445,39 @@
           <img src="assets/celeste-avatar.png" alt="Celeste avatar, used here as placeholder figure art">
           <figcaption>Figures break out of the text measure by default; this square one is capped inline.</figcaption>
         </figure>
+
+        <div class="ct-gallery" style="--ct-thumb-min:140px">
+          <a href="assets/celeste-avatar.png"><img src="assets/celeste-avatar.png" alt="Gallery thumbnail one" loading="lazy" decoding="async"></a>
+          <a href="assets/celeste-avatar.png"><img src="assets/celeste-avatar.png" alt="Gallery thumbnail two" loading="lazy" decoding="async"></a>
+          <a href="assets/celeste-avatar.png"><img src="assets/celeste-avatar.png" alt="Gallery thumbnail three" loading="lazy" decoding="async"></a>
+        </div>
+
+        <div class="ct-post-list">
+          <a class="ct-card ct-post-card" href="#">
+            <time class="ct-post-date" datetime="2026-09-24">2026.09.24</time>
+            <h3 class="ct-post-title">Signal Decay, Season 3</h3>
+            <p class="ct-post-excerpt">The recap, awards and ranked segments from the latest season.</p>
+          </a>
+          <a class="ct-card ct-post-card" href="#">
+            <time class="ct-post-date" datetime="2026-06-18">2026.06.18</time>
+            <h3 class="ct-post-title">Patch Notes, Midseason</h3>
+            <p class="ct-post-excerpt">Schedule changes, archive notes and the next block of nominations.</p>
+          </a>
+        </div>
+
       </div>
+
+      <!-- Post chrome sits outside .ct-body, so it spans the wrapper rather
+           than the text measure. -->
+      <nav class="ct-post-nav" aria-label="Post navigation">
+        <a href="#">Back to index</a>
+        <a href="#">Previous recap</a>
+        <a href="#">Next recap</a>
+      </nav>
+
+      <footer class="ct-post-foot">
+        <span class="ct-byline">Filed by the archive bot after stream 41.</span>
+      </footer>
     </article>
   </main>
 

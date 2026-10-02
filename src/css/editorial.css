@@ -1,5 +1,5 @@
 /**
- * Editorial & data-page primitives — article masthead, prose blocks, entity cards, stat tiles, bar sparklines and award rows.
+ * Editorial & data-page primitives — article masthead, prose blocks, card grids, charts and award rows.
  *
  * One shared copy of the long-form article and recap-page blocks, so a post
  * authored for one site renders the same on another.
@@ -8,8 +8,10 @@
  * `ct-`-prefixed because this sheet ships in the global theme bundle.
  *
  * Knobs (all optional, set on any ancestor or inline):
- *   --ct-measure (47rem)  --ct-measure-wide (62rem)  --ct-cols (2)
- *   --ct-grid-min (260px) --ct-spark-h (72px)        --ct-tone (--accent)
+ *   --ct-measure (47rem)     --ct-measure-wide (62rem)  --ct-cols (2)
+ *   --ct-cols-tracks         --ct-grid-min (260px)      --ct-row-cols
+ *   --ct-spark-h (72px)      --ct-tone (--accent)       --ct-value-size (1.5rem)
+ *   --ct-avatar-size (64px)  --v (0-1)
  *
  * House style: chrome is corner ticks and a // marker, never a rounded card
  * with a coloured rail down the left edge — that is the default every
@@ -22,6 +24,45 @@
  *   </div>
  */
 
+/* ========== RANK SCALE ========== */
+/* RANK-SCALE-LITERALS:START
+   Standard rank tiers are deliberately familiar tier-list colours, not theme
+   chrome, so the twelve literals are quarantined here and only here. They live
+   on :root because ranks are data tokens: a rank badge keeps its meaning even
+   when it appears outside .ct-article, such as in a post index card. */
+:root {
+  --ct-rank-0: #ef4444;
+  --ct-rank-0-ink: #fca5a5;
+  --ct-rank-1: #f97316;
+  --ct-rank-1-ink: #fdba74;
+  --ct-rank-2: #eab308;
+  --ct-rank-2-ink: #fde047;
+  --ct-rank-3: #22c55e;
+  --ct-rank-3-ink: #86efac;
+  --ct-rank-4: #3b82f6;
+  --ct-rank-4-ink: #93c5fd;
+  --ct-rank-5: #6b7280;
+  --ct-rank-5-ink: #cbd5e1;
+}
+/* RANK-SCALE-LITERALS:END */
+
+/* The spec named --text-muted for step 5's corrupted edge. This sheet forbids
+   that token for AA; --text-secondary is the nearest legal neutral. */
+.ct-ranks-corrupted {
+  --ct-rank-0: var(--corrupted-red);
+  --ct-rank-0-ink: color-mix(in srgb, var(--corrupted-red) 55%, var(--corrupted-white));
+  --ct-rank-1: var(--corrupted-magenta);
+  --ct-rank-1-ink: color-mix(in srgb, var(--corrupted-magenta) 55%, var(--corrupted-white));
+  --ct-rank-2: var(--corrupted-magenta2);
+  --ct-rank-2-ink: color-mix(in srgb, var(--corrupted-magenta2) 55%, var(--corrupted-white));
+  --ct-rank-3: var(--corrupted-purple);
+  --ct-rank-3-ink: color-mix(in srgb, var(--corrupted-purple) 55%, var(--corrupted-white));
+  --ct-rank-4: var(--corrupted-cyan);
+  --ct-rank-4-ink: color-mix(in srgb, var(--corrupted-cyan) 55%, var(--corrupted-white));
+  --ct-rank-5: var(--text-secondary);
+  --ct-rank-5-ink: color-mix(in srgb, var(--text-secondary) 55%, var(--corrupted-white));
+}
+
 /* ========== ARTICLE FRAME ========== */
 
 .ct-article { padding: 2.5rem 0 5rem; }
@@ -32,6 +73,24 @@
   padding: 1.5rem 0 2.5rem;
   margin-bottom: 2.5rem;
   border-bottom: 1px solid var(--border);
+}
+
+/* An absolutely positioned aside overlapped any title longer than the demo's.
+   With an aside present the masthead becomes two columns and the title column
+   is the one that wraps; without one, nothing changes. */
+.ct-masthead:has(.ct-masthead-aside) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 1.75rem;
+  align-items: start;
+}
+
+.ct-masthead:has(.ct-masthead-aside) > * { grid-column: 1; }
+
+.ct-masthead:has(.ct-masthead-aside) > .ct-masthead-aside {
+  position: static;
+  grid-column: 2;
+  grid-row: 1 / -1;
 }
 
 .ct-masthead::after {
@@ -99,6 +158,20 @@
   color: var(--text-secondary);
 }
 
+.ct-masthead-aside {
+  position: absolute;
+  top: 1.5rem;
+  right: 0;
+  max-width: 14rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  line-height: 1.6;
+  letter-spacing: 1.5px;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
 .ct-dateline {
   display: inline-block;
   margin-top: 1.25rem;
@@ -112,6 +185,46 @@
   border-radius: var(--radius-sm);
 }
 
+.ct-byline {
+  margin: 1rem auto 0;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 1.6px;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ct-divider {
+  position: relative;
+  margin: 2.4rem auto;
+  min-height: 1.25rem;
+  text-align: center;
+}
+
+.ct-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+}
+
+.ct-divider::after {
+  content: attr(data-label);
+  position: relative;
+  display: inline-block;
+  padding: 0 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent-light);
+  background: var(--bg);
+}
+
 /* ========== MEASURE ========== */
 /* Running text is clamped and centred; wide blocks opt out. rem, not ch: ch
    resolves against each element's own font-size, so a large heading would
@@ -122,14 +235,17 @@
   margin-inline: auto;
 }
 
-.ct-body > .ct-table { max-width: var(--ct-measure-wide, 62rem); }
+.ct-body > .ct-table,
+.ct-body > .ct-rows,
+.ct-body > .ct-chart,
+.ct-body > .ct-gallery,
+.ct-body > .ct-post-list,
+.ct-body > .ct-divider { max-width: var(--ct-measure-wide, 62rem); }
 
 .ct-body > .ct-figure,
 .ct-body > .ct-section-h,
-.ct-body > .ct-stat-row,
 .ct-body > .ct-cols,
 .ct-body > .ct-grid,
-.ct-body > .ct-tiles,
 .ct-body > .ct-spark-wrap,
 .ct-body > .ct-awards,
 .ct-body > .ct-attrs { max-width: none; }
@@ -154,6 +270,47 @@
 }
 
 .ct-list li { margin: 0.35em 0; }
+
+.ct-list.is-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--ct-chip-min, 150px), 1fr));
+  gap: 0.45rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.ct-list.is-grid li {
+  margin: 0;
+  padding: 0.45rem 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 24%, transparent);
+  border-radius: var(--radius-sm);
+}
+
+.ct-list.is-numbered {
+  padding-left: 0;
+  list-style: none;
+  counter-reset: ct-list;
+}
+
+.ct-list.is-numbered li {
+  position: relative;
+  padding-left: 2.4rem;
+  counter-increment: ct-list;
+}
+
+.ct-list.is-numbered li::before {
+  content: counter(ct-list, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.05em;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--accent) 80%, var(--corrupted-white));
+}
 
 /* ========== SECTION HEADINGS ========== */
 /* A bare <h2> is left alone on purpose: the styled form is the wrapper below.
@@ -187,6 +344,16 @@
   font-weight: 700;
   letter-spacing: -0.5px;
   color: var(--text);
+}
+
+.ct-section-meta {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 1.6px;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 .ct-h3 {
@@ -249,6 +416,12 @@
 
 .ct-table tbody tr:last-child td { border-bottom: 0; }
 .ct-table td { color: var(--text-secondary); }
+.ct-table.is-compact th,
+.ct-table.is-compact td { padding: 0.42em 0.65em; font-size: 0.78rem; }
+.ct-table th.ct-num,
+.ct-table td.ct-num { font-variant-numeric: tabular-nums; text-align: right; }
+.ct-table tr.is-self td,
+.ct-table tr.is-self th { background: color-mix(in srgb, var(--accent) 10%, transparent); }
 
 .ct-table th {
   font-family: var(--font-mono);
@@ -321,6 +494,30 @@
   color: var(--ct-tone, var(--accent));
 }
 
+.ct-callout-icon {
+  float: left;
+  margin: 0.05rem 0.75rem 0.25rem 0;
+  font-family: var(--font-mono);
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--ct-tone, var(--accent));
+}
+
+.ct-callout-aside {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.65rem 1rem;
+  align-items: start;
+}
+
+.ct-callout-aside time {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
 .ct-slash { opacity: 0.55; }
 
 .ct-key  { --ct-tone: var(--accent); }
@@ -386,13 +583,31 @@
 
 .ct-cols {
   display: grid;
-  grid-template-columns: repeat(var(--ct-cols, 2), minmax(0, 1fr));
+  grid-template-columns: var(--ct-cols-tracks, repeat(var(--ct-cols, 2), minmax(0, 1fr)));
   gap: 1.4rem;
   margin: 1.8em auto;
 }
 
 .ct-col > *:first-child { margin-top: 0; }
 .ct-col > .ct-p:last-child { margin-bottom: 0; }
+
+/* These blocks are documented as working on a <ul>: theme.css styles every
+   list with left padding, a bottom margin per item and a marker, which would
+   indent the rows inside their own rule and put a bullet in every badge. */
+.ct-rows,
+.ct-grid,
+.ct-badges,
+.ct-gallery,
+.ct-post-list {
+  padding-left: 0;
+  list-style: none;
+}
+
+.ct-row,
+.ct-badge,
+.ct-gallery > li,
+.ct-post-list > li,
+.ct-grid > li { margin-bottom: 0; }
 
 .ct-grid {
   display: grid;
@@ -401,7 +616,9 @@
   margin: 1.8em auto;
 }
 
-.ct-cell {
+/* ========== CARDS ========== */
+
+.ct-card {
   position: relative;
   padding: 1.05rem 1.2rem;
   background: var(--glass);
@@ -409,29 +626,47 @@
   border-radius: var(--radius-md);
 }
 
-.ct-cell::before {
+.ct-card.has-tick::before {
   content: '';
   position: absolute;
   inset: 5px;
   pointer-events: none;
   opacity: 0.45;
   background:
-    linear-gradient(var(--accent), var(--accent)) left top / 11px 1px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) left top / 1px 11px no-repeat;
+    linear-gradient(var(--ct-tone, var(--accent)), var(--ct-tone, var(--accent))) left top / 11px 1px no-repeat,
+    linear-gradient(var(--ct-tone, var(--accent)), var(--ct-tone, var(--accent))) left top / 1px 11px no-repeat;
 }
 
-.ct-cell > * { position: relative; }
+.ct-card > * { position: relative; }
 
-.ct-cell-eyebrow {
+.ct-card.is-raised { background: var(--surface-elevated); }
+/* Muting is a tone change, never opacity. Group opacity composites every
+   descendant: at 0.7 a 0.62rem accent badge inside the card measured 2.9:1
+   and the labels 4.8:1, and no opacity that still reads as "dimmed" keeps
+   small accent text at AA. The card reads inactive through its tick, its
+   border and its imagery, and all of its text keeps full contrast. */
+.ct-card.is-muted {
+  --ct-tone: var(--text-secondary);
+  background: color-mix(in srgb, var(--glass) 55%, transparent);
+  border-color: color-mix(in srgb, var(--border) 55%, transparent);
+}
+
+/* The title drops a step rather than fading: --text-secondary is 8.2:1 on the
+   worst surface here, so the card reads inactive and stays readable. */
+.ct-card.is-muted .ct-card-title { color: var(--text-secondary); }
+
+.ct-card.is-muted .ct-media-img { opacity: 0.55; }
+
+.ct-label {
   margin-bottom: 0.45rem;
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  letter-spacing: 2px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text-secondary);
 }
 
-.ct-cell-title {
+.ct-card-title {
   margin: 0 0 0.5rem;
   font-size: 1rem;
   font-weight: 700;
@@ -439,11 +674,50 @@
   color: var(--text);
 }
 
-.ct-cell .ct-p { font-size: 0.9rem; margin-bottom: 0.6em; }
-.ct-cell .ct-p:last-child { margin-bottom: 0; }
+.ct-card-corner {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+.ct-value {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--ct-value-size, 1.5rem);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+/* Direction lives in the delta text (▲, ▼, +, -). .is-up adds emphasis but
+   never carries the meaning; .is-down would match the neutral default, and
+   green is reserved for "system". */
+.ct-delta {
+  margin-bottom: 0;   /* these may be a <p>, which theme.css gives a bottom margin */
+  margin-top: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+
+.ct-delta.is-up { color: var(--accent-light); }
+
+.ct-detail {
+  margin-bottom: 0;   /* these may be a <p>, which theme.css gives a bottom margin */
+  margin-top: 0.2em;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.ct-card .ct-p { font-size: 0.9rem; margin-bottom: 0.6em; }
+.ct-card .ct-p:last-child { margin-bottom: 0; }
 
 /* ========== MEDIA ========== */
-/* An image on its own. `wide` fills its column; `portrait` is a fixed square
+/* An image on its own. `wide` fills its column; `avatar` is a fixed square
    that never shrinks, so an entity head keeps the same shape whatever the
    title length — the layout guarantee lives here, not in how content is
    authored. */
@@ -458,14 +732,17 @@
 
 .ct-media-wide .ct-media-img { width: 100%; height: auto; }
 
-.ct-media-portrait { flex: none; }
+.ct-avatar { flex: none; }
 
-.ct-media-portrait .ct-media-img {
-  width: 68px;
-  height: 68px;
+.ct-avatar .ct-media-img {
+  width: var(--ct-avatar-size, 64px);
+  height: var(--ct-avatar-size, 64px);
   object-fit: cover;
   background: color-mix(in srgb, var(--corrupted-black) 30%, transparent);
+  border-color: var(--ct-tone, var(--border));
 }
+
+.ct-avatar.is-round .ct-media-img { border-radius: 50%; }
 
 /* ========== ATTRIBUTE STRIP ========== */
 /* Labelled values, each with an optional icon. The icon is a plain URL the
@@ -509,7 +786,7 @@
 }
 
 /* ========== ENTITY CARD ========== */
-/* A .ct-cell whose head is composed for you: portrait media beside the
+/* A .ct-card whose head is composed for you: avatar media beside the
    eyebrow/title/badges, then the attribute strip, then any blocks. Fixing
    the arrangement is the point — two authors writing the same card should
    get the same card. */
@@ -521,7 +798,7 @@
 }
 
 .ct-entity-id { min-width: 0; }
-.ct-entity .ct-cell-title { margin-bottom: 0; }
+.ct-entity .ct-card-title { margin-bottom: 0; }
 .ct-entity .ct-badges { margin-top: 0.45rem; }
 
 /* ========== BADGES ========== */
@@ -533,107 +810,68 @@
   margin: 0.4rem 0 0.6rem;
 }
 
+/* Outline is the default, declared on the base rule rather than behind a
+   `:not()` chain: the chain scored three classes and quietly outranked the
+   rank scale below, so every rank badge painted an accent border and no fill.
+   Found in the browser — the source read fine. */
 .ct-badge {
   padding: 0.15rem 0.45rem;
   font-family: var(--font-mono);
   font-size: 0.62rem;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--accent);
-  border: 1px solid var(--accent);
+  /* Lightened against the border's full tone: --accent itself measures 4.50:1
+     on --surface-elevated at this size, which is the line, not clear of it. */
+  color: color-mix(in srgb, var(--ct-tone, var(--accent)) 80%, var(--corrupted-white));
+  background: transparent;
+  border: 1px solid var(--ct-tone, var(--accent));
   border-radius: 3px;
 }
 
-/* ========== STAT ROW ========== */
-/* A .ct-stat always sits in a .ct-stat-row; a loose one is unsupported. */
-
-.ct-stat-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 0.9rem;
-  margin: 1.7em auto;
+/* The class a page uses to say "outline" out loud, and to come back to it
+   from a variant. */
+.ct-badge.is-outline {
+  background: transparent;
+  border-style: solid;
 }
 
-.ct-stat {
-  padding: 0.95rem 1.15rem;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+.ct-badge.is-solid {
+  color: var(--bg);
+  background: var(--ct-tone, var(--accent));
+  border: 1px solid transparent;
 }
 
-.ct-stat-value {
-  font-size: 1.7rem;
-  font-weight: 800;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-  color: var(--accent-light);
+.ct-badge.is-dashed {
+  background: color-mix(in srgb, var(--ct-tone, var(--accent)) 8%, transparent);
+  border: 1px dashed var(--ct-tone, var(--accent));
 }
 
-/* --text-secondary, not --text-muted: muted is 4.1:1 on glass, under AA for
-   text this small. */
-.ct-stat-label { margin-top: 0.3rem; font-size: 0.8rem; color: var(--text-secondary); }
-.ct-stat-sub { margin-top: 0.2em; font-size: 0.72rem; color: var(--text-secondary); }
-
-/* ========== STAT TILES ========== */
-/* Label, big number, one line of context. Direction lives in the delta's
-   text (▲ 12%, +3); .is-up adds emphasis but never carries the meaning, and
-   green is not used — it is reserved for "system". */
-
-.ct-tiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 22px auto;
+/* A rank badge paints from the scale instead of --ct-tone. The selector
+   carries .ct-badge so it outranks the badge's own default; the data-rank
+   rules below set only custom properties, which keeps them order-safe. */
+.ct-badge.ct-rank {
+  --ct-rank-edge: var(--ct-rank-5);
+  --ct-rank-ink: var(--ct-rank-5-ink);
+  color: var(--ct-rank-ink);
+  background: color-mix(in srgb, var(--ct-rank-edge) 15%, transparent);
+  border-color: var(--ct-rank-edge);
 }
 
-.ct-tile {
-  padding: 14px;
-  background: var(--surface-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-}
+.ct-rank[data-rank="0"] { --ct-rank-edge: var(--ct-rank-0); --ct-rank-ink: var(--ct-rank-0-ink); }
+.ct-rank[data-rank="1"] { --ct-rank-edge: var(--ct-rank-1); --ct-rank-ink: var(--ct-rank-1-ink); }
+.ct-rank[data-rank="2"] { --ct-rank-edge: var(--ct-rank-2); --ct-rank-ink: var(--ct-rank-2-ink); }
+.ct-rank[data-rank="3"] { --ct-rank-edge: var(--ct-rank-3); --ct-rank-ink: var(--ct-rank-3-ink); }
+.ct-rank[data-rank="4"] { --ct-rank-edge: var(--ct-rank-4); --ct-rank-ink: var(--ct-rank-4-ink); }
+.ct-rank[data-rank="5"] { --ct-rank-edge: var(--ct-rank-5); --ct-rank-ink: var(--ct-rank-5-ink); }
 
-.ct-tile-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.ct-tile-value {
-  margin-top: 4px;
-  font-family: var(--font-mono);
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-}
-
-.ct-tile-delta {
-  margin-top: 5px;
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  color: var(--text-secondary);
-}
-
-.ct-tile-delta.is-up { color: var(--accent-light); }
-
-/* ========== BAR SPARKLINE ========== */
+/* ========== DATA DISPLAY ========== */
 /* Each bar's height is a unitless --v from 0 to 1. The last bar is the
    current one and stays full accent; the rest are a 42% mix. Give the chart
    role="img" and a text alternative — the bars carry nothing for AT. */
 
 .ct-spark-wrap { margin: 20px auto; }
 
-.ct-spark-cap {
-  margin-bottom: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
+.ct-spark-wrap .ct-label { margin-bottom: 8px; }
 
 .ct-spark {
   display: flex;
@@ -667,15 +905,154 @@
 .ct-spark-axis {
   display: flex;
   justify-content: space-between;
-  margin-top: 5px;
+  margin-top: 3px;
   font-family: var(--font-mono);
   font-size: 0.6rem;
   color: var(--text-secondary);
 }
 
+/* A meter's --v is unitless 0..1. Like .ct-spark, give it role="img" or a
+   labelled value nearby: the bar shape alone is decorative to AT. */
+.ct-meter {
+  position: relative;
+  height: 0.55rem;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--surface-elevated) 70%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.ct-meter::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: calc(var(--v, 0) * 100%);
+  /* Flat fill first: if color-mix() is unsupported the whole gradient is
+     invalid and the fill would vanish, unlike a spark bar which keeps
+     --accent. */
+  background: var(--ct-tone, var(--accent));
+  background: linear-gradient(90deg, var(--ct-tone, var(--accent)), color-mix(in srgb, var(--ct-tone, var(--accent)) 58%, var(--corrupted-white)));
+}
+
+.ct-rows {
+  display: grid;
+  margin: 1.8em auto;
+  border-top: 1px solid var(--border);
+}
+
+.ct-row {
+  display: grid;
+  grid-template-columns: var(--ct-row-cols, auto minmax(0, 1fr) auto);
+  gap: 0.75rem;
+  align-items: center;
+  min-width: 0;
+  padding: 0.65rem 0.25rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.ct-row.is-self {
+  padding-inline: 0.65rem;
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+
+.ct-row > * { min-width: 0; }
+.ct-row > :nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; /* Put the full value in title when truncation is possible. */
+}
+.ct-row > :last-child {
+  justify-self: end;
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+.ct-kv {
+  display: inline-flex;
+  gap: 0.35rem;
+  align-items: baseline;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.ct-kv strong {
+  color: var(--ct-tone, var(--accent-light));
+  font-weight: 700;
+}
+
+.ct-chart {
+  position: relative;
+  margin: 1.9em auto;
+  padding: 1rem;
+  overflow: hidden;
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+}
+
+.ct-chart::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: repeating-linear-gradient(0deg, transparent 0 2px,
+    color-mix(in srgb, var(--accent) 4%, transparent) 2px 3px);
+}
+
+.ct-chart > * { position: relative; z-index: 2; }
+.ct-chart svg,
+.ct-chart canvas { display: block; width: 100%; height: auto; }
+
+.ct-chart-cap {
+  margin-bottom: 0;   /* these may be a <p>, which theme.css gives a bottom margin */
+  margin-top: 0.65rem;
+  font-size: 0.82rem;
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.ct-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem 1rem;
+  margin: 0.75rem 0 0;
+}
+
+.ct-legend-item {
+  display: inline-flex;
+  gap: 0.45rem;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.ct-legend-item::before {
+  content: '';
+  width: 0.75rem;
+  height: 0.75rem;
+  flex: none;
+  background: var(--ct-tone, var(--accent));
+  border-radius: 2px;
+  box-shadow: 0 0 10px color-mix(in srgb, var(--ct-tone, var(--accent)) 35%, transparent);
+}
+
+.ct-legend.is-key {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 0.45rem 0.9rem;
+}
+
+.ct-legend.is-key .ct-legend-item { display: contents; }
+.ct-legend.is-key .ct-legend-item::before { content: none; }
+.ct-legend.is-key .ct-label { margin: 0; }
+
 /* ========== AWARD ROWS ========== */
 /* Small category, enormous winner — reads as a graphic on stream rather than
-   a paragraph to be read aloud. */
+   a paragraph to be read aloud. Spacing, glow and stat sizing follow the
+   season-recap original; the stat column is tabular so figures line up. */
 
 .ct-awards {
   display: grid;
@@ -687,7 +1064,9 @@
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: auto auto auto;
-  padding: 18px 0;
+  gap: 3px 32px;
+  align-items: baseline;
+  padding: 30px 2px;
   border-bottom: 1px solid var(--border);
 }
 
@@ -696,18 +1075,20 @@
   grid-row: 1;
   font-family: var(--font-mono);
   font-size: 0.64rem;
+  font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--accent);
+  text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 45%, transparent);
 }
 
 .ct-award-winner {
   grid-column: 1;
   grid-row: 2;
-  margin-top: 6px;
   font-size: clamp(1.9rem, 4.6vw, 2.9rem);
   font-weight: 800;
-  line-height: 1.05;
+  letter-spacing: -0.03em;
+  line-height: 1;
   overflow-wrap: anywhere;
   color: var(--text);
 }
@@ -727,21 +1108,113 @@
   grid-row: 2 / 4;
   align-self: center;
   justify-self: end;
-  padding-left: 16px;
   font-family: var(--font-mono);
-  font-size: 1.6rem;
+  font-size: clamp(1.3rem, 3vw, 2rem);
   font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
   text-align: right;
   white-space: nowrap;
-  color: var(--accent);
+  color: var(--accent-light);
+}
+
+/* ========== GALLERY & POSTS ========== */
+/* No lightbox here: linked thumbnails intentionally open their full-size
+   image, leaving enhancement to the consuming site. */
+.ct-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--ct-thumb-min, 180px), 1fr));
+  gap: 0.75rem;
+  margin: 1.8em auto;
+}
+
+.ct-gallery a {
+  display: block;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.ct-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.ct-post-list {
+  display: grid;
+  gap: 0.85rem;
+  margin: 1.8em auto;
+}
+
+.ct-post-card {
+  display: grid;
+  gap: 0.35rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ct-post-date {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.ct-post-title {
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.ct-post-excerpt {
+  margin: 0;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.ct-post-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.7rem;
+  margin: 1.8em auto;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.ct-post-nav a { color: var(--accent-light); text-decoration: none; }
+
+/* The documented markup may use <footer>; reset the global page footer. */
+.ct-post-foot {
+  margin: 2rem auto 0;
+  padding: 0.85rem 0 0;
+  border-top: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 1.4px;
+  text-align: left;
+  text-transform: uppercase;
+  color: var(--text-secondary);
 }
 
 /* ========== RESPONSIVE ========== */
 
 @media (max-width: 720px) {
-  .ct-section-h { gap: 0.8rem; }
+  /* Wraps rather than hiding: display:none took the context away from screen
+     readers as well as from the screen. */
+  .ct-section-h { flex-wrap: wrap; gap: 0.8rem; }
+  .ct-section-meta { flex-basis: 100%; margin-left: 0; text-align: left; }
   .ct-section-t { font-size: 1.35rem; }
+  .ct-section-meta { display: none; }
   .ct-cols { grid-template-columns: 1fr; }
+  .ct-masthead-aside { position: static; max-width: none; margin-top: 1rem; text-align: center; }
+  .ct-callout-aside { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
@@ -749,14 +1222,29 @@
 }
 
 @media (max-width: 560px) {
-  .ct-tiles { grid-template-columns: 1fr; }
+  /* The documented four-track recipe needs ~308px of fixed track and gap; a
+     320px phone has 280px of content box, and at 375px the title column is
+     squeezed to an ellipsis. Below this width a row reflows instead, and the
+     text keeps the room it needs to stay readable. */
+  .ct-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.7rem;
+  }
+
+  .ct-row > :nth-child(2) { flex: 1 1 55%; }
+  .ct-row > :last-child { margin-left: auto; }
+
+  /* A middle child — a meter, say — would be left as a sliver between the
+     title and the trailing figure, so it takes a line of its own. */
+  .ct-row > :not(:nth-child(-n + 2)):not(:last-child) { flex: 1 1 100%; }
+
   .ct-award { grid-template-columns: 1fr; gap: 5px; }
   .ct-award-stat {
     grid-column: 1;
     grid-row: auto;
     justify-self: start;
     margin-top: 4px;
-    padding-left: 0;
     font-size: 1.4rem;
     text-align: left;
   }
@@ -765,7 +1253,8 @@
 /* ========== ACCESSIBILITY ========== */
 
 @media (prefers-reduced-motion: reduce) {
-  .ct-callout::after { background: none; }
+  .ct-callout::after,
+  .ct-chart::after { background: none; }
 }
 
 /* Gradient text is transparent fill; in forced colours the background is
@@ -776,5 +1265,11 @@
     color: CanvasText;
     -webkit-text-fill-color: CanvasText;
     text-shadow: none;
+  }
+
+  /* Backgrounds are dropped in forced colours, so a meter would read empty. */
+  .ct-meter::before {
+    forced-color-adjust: none;
+    background: CanvasText;
   }
 }

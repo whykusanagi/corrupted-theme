@@ -417,8 +417,9 @@ gallery1.destroy(); // Only destroys gallery1
 
 ## Editorial & Data Pages
 
-`src/css/editorial.css`, bundled in `theme.css` and exported as `./editorial`,
-from **0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
+`src/css/editorial.css`, bundled in `theme.css` — which is what builds into the
+`dist/theme.min.css` the CDN serves — and exported as `./editorial`, from
+**0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
 doesn't contain these classes. These are long-form article and recap-page
 primitives: a masthead, prose blocks, card grids, entity cards, rank badges,
 bar sparklines, meters, ruled rows, chart frames, award rows and the post
@@ -447,7 +448,7 @@ class in your stylesheet instead, or see
 | `--ct-grid-min` | `260px` | Minimum cell width of `.ct-grid` |
 | `--ct-row-cols` | `auto minmax(0, 1fr) auto` | Dense `.ct-row` tracks |
 | `--ct-spark-h` | `72px` | Height of `.ct-spark` |
-| `--ct-tone` | `var(--accent)` | Callout/card tick and avatar frame colour |
+| `--ct-tone` | `var(--accent)` | Tone colour: callout and card tick, avatar frame, badge, meter fill, legend swatch, `.ct-kv` value |
 | `--ct-value-size` | `1.5rem` | Size of `.ct-value` |
 | `--ct-avatar-size` | `64px` | Size of `.ct-avatar` |
 | `--v` | `0` | Unitless sparkline bar or meter value, 0 to 1 |
@@ -459,7 +460,7 @@ length for running text — and centred. Wider blocks opt out, in two steps:
 
 | Width | Blocks |
 |---|---|
-| `--ct-measure` (47rem), the default for everything else | `.ct-p`, `.ct-list`, `.ct-h3`, `.ct-callout`, `.ct-quote`, `.ct-media`, `.ct-kv`, `.ct-post-nav`, `.ct-post-foot` |
+| `--ct-measure` (47rem), the default for everything else | `.ct-p`, `.ct-list`, `.ct-h3`, `.ct-callout`, `.ct-quote`, `.ct-media`, `.ct-meter`, `.ct-kv`, `.ct-post-nav`, `.ct-post-foot` |
 | `--ct-measure-wide` (62rem) | `.ct-table`, `.ct-rows`, `.ct-chart`, `.ct-gallery`, `.ct-post-list`, `.ct-divider` |
 | full width of the wrapper | `.ct-figure`, `.ct-section-h`, `.ct-cols`, `.ct-grid`, `.ct-spark-wrap`, `.ct-awards`, `.ct-attrs` |
 
@@ -518,9 +519,10 @@ and awards run full width.
 <h3 class="ct-h3">Sub-heading</h3>
 ```
 
+- **A section heading is the `.ct-section-h` wrapper.** A bare `<h2>` in
+  `.ct-body` gets no section styling at all.
 - The number goes in a sibling span **outside** the `<h2>`, so the heading's
-  accessible name is just its title. A bare `<h2>` in `.ct-body` gets no
-  section styling.
+  accessible name is just its title.
 - The number is optional. An unnumbered section keeps the wrapper and drops
   the span:
   `<div class="ct-section-h"><h2 class="ct-section-t">Heading</h2></div>`.
@@ -543,7 +545,8 @@ and awards run full width.
 
 The scroll wrapper stops a wide table from pushing the page sideways. It needs
 `tabindex`, `role` and a label so keyboard users can scroll it. Header cells
-start-align by default. Use `td.ct-num` for tabular right-aligned figures,
+start-align by default. Use `.ct-num` on the `<th>` and the `<td>` of a figures
+column for tabular right-aligned numbers,
 `.is-compact` for tighter tables, and `tr.is-self` for the reader's own row.
 Row headers (`<th scope="row">`) are fine.
 
@@ -569,6 +572,15 @@ Row headers (`<th scope="row">`) are fine.
   </div>
   <time datetime="2026-09-22T03:00">03:00 UTC</time>
 </aside>
+```
+
+`.ct-callout-aside` is a two-column grid: a content wrapper, then the `<time>`.
+An icon goes **inside that wrapper**, not beside it — a direct child becomes a
+grid item and takes a column of its own. A two-ended window is two `<time>`
+elements in one wrapper, so the grid still sees a single cell:
+
+```html
+<span><time datetime="2026-09-22T02:00">02:00</time>–<time datetime="2026-09-22T04:00">04:00 UTC</time></span>
 ```
 
 Tones: `ct-key` (accent), `ct-info` (violet), `ct-warn` (red). The colour
@@ -611,8 +623,11 @@ styled `<div>`, not a heading, so it doesn't add to the page outline.
 </div>
 ```
 
-`.ct-cols` stacks to one column at 720px and below. Grid cells fit as many
-as `--ct-grid-min` allows and wrap. `.ct-card-title` is shown as `<h4>`, but
+**Which to use:** `.ct-cols` is for a fixed arrangement you are composing — two
+columns of prose, a 1.55fr/1fr split. `.ct-grid` is for a set of like things
+whose count you do not control, such as a row of cards; it fits as many per row
+as `--ct-grid-min` allows and wraps. `.ct-cols` stacks to one column at 720px
+and below; a grid needs no breakpoint because it is already fluid. `.ct-card-title` is shown as `<h4>`, but
 the style is on the class, so use whichever heading level fits your outline
 (an `<h3>` under a section's `<h2>`).
 
@@ -633,9 +648,10 @@ the style is on the class, so use whichever heading level fits your outline
 `.ct-card` is the one card surface. Add `.has-tick` for the corner tick,
 `.is-raised` for the lighter tile-style surface, or `.is-muted` for inactive
 entries. The delta's **text** carries the direction (`▲ 12%`, `▼ 3%`, `+4`).
-`.is-up` adds emphasis but never the meaning. There is deliberately **no
-`.is-down`**: a fall uses the neutral default. Green is not used, because the
-palette reserves it for "system".
+**A fall is a plain `.ct-delta`** and a rise adds `.is-up`, which brightens it;
+there is no `.is-down`, because the neutral default already is "down" and
+colour never carries the meaning. Green is not used at all — the palette
+reserves it for "system".
 
 ### Bar sparkline
 
@@ -653,8 +669,10 @@ palette reserves it for "system".
 ```
 
 - Bar height is a unitless `--v` from 0 to 1, as a fraction of the chart's
-  largest value (the largest bar is `1`). From JS, use
-  `bar.style.setProperty('--v', n)`.
+  largest value (the largest bar is `1`). You normalise your own data, which
+  means **two sparklines on a page are not comparable bar for bar** — each is
+  scaled to its own maximum. Say the maximum in the caption if that matters.
+  From JS, use `bar.style.setProperty('--v', n)`.
 - The last bar is full accent, because it's read as "now". `.is-flat` dims
   every bar when there's no "now". `.is-empty` is a 2px stub and needs no
   `--v`. An empty last bar still reads as empty.
@@ -685,9 +703,35 @@ palette reserves it for "system".
 </div>
 ```
 
-`.ct-rank` uses the standard rank map by default. Put
-`.ct-ranks-corrupted` on any ancestor to switch the six rank steps to the
-theme palette.
+`.ct-rank` is a `.ct-badge` whose colour comes from its step, so it goes
+wherever a badge goes — a `.ct-badges` row, a `.ct-row`, or a `<td>` in a
+ranked table.
+
+**The two maps.** The default is the familiar tier-list rainbow, step 0 to 5:
+red, orange, yellow, green, blue, neutral grey. It is the one place this
+package uses colours outside its palette, because a tier list that reads as a
+tier list anywhere is worth more here than palette purity. Put
+`.ct-ranks-corrupted` on any ancestor and the same six steps run hot to cold
+through the theme instead: red, magenta, accent, violet, cyan, neutral.
+
+**Each step is two custom properties** — `--ct-rank-N` for the edge (border,
+and the background at 15%) and `--ct-rank-N-ink` for the text. Override them
+on any ancestor for a third map of your own:
+
+```css
+.my-grades {
+  --ct-rank-0: var(--corrupted-green);
+  --ct-rank-0-ink: color-mix(in srgb, var(--corrupted-green) 55%, white);
+}
+```
+
+That mix is how the corrupted map derives every ink: it keeps the text light
+enough to clear 4.5:1 against the step's own 15% background.
+
+**There are exactly six steps.** `data-rank="6"` and anything else unknown
+falls back to step 5's colours rather than failing visibly, so a scale with
+more than six tiers has to map its tiers onto these six — in data, not by
+adding a step.
 
 ### Meter, rows and inline values
 
@@ -709,6 +753,20 @@ theme palette.
 Rows ellipsise their second cell. When the text may truncate, put the full
 value in `title`.
 
+`.ct-rows` is presentational: it gives you ruled rows, not semantics. A ranked
+ladder that a screen reader should be able to navigate is a `.ct-table`. If the
+rows are a list rather than a table, say so — `<ul class="ct-rows">` with
+`<li class="ct-row">` works as it stands, and nothing in the CSS depends on the
+element being a `<div>`. The same is true of `.ct-grid` and `.ct-badges`.
+
+Below 560px a row reflows: the lead and the text share the first line, a middle
+cell such as a meter takes a line of its own, and the trailing figure sits at
+the end. The `--ct-row-cols` tracks apply above that width.
+
+`.ct-delta` is shown inside a card because that is where it usually goes, but it
+is a standalone line of type — it works next to a table, a sparkline or a
+heading just as well.
+
 ### Chart and legend
 
 ```html
@@ -728,6 +786,19 @@ value in `title`.
   </div>
 </figure>
 ```
+
+`--ct-tone` colours a legend swatch; it does **not** reach inside the `<svg>`.
+Set each series' `stroke` or `fill` yourself and use the same value on its
+legend item, so the two agree:
+
+```html
+<polyline stroke="var(--corrupted-purple)" …></polyline>
+<span class="ct-legend-item" style="--ct-tone:var(--corrupted-purple)">Raid nights</span>
+```
+
+A single-series chart can leave the polyline on `currentColor`, which inherits
+the frame's text colour. The `.ct-chart` frame styles any `<svg>` or `<canvas>`
+to fill its width; what you draw inside it is yours.
 
 ### Award rows
 
@@ -849,10 +920,13 @@ block, and its title carries the meaning.
 
 ### Label contrast
 
-Small labels (card labels, sparkline caption and axis, figcaptions, the kicker,
-quote attribution) use `--text-secondary`, not `--text-muted`.
-Measured on `--surface-elevated`, the *lightest* surface these blocks sit on and so
-the worst case for light text:
+**Use `--text-secondary` for small text in these blocks, never `--text-muted`.**
+That covers card labels, the sparkline caption and axis, figcaptions, the
+kicker and quote attribution — and it is what the shipped classes already do,
+so this only matters if you are writing your own rules alongside them.
+
+The measurement, on `--surface-elevated`, the *lightest* surface these blocks
+sit on and so the worst case for light text:
 
 | Token | Pair | Ratio |
 |---|---|---|

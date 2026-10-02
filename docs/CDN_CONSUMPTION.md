@@ -89,7 +89,10 @@ list the one you actually use.
 
 - sparkline bar heights (`<span class="ct-spark-bar" style="--v:.42">`);
 - the `--ct-cols`, `--ct-grid-min` and `--ct-tone` knobs;
-- number-column alignment in tables (`style="text-align:right"`).
+- per-step rank colours, if you override `--ct-rank-N` on an element.
+
+Number-column alignment is **not** one of them: use the `.ct-num` class the
+theme ships, on the `<th>` and the `<td>`.
 
 A policy without `'unsafe-inline'` for styles blocks all of these. You have
 three options, in order of preference:

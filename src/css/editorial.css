@@ -400,6 +400,7 @@
 .ct-table td { color: var(--text-secondary); }
 .ct-table.is-compact th,
 .ct-table.is-compact td { padding: 0.42em 0.65em; font-size: 0.78rem; }
+.ct-table th.ct-num,
 .ct-table td.ct-num { font-variant-numeric: tabular-nums; text-align: right; }
 .ct-table tr.is-self td,
 .ct-table tr.is-self th { background: color-mix(in srgb, var(--accent) 10%, transparent); }

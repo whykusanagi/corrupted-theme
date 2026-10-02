@@ -394,8 +394,12 @@ new TitleDecoder(el, { nsfw: false });             // was: { lewdMode: false }
 ```
 
 ### Required CSS
+
+Only for this full-bleed background recipe. The theme already sets the page
+background and resets `body` margin, so a normal page needs none of this.
+
 ```css
-html, body { min-height: 100vh; background: var(--bg); margin: 0; }
+html, body { min-height: 100vh; background: var(--bg); margin: 0; }  /* min-height is the only part the theme does not do */
 .background-media { position: fixed; inset: 0; object-fit: cover; z-index: var(--z-negative); }
 .glass-backdrop { position: fixed; inset: 0; background: linear-gradient(180deg, rgba(5,0,16,.85), rgba(10,10,10,.9)); z-index: var(--z-background); }
 .app-shell { position: relative; z-index: var(--z-elevated); padding: clamp(1.5rem, 3vw, 3rem); backdrop-filter: blur(0); }

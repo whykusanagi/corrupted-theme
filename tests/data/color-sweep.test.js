@@ -188,6 +188,19 @@ function sources() {
  */
 const ELEMENT_OWNERS = /(?:^|\/)(?:nikke-[^/]*|colors\.(?:json|data\.js))$/;
 
+// Sanctioned rank-scale exception: the standard tier-list map is legal only
+// in editorial.css, where tests/data/editorial.test.js also requires it to be
+// quarantined inside the marked rank-scale block.
+const EDITORIAL_RANK_SCALE_OWNER = /(?:^|\/)editorial\.css$/;
+const STANDARD_RANK_SCALE = [
+  '#ef4444', '#fca5a5',
+  '#f97316', '#fdba74',
+  '#eab308', '#fde047',
+  '#22c55e', '#86efac',
+  '#3b82f6', '#93c5fd',
+  '#6b7280', '#cbd5e1',
+];
+
 test('no colour outside the palette, surfaces or the exceptions list', () => {
   const base = [
     ...Object.values(colors.palette).map(expand),
@@ -196,7 +209,11 @@ test('no colour outside the palette, surfaces or the exceptions list', () => {
     ...chromeTokens(),
   ];
   const elements = Object.values(colors.elementalColors).map(expand);
-  const legalFor = (rel) => new Set(ELEMENT_OWNERS.test(rel) ? [...base, ...elements] : base);
+  const legalFor = (rel) => new Set([
+    ...base,
+    ...(ELEMENT_OWNERS.test(rel) ? elements : []),
+    ...(EDITORIAL_RANK_SCALE_OWNER.test(rel) ? STANDARD_RANK_SCALE.map(expand) : []),
+  ]);
   const offenders = new Map();
   for (const rel of sources()) {
     const legal = legalFor(rel);
@@ -392,6 +409,16 @@ const DOCS_ALLOWED = {
   // Shipped defaults that are a design question, not a docs bug.
   '#ff8c00': 'ASCIIBorder / SegmentedProgressBar default — a real shipped colour; changing it is breaking under CLAUDE.md §12',
   '#4c2967': 'CountdownWidget usage example borderColor',
+  '#3b82f6': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#fca5a5': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#f97316': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#fdba74': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#eab308': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#fde047': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#86efac': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#93c5fd': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#6b7280': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
+  '#cbd5e1': 'standard rank-scale step, sanctioned off-palette exception (editorial §5)',
 };
 
 test('shipped docs carry no unexplained off-palette colour', () => {

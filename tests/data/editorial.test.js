@@ -16,6 +16,14 @@ const read = (p) => readFileSync(path.join(ROOT, p), 'utf8');
 
 const css = read('src/css/editorial.css');
 const code = css.replace(/\/\*[\s\S]*?\*\//g, '');
+const RANK_HEXES = new Set([
+  '#ef4444', '#fca5a5',
+  '#f97316', '#fdba74',
+  '#eab308', '#fde047',
+  '#22c55e', '#86efac',
+  '#3b82f6', '#93c5fd',
+  '#6b7280', '#cbd5e1',
+]);
 
 /** Class names used in selectors (declaration bodies stripped first). */
 function selectorClasses(source) {
@@ -30,9 +38,14 @@ test('every class is ct- prefixed, or an is-*/has-* state on a ct- element', () 
   // any consumer element that happens to share the name.
   const bad = [...classes].filter((c) => !c.startsWith('ct-') && !c.startsWith('is-') && !c.startsWith('has-'));
   assert.deepEqual(bad, []);
+  // Scoped by the whole selector rather than the compound it sits on: an
+  // ancestor is scope enough, so `.ct-table tr.is-self` is safe and the markup
+  // contract stays `tr.is-self` instead of a filler class on every row.
+  const selectors = [...code.matchAll(/([^{}]+)\{[^{}]*\}/g)].flatMap(([, sel]) => sel.split(','));
   for (const state of [...classes].filter((c) => c.startsWith('is-') || c.startsWith('has-'))) {
-    const uses = code.match(new RegExp(`[^\\s,{}]*\\.${state}\\b`, 'g'));
-    for (const u of uses) assert.match(u, /\.ct-/, `.${state} must be scoped to a ct- element: ${u}`);
+    const uses = selectors.filter((sel) => new RegExp(`\\.${state}\\b`).test(sel));
+    assert.ok(uses.length > 0, `.${state} appears in no selector`);
+    for (const u of uses) assert.match(u, /\.ct-/, `.${state} must be scoped to a ct- element: ${u.trim()}`);
   }
 });
 
@@ -45,9 +58,17 @@ test('keyframes are ct- prefixed', () => {
 test('colour comes from tokens only — no literal hex, rgb() or hsl()', () => {
   // Every literal in the ported rules equalled an existing token; keeping them
   // as tokens is what lets a consumer who overrides --accent get consistent
-  // chrome, and it keeps color-sweep's ALLOWED list untouched.
-  const literals = code.match(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/g) ?? [];
-  assert.deepEqual(literals, []);
+  // chrome, and it keeps color-sweep's ALLOWED list untouched. The sole
+  // exception is the standard rank scale: those off-palette literals are data
+  // values, quarantined in one marked block so the sweep can scope them.
+  const block = css.match(/\/\*\s*RANK-SCALE-LITERALS:START[\s\S]*?\*\/([\s\S]*?)\/\*\s*RANK-SCALE-LITERALS:END\s*\*\//);
+  assert.ok(block, 'rank-scale literal block must stay explicitly marked');
+  const rest = css.replace(block[0], '').replace(/\/\*[\s\S]*?\*\//g, '');
+  const illegal = rest.match(/#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/g) ?? [];
+  assert.deepEqual(illegal, []);
+  const rankCode = block[1].replace(/\/\*[\s\S]*?\*\//g, '');
+  assert.deepEqual(rankCode.match(/\brgba?\(|\bhsla?\(/g) ?? [], []);
+  assert.deepEqual(new Set((rankCode.match(/#[0-9a-fA-F]{6}\b/g) ?? []).map((h) => h.toLowerCase())), RANK_HEXES);
 });
 
 test('no --text-muted: it is under 4.5:1 on every surface these blocks use', () => {
@@ -59,7 +80,26 @@ test('callout tones stay on the palette; accents never become a status', () => {
   assert.equal(tone('ct-key'), 'var(--accent)');
   assert.equal(tone('ct-info'), 'var(--corrupted-purple)', 'info is violet, not cyan');
   assert.equal(tone('ct-warn'), 'var(--corrupted-red)');
-  assert.doesNotMatch(code, /--corrupted-cyan|--corrupted-green/, 'cyan/green carry no data meaning here');
+  assert.doesNotMatch(code.match(/\.ct-(?:key|info|warn)\s*\{[^}]+\}/g).join('\n'),
+    /--corrupted-cyan|--corrupted-green/, 'cyan/green carry no callout meaning here');
+  // Green is a system callback and never appears here. Cyan is legal in exactly
+  // one place: as one END of the corrupted rank ramp, which spec §5 sanctions as
+  // a compositional use of an accent — not as a state anywhere else in the sheet.
+  assert.doesNotMatch(code, /--corrupted-green/, 'green is a system callback, not an editorial colour');
+  const outsideRanks = code.replace(/\.ct-ranks-corrupted\s*\{[^}]*\}/, '');
+  assert.doesNotMatch(outsideRanks, /--corrupted-cyan/, 'cyan is legal only in the corrupted rank ramp');
+});
+
+test('.ct-rank reads rank colours from --ct-rank-* only', () => {
+  const withoutScale = code.replace(/:root\s*\{[^}]*--ct-rank-0:[^}]*\}/, '');
+  const rules = [...withoutScale.matchAll(/[^{}]*\.ct-rank[^{}]*\{([^}]*)\}/g)];
+  assert.ok(rules.length >= 7, 'expected base .ct-rank plus data-rank rules');
+  for (const [, body] of rules) {
+    assert.doesNotMatch(body, /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(/);
+    for (const decl of body.match(/(?:color|background|border):[^;]+;/g) ?? []) {
+      assert.match(decl, /--ct-rank-/, decl);
+    }
+  }
 });
 
 test('every animation runs only under prefers-reduced-motion: no-preference', () => {

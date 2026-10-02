@@ -27,6 +27,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Award rows and the sparkline axis follow the original season-recap
     styles: roomier rows, a glowing category label, tighter winner type and a
     fluid stat column with tabular figures.
+  - Phase B extends the shared editorial vocabulary with bylines, masthead
+    fact blocks, labelled dividers, section metadata, grid/numbered lists,
+    badge variants, rank badges, meters, dense rows, inline key/value facts,
+    chart frames, legends, compact numeric tables, callout icons/asides,
+    galleries and post index/nav/footer chrome.
+  - Rank badges use a sanctioned off-palette standard rank scale, quarantined
+    in the one `editorial.css` rank-scale block and guarded by the colour
+    sweep. The corrupted rank map stays on theme tokens; step 5 uses
+    `--text-secondary` instead of the spec's `--text-muted` because the latter
+    is below AA on these surfaces.
   - Fixes bugs the downstream copies carried: `.ct-cols` never going
     multi-column, empty sparkline bars never rendering as empty, the global
     `footer` rule drawing a divider inside every quote attribution, and a

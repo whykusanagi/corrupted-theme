@@ -440,21 +440,26 @@ class in your stylesheet instead, or see
 | `--ct-measure` | `47rem` | Width of running text inside `.ct-body` |
 | `--ct-measure-wide` | `62rem` | Width of `.ct-table` inside `.ct-body` |
 | `--ct-cols` | `2` | Column count of `.ct-cols` |
+| `--ct-cols-tracks` | unset | Explicit `.ct-cols` tracks, such as `1.55fr 1fr` |
 | `--ct-grid-min` | `260px` | Minimum cell width of `.ct-grid` |
+| `--ct-row-cols` | `auto minmax(0, 1fr) auto` | Dense `.ct-row` tracks |
 | `--ct-spark-h` | `72px` | Height of `.ct-spark` |
 | `--ct-tone` | `var(--accent)` | Callout/card tick and avatar frame colour |
 | `--ct-value-size` | `1.5rem` | Size of `.ct-value` |
 | `--ct-avatar-size` | `64px` | Size of `.ct-avatar` |
+| `--v` | `0` | Unitless sparkline bar or meter value, 0 to 1 |
 
 ### Article frame
 
 ```html
 <article class="ct-article">
   <header class="ct-masthead">
+    <div class="ct-masthead-aside">41 streams<br>13 weeks</div>
     <div class="ct-kicker"><span class="ct-kicker-dot" aria-hidden="true"></span>Patch notes</div>
     <h1 class="ct-title">Season recap</h1>
     <p class="ct-dek">One-line standfirst.</p>
     <time class="ct-dateline" datetime="2026-09-24">2026.09.24</time>
+    <div class="ct-byline">By the editorial desk</div>
   </header>
   <div class="ct-body">
     <!-- blocks below -->
@@ -464,6 +469,15 @@ class in your stylesheet instead, or see
 
 The kicker dot pulses only when the reader hasn't asked for reduced motion.
 `.ct-title` is gradient text with a forced-colours fallback.
+`.ct-masthead-aside` is a right-aligned facts block for issue counts, season
+stats or recap metadata. `.ct-byline` is also the end-of-log sign-off style.
+
+```html
+<div class="ct-divider" data-label="Developer log"></div>
+```
+
+The divider label is decorative text from `data-label`; put a real heading
+after it when the split starts a new section.
 
 ### Prose and numbered sections
 
@@ -475,9 +489,12 @@ and awards run full width.
 <div class="ct-section-h">
   <span class="ct-section-n" aria-hidden="true">01</span>
   <h2 class="ct-section-t">What changed</h2>
+  <div class="ct-section-meta">Us vs region</div>
 </div>
 <p class="ct-p">Body text with <strong>emphasis</strong> and a <span class="ct-hi">highlight</span>.</p>
 <ul class="ct-list"><li>List item</li></ul>
+<ul class="ct-list is-grid" style="--ct-grid-min:150px"><li>Chip item</li><li>Chip item</li></ul>
+<ol class="ct-list is-numbered"><li>First step.</li><li>Second step.</li></ol>
 <h3 class="ct-h3">Sub-heading</h3>
 ```
 
@@ -493,11 +510,11 @@ and awards run full width.
 ### Table
 
 ```html
-<figure class="ct-table">
+<figure class="ct-table is-compact">
   <div class="ct-table-scroll" tabindex="0" role="region" aria-label="Unit changes">
     <table>
-      <thead><tr><th scope="col">Unit</th><th scope="col" style="text-align:right">Δ</th></tr></thead>
-      <tbody><tr><td>Example</td><td style="text-align:right">+4%</td></tr></tbody>
+      <thead><tr><th scope="col">Unit</th><th scope="col">Δ</th></tr></thead>
+      <tbody><tr class="is-self"><td>Example</td><td class="ct-num">+4%</td></tr></tbody>
     </table>
   </div>
   <figcaption>Caption.</figcaption>
@@ -506,8 +523,8 @@ and awards run full width.
 
 The scroll wrapper stops a wide table from pushing the page sideways. It needs
 `tabindex`, `role` and a label so keyboard users can scroll it. Header cells
-start-align by default. The inline `text-align:right` on number columns is a
-plain style attribute, so under a strict CSP use a class of your own.
+start-align by default. Use `td.ct-num` for tabular right-aligned figures,
+`.is-compact` for tighter tables, and `tr.is-self` for the reader's own row.
 Row headers (`<th scope="row">`) are fine.
 
 ### Figure
@@ -521,7 +538,16 @@ Row headers (`<th scope="row">`) are fine.
 ```html
 <aside class="ct-callout ct-info">
   <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Note</div>
+  <span class="ct-callout-icon" aria-hidden="true">!</span>
   <p>Body.</p>
+</aside>
+
+<aside class="ct-callout ct-warn ct-callout-aside">
+  <div>
+    <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> Maintenance</div>
+    <p>Exports are paused while the archive reindexes.</p>
+  </div>
+  <time datetime="2026-09-22T03:00">03:00 UTC</time>
 </aside>
 ```
 
@@ -547,11 +573,19 @@ styled `<div>`, not a heading, so it doesn't add to the page outline.
   <div class="ct-col">…</div><div class="ct-col">…</div><div class="ct-col">…</div>
 </div>
 
+<div class="ct-cols" style="--ct-cols-tracks:1.55fr 1fr">
+  <div class="ct-col">…</div><div class="ct-col">…</div>
+</div>
+
 <div class="ct-grid" style="--ct-grid-min:220px">
   <div class="ct-card has-tick">
     <div class="ct-label">Eyebrow</div>
     <h4 class="ct-card-title">Title</h4>
-    <div class="ct-badges"><span class="ct-badge">Tag</span></div>
+    <div class="ct-badges">
+      <span class="ct-badge is-outline">Tag</span>
+      <span class="ct-badge is-solid">Solid</span>
+      <span class="ct-badge is-dashed">Dashed</span>
+    </div>
     <p class="ct-p">Any blocks.</p>
   </div>
 </div>
@@ -613,6 +647,68 @@ palette reserves it for "system".
 - **CSP:** the inline `style` attribute needs `style-src-attr 'unsafe-inline'`.
   Under a strict policy, set `--v` through the CSSOM instead.
 
+### Ranks and badges
+
+```html
+<div class="ct-badges">
+  <span class="ct-badge ct-rank" data-rank="0">S</span>
+  <span class="ct-badge ct-rank" data-rank="1">A</span>
+  <span class="ct-badge ct-rank" data-rank="2">B</span>
+  <span class="ct-badge ct-rank" data-rank="3">C</span>
+  <span class="ct-badge ct-rank" data-rank="4">D</span>
+  <span class="ct-badge ct-rank" data-rank="5">Archived</span>
+</div>
+
+<div class="ct-ranks-corrupted">
+  <span class="ct-badge ct-rank" data-rank="0">Hot</span>
+  <span class="ct-badge ct-rank" data-rank="5">Cold</span>
+</div>
+```
+
+`.ct-rank` uses the standard rank map by default. Put
+`.ct-ranks-corrupted` on any ancestor to switch the six rank steps to the
+theme palette.
+
+### Meter, rows and inline values
+
+```html
+<div class="ct-meter" style="--v:.72" role="img" aria-label="72 percent"></div>
+
+<div class="ct-rows" style="--ct-row-cols:4rem minmax(0, 1fr) 8rem 5rem">
+  <div class="ct-row is-self">
+    <span class="ct-badge ct-rank" data-rank="2">B</span>
+    <span title="Full row label for truncated layouts">Full row label for truncated layouts</span>
+    <div class="ct-meter" style="--v:.72;--ct-tone:var(--corrupted-purple)" role="img" aria-label="72 percent"></div>
+    <span>72%</span>
+  </div>
+</div>
+
+<span class="ct-kv">sync <strong>660</strong></span>
+```
+
+Rows ellipsise their second cell. When the text may truncate, put the full
+value in `title`.
+
+### Chart and legend
+
+```html
+<figure class="ct-chart">
+  <svg viewBox="0 0 320 120" role="img" aria-labelledby="chart-title">
+    <title id="chart-title">Viewer trend</title>
+    <polyline points="0,90 80,70 160,44 240,20 320,34" fill="none" stroke="currentColor" stroke-width="4"></polyline>
+  </svg>
+  <div class="ct-chart-cap">Caption below the chart.</div>
+  <div class="ct-legend">
+    <span class="ct-legend-item">Average viewers</span>
+    <span class="ct-legend-item" style="--ct-tone:var(--corrupted-purple)">Raid nights</span>
+  </div>
+  <div class="ct-legend is-key">
+    <span class="ct-legend-item"><span class="ct-label">S</span><span>Top tier.</span></span>
+    <span class="ct-legend-item"><span class="ct-label">B</span><span>Solid performer.</span></span>
+  </div>
+</figure>
+```
+
 ### Award rows
 
 ```html
@@ -668,6 +764,40 @@ below.
   whatever it's given.
 - `.ct-attr-icon` is optional. It's a plain URL that the calling page
   resolves, so the block knows nothing about what the values mean.
+
+### Gallery
+
+```html
+<div class="ct-gallery" style="--ct-grid-min:140px">
+  <a href="full-size-1.jpg"><img src="thumb-1.jpg" alt="Description"></a>
+  <a href="full-size-2.jpg"><img src="thumb-2.jpg" alt="Description"></a>
+</div>
+```
+
+Gallery thumbnails link to their full-size images. The theme does not include
+a lightbox.
+
+### Post index and post chrome
+
+```html
+<nav class="ct-post-nav" aria-label="Post navigation">
+  <a href="/posts/">Back to index</a>
+  <a href="/posts/previous/">Previous</a>
+  <a href="/posts/next/">Next</a>
+</nav>
+
+<div class="ct-post-list">
+  <a class="ct-card ct-post-card" href="/posts/season-3/">
+    <time class="ct-post-date" datetime="2026-09-24">2026.09.24</time>
+    <h3 class="ct-post-title">Signal Decay, Season 3</h3>
+    <p class="ct-post-excerpt">Recap, awards and ranked segments.</p>
+  </a>
+</div>
+
+<footer class="ct-post-foot">
+  <span class="ct-byline">Filed by the archive bot.</span>
+</footer>
+```
 
 ### Label contrast
 

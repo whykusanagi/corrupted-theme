@@ -420,7 +420,7 @@ gallery1.destroy(); // Only destroys gallery1
 `src/css/editorial.css`, bundled in `theme.css` and exported as `./editorial`,
 from **0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
 doesn't contain these classes. These are long-form article and recap-page
-primitives: a masthead, prose blocks, entity cards, stat tiles, bar sparklines
+primitives: a masthead, prose blocks, entity cards, card grids, bar sparklines
 and award rows. Every class is `ct-`-prefixed. Live demo: [`examples/editorial.html`](../examples/editorial.html).
 Design decisions: [`docs/specs/EDITORIAL_PRIMITIVES.md`](specs/EDITORIAL_PRIMITIVES.md).
 
@@ -442,7 +442,9 @@ class in your stylesheet instead, or see
 | `--ct-cols` | `2` | Column count of `.ct-cols` |
 | `--ct-grid-min` | `260px` | Minimum cell width of `.ct-grid` |
 | `--ct-spark-h` | `72px` | Height of `.ct-spark` |
-| `--ct-tone` | `var(--accent)` | Callout tick and title colour |
+| `--ct-tone` | `var(--accent)` | Callout/card tick and avatar frame colour |
+| `--ct-value-size` | `1.5rem` | Size of `.ct-value` |
+| `--ct-avatar-size` | `64px` | Size of `.ct-avatar` |
 
 ### Article frame
 
@@ -466,8 +468,8 @@ The kicker dot pulses only when the reader hasn't asked for reduced motion.
 ### Prose and numbered sections
 
 Direct children of `.ct-body` are clamped to `--ct-measure`. Tables widen to
-`--ct-measure-wide`. Figures, section headings, stat rows, columns, grids,
-tiles, sparklines and awards run full width.
+`--ct-measure-wide`. Figures, section headings, columns, grids, sparklines
+and awards run full width.
 
 ```html
 <div class="ct-section-h">
@@ -546,9 +548,9 @@ styled `<div>`, not a heading, so it doesn't add to the page outline.
 </div>
 
 <div class="ct-grid" style="--ct-grid-min:220px">
-  <div class="ct-cell">
-    <div class="ct-cell-eyebrow">Eyebrow</div>
-    <h4 class="ct-cell-title">Title</h4>
+  <div class="ct-card has-tick">
+    <div class="ct-label">Eyebrow</div>
+    <h4 class="ct-card-title">Title</h4>
     <div class="ct-badges"><span class="ct-badge">Tag</span></div>
     <p class="ct-p">Any blocks.</p>
   </div>
@@ -556,49 +558,36 @@ styled `<div>`, not a heading, so it doesn't add to the page outline.
 ```
 
 `.ct-cols` stacks to one column at 720px and below. Grid cells fit as many
-as `--ct-grid-min` allows and wrap. `.ct-cell-title` is shown as `<h4>`, but
+as `--ct-grid-min` allows and wrap. `.ct-card-title` is shown as `<h4>`, but
 the style is on the class, so use whichever heading level fits your outline
 (an `<h3>` under a section's `<h2>`).
 
-### Stat row
+### Cards
 
 ```html
-<div class="ct-stat-row">
-  <div class="ct-stat">
-    <div class="ct-stat-value">1,204</div>
-    <div class="ct-stat-label">Pulls</div>
-    <div class="ct-stat-sub">Optional context</div>
+<div class="ct-grid">
+  <div class="ct-card is-raised">
+    <div class="ct-card-corner">01</div>
+    <div class="ct-label">Peak viewers</div>
+    <div class="ct-value" style="--ct-value-size:1.7rem">3,410</div>
+    <div class="ct-delta is-up">▲ 12% vs last season</div>
+    <p class="ct-detail">Optional context.</p>
   </div>
 </div>
 ```
 
-A `.ct-stat` must sit inside a `.ct-stat-row`. A loose one is unsupported.
-The row fits as many 170px-minimum stats per line as the width allows and
-wraps the rest, so three stats sit side by side on desktop and stack on a
-phone.
-
-### Stat tiles
-
-```html
-<div class="ct-tiles">
-  <div class="ct-tile">
-    <div class="ct-tile-label">Peak viewers</div>
-    <div class="ct-tile-value">3,410</div>
-    <div class="ct-tile-delta is-up">▲ 12% vs last season</div>
-  </div>
-</div>
-```
-
-The delta's **text** carries the direction (`▲ 12%`, `▼ 3%`, `+4`). `.is-up`
-adds emphasis but never the meaning. There is deliberately **no `.is-down`**:
-a fall uses the neutral default. Green is not used, because the palette
-reserves it for "system". Tiles sit in two columns, and one at 560px and below.
+`.ct-card` is the one card surface. Add `.has-tick` for the corner tick,
+`.is-raised` for the lighter tile-style surface, or `.is-muted` for inactive
+entries. The delta's **text** carries the direction (`▲ 12%`, `▼ 3%`, `+4`).
+`.is-up` adds emphasis but never the meaning. There is deliberately **no
+`.is-down`**: a fall uses the neutral default. Green is not used, because the
+palette reserves it for "system".
 
 ### Bar sparkline
 
 ```html
 <figure class="ct-spark-wrap">
-  <figcaption class="ct-spark-cap" id="viewers-cap">Viewers per stream</figcaption>
+  <figcaption class="ct-label" id="viewers-cap">Viewers per stream</figcaption>
   <div class="ct-spark" role="img" aria-labelledby="viewers-cap" aria-describedby="viewers-data">
     <span class="ct-spark-bar" style="--v:.42"></span>
     <span class="ct-spark-bar is-empty" style="--v:0"></span>
@@ -646,12 +635,12 @@ below.
 <figure class="ct-media ct-media-wide"><img class="ct-media-img" src="…" alt="…"></figure>
 
 <div class="ct-grid">
-  <div class="ct-cell ct-entity">
+  <div class="ct-card has-tick ct-entity">
     <div class="ct-entity-head">
-      <figure class="ct-media ct-media-portrait"><img class="ct-media-img" src="…" alt=""></figure>
+      <figure class="ct-media ct-avatar is-round" style="--ct-avatar-size:68px"><img class="ct-media-img" src="…" alt=""></figure>
       <div class="ct-entity-id">
-        <div class="ct-cell-eyebrow">Role</div>
-        <h4 class="ct-cell-title">Name</h4>
+        <div class="ct-label">Role</div>
+        <h4 class="ct-card-title">Name</h4>
         <div class="ct-badges"><span class="ct-badge">Tag</span></div>
       </div>
     </div>
@@ -667,7 +656,7 @@ below.
 </div>
 ```
 
-- `.ct-media-portrait` is a fixed 68px square that never shrinks, so a long
+- `.ct-avatar` is a fixed square that never shrinks, so a long
   title wraps beside it instead of squeezing it. That includes unbroken
   handles and IDs: titles wrap anywhere. `.ct-media-wide` fills its column.
 - Use `.ct-media` for images inside cards and grids. Use `.ct-figure` for an
@@ -675,15 +664,15 @@ below.
 - `alt=""` is right when the name or value sits next to the image, as in the
   entity head and the attribute strip. Otherwise, describe the image.
 - The entity card's arrangement is fixed on purpose, so two authors writing
-  the same card get the same card. Without `.ct-entity`, a `.ct-cell` stacks
+  the same card get the same card. Without `.ct-entity`, a `.ct-card` stacks
   whatever it's given.
 - `.ct-attr-icon` is optional. It's a plain URL that the calling page
   resolves, so the block knows nothing about what the values mean.
 
 ### Label contrast
 
-Small labels (stat and tile labels, sparkline caption and axis, figcaptions,
-the kicker, quote attribution) use `--text-secondary`, not `--text-muted`.
+Small labels (card labels, sparkline caption and axis, figcaptions, the kicker,
+quote attribution) use `--text-secondary`, not `--text-muted`.
 Measured on `--surface-elevated`, the *lightest* surface these blocks sit on and so
 the worst case for light text:
 

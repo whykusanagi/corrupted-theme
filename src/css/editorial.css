@@ -1,5 +1,5 @@
 /**
- * Editorial & data-page primitives — article masthead, prose blocks, entity cards, stat tiles, bar sparklines and award rows.
+ * Editorial & data-page primitives — article masthead, prose blocks, card grids, bar sparklines and award rows.
  *
  * One shared copy of the long-form article and recap-page blocks, so a post
  * authored for one site renders the same on another.
@@ -8,8 +8,9 @@
  * `ct-`-prefixed because this sheet ships in the global theme bundle.
  *
  * Knobs (all optional, set on any ancestor or inline):
- *   --ct-measure (47rem)  --ct-measure-wide (62rem)  --ct-cols (2)
- *   --ct-grid-min (260px) --ct-spark-h (72px)        --ct-tone (--accent)
+ *   --ct-measure (47rem)     --ct-measure-wide (62rem)  --ct-cols (2)
+ *   --ct-grid-min (260px)    --ct-spark-h (72px)        --ct-tone (--accent)
+ *   --ct-value-size (1.5rem) --ct-avatar-size (64px)
  *
  * House style: chrome is corner ticks and a // marker, never a rounded card
  * with a coloured rail down the left edge — that is the default every
@@ -126,10 +127,8 @@
 
 .ct-body > .ct-figure,
 .ct-body > .ct-section-h,
-.ct-body > .ct-stat-row,
 .ct-body > .ct-cols,
 .ct-body > .ct-grid,
-.ct-body > .ct-tiles,
 .ct-body > .ct-spark-wrap,
 .ct-body > .ct-awards,
 .ct-body > .ct-attrs { max-width: none; }
@@ -401,7 +400,9 @@
   margin: 1.8em auto;
 }
 
-.ct-cell {
+/* ========== CARDS ========== */
+
+.ct-card {
   position: relative;
   padding: 1.05rem 1.2rem;
   background: var(--glass);
@@ -409,29 +410,32 @@
   border-radius: var(--radius-md);
 }
 
-.ct-cell::before {
+.ct-card.has-tick::before {
   content: '';
   position: absolute;
   inset: 5px;
   pointer-events: none;
   opacity: 0.45;
   background:
-    linear-gradient(var(--accent), var(--accent)) left top / 11px 1px no-repeat,
-    linear-gradient(var(--accent), var(--accent)) left top / 1px 11px no-repeat;
+    linear-gradient(var(--ct-tone, var(--accent)), var(--ct-tone, var(--accent))) left top / 11px 1px no-repeat,
+    linear-gradient(var(--ct-tone, var(--accent)), var(--ct-tone, var(--accent))) left top / 1px 11px no-repeat;
 }
 
-.ct-cell > * { position: relative; }
+.ct-card > * { position: relative; }
 
-.ct-cell-eyebrow {
+.ct-card.is-raised { background: var(--surface-elevated); }
+.ct-card.is-muted { opacity: 0.58; }
+
+.ct-label {
   margin-bottom: 0.45rem;
   font-family: var(--font-mono);
   font-size: 0.68rem;
-  letter-spacing: 2px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: var(--accent);
+  color: var(--text-secondary);
 }
 
-.ct-cell-title {
+.ct-card-title {
   margin: 0 0 0.5rem;
   font-size: 1rem;
   font-weight: 700;
@@ -439,11 +443,48 @@
   color: var(--text);
 }
 
-.ct-cell .ct-p { font-size: 0.9rem; margin-bottom: 0.6em; }
-.ct-cell .ct-p:last-child { margin-bottom: 0; }
+.ct-card-corner {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  color: var(--text-secondary);
+}
+
+.ct-value {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: var(--ct-value-size, 1.5rem);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+/* Direction lives in the delta text (▲, ▼, +, -). .is-up adds emphasis but
+   never carries the meaning; .is-down would match the neutral default, and
+   green is reserved for "system". */
+.ct-delta {
+  margin-top: 5px;
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  color: var(--text-secondary);
+}
+
+.ct-delta.is-up { color: var(--accent-light); }
+
+.ct-detail {
+  margin-top: 0.2em;
+  font-size: 0.72rem;
+  color: var(--text-secondary);
+}
+
+.ct-card .ct-p { font-size: 0.9rem; margin-bottom: 0.6em; }
+.ct-card .ct-p:last-child { margin-bottom: 0; }
 
 /* ========== MEDIA ========== */
-/* An image on its own. `wide` fills its column; `portrait` is a fixed square
+/* An image on its own. `wide` fills its column; `avatar` is a fixed square
    that never shrinks, so an entity head keeps the same shape whatever the
    title length — the layout guarantee lives here, not in how content is
    authored. */
@@ -458,14 +499,17 @@
 
 .ct-media-wide .ct-media-img { width: 100%; height: auto; }
 
-.ct-media-portrait { flex: none; }
+.ct-avatar { flex: none; }
 
-.ct-media-portrait .ct-media-img {
-  width: 68px;
-  height: 68px;
+.ct-avatar .ct-media-img {
+  width: var(--ct-avatar-size, 64px);
+  height: var(--ct-avatar-size, 64px);
   object-fit: cover;
   background: color-mix(in srgb, var(--corrupted-black) 30%, transparent);
+  border-color: var(--ct-tone, var(--border));
 }
+
+.ct-avatar.is-round .ct-media-img { border-radius: 50%; }
 
 /* ========== ATTRIBUTE STRIP ========== */
 /* Labelled values, each with an optional icon. The icon is a plain URL the
@@ -509,7 +553,7 @@
 }
 
 /* ========== ENTITY CARD ========== */
-/* A .ct-cell whose head is composed for you: portrait media beside the
+/* A .ct-card whose head is composed for you: avatar media beside the
    eyebrow/title/badges, then the attribute strip, then any blocks. Fixing
    the arrangement is the point — two authors writing the same card should
    get the same card. */
@@ -521,7 +565,7 @@
 }
 
 .ct-entity-id { min-width: 0; }
-.ct-entity .ct-cell-title { margin-bottom: 0; }
+.ct-entity .ct-card-title { margin-bottom: 0; }
 .ct-entity .ct-badges { margin-top: 0.45rem; }
 
 /* ========== BADGES ========== */
@@ -544,81 +588,6 @@
   border-radius: 3px;
 }
 
-/* ========== STAT ROW ========== */
-/* A .ct-stat always sits in a .ct-stat-row; a loose one is unsupported. */
-
-.ct-stat-row {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
-  gap: 0.9rem;
-  margin: 1.7em auto;
-}
-
-.ct-stat {
-  padding: 0.95rem 1.15rem;
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-}
-
-.ct-stat-value {
-  font-size: 1.7rem;
-  font-weight: 800;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-  color: var(--accent-light);
-}
-
-/* --text-secondary, not --text-muted: muted is 4.1:1 on glass, under AA for
-   text this small. */
-.ct-stat-label { margin-top: 0.3rem; font-size: 0.8rem; color: var(--text-secondary); }
-.ct-stat-sub { margin-top: 0.2em; font-size: 0.72rem; color: var(--text-secondary); }
-
-/* ========== STAT TILES ========== */
-/* Label, big number, one line of context. Direction lives in the delta's
-   text (▲ 12%, +3); .is-up adds emphasis but never carries the meaning, and
-   green is not used — it is reserved for "system". */
-
-.ct-tiles {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin: 22px auto;
-}
-
-.ct-tile {
-  padding: 14px;
-  background: var(--surface-elevated);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-}
-
-.ct-tile-label {
-  font-size: 0.68rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
-
-.ct-tile-value {
-  margin-top: 4px;
-  font-family: var(--font-mono);
-  font-size: 1.5rem;
-  font-weight: 700;
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  color: var(--text);
-}
-
-.ct-tile-delta {
-  margin-top: 5px;
-  font-family: var(--font-mono);
-  font-size: 0.76rem;
-  color: var(--text-secondary);
-}
-
-.ct-tile-delta.is-up { color: var(--accent-light); }
-
 /* ========== BAR SPARKLINE ========== */
 /* Each bar's height is a unitless --v from 0 to 1. The last bar is the
    current one and stays full accent; the rest are a 42% mix. Give the chart
@@ -626,14 +595,7 @@
 
 .ct-spark-wrap { margin: 20px auto; }
 
-.ct-spark-cap {
-  margin-bottom: 8px;
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-}
+.ct-spark-wrap .ct-label { margin-bottom: 8px; }
 
 .ct-spark {
   display: flex;
@@ -755,7 +717,6 @@
 }
 
 @media (max-width: 560px) {
-  .ct-tiles { grid-template-columns: 1fr; }
   .ct-award { grid-template-columns: 1fr; gap: 5px; }
   .ct-award-stat {
     grid-column: 1;

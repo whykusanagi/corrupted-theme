@@ -11,15 +11,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Editorial & data-page primitives** (`src/css/editorial.css`, bundled in
   `theme.css`, exported as `./editorial`) — #76. The article masthead, prose
-  blocks (sections, tables, figures, callouts, quotes, columns, grids, stat
-  rows, media, attribute strips, entity cards), stat tiles, bar sparklines and
+  blocks (sections, tables, figures, callouts, quotes, columns, card grids,
+  media, attribute strips, entity cards), bar sparklines and
   award rows that consumer sites had each been re-deriving by hand, so one
   copy ships in the theme. +2.3 KB gzipped on `dist/theme.min.css`.
   - Every class is `ct-`-prefixed, because the sheet ships in the global
     bundle and generic names like `.tile` or `.spark` would restyle any
     consumer element that shares them.
   - Colour is tokens only. Callout tones are accent, violet (`ct-info`, was
-    cyan downstream) and red (`ct-warn`, was an off-palette amber); a tile's
+    cyan downstream) and red (`ct-warn`, was an off-palette amber); a card's
     direction lives in its text, not in green.
   - Small labels use `--text-secondary`: `--text-muted` measures 3.7–4.2:1 on
     these surfaces, under AA for text that size.

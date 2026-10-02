@@ -25,12 +25,12 @@ function selectorClasses(source) {
 
 const classes = selectorClasses(code);
 
-test('every class is ct- prefixed, or an is-* state on a ct- element', () => {
+test('every class is ct- prefixed, or an is-*/has-* state on a ct- element', () => {
   // The sheet ships in the global bundle: a bare .tile or .spark would style
   // any consumer element that happens to share the name.
-  const bad = [...classes].filter((c) => !c.startsWith('ct-') && !c.startsWith('is-'));
+  const bad = [...classes].filter((c) => !c.startsWith('ct-') && !c.startsWith('is-') && !c.startsWith('has-'));
   assert.deepEqual(bad, []);
-  for (const state of [...classes].filter((c) => c.startsWith('is-'))) {
+  for (const state of [...classes].filter((c) => c.startsWith('is-') || c.startsWith('has-'))) {
     const uses = code.match(new RegExp(`[^\\s,{}]*\\.${state}\\b`, 'g'));
     for (const u of uses) assert.match(u, /\.ct-/, `.${state} must be scoped to a ct- element: ${u}`);
   }
@@ -103,7 +103,14 @@ test('the demo page uses every class, and only classes that exist', () => {
   const html = read('examples/editorial.html');
   const used = new Set();
   for (const [, list] of html.matchAll(/class="([^"]*)"/g)) {
-    for (const c of list.split(/\s+/)) if (c.startsWith('ct-') || c.startsWith('is-')) used.add(c);
+    // State classes count only on an element that also carries a ct- class —
+    // the same scoping the CSS guard enforces, and the page's own navbar ships
+    // a `has-submenu` that this sheet knows nothing about.
+    const names = list.split(/\s+/);
+    const onCt = names.some((c) => c.startsWith('ct-'));
+    for (const c of names) {
+      if (c.startsWith('ct-') || (onCt && (c.startsWith('is-') || c.startsWith('has-')))) used.add(c);
+    }
   }
   const unknown = [...used].filter((c) => !classes.has(c));
   const unused = [...classes].filter((c) => !used.has(c));
@@ -116,7 +123,7 @@ test('the reference doc shows markup for every component family', () => {
   const section = doc.slice(doc.indexOf('## Editorial'));
   assert.ok(section.length > 0 && doc.includes('## Editorial'));
   for (const root of ['ct-article', 'ct-section-h', 'ct-table', 'ct-callout', 'ct-cols', 'ct-grid',
-    'ct-stat-row', 'ct-quote', 'ct-tiles', 'ct-spark', 'ct-awards', 'ct-media',
+    'ct-card', 'ct-quote', 'ct-spark', 'ct-awards', 'ct-media',
     'ct-entity-head', 'ct-attrs']) {
     assert.match(section, new RegExp(`class="${root}[ "]`), `no markup example for .${root}`);
   }
@@ -133,10 +140,10 @@ test('quote attribution resets the global page-footer styles it would inherit', 
 });
 
 test('names that cannot break on spaces still wrap inside cards and award rows', () => {
-  // An entity card next to a fixed 68px portrait overflowed a 375px screen
+  // An entity card next to a fixed-size avatar overflowed a 375px screen
   // with a long handle: min-width:0 lets the box shrink, but the word itself
   // needs permission to break.
-  for (const sel of ['.ct-cell-title', '.ct-award-winner']) {
+  for (const sel of ['.ct-card-title', '.ct-award-winner']) {
     const body = code.match(new RegExp(`\\${sel}\\s*\\{([^}]*)\\}`))[1];
     assert.match(body, /overflow-wrap:\s*anywhere/, sel);
   }
@@ -150,7 +157,14 @@ test('every ct- class in the reference doc examples exists in the module', () =>
   const section = doc.slice(doc.indexOf('## Editorial'), doc.indexOf('\n## ', doc.indexOf('## Editorial') + 5));
   const used = new Set();
   for (const [, list] of section.matchAll(/class="([^"]*)"/g)) {
-    for (const c of list.split(/\s+/)) if (c.startsWith('ct-') || c.startsWith('is-')) used.add(c);
+    // State classes count only on an element that also carries a ct- class —
+    // the same scoping the CSS guard enforces, and the page's own navbar ships
+    // a `has-submenu` that this sheet knows nothing about.
+    const names = list.split(/\s+/);
+    const onCt = names.some((c) => c.startsWith('ct-'));
+    for (const c of names) {
+      if (c.startsWith('ct-') || (onCt && (c.startsWith('is-') || c.startsWith('has-')))) used.add(c);
+    }
   }
   assert.ok(used.size > 20, `parsed only ${used.size} classes — extractor drifted?`);
   assert.deepEqual([...used].filter((c) => !classes.has(c)), []);

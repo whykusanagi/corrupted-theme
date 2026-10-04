@@ -63,3 +63,53 @@ test('decode() registers timers; destroy() clears them', () => {
   m.destroy();
   assert.equal(m._timers.pendingCount, 0, 'expected zero timers after destroy()');
 });
+
+/* ── Readable endpoints on teardown (0.3.4) ──────────────────────────────── */
+
+test('stop() leaves the element on its final text, not on scrambled glyphs', () => {
+  // The manager stops itself when the tab hides. Dropping the animation there
+  // left whatever glyphs were last written on screen, so a decode interrupted
+  // by a background tab never completed and never resumed — blog headings on
+  // the consuming site read as missing. Spec Core Tenet 2: readable endpoints.
+  const m = new DecryptReveal();
+  const el = { textContent: '' };
+  m.decode(el, 'SIGNAL DECAY', { duration: 2000 });
+  m.stop();
+  assert.equal(el.textContent, 'SIGNAL DECAY');
+  m.destroy();
+});
+
+test('cleanup(id) settles the one animation it cancels', () => {
+  const m = new DecryptReveal();
+  const a = { textContent: '' };
+  const b = { textContent: '' };
+  const idA = m.decode(a, 'ALPHA', { duration: 2000 });
+  m.decode(b, 'BETA', { duration: 2000 });
+  m.cleanup(idA);
+  assert.equal(a.textContent, 'ALPHA');
+  assert.equal(b.textContent, '', 'the other animation is untouched');
+  m.stop();
+  m.destroy();
+});
+
+test('stop() is safe with nothing running, and safe twice', () => {
+  // The record is deleted ~50ms after the duration, so by the time a hidden tab
+  // fires the map may be empty; and a caller may have reused the element, which
+  // must not be written to a second time.
+  const m = new DecryptReveal();
+  const el = { textContent: '' };
+  m.decode(el, 'ONCE', { duration: 2000 });
+  m.stop();
+  el.textContent = 'reused by the caller';
+  assert.doesNotThrow(() => m.stop());
+  assert.equal(el.textContent, 'reused by the caller');
+  m.destroy();
+});
+
+test('destroy() settles too', () => {
+  const m = new DecryptReveal();
+  const el = { textContent: '' };
+  m.decode(el, 'TERMINAL', { duration: 2000 });
+  m.destroy();
+  assert.equal(el.textContent, 'TERMINAL');
+});

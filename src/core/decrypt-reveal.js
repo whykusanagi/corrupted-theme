@@ -54,7 +54,7 @@ import { TimerRegistry } from './timer-registry.js';
  * @param {object}       opts
  * @param {number}       [opts.duration=2000]
  * @param {string}       [opts.charset]
- * @returns {{ cleanup: Function, isAnimating: Function }}
+ * @returns {{ cleanup: Function, isAnimating: Function, settle: Function }}
  */
 function _decode(element, finalText, timers, opts = {}) {
   const duration = opts.duration ?? 2000;
@@ -86,6 +86,9 @@ function _decode(element, finalText, timers, opts = {}) {
   return {
     cleanup:     () => { timers.clearInterval(id); done = true; },
     isAnimating: () => !done,
+    /** Write the finished text. Teardown calls this so an interrupted decode
+     *  never leaves the element unreadable (spec Core Tenet 2). */
+    settle:      () => { element.textContent = finalText; },
   };
 }
 
@@ -122,7 +125,7 @@ export class DecryptReveal {
 
     /**
      * Per-animation state keyed by numeric ID.
-     * @type {Map<number, { type: string, handle: { cleanup: Function, isAnimating: Function }, element: object }>}
+     * @type {Map<number, { type: string, handle: { cleanup: Function, isAnimating: Function, settle: Function }, element: object }>}
      */
     this._animations = new Map();
 
@@ -172,12 +175,15 @@ export class DecryptReveal {
   /* ── Lifecycle ──────────────────────────────────────────────────────── */
 
   /**
-   * Cancel all active animations and clear their timers.
-   * Visual state of elements is preserved (text remains as last written).
+   * Cancel all active animations and clear their timers. Each element is left
+   * showing its finished text: a decode interrupted by the tab hiding would
+   * otherwise stay frozen on scrambled glyphs and never resume, because
+   * start() is deliberately a no-op.
    * Called automatically when document.hidden becomes true.
    */
   stop() {
     for (const [, anim] of this._animations) {
+      anim.handle.settle();
       anim.handle.cleanup();
     }
     this._animations.clear();
@@ -202,6 +208,7 @@ export class DecryptReveal {
   cleanup(id) {
     const anim = this._animations.get(id);
     if (!anim) return;
+    anim.handle.settle();
     anim.handle.cleanup();
     this._animations.delete(id);
   }

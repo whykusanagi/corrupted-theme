@@ -352,6 +352,39 @@ export function parseModule(source) {
            options: uniqueOptions, methods, methodDetail, constructors, namespaces, fnDetail, properties, examples };
 }
 
+/**
+ * Describe a stylesheet for the agent surface: the classes it defines, the
+ * state modifiers scoped to them, and the custom properties it reads with
+ * their fallbacks. A CSS export used to reach the surface as its path and
+ * nothing else, which left a release whose headline was ~90 classes invisible
+ * to the agents the surface exists for.
+ *
+ * @param {string} source
+ * @returns {{ description?: string, classes: string[], modifiers: string[], knobs: Record<string, string|null> }}
+ */
+export function describeStylesheet(source) {
+  const header = /\/\*\*([\s\S]*?)\*\//.exec(source)?.[1] ?? '';
+  const description = header
+    .split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim()).find(Boolean);
+
+  const code = source.replace(/\/\*[\s\S]*?\*\//g, '');
+  const selectors = code.replace(/\{[^{}]*\}/g, '{}');
+  const names = [...new Set([...selectors.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]))].sort();
+
+  const knobs = {};
+  for (const [, name, fallback] of code.matchAll(/var\(\s*(--[\w-]+)\s*(?:,\s*([^)]+))?\)/g)) {
+    const value = fallback ? fallback.trim() : null;
+    if (!(name in knobs) || (value && knobs[name] === null)) knobs[name] = value;
+  }
+
+  return {
+    description,
+    classes: names.filter((n) => !n.startsWith('is-') && !n.startsWith('has-')),
+    modifiers: names.filter((n) => n.startsWith('is-') || n.startsWith('has-')),
+    knobs,
+  };
+}
+
 /** Build the manifest object from package.json exports. */
 export function buildManifest() {
   const pkg = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
@@ -412,6 +445,9 @@ export function buildManifest() {
         browserOnly: BROWSER_ONLY.has(key) || undefined,
       });
     }
+    if (type === 'css') {
+      Object.assign(entry, describeStylesheet(readFileSync(path.join(ROOT, target), 'utf8')));
+    }
     entries.push(entry);
   }
 
@@ -447,11 +483,23 @@ export function renderLlmsTxt(manifest) {
     `Machine-readable surface: ${manifest.cdn.base}/dist/manifest.json`,
     '',
     '## Conventions (read before generating code)',
+    '- stylesheets: a [css] export lists its class and knob counts here; the full'
+      + ' class list is in manifest.json and the markup contract is in'
+      + ' docs/COMPONENTS_REFERENCE.md',
     ...Object.entries(manifest.conventions).map(([k, v]) => `- ${k}: ${v}`),
     '',
     '## Exports',
   ];
   for (const e of manifest.exports) {
+    if (e.type === 'css') {
+      const knobs = Object.keys(e.knobs ?? {}).filter((k) => k.startsWith('--ct-'));
+      const shape = e.classes?.length
+        ? ` ${e.classes.length} classes${e.modifiers?.length ? `, ${e.modifiers.length} modifiers` : ''}.`
+        : ' tokens only.';
+      lines.push(`- ${e.export} [css] → ${e.cdnUrl}.${shape}`
+        + `${knobs.length ? ` knobs: ${knobs.join(' ')}.` : ''}`);
+      continue;
+    }
     if (e.type !== 'js') {
       lines.push(`- ${e.export} [${e.type}] ${e.npmImport}`);
       continue;

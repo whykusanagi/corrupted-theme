@@ -161,10 +161,11 @@ shape that looks copied from somewhere real.
 
 ### G. The v0.3.0 release notes stop naming internal repos
 
-The published v0.3.0 release is titled *"absorbed glitch libraries,
-orchestration components, agent surface"* and its body names
-`celeste-tts-bot obs/transitions`, the site's `thumbnail-generator` and
-`youtube_poop`. The CHANGELOG was scrubbed for the E4 provenance gate at the
+The published v0.3.0 release still carries its pre-scrub title and body: a
+harvest verb in the title, and three internal repository names in the summary
+(the exact terms are the list in `scripts/audit-provenance.sh` — this spec does
+not repeat them, because the repository is public and that is the surface item
+G exists to clean). The CHANGELOG was scrubbed for the E4 provenance gate at the
 time; the release was not, and it has been public since July. v0.2.1 and v0.2.0
 read clean on inspection but get the same grep before this closes.
 
@@ -222,7 +223,7 @@ In order, from a clean tree on `main`:
 ## 6. Deferred, with reasons
 
 - **Fold the site's countdown-widget fork back in** (CelesteOps `686aa0e1`).
-  This is an absorption, not a defect: ~193 changed lines, a theme-preset data
+  This is a feature fold-in, not a defect: ~193 changed lines, a theme-preset data
   contract to design, and an injectable asset resolver to agree on. It belongs
   in its own release with its own spec. 0.3.4 is a patch and is already large.
 - **`src/core/terminal-vocab.js:8` `TODO(cross-language contract)`** — a note

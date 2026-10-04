@@ -404,7 +404,7 @@ off.
 
 ## 8. Downstream migration (after release)
 
-Each consumer bumps its vendored theme or its CDN pin, then deletes its copy:
+Each consumer bumps its bundled copy of the theme or its CDN pin, then deletes its own:
 
 | Repo | Delete | Rename in |
 |---|---|---|
@@ -568,7 +568,7 @@ These need the maintainer's machine, credentials or network access.
 4. **Q4.** Compare `.ct-tile*`, `.ct-spark*` and `.ct-award*` against the
    original `recap.css`. Either allow nikkers.cc in the cloud environment's
    network settings, or do it locally.
-5. **Downstream migration (§8).** After publishing, bump the vendored file or
+5. **Downstream migration (§8).** After publishing, bump the bundled file or
    CDN pin in each site, delete its copy, and apply §8.1.
 6. **Pre-existing E4 hit, not from this work:**
    `docs/MIGRATION_CONTAINER_0.2.0.md` has a `/* updates.ts:32 */` comment.

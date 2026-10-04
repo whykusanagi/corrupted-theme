@@ -22,7 +22,7 @@
 - **Text contrast floor is 4.5:1** against the surface actually painted, including any ancestor `opacity`.
 - **Infinite motion only under `@media (prefers-reduced-motion: no-preference)`.**
 - **`dist/llms.txt` stays under 16KB.**
-- **Public surfaces name no internal repository** and use no harvest verb: `celeste-tts-bot`, `obs/transitions`, `obs/shared`, `spatial_videos`, `youtube_poop`, `thumbnail-generator`, `Ported from`, `Adapted from`, `Absorbed`, `absorption`, `copy-pasted`, `vendored`, `single canonical home`, `drift reconvergence`. `celeste-cli` is kept — it is a documented consumer, not a source.
+- **Public surfaces name no internal repository** and use no harvest verb. The term list is the `TERMS` line in `scripts/audit-provenance.sh`; it is not repeated here, since this repository is public. `celeste-cli` is kept — it is a documented consumer, not a source.
 - **CI does not run `npm test`.** The suite is a pre-publish local gate. Green CI ≠ tests ran.
 - **Commits are small and on a branch.** Never commit to `main`; never `npm version` (see Task 9, step 6).
 
@@ -651,7 +651,7 @@ git commit -m "chore(examples): the env template teaches a synthetic UUID"
 # three months because the grep only ever ran over files.
 set -uo pipefail
 
-TERMS='celeste-tts-bot|obs/transitions|obs/shared|spatial_videos|youtube_poop|thumbnail-generator|Ported from|Adapted from|Absorbed|absorption|copy-pasted|vendored|single canonical home|drift reconvergence'
+TERMS='<the term list — see scripts/audit-provenance.sh>'
 status=0
 
 echo "== files =="

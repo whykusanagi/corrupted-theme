@@ -94,6 +94,7 @@ export const NAV = [
       { label: 'Corrupted Timeline', icon: 'fa-stream', target: 'examples/corrupted-timeline.html' },
       { label: 'CRT Effects', icon: 'fa-tv', target: 'examples/advanced/crt-effects.html' },
       { label: 'Audio Spectrum', icon: 'fa-wave-square', target: 'examples/audio-spectrum.html' },
+      { label: 'Lipsync', icon: 'fa-microphone-lines', target: 'examples/lipsync.html' },
       { label: 'Browse all →', icon: 'fa-ellipsis', target: 'examples/index.html' },
     ],
   },

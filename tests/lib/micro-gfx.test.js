@@ -9,6 +9,12 @@ import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import { MicroGfx, fitTitle } from '../../src/lib/micro-gfx.js';
 
+// Width of a rendered title, costing a fullwidth glyph at a full em and the
+// rest at the monospace advance — the model fitTitle fits against.
+const FW = /[\u1100-\u115F\u2E80-\u303E\u3041-\u33FF\u3400-\u4DBF\u4E00-\u9FFF\uA000-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE6F\uFF00-\uFF60\uFFE0-\uFFE6]/;
+const measure = (text, size, advance = 0.6) =>
+  [...text].reduce((w, ch) => w + size * (FW.test(ch) ? 1 : advance), 0);
+
 const SRC = readFileSync(new URL('../../src/lib/micro-gfx.js', import.meta.url), 'utf8');
 /** Source with comments stripped — the module's own docs mention innerHTML in
  *  order to warn against it, and a prose mention is not a code path. */
@@ -223,4 +229,45 @@ test('an empty or tiny title is handled without a lone ellipsis', () => {
   assert.deepEqual(fitTitle('X', CARD_AVAILABLE), { size: 44, text: 'X' });
   const narrow = fitTitle('Some title', 40);
   assert.ok(narrow.text.length >= 2, `refused to emit a bare ellipsis: ${narrow.text}`);
+});
+
+test('fitTitle measures a fullwidth glyph at its real advance', () => {
+  // Every char was costed at 0.6em, so a Japanese title — 30 chars at ~1em —
+  // measured 792px against a 1100px rail and was returned untouched at full
+  // size, then ran straight through it. This package is Japanese-flavoured and
+  // the consuming site covers NIKKE, so CJK titles are the normal case.
+  const jp = 'ニケ シーズン総括：全キャラクター評価と編成ガイド 2026年版';
+  const fit = fitTitle(jp, 1100);
+  assert.ok(fit.size < 44 || fit.text !== jp, 'a fullwidth title was returned unshrunk');
+  assert.ok(measure(fit.text, fit.size) <= 1100, `fitted CJK still overflows: ${measure(fit.text, fit.size)}px`);
+});
+
+test('fitTitle never splits a surrogate pair and never leaves a space before the ellipsis', () => {
+  const emoji = `${'season recap '.repeat(5)}🎮🎯🎲🏆`;
+  for (const w of [300, 420, 560, 700, 900]) {
+    const { text } = fitTitle(emoji, w);
+    assert.ok(!/[\uD800-\uDBFF]$/.test(text.replace(/…$/, '')), `split a surrogate pair at ${w}px`);
+    assert.ok(!/\s…$/.test(text), `space before the ellipsis at ${w}px: ${JSON.stringify(text)}`);
+  }
+  assert.ok(!/\s…$/.test(fitTitle(`blog  ${'x'.repeat(40)}`, 320).text));
+});
+
+test('fitTitle always returns something that fits, and honours an odd floor', () => {
+  // The guard the first version did not have: it asserted one clipped title,
+  // which is why a whole script's worth of titles could overflow unnoticed.
+  const titles = [
+    '', 'X', 'season recap', 'a'.repeat(200), 'ニケ', '日本語のタイトルがとても長い場合の挙動を確かめる',
+    `${'word '.repeat(30)}end`, 'Mixed 日本語 and latin in one title that runs long',
+  ];
+  for (const t of titles) {
+    for (const available of [200, 480, 1100, 1600]) {
+      const fit = fitTitle(t, available);
+      assert.ok(measure(fit.text, fit.size) <= available || [...t].length <= 2,
+        `"${t.slice(0, 20)}" at ${available}px → ${measure(fit.text, fit.size)}px`);
+    }
+  }
+  // size -= 2 from an even max skips an odd floor entirely.
+  const odd = fitTitle('a'.repeat(30), 30 * 29 * 0.6, { min: 29 });
+  assert.equal(odd.size, 29);
+  assert.equal(odd.text, 'a'.repeat(30));
 });

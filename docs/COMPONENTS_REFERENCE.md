@@ -3461,7 +3461,7 @@ MicroGfx — seeded generative instrument graphics.
     - `opts`: `object`
     - `opts.max` (default `44`): `number` — starting font-size
     - `opts.min` (default `28`): `number` — floor; below this the card reads as a caption
-    - `opts.advance` (default `0.6`): `number` — monospace advance as a fraction of size
+    - `opts.advance` (default `0.6`): `number` — Latin advance as a fraction of size;
 - `MicroGfx` methods:
   - `MicroGfx.generate(options = {})` → `{svg:string, node:SVGSVGElement, seed:number, width:number, height:number}` — Build one artwork.
     - `options` (default `{}`): `object`

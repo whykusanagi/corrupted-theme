@@ -48,6 +48,15 @@ import {
 
 const NS = 'http://www.w3.org/2000/svg';
 
+/**
+ * Code points that occupy a full em in a monospace face — CJK, kana, Hangul and
+ * the fullwidth forms. Costing these at the Latin 0.6 advance measured a
+ * Japanese title at 60% of its real width, so fitTitle returned it unshrunk and
+ * it ran through the rail.
+ */
+const FULLWIDTH = /[\u1100-\u115F\u2E80-\u303E\u3041-\u33FF\u3400-\u4DBF\u4E00-\u9FFF\uA000-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE6F\uFF00-\uFF60\uFFE0-\uFFE6]/;
+
+
 /** Aspect presets. Pass `{ w, h }` for anything else. */
 const FORMATS = {
   card:     { w: 1200, h: 630 },
@@ -430,22 +439,37 @@ function drawScanlines(parent, { w, h }) {
  * @param {object} [opts]
  * @param {number} [opts.max=44]      - starting font-size
  * @param {number} [opts.min=28]      - floor; below this the card reads as a caption
- * @param {number} [opts.advance=0.6] - monospace advance as a fraction of size
+ * @param {number} [opts.advance=0.6] - Latin advance as a fraction of size;
+ *   fullwidth code points are costed at a full em regardless
  * @returns {{ size: number, text: string }}
  */
 export function fitTitle(title, available, opts = {}) {
   const { max = 44, min = 28, advance = 0.6 } = opts;
-  const width = (chars, size) => chars * size * advance;
+  // Code points, not UTF-16 units, so a cut never lands inside a surrogate pair.
+  const chars = [...title];
+  const em = (ch) => (FULLWIDTH.test(ch) ? 1 : advance);
+  const width = (list, size) => list.reduce((w, ch) => w + size * em(ch), 0);
 
-  for (let size = max; size >= min; size -= 2) {
-    if (width(title.length, size) <= available) return { size, text: title };
+  // `size > min` plus an explicit test of `min`, because stepping by 2 from an
+  // even max skips an odd floor entirely.
+  for (let size = max; size > min; size -= 2) {
+    if (width(chars, size) <= available) return { size, text: title };
   }
+  if (width(chars, min) <= available) return { size: min, text: title };
 
-  const budget = Math.max(2, Math.floor(available / (min * advance)));
-  const cut = title.slice(0, budget - 1);
+  // The floor is still too narrow: keep whole code points while the ellipsis
+  // still fits beside them, so the result fits by construction.
+  const ellipsis = min * advance;
+  let used = 0;
+  let n = 0;
+  while (n < chars.length && used + min * em(chars[n]) + ellipsis <= available) {
+    used += min * em(chars[n]);
+    n += 1;
+  }
+  const cut = chars.slice(0, Math.max(1, n));
   const atSpace = cut.lastIndexOf(' ');
-  const kept = atSpace > budget * 0.5 ? cut.slice(0, atSpace) : cut.trimEnd();
-  return { size: min, text: `${kept}\u2026` };
+  const kept = atSpace > cut.length * 0.5 ? cut.slice(0, atSpace) : cut;
+  return { size: min, text: `${kept.join('').trimEnd()}\u2026` };
 }
 
 /** Every string here goes in via textContent — never parsed as markup (S1). */

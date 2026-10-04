@@ -258,32 +258,58 @@ function frame(buffer) {           // Float32Array from an AnalyserNode
       return buffer;
     }
 
+    // The live capture, so it can actually be released: a page that says
+    // "nothing is recorded" must not leave the browser's mic indicator lit.
+    let micStream = null;
+    let micCtx = null;
+
+    function releaseMicrophone() {
+      micStream?.getTracks().forEach((t) => t.stop());
+      micCtx?.close();
+      micStream = null;
+      micCtx = null;
+    }
+
+    function useSynthetic() {
+      releaseMicrophone();
+      readFrame = syntheticFrame;
+      buffer = new Float32Array(1024);
+      el('source-note').textContent = 'Source: synthetic. Nothing is recorded.';
+    }
+
     async function useMicrophone() {
       const note = el('source-note');
+      releaseMicrophone();           // clicking twice must not stack streams
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        const ctx = new (window.AudioContext ?? window.webkitAudioContext)();
-        analyser = ctx.createAnalyser();
+        micStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        micCtx = new (window.AudioContext ?? window.webkitAudioContext)();
+        // Safari's gesture activation can lapse during the permission prompt,
+        // which leaves the context suspended and the mouth shut.
+        if (micCtx.state === 'suspended') await micCtx.resume();
+        analyser = micCtx.createAnalyser();
         analyser.fftSize = 2048;
         buffer = new Float32Array(analyser.fftSize);
-        ctx.createMediaStreamSource(stream).connect(analyser);
+        micCtx.createMediaStreamSource(micStream).connect(analyser);
         readFrame = micFrame;
         note.textContent = 'Source: your microphone. Nothing is recorded — each frame is read and dropped.';
       } catch (err) {
-        // Denied, no device, or a non-secure origin. The demo keeps running on
-        // the synthetic source; silence here would read as a broken page.
+        // Denied, no device, or a non-secure origin (getUserMedia is undefined
+        // off https, which throws a TypeError). The demo keeps running on the
+        // synthetic source; silence here would read as a broken page.
+        releaseMicrophone();
         readFrame = syntheticFrame;
         buffer = new Float32Array(1024);
-        note.textContent = `Microphone unavailable (${err.name}). Still running on the synthetic source.`;
+        const why = err.name === 'TypeError'
+          ? 'this page needs https (or localhost) to reach a microphone'
+          : err.name;
+        note.textContent = `Microphone unavailable (${why}). Still running on the synthetic source.`;
       }
     }
 
     el('use-mic').addEventListener('click', useMicrophone);
-    el('use-synthetic').addEventListener('click', () => {
-      readFrame = syntheticFrame;
-      buffer = new Float32Array(1024);
-      el('source-note').textContent = 'Source: synthetic. Nothing is recorded.';
-    });
+    el('use-synthetic').addEventListener('click', useSynthetic);
+    // Leaving the page releases the device too.
+    window.addEventListener('pagehide', releaseMicrophone);
 
     /* ── The frame loop ─────────────────────────────────────────────────── */
     function tick() {
@@ -313,6 +339,11 @@ function frame(buffer) {           // Float32Array from an AnalyserNode
       el('void').style.height = '24px';
       el('lip-bottom').style.top = '94px';
       el('source-note').textContent = 'Reduced motion: the envelope is held still.';
+      // Nothing reads a frame, so do not ask for the device: capturing audio to
+      // drive an animation that is deliberately not running is pure cost to the
+      // visitor.
+      el('use-mic').disabled = true;
+      el('use-mic').title = 'Disabled under reduced motion — nothing would move.';
     } else {
       requestAnimationFrame(tick);
     }

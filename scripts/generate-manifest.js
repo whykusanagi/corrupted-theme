@@ -353,6 +353,32 @@ export function parseModule(source) {
 }
 
 /**
+ * Every `var()` in `code` as `[name, fallback]`, with the fallback balanced
+ * across nested parens. A `[^)]+` fallback stopped at the first `)`, so any
+ * default carrying parens reached the agent surface truncated (`var(--accent`
+ * for `--ct-tone`) and a var() nested in a fallback was swallowed with it,
+ * hiding `--ct-cols` entirely. Nested refs need no recursion here: the scan
+ * resumes inside the fallback text and matches them on later iterations.
+ *
+ * @param {string} code
+ * @returns {Generator<[string, string|null]>}
+ */
+function* varRefs(code) {
+  const re = /var\(\s*(--[\w-]+)\s*/g;
+  let m;
+  while ((m = re.exec(code))) {
+    let i = m.index + m[0].length;
+    if (code[i] !== ',') { yield [m[1], null]; continue; }
+    const start = ++i;
+    for (let depth = 1; i < code.length && depth > 0; i += 1) {
+      if (code[i] === '(') depth += 1;
+      else if (code[i] === ')') depth -= 1;
+    }
+    yield [m[1], code.slice(start, i - 1).trim() || null];
+  }
+}
+
+/**
  * Describe a stylesheet for the agent surface: the classes it defines, the
  * state modifiers scoped to them, and the custom properties it reads with
  * their fallbacks. A CSS export used to reach the surface as its path and
@@ -368,12 +394,17 @@ export function describeStylesheet(source) {
     .split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim()).find(Boolean);
 
   const code = source.replace(/\/\*[\s\S]*?\*\//g, '');
-  const selectors = code.replace(/\{[^{}]*\}/g, '{}');
+  // Collapse declaration blocks, then drop the at-rules that carry file paths:
+  // `@import './variables.css'` matched the class regex and published a phantom
+  // class named `css`.
+  const selectors = code
+    .replace(/\{[^{}]*\}/g, '{}')
+    .replace(/@(?:import|charset|namespace)[^;]*;/g, '')
+    .replace(/url\([^)]*\)/g, '');
   const names = [...new Set([...selectors.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]))].sort();
 
   const knobs = {};
-  for (const [, name, fallback] of code.matchAll(/var\(\s*(--[\w-]+)\s*(?:,\s*([^)]+))?\)/g)) {
-    const value = fallback ? fallback.trim() : null;
+  for (const [name, value] of varRefs(code)) {
     if (!(name in knobs) || (value && knobs[name] === null)) knobs[name] = value;
   }
 

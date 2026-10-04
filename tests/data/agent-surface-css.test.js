@@ -74,3 +74,47 @@ test('llms.txt stays inside its dense-surface budget', () => {
   const bytes = Buffer.byteLength(read('dist/llms.txt'));
   assert.ok(bytes < 32768, `llms.txt is ${bytes} bytes`);
 });
+
+test('a knob default survives nested parens, and a nested var() is its own knob', () => {
+  // The fallback scanner stopped at the first ')', so every default carrying
+  // parens reached the surface truncated — `var(--accent` for --ct-tone — and a
+  // var() nested inside a fallback was swallowed whole, which hid --ct-cols,
+  // the column-count knob, from the release that exists to describe it.
+  const d = describeStylesheet('.a{color:var(--x, rgba(1, 2, 3, .4)); gap:var(--y, calc(var(--z, 2) * 1rem))}');
+  assert.equal(d.knobs['--x'], 'rgba(1, 2, 3, .4)');
+  assert.equal(d.knobs['--y'], 'calc(var(--z, 2) * 1rem)');
+  assert.equal(d.knobs['--z'], '2');
+  assert.equal(describeStylesheet('.a{color:var(--bare)}').knobs['--bare'], null);
+
+  const editorial = manifest().exports.find((e) => e.export === './editorial');
+  assert.equal(editorial.knobs['--ct-tone'], 'var(--accent)');
+  assert.equal(editorial.knobs['--ct-row-cols'], 'auto minmax(0, 1fr) auto');
+  assert.ok('--ct-cols' in editorial.knobs, 'manifest omits the --ct-cols knob');
+});
+
+test('no stylesheet reaches the surface with a truncated knob default', () => {
+  // The guard the first version did not have: it asserted two knobs whose
+  // defaults happened to be scalars, so it could not see six broken ones.
+  for (const e of manifest().exports.filter((x) => x.type === 'css')) {
+    for (const [name, value] of Object.entries(e.knobs ?? {})) {
+      if (value === null) continue;
+      const opens = (value.match(/\(/g) ?? []).length;
+      const closes = (value.match(/\)/g) ?? []).length;
+      assert.equal(opens, closes, `${e.export} ${name} default is unbalanced: ${JSON.stringify(value)}`);
+    }
+  }
+});
+
+test('an @import target is not a class', () => {
+  // `@import './variables.css'` matched the class regex, so the root export
+  // published a phantom class named `css` — and the drift guard passed, because
+  // `.css` does appear in the file it checks against.
+  assert.deepEqual(describeStylesheet("@import './variables.css';\n.real{color:red}").classes, ['real']);
+  assert.deepEqual(describeStylesheet('@import url("x/y.css");').classes, []);
+  assert.deepEqual(describeStylesheet(read('src/css/variables.css')).classes, []);
+  for (const e of manifest().exports.filter((x) => x.type === 'css')) {
+    for (const ext of ['css', 'png', 'woff2', 'svg', 'json']) {
+      assert.ok(!e.classes.includes(ext), `${e.export} publishes phantom class .${ext}`);
+    }
+  }
+});

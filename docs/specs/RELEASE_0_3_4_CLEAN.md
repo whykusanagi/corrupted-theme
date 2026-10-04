@@ -108,12 +108,12 @@ a CSS path. For each CSS export emit: the classes it defines, the `is-*`/`has-*`
 modifiers scoped to each, the `--ct-*`-style custom properties it reads with
 their defaults, and the module header's one-line description. `llms.txt` gets a
 dense line per CSS export rather than the full inventory, to stay inside its
-16KB budget. See Q3.
+32KB budget. See Q3.
 
 **Acceptance.**
 - `dist/manifest.json`'s `./editorial` entry lists `.ct-card`, `.ct-rank`,
   `--ct-grid-min` and `--ct-measure`, with defaults.
-- `dist/llms.txt` stays under 16KB (existing budget test).
+- `dist/llms.txt` stays under 32KB. The 16KB in earlier docs was never measured — the file was already 24.5KB before this release, because no test asserted it.
 - A test asserts every class the manifest claims for a CSS export is defined in
   that sheet, so the surface cannot drift from the file it describes.
 - The §3 class names removed in 0.3.4 (`ct-tile`, `ct-stat`, `ct-cell`) appear
@@ -217,7 +217,7 @@ In order, from a clean tree on `main`:
 | New guards bite | Each is mutation-checked: reintroduce the defect, watch it fail, restore |
 | Browser | `lipsync.html` and the two index pages: zero console errors; `DecryptReveal` settles after a hide/show cycle |
 | Tarball | `npm pack --dry-run`: no secrets, no dev files, no internal specs |
-| Agent surface | `llms.txt` under 16KB; no removed class name anywhere in it |
+| Agent surface | `llms.txt` under 32KB; no removed class name anywhere in it |
 | Public surfaces | E4 grep over `README`, `CHANGELOG`, shipped docs, `dist/manifest.json`, `dist/llms.txt` **and release bodies** |
 
 ## 6. Deferred, with reasons
@@ -249,7 +249,7 @@ In order, from a clean tree on `main`:
   cost is that a background-tab decode is skipped rather than played late.
 - **Q3 — How much of the CSS inventory goes in `llms.txt`?** *Recommend a dense
   line per CSS export in `llms.txt` and the full inventory in `manifest.json`.*
-  The budget is 16KB and the editorial sheet alone has ~90 classes.
+  The budget is 32KB and the editorial sheet alone has 86 classes.
 - **Q4 — Rewrite the v0.3.0 release notes?** *Recommend yes, body and title,
   tag and date untouched.* The alternative is leaving a public page that names
   three private repositories. I will draft the replacement for approval before

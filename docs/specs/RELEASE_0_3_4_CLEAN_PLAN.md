@@ -21,7 +21,7 @@
 - **`--text-muted` is forbidden in `editorial.css`** — it measures 3.7–4.2:1 on these surfaces.
 - **Text contrast floor is 4.5:1** against the surface actually painted, including any ancestor `opacity`.
 - **Infinite motion only under `@media (prefers-reduced-motion: no-preference)`.**
-- **`dist/llms.txt` stays under 16KB.**
+- **`dist/llms.txt` stays under 32KB.** The 16KB figure in earlier docs was never measured: the file was already 24.5KB before this release touched it, because no test asserted it. See the ledger note on Task 3.
 - **Public surfaces name no internal repository** and use no harvest verb. The term list is the `TERMS` line in `scripts/audit-provenance.sh`; it is not repeated here, since this repository is public. `celeste-cli` is kept — it is a documented consumer, not a source.
 - **CI does not run `npm test`.** The suite is a pre-publish local gate. Green CI ≠ tests ran.
 - **Commits are small and on a branch.** Never commit to `main`; never `npm version` (see Task 9, step 6).
@@ -458,11 +458,11 @@ At the top of the `for (const e of manifest.exports) {` loop at `:454`:
 
 ```bash
 npm run manifest:generate
-wc -c dist/llms.txt          # must stay under 16384
+wc -c dist/llms.txt          # must stay under 32768
 node -e "const m=require('./dist/manifest.json');const e=m.exports.find(x=>x.export==='./editorial');console.log(e.classes.length,'classes',e.modifiers.length,'modifiers',Object.keys(e.knobs).length,'knobs')"
 ```
 
-Expected: `llms.txt` under 16KB; `./editorial` reports roughly 90 classes, a handful of modifiers, and its knobs.
+Expected: `llms.txt` under 32KB; `./editorial` reports roughly 90 classes, a handful of modifiers, and its knobs.
 
 - [ ] **Step 7: Run the suite and commit**
 

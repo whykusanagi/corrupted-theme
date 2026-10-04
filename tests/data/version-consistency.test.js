@@ -114,7 +114,11 @@ test('the landing page hero states numbers that are actually true', () => {
   assert.ok(existsSync(manifestPath),
     'dist/manifest.json is missing — run `npm run manifest:generate`');
   const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
-  const components = manifest.exports.filter((e) => e.type === 'js').length;
+  // Labelled "JS Modules", not "Components": the count is every JS export, so
+  // it includes utilities like random-utils and time-utils that nobody would
+  // call a component. Pinning the number and then mislabelling it is still a
+  // false claim above the fold.
+  const modules = manifest.exports.filter((e) => e.type === 'js').length;
   const tokens = new Set(
     readdirSync(path.join(ROOT, 'src/css'))
       .filter((f) => f.endsWith('.css'))
@@ -129,6 +133,6 @@ test('the landing page hero states numbers that are actually true', () => {
     assert.ok(m, `no hero stat labelled ${label}`);
     return m[1].trim();
   };
-  assert.equal(stat('Components'), String(components));
+  assert.equal(stat('JS Modules'), String(modules));
   assert.equal(stat('CSS Variables'), String(tokens));
 });

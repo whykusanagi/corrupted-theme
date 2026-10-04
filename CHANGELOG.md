@@ -55,6 +55,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it was never declared, so `.event-bar`, `.logo-banner` and `.clock-widget`
   text fell back to Courier New; they now get the declared monospace stack.
 
+
+- **`fitTitle(title, available, opts)`** — new export from `./micro-gfx`. Fits a
+  card title between the rails: shrinks from 44px to a 28px floor so the whole
+  title survives, then clips on a word boundary with an ellipsis only when the
+  floor is still too narrow. Fullwidth code points (CJK, kana, Hangul) cost a
+  full em; Latin costs the 0.6 monospace advance.
+- **CSS exports describe themselves in the agent surface.** Every `type: "css"`
+  entry in `dist/manifest.json` now carries `classes`, `modifiers` and `knobs`
+  (name → default); `./editorial` reports 86 classes, 15 modifiers and 48 knobs
+  where it previously reported its path and nothing else. `dist/llms.txt`
+  carries a dense one-line summary per sheet and points at the manifest for the
+  full inventory. Both blind agents in this release's docs validation reported
+  the gap independently: given only the machine surface, neither could answer a
+  single question about the vocabulary.
+- **Lipsync example** (`examples/lipsync.html`) — the envelope maths (`rms`,
+  `smoothRms`, `mouthTarget`, `approach`) driving a mouth, on a synthetic source
+  by default with an opt-in microphone. Nothing is recorded: each frame is read
+  and dropped, and the capture is released when you switch away.
+- **`npm run audit:provenance`** — release gate E4 as a script. It greps the
+  shipped files *and* the published GitHub release notes, and fails loudly
+  rather than reporting clean when it cannot see a surface.
+
 ### Changed
 
 - **Build toolchain majors** (dev-only; consumers unaffected): `cssnano` 8 → 9,
@@ -75,6 +97,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `gitleaks/gitleaks-action` v2 → v3.0.0. The gitleaks bump is a fix, not
   housekeeping — v2 ran on the Node 20 Actions runtime, which GitHub removed on
   2026-09-16. Both remain SHA-pinned.
+
+### Fixed
+
+- **An interrupted decode no longer leaves text unreadable.** `DecryptReveal`'s
+  `stop()`, `cleanup(id)` and `destroy()` now write the final text before
+  cancelling, and `decodeText()`'s returned cleanup does the same for a live
+  animation. **This is a behaviour change on a public API**: the old doc comment
+  promised the opposite ("does not restore the final text"). A heading decoding
+  in a tab the visitor switched away from used to stay frozen on scrambled
+  glyphs — directly against spec Core Tenet 2, "the final state must be
+  readable" — and the consuming site papered over it with a re-run on
+  `visibilitychange`. That workaround can now be deleted.
+  - The record was also retired on a `duration + 50` timeout while the interval
+    writes its final text on the 21st tick, at `21 × floor(duration/20)`. For
+    every duration over 1000ms that lands *after* the deletion, so a `stop()` in
+    that window found an empty map, settled nothing, then killed the live
+    interval. Retirement now happens in the branch that writes the text.
+- **Long card titles are fitted instead of overrunning the frame.** `MicroGfx`
+  drew the title at a fixed 44px from a fixed origin, so anything past ~41
+  characters ran through the right rail and off the canvas — every og:image for
+  a long post. Titles at or under that length render byte-identically; longer
+  ones now shrink, and ellipsise only if 28px is still too narrow.
+- **The agent surface published truncated knob defaults.** The `var()` fallback
+  pattern stopped at the first `)`, so `--ct-tone` reached consumers as
+  `var(--accent`, `--glass` as `rgba(20, 12, 40, 0.6`, and a `var()` nested
+  inside a fallback was swallowed whole — which hid `--ct-cols`, the
+  column-count knob, entirely. An `@import` target was also published as a
+  class, so the root export claimed a class named `css`.
+- **Editorial, from the browser pass and the external review** (all on classes
+  that ship first in this release, so no published markup changes):
+  `.ct-badge.ct-rank` now outranks the badge default, which was painting every
+  rank badge with an accent border and no fill; `.ct-card.is-muted` mutes by
+  tone rather than `opacity`, which composited its own labels down to 2.9:1;
+  badge ink on a raised card lightens to clear AA at 4.50:1 exactly; the
+  masthead reserves a column for its fact block instead of overlapping any
+  title longer than the demo's; `.ct-rows` reflows below 560px instead of
+  collapsing its title column to an ellipsis; `.ct-section-meta` wraps on a
+  phone instead of being `display: none`, which removed it from the
+  accessibility tree too; the chart scanline clears under
+  `prefers-reduced-motion` like the callout's always did; `.ct-divider` carries
+  `aria-hidden`; `.ct-detail` and `.ct-chart-cap` zero the inherited paragraph
+  margin, which added 16px of dead space to every card built from the
+  reference; `.ct-list.is-grid` and `.ct-gallery` read their own `--ct-chip-min`
+  and `--ct-thumb-min` instead of inheriting `--ct-grid-min` from a card grid
+  they sit inside; `<ul class="ct-rows">`, `.ct-grid` and `.ct-badges` reset the
+  theme's list indent and marker, so the documented list markup works as
+  documented; and the rank ink mixes go through `--corrupted-white` rather than
+  the `white` keyword, which no colour guard could see.
 
 ## [0.3.3] - 2026-08-25
 

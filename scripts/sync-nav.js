@@ -38,6 +38,7 @@ export const RELEASE_DEMOS = {
   version: '0.3.4',
   pages: [
     'examples/editorial.html',
+    'examples/lipsync.html',
   ],
 };
 

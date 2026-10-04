@@ -154,7 +154,8 @@
     "prepublishOnly": "npm run build && npm test",
     "nav:sync": "node scripts/sync-nav.js",
     "lint:security": "eslint .",
-    "audit:colors": "node --test tests/data/color-sweep.test.js"
+    "audit:colors": "node --test tests/data/color-sweep.test.js",
+    "audit:provenance": "bash scripts/audit-provenance.sh"
   },
   "homepage": "https://github.com/whykusanagi/corrupted-theme#readme",
   "bugs": {

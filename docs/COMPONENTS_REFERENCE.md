@@ -419,8 +419,8 @@ gallery1.destroy(); // Only destroys gallery1
 
 `src/css/editorial.css`, bundled in `theme.css` — which is what builds into the
 `dist/theme.min.css` the CDN serves — and exported as `./editorial`, from
-**0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
-doesn't contain these classes. These are long-form article and recap-page
+**0.3.4**. A `theme.min.css` pinned to 0.3.3 or earlier — on the CDN, or copied
+into your own site — doesn't contain these classes. These are long-form article and recap-page
 primitives: a masthead, prose blocks, card grids, entity cards, rank badges,
 bar sparklines, meters, ruled rows, chart frames, award rows and the post
 index. Every class is `ct-`-prefixed. A *state* is an `is-*` or `has-*` modifier on a

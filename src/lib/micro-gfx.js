@@ -416,6 +416,38 @@ function drawScanlines(parent, { w, h }) {
 
 /* ── Text ───────────────────────────────────────────────────────────────── */
 
+/**
+ * Fit a title to the width available inside the frame rails.
+ *
+ * The face is monospace, so width is `chars × size × advance` and no DOM
+ * measurement is needed — which matters because the same call has to produce
+ * the same card headless, in a browser, and inside a frame-locked render.
+ * Shrinks first so the whole title survives; clips on a word boundary only
+ * when the floor is still too narrow.
+ *
+ * @param {string} title
+ * @param {number} available  - px between the rails
+ * @param {object} [opts]
+ * @param {number} [opts.max=44]      - starting font-size
+ * @param {number} [opts.min=28]      - floor; below this the card reads as a caption
+ * @param {number} [opts.advance=0.6] - monospace advance as a fraction of size
+ * @returns {{ size: number, text: string }}
+ */
+export function fitTitle(title, available, opts = {}) {
+  const { max = 44, min = 28, advance = 0.6 } = opts;
+  const width = (chars, size) => chars * size * advance;
+
+  for (let size = max; size >= min; size -= 2) {
+    if (width(title.length, size) <= available) return { size, text: title };
+  }
+
+  const budget = Math.max(2, Math.floor(available / (min * advance)));
+  const cut = title.slice(0, budget - 1);
+  const atSpace = cut.lastIndexOf(' ');
+  const kept = atSpace > budget * 0.5 ? cut.slice(0, atSpace) : cut.trimEnd();
+  return { size: min, text: `${kept}\u2026` };
+}
+
 /** Every string here goes in via textContent — never parsed as markup (S1). */
 function drawText(parent, { w, h, theme }, text) {
   const m = Math.round(Math.min(w, h) * 0.045) + 22;
@@ -426,10 +458,11 @@ function drawText(parent, { w, h, theme }, text) {
     }, parent, text.eyebrow);
   }
   if (text.title) {
+    const fit = fitTitle(text.title, w - m * 2);
     el('text', {
-      x: m, y: m + 62, 'font-family': MONO, 'font-size': 44,
+      x: m, y: m + 62, 'font-family': MONO, 'font-size': fit.size,
       'font-weight': 'bold', fill: theme.ink,
-    }, parent, text.title);
+    }, parent, fit.text);
   }
   if (text.serial) {
     el('text', {

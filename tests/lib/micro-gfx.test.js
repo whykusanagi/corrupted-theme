@@ -7,7 +7,7 @@
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
-import { MicroGfx } from '../../src/lib/micro-gfx.js';
+import { MicroGfx, fitTitle } from '../../src/lib/micro-gfx.js';
 
 const SRC = readFileSync(new URL('../../src/lib/micro-gfx.js', import.meta.url), 'utf8');
 /** Source with comments stripped — the module's own docs mention innerHTML in
@@ -45,12 +45,19 @@ test('S1: no markup is ever concatenated', () => {
 });
 
 test('S1: every caller-supplied string reaches the SVG as element text', () => {
-  // drawText must pass text.* as the `text` argument of el(), which is the
-  // textContent path — never as an attribute value that could carry markup.
-  for (const field of ['eyebrow', 'title', 'serial', 'nameplate']) {
-    const re = new RegExp(`\\}, parent, text\\.${field}\\)`);
-    assert.match(SRC, re, `text.${field} must be passed as textContent`);
+  // drawText must pass the caller's string as the `text` argument of el(),
+  // which is the textContent path — never as an attribute value that could
+  // carry markup. The title goes through fitTitle() first, which only ever
+  // shortens it, so the value reaching el() is `fit.text`.
+  const expected = {
+    eyebrow: 'text.eyebrow', title: 'fit.text', serial: 'text.serial', nameplate: 'text.nameplate',
+  };
+  for (const [field, argument] of Object.entries(expected)) {
+    const re = new RegExp(`\\}, parent, ${argument.replace('.', '\\.')}\\)`);
+    assert.match(SRC, re, `text.${field} must be passed as textContent (as ${argument})`);
   }
+  // fitTitle returns the caller's characters, never new markup.
+  assert.match(SRC, /return \{ size, text: title \}/, 'fitTitle returns the title verbatim when it fits');
 });
 
 test('S3: no external references are emitted, so the PNG canvas cannot taint', () => {
@@ -181,4 +188,39 @@ test('the palette uses theme colours; cyan and red appear only as highlights', (
         `accent colour ${m[1]} must not carry the composition: ${line.trim()}`);
     }
   }
+});
+
+/* ── Title fitting ──────────────────────────────────────────────────────── */
+
+const CARD_AVAILABLE = 1200 - (Math.round(Math.min(1200, 630) * 0.045) + 22) * 2;
+
+test('a title that fits is untouched at full size', () => {
+  const fit = fitTitle('Corrupted Theme 0.3.4', CARD_AVAILABLE);
+  assert.equal(fit.text, 'Corrupted Theme 0.3.4');
+  assert.equal(fit.size, 44, 'existing cards must render byte-identically');
+});
+
+test('a long title shrinks until it fits inside the rail', () => {
+  // 56 characters at font-size 44 ran through the frame rail and off the card.
+  const title = 'Corrupted Theme 0.3.0: One Home for the Glitch Libraries';
+  const fit = fitTitle(title, CARD_AVAILABLE);
+  assert.ok(fit.size < 44, `expected a smaller size, got ${fit.size}`);
+  assert.ok(fit.text.length * fit.size * 0.6 <= CARD_AVAILABLE,
+    `${fit.text.length} chars at ${fit.size}px overflows ${CARD_AVAILABLE}px`);
+});
+
+test('a title too long even at the floor is cut on a word boundary', () => {
+  const title = 'Corrupted Theme ships one editorial vocabulary for every blog and data page across every consuming site';
+  const fit = fitTitle(title, CARD_AVAILABLE);
+  assert.ok(fit.text.endsWith('\u2026'), fit.text);
+  assert.ok(!/\s\u2026$/.test(fit.text), 'no space before the ellipsis');
+  assert.ok(fit.text.length * fit.size * 0.6 <= CARD_AVAILABLE, fit.text);
+  assert.ok(title.startsWith(fit.text.slice(0, -1)), 'the kept prefix is verbatim');
+});
+
+test('an empty or tiny title is handled without a lone ellipsis', () => {
+  assert.deepEqual(fitTitle('', CARD_AVAILABLE), { size: 44, text: '' });
+  assert.deepEqual(fitTitle('X', CARD_AVAILABLE), { size: 44, text: 'X' });
+  const narrow = fitTitle('Some title', 40);
+  assert.ok(narrow.text.length >= 2, `refused to emit a bare ellipsis: ${narrow.text}`);
 });

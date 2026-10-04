@@ -1,7 +1,7 @@
 // tests/core/decrypt-reveal.test.js
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
-import { DecryptReveal } from '../../src/core/decrypt-reveal.js';
+import { DecryptReveal, decodeText } from '../../src/core/decrypt-reveal.js';
 
 test('DecryptReveal exposes decode + start/stop/destroy', () => {
   const m = new DecryptReveal();
@@ -112,4 +112,29 @@ test('destroy() settles too', () => {
   m.decode(el, 'TERMINAL', { duration: 2000 });
   m.destroy();
   assert.equal(el.textContent, 'TERMINAL');
+});
+
+test('a decode cannot be left scrambled in the window before its last tick', async () => {
+  // The record was deleted at duration + 50, but the interval writes the final
+  // text on its 21st tick — at 21 × floor(duration/20), which for every
+  // duration over 1000ms lands *after* the deletion. A stop() in that window
+  // found an empty map, so nothing settled, and then killed the live interval:
+  // the element stayed on its last scrambled frame. Real timers, because the
+  // bug lives in the gap between two of them.
+  const m = new DecryptReveal();
+  const el = { textContent: '' };
+  m.decode(el, 'STILL READABLE', { duration: 200 });   // last tick at 336ms
+  await new Promise((r) => setTimeout(r, 270));          // old deletion at 250ms
+  m.stop();
+  assert.equal(el.textContent, 'STILL READABLE');
+  m.destroy();
+});
+
+test('decodeText() cleanup settles as well', () => {
+  // Same invariant, sibling public export: a caller who cancels the standalone
+  // helper must not be left with an unreadable element either.
+  const el = { textContent: '' };
+  const cancel = decodeText(el, 'STANDALONE', { duration: 2000 });
+  cancel();
+  assert.equal(el.textContent, 'STANDALONE');
 });

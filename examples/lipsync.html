@@ -32,10 +32,10 @@
   body { margin: 0; background: var(--bg); color: var(--text);
     font-family: 'Courier New', monospace; min-height: 100vh; }
   .stage { max-width: 940px; margin: 96px auto 0; padding: 0 24px 72px; }
-  .panel { padding: 1.4rem 1.5rem; background: var(--glass);
-    border: 1px solid var(--border); border-radius: var(--radius-lg); margin: 1.5rem 0; }
-  .readouts { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 0.75rem; margin-top: 1rem; }
+  /* The demo surface and the readout row are .ct-card and .ct-grid from the
+     theme — this page ships in the release that exists so a page stops
+     re-deriving them. Only the mouth, which is this page's own illustration,
+     is drawn here. */
   .sources { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
   /* The mouth is drawn from the same weight the meter shows, so the number and
      the picture can never disagree. */
@@ -141,7 +141,7 @@
             The meter is the weight; so is the mouth.</p>
         </aside>
 
-        <div class="panel">
+        <div class="ct-card">
           <div class="mouth" id="mouth" role="img" aria-label="Mouth opening with the audio envelope">
             <div class="mouth-lip" id="lip-top" style="top: 60px"></div>
             <div class="mouth-void" id="void" style="top: 70px; height: 4px"></div>
@@ -152,7 +152,7 @@
           <div class="ct-meter" id="meter" style="--v:0" role="img" aria-labelledby="meter-cap"
                aria-describedby="weight-value"></div>
 
-          <div class="readouts">
+          <div class="ct-grid" style="--ct-grid-min:150px">
             <div class="ct-card is-raised">
               <div class="ct-label">Raw RMS</div>
               <div class="ct-value" style="--ct-value-size:1.2rem" id="raw">0.000</div>
@@ -204,7 +204,7 @@
           <h2 class="ct-section-t">Drive it yourself</h2>
         </div>
 
-        <pre class="ct-p"><code>import { rms, smoothRms, mouthTarget, approach }
+        <pre class="ct-p" tabindex="0" role="region" aria-label="Code sample: driving the envelope"><code>import { rms, smoothRms, mouthTarget, approach }
   from '@whykusanagi/corrupted-theme/lipsync';
 
 let smoothed = 0, weight = 0;

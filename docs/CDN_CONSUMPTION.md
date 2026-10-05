@@ -189,8 +189,8 @@ npm package during development.
 
 | URL | What it is |
 |---|---|
-| `@latest/dist/manifest.json` | Component map: every export with its import path, CDN URL, constructor option schema, and composition hints |
-| `@latest/dist/llms.txt` | Package conventions and one line per export, sized for a prompt |
+| `@latest/dist/manifest.json` | Component map: every export with its import path, CDN URL, constructor option schema, and composition hints. A **CSS** export also carries `classes`, `modifiers` (its `is-*`/`has-*` states) and `knobs` (custom property → default), so a stylesheet's vocabulary is readable without fetching the sheet (0.3.4+) |
+| `@latest/dist/llms.txt` | Package conventions and one line per export, sized for a prompt. A stylesheet's line summarises its counts and names its knobs; the full class list lives in `manifest.json` |
 
 **Browser-global (IIFE) builds** for no-build sites. SRI hashes live in CHANGELOG.md:
 

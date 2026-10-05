@@ -134,6 +134,23 @@ Markup and data stay with the site; every rule for post content lives here.
 It also declares `--font-mono`, which components had referenced since 0.2.x
 without it ever being defined.
 
+Alongside the stylesheet:
+
+- **`fitTitle()`** joins `./micro-gfx`. A card title now shrinks to fit between
+  the rails and ellipsises only as a last resort, instead of being drawn at a
+  fixed size and running off the canvas past ~41 characters. Fullwidth scripts
+  are measured at their real width, so a Japanese title fits too.
+- **An interrupted decode settles on readable text.** `DecryptReveal`'s
+  `stop()`, `cleanup()` and `destroy()` write the final string before
+  cancelling, so a heading in a backgrounded tab no longer freezes mid-corruption.
+  This is a behaviour change on a public API — see the CHANGELOG.
+- **The agent surface describes the stylesheets.** Every CSS export in
+  `dist/manifest.json` now lists its classes, state modifiers and custom-property
+  knobs; `./editorial` reports 86 classes, 15 modifiers and 48 knobs where it
+  used to report only its path.
+- **A [lipsync example](examples/lipsync.html)** — the audio envelope maths
+  driving a mouth, on a synthetic source by default with an opt-in microphone.
+
 ## What's New in 0.3.3
 
 **0.3.3** adds `corrupted-flares`, and gives the palette rules a guard that

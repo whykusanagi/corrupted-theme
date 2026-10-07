@@ -146,6 +146,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   documented; and the rank ink mixes go through `--corrupted-white` rather than
   the `white` keyword, which no colour guard could see.
 
+### Removed
+
+- **The Celeste widget and its proxy are gone**, along with the portfolio-site
+  container setup they belonged to: `src/lib/celeste-widget.js`,
+  `src/lib/celeste-proxy.js`, `scripts/celeste-proxy-server.js`, `Dockerfile`,
+  `docker-entrypoint.sh` and `examples/.env.example` (which configured nothing
+  else). The `dev:proxy` script and README's widget section went with them —
+  that section pointed at a `celeste_widget_pack/` directory which has not
+  existed for some time. 1,794 lines out.
+
+  None of it was ever in `exports`, so no `import` can break: with an `exports`
+  map declared, Node refuses deep paths that aren't listed. **The one reachable
+  surface was the CDN** — `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/celeste-widget.js`
+  returned 200 and will 404 from 0.3.4 on. Pinned versions are immutable, so
+  `@0.3.3` keeps serving it. Nothing on whykusanagi.xyz or
+  corrupted.whykusanagi.xyz referenced it (checked before removal — the
+  portfolio has its own Celeste implementation and loads only
+  `dist/theme.min.css` from this package).
+
+  Why remove rather than export it: a browser chat widget for one site's AI
+  agent is not part of a corruption-aesthetic theme. It carried credentials
+  handling, a backend proxy and a Docker runtime into a package whose job is
+  CSS and animation primitives.
+
 ### Security
 
 - **The published tarball no longer carries the portfolio site's container setup.**

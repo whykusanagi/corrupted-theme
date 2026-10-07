@@ -93,7 +93,7 @@ This is a **public OSS package**. The repository must never contain:
 
 - API keys, tokens, passwords
 - Private URLs (staging/prod endpoints not meant for public access)
-- `.env` files (only `.env.example` with placeholder values)
+- `.env` files
 - OAuth credentials
 
 If a secret is accidentally committed:
@@ -105,7 +105,7 @@ If a secret is accidentally committed:
 
 ### Current state
 
-- `examples/.env.example` — template file with placeholder values (e.g. `your-api-key-token`). Safe to commit and deploy. Verified 2026-04-19.
+- No `.env` or env-template files remain in the tree. `examples/.env.example` configured the Celeste widget and was removed with it in 0.3.4.
 - No real secrets detected by `grep` sweep across git-tracked files.
 
 ---
@@ -128,7 +128,7 @@ CI runs `npm install` + `npm run build` on every PR. `npm audit` is run locally 
 
 | Version | Change |
 |---|---|
-| 0.1.7 | XSS hardening pass — `celeste-widget.js`, `countdown-widget.js`, `components.js` rebuilt to use `textContent`/`createElement` instead of `innerHTML` |
+| 0.1.7 | XSS hardening pass — `celeste-widget.js` (removed in 0.3.4), `countdown-widget.js`, `components.js` rebuilt to use `textContent`/`createElement` instead of `innerHTML` |
 | 0.1.8 | Added `corrupted-particles.js` and `corrupted-vortex.js` following same `textContent`-only DOM pattern |
 | 0.1.9 | `TypingAnimation` rewrite preserves the XSS hardening (zero `innerHTML`); new `destroy()` method on `CorruptedText` and `TypingAnimation` for clean teardown of DOM + timers |
 | 0.1.9 | Added `.github/workflows/checks.yml` with build + syntax check gating on PRs |

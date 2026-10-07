@@ -5,8 +5,8 @@
  * Both exist because of real escapes: the portfolio site's `Dockerfile` and
  * `docker-entrypoint.sh` shipped to npm in every release up to 0.3.3 (they
  * named another project and ran `scripts/` files the tarball excludes, so a
- * consumer's copy could never even build), and the dev server's traversal
- * guard was a bare startsWith().
+ * consumer's copy could never even build — both files were deleted in 0.3.4),
+ * and the dev server's traversal guard was a bare startsWith().
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';

@@ -141,7 +141,6 @@
     "build": "postcss src/css/theme.css -o dist/theme.min.css",
     "build:umd": "rollup -c rollup.config.js",
     "watch": "postcss --watch src/css/theme.css -o dist/theme.min.css",
-    "dev:proxy": "node scripts/celeste-proxy-server.js",
     "dev:static": "node scripts/static-server.js",
     "start": "npm run dev:static",
     "validate-data": "node scripts/validate-data.js",

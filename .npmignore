@@ -50,3 +50,9 @@ CORRUPTION_BUFFER_IMPLEMENTATIONS.md
 # Tests and dev scripts (not needed by consumers)
 tests/
 scripts/validate-data.js
+
+# Portfolio-site container setup (belongs to whykusanagi.xyz, not this package).
+# Its ENTRYPOINT runs scripts/ files that are excluded above, so a published copy
+# could never build or run — it only leaked another project's layout to consumers.
+Dockerfile
+docker-entrypoint.sh

@@ -28,5 +28,8 @@ EXPOSE 8000 5000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
   CMD node -e "require('http').get('http://localhost:8000', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})" || exit 1
 
+# Drop root for the runtime; the chmod steps above already ran as root.
+USER node
+
 # Run entrypoint script that starts both proxy and HTTP server
 ENTRYPOINT ["./docker-entrypoint.sh"]

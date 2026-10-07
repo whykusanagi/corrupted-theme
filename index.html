@@ -867,12 +867,11 @@
   <script>
     function copyInstall() {
       navigator.clipboard.writeText('npm install @whykusanagi/corrupted-theme');
-      const btn = document.querySelector('.install-code button');
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-check"></i>';
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
-      }, 2000);
+      const icon = document.querySelector('.install-code button i');
+      if (!icon) return;
+      const previous = icon.className;
+      icon.className = 'fas fa-check';
+      setTimeout(() => { icon.className = previous; }, 2000);
     }
   </script>
 </body>

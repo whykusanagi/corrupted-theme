@@ -146,6 +146,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   documented; and the rank ink mixes go through `--corrupted-white` rather than
   the `white` keyword, which no colour guard could see.
 
+### Security
+
+- **The published tarball no longer carries the portfolio site's container setup.**
+  `package.json`'s `files` whitelist named `Dockerfile` and `docker-entrypoint.sh`
+  explicitly, so every release up to 0.3.3 shipped them. Both describe
+  whykusanagi.xyz rather than this package, and their `ENTRYPOINT` runs `scripts/`
+  files the tarball excludes — so a consumer's copy could never build or run. No
+  credentials were exposed (both read them from the environment), but the layout
+  and service names of an unrelated project were.
+- **`tests/data/package-contents.test.js` now asserts what ships**: no `*.sh`
+  anywhere, nothing at the tarball root but documentation and manifests, and no
+  `tests/`, `scripts/` or `docs/planning/`. Nothing previously checked the
+  tarball's contents, which is why the two files rode along for four releases.
+- **`scripts/static-server.js` binds `127.0.0.1` by default** instead of `0.0.0.0`.
+  The dev server has no authentication and serves the repository root, so the old
+  default exposed the working tree — including any untracked `.env` — to everyone
+  on the same network. Set `HOST=0.0.0.0` to opt back in.
+- **The same server's traversal guard is no longer a prefix test.** `startsWith(ROOT_DIR)`
+  without a trailing separator admits a sibling directory that shares the prefix
+  (`<root>-secrets/`). Replaced with a resolved-path check, exported as
+  `isInsideRoot()` and covered by tests.
+- **GitHub Actions hardening.** `checks.yml` and `gitleaks.yml` now set
+  `persist-credentials: false` (neither pushes), and `dependabot-automerge.yml`
+  declares `permissions: {}` at the workflow level with write scopes on the one
+  job that merges.
+- **`Dockerfile` drops to `USER node`** for the runtime rather than running the
+  entrypoint as root.
+- **`index.html`'s copy button swaps an icon class** instead of saving and
+  restoring `innerHTML`.
+
 ## [0.3.3] - 2026-08-25
 
 > One new component and one correction that runs deeper than it looks: the

@@ -95,8 +95,6 @@
     "docs/RENDER_TO_VIDEO.md",
     "docs/STYLE_GUIDE.md",
     "examples",
-    "Dockerfile",
-    "docker-entrypoint.sh",
     "README.md",
     "CHANGELOG.md",
     "SECURITY.md",

@@ -146,6 +146,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   documented; and the rank ink mixes go through `--corrupted-white` rather than
   the `white` keyword, which no colour guard could see.
 
+### Fixed (review follow-ups)
+
+- **A second `decode()` on the same element now supersedes the first.** Settling
+  on `cleanup()` fixed a freeze but opened a worse case: with both animations
+  registered, retiring the loser wrote its stale final text over the winner's.
+- **`fitTitle()` never returns text wider than the rail it was given.** One
+  fullwidth glyph at the 28px floor plus the ellipsis is 44.8px, so a narrow rail
+  had no room for either — and the truncation path forced the glyph through
+  anyway. It now returns the ellipsis alone.
+- **The lipsync demo releases a microphone stream that arrives late.** Choosing
+  "Synthetic speech" while the permission prompt is open used to leave the
+  resolved stream live and silently switch the page back to microphone input.
+  Source changes now carry a generation, and a stale resolution stops its tracks.
+- **That demo also honours a reduced-motion preference turned on after load**,
+  rather than only at first paint.
+- **Copying the install command twice within two seconds** no longer leaves the
+  checkmark stuck: the second call used to capture `fa-check` as the icon to
+  restore.
+- **`describeStylesheet()` no longer reads quoted attribute values as selectors** —
+  `[data-label=".secret"]` was publishing a class called `secret`.
+- **`audit:provenance` checks every published release**, not the newest twenty;
+  the two that needed rewriting were the oldest.
+
 ### Removed
 
 - **The Celeste widget and its proxy are gone**, along with the portfolio-site
@@ -195,8 +218,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `persist-credentials: false` (neither pushes), and `dependabot-automerge.yml`
   declares `permissions: {}` at the workflow level with write scopes on the one
   job that merges.
-- **`Dockerfile` drops to `USER node`** for the runtime rather than running the
-  entrypoint as root.
 - **`index.html`'s copy button swaps an icon class** instead of saving and
   restoring `innerHTML`.
 

@@ -869,9 +869,14 @@
       navigator.clipboard.writeText('npm install @whykusanagi/corrupted-theme');
       const icon = document.querySelector('.install-code button i');
       if (!icon) return;
-      const previous = icon.className;
+      // Remember the original once and reset any pending restore, so copying
+      // twice inside the window cannot leave the checkmark as the "original".
+      icon.dataset.restore = icon.dataset.restore ?? icon.className;
+      clearTimeout(window.__copyInstallTimer);
       icon.className = 'fas fa-check';
-      setTimeout(() => { icon.className = previous; }, 2000);
+      window.__copyInstallTimer = setTimeout(() => {
+        icon.className = icon.dataset.restore;
+      }, 2000);
     }
   </script>
 </body>

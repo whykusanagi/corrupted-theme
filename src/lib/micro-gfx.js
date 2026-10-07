@@ -466,7 +466,11 @@ export function fitTitle(title, available, opts = {}) {
     used += min * em(chars[n]);
     n += 1;
   }
-  const cut = chars.slice(0, Math.max(1, n));
+  // Nothing fits beside the ellipsis — a single fullwidth glyph at the floor
+  // can already be wider than the rail. The ellipsis alone still reads as
+  // "there was more here".
+  if (n === 0) return { size: min, text: '\u2026' };
+  const cut = chars.slice(0, n);
   const atSpace = cut.lastIndexOf(' ');
   const kept = atSpace > cut.length * 0.5 ? cut.slice(0, atSpace) : cut;
   return { size: min, text: `${kept.join('').trimEnd()}\u2026` };

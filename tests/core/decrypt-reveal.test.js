@@ -138,3 +138,29 @@ test('decodeText() cleanup settles as well', () => {
   cancel();
   assert.equal(el.textContent, 'STANDALONE');
 });
+
+test('a second decode on the same element supersedes the first', () => {
+  // Settling on cleanup fixed a freeze but opened this: with both animations
+  // registered, retiring the loser wrote its stale final text over the winner's.
+  const m = new DecryptReveal();
+  const el = { textContent: '' };
+  const first = m.decode(el, 'OLD', { duration: 2000 });
+  const second = m.decode(el, 'NEW', { duration: 2000 });
+
+  m.cleanup(first);
+  assert.notEqual(el.textContent, 'OLD', 'retiring the superseded decode wrote its text');
+
+  m.cleanup(second);
+  assert.equal(el.textContent, 'NEW', 'the live decode must still settle');
+  m.destroy();
+});
+
+test('stop() settles the live decode, not a superseded one', () => {
+  const m = new DecryptReveal();
+  const el = { textContent: '' };
+  m.decode(el, 'OLD', { duration: 2000 });
+  m.decode(el, 'NEW', { duration: 2000 });
+  m.stop();
+  assert.equal(el.textContent, 'NEW');
+  m.destroy();
+});

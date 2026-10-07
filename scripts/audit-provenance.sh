@@ -50,7 +50,8 @@ if ! command -v gh >/dev/null 2>&1; then
   echo "gh not installed — releases NOT checked"
   status=1
 else
-  tags=$(gh release list --limit 20 --json tagName --jq '.[].tagName' 2>&1)
+  # Every release, not a window: the two that needed rewriting were the oldest.
+  tags=$(gh api --paginate 'repos/{owner}/{repo}/releases?per_page=100' --jq '.[].tag_name' 2>&1)
   rc=$?
   if [ "$rc" -ne 0 ]; then
     echo "gh release list failed (rc=$rc) — releases NOT checked"

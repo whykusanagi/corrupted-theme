@@ -161,6 +161,15 @@ export class DecryptReveal {
    */
   decode(element, content, opts = {}) {
     if (this._destroyed) return -1;
+    // A second decode on the same element supersedes the first. Both write
+    // textContent, so leaving the loser registered means a later stop() or
+    // cleanup() settles it and overwrites the winner's text with stale content.
+    for (const [previousId, previous] of this._animations) {
+      if (previous.element === element) {
+        previous.handle.cleanup();          // cancel without settling
+        this._animations.delete(previousId);
+      }
+    }
     const id = this._nextId++;
     const mergedOpts = { charset: this._defaultCharset, ...opts };
     // Retire the record when the animation actually writes its final text. A

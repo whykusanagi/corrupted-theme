@@ -360,6 +360,10 @@ export function parseModule(source) {
  * hiding `--ct-cols` entirely. Nested refs need no recursion here: the scan
  * resumes inside the fallback text and matches them on later iterations.
  *
+ * ponytail: paren-depth only, not quote-aware — `var(--x, "a)b")` would publish
+ * `"a` as the default. No stylesheet here puts a paren inside a quoted
+ * fallback; track quote state if one ever does.
+ *
  * @param {string} code
  * @returns {Generator<[string, string|null]>}
  */
@@ -400,7 +404,10 @@ export function describeStylesheet(source) {
   const selectors = code
     .replace(/\{[^{}]*\}/g, '{}')
     .replace(/@(?:import|charset|namespace)[^;]*;/g, '')
-    .replace(/url\([^)]*\)/g, '');
+    .replace(/url\([^)]*\)/g, '')
+    // A quoted attribute value is data, not a selector: [data-label=".secret"]
+    // defines no class called `secret`.
+    .replace(/"[^"]*"|'[^']*'/g, '""');
   const names = [...new Set([...selectors.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]))].sort();
 
   const knobs = {};

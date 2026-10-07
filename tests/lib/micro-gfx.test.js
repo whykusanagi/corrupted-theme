@@ -271,3 +271,27 @@ test('fitTitle always returns something that fits, and honours an odd floor', ()
   assert.equal(odd.size, 29);
   assert.equal(odd.text, 'a'.repeat(30));
 });
+
+test('fitTitle never returns text wider than the rail', () => {
+  // A single fullwidth glyph at the 28px floor is 28px, and the ellipsis beside
+  // it another 16.8px — wider than a 40px rail. The truncation path used to
+  // force the glyph through anyway.
+  const narrow = fitTitle('ニケ', 40);
+  assert.ok(
+    measure(narrow.text, narrow.size) <= 40,
+    `"${narrow.text}" measures ${measure(narrow.text, narrow.size)} in a 40px rail`
+  );
+
+  // The invariant, swept: nothing it returns may exceed what it was given.
+  const titles = ['', 'X', 'Short title', 'ニケ', 'ニケ シーズン総括：全キャラクター評価と編成ガイド 2026年版',
+    'A very long latin headline that will not fit on one line at any size', '🎮🎯🎪 emoji lead'];
+  for (const title of titles) {
+    for (const available of [40, 80, 200, 600, 1100]) {
+      const fit = fitTitle(title, available);
+      assert.ok(
+        measure(fit.text, fit.size) <= available,
+        `fitTitle(${JSON.stringify(title)}, ${available}) → "${fit.text}" at ${fit.size}px`
+      );
+    }
+  }
+});

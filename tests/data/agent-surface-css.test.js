@@ -6,7 +6,7 @@
 // exists for agents to read. Both blind agents in the 0.3.4 docs validation
 // reported it independently: given only llms.txt they could not answer a single
 // question about the vocabulary.
-import { strict as assert } from 'node:assert';
+import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { readFileSync } from 'node:fs';
 import path from 'node:path';
@@ -30,13 +30,14 @@ test('a stylesheet entry describes what it defines and what it reads', () => {
   assert.equal(editorial.knobs['--ct-measure'], '47rem');
 });
 
-test('every class the manifest claims for a stylesheet is defined in it', () => {
-  // The surface must not drift from the file it describes.
+test('a stylesheet entry matches what the file actually defines', () => {
+  // Both directions, and modifiers too. A one-way `claims .x` check passed when
+  // a class vanished from a selector but survived in a comment, and it never
+  // read e.modifiers at all.
   for (const e of manifest().exports.filter((x) => x.type === 'css')) {
-    const src = read(e.path);
-    for (const cls of e.classes) {
-      assert.ok(new RegExp(`\\.${cls}\\b`).test(src), `${e.export} claims .${cls}`);
-    }
+    const fresh = describeStylesheet(read(e.path));
+    assert.deepEqual(e.classes, fresh.classes, `${e.export} classes are stale`);
+    assert.deepEqual(e.modifiers, fresh.modifiers, `${e.export} modifiers are stale`);
   }
 });
 

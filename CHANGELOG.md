@@ -226,6 +226,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   job that merges.
 - **`index.html`'s copy button swaps an icon class** instead of saving and
   restoring `innerHTML`.
+- **`package-lock.json` is now committed, and CI installs with `npm ci`.** It was
+  gitignored, so every CI run re-resolved the eight dependency ranges from
+  scratch — a transitive release moved the build's Node floor once with nothing
+  in this repo changing. It also left the security scanner with no dependency
+  tree to read at all: it could see eight caret ranges where the resolved graph
+  has 203 packages, so transitive vulnerabilities were invisible repository-wide.
+  The lockfile is still absent from the tarball — npm never publishes one, and it
+  would not affect consumers in any case, since this package has no runtime
+  dependencies. Its version is asserted against `package.json` by
+  `tests/data/version-consistency.test.js`, in both places lockfileVersion 3
+  records it.
+- **Two high-severity advisories were waiting behind that blind spot**, found by
+  `npm audit` within a minute of the lockfile existing: `fast-uri` 3.1.2 (eight
+  advisories — host confusion, SSRF, authority injection) via `ajv`, and
+  `brace-expansion` 5.0.7 via `eslint` → `minimatch`. Both are transitive
+  devDependencies, so neither ever reached a consumer, and both took a patch
+  bump inside the existing ranges — `package.json` is unchanged. `npm audit` now
+  reports zero.
 
 ## [0.3.3] - 2026-08-25
 

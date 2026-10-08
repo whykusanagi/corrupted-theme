@@ -24,15 +24,16 @@ jobs:
         with:
           # 22, not 20. The build chain reaches Set.prototype.difference via a
           # transitive cssnano/postcss-merge-longhand dependency, which is Node
-          # 22+. package-lock.json is gitignored and CI runs `npm install`, so
-          # every run resolves dependencies fresh — a transitive release can and
-          # did move the floor without anything in this repo changing. The
-          # `engines` field stays ">=18" because it constrains CONSUMERS, who
-          # never run this build.
+          # 22+. The `engines` field stays ">=18" because it constrains
+          # CONSUMERS, who never run this build.
           node-version: '22'
 
       - name: Install dependencies
-        run: npm install
+        # `ci`, not `install`: it installs the committed lockfile exactly and
+        # fails if the lockfile and package.json disagree. Before the lockfile
+        # was committed every run re-resolved the ranges, and a transitive
+        # release moved the Node floor with nothing in this repo changing.
+        run: npm ci
 
       - name: Build CSS bundle
         run: npm run build

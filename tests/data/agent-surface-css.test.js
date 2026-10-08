@@ -119,3 +119,19 @@ test('an @import target is not a class', () => {
     }
   }
 });
+
+test('a var() fallback survives nested parens and quoted strings', () => {
+  const { knobs } = describeStylesheet(`
+    .a { content: var(--ct-label, "yes)"); }
+    .b { grid-template-columns: repeat(var(--ct-cols, 2), minmax(0, 1fr)); }
+    .c { color: var(--ct-tone, var(--accent)); }
+  `);
+  assert.equal(knobs['--ct-label'], '"yes)"');   // the paren is inside a string
+  assert.equal(knobs['--ct-cols'], '2');         // nested var() is its own knob
+  assert.equal(knobs['--ct-tone'], 'var(--accent)');
+});
+
+test('a quoted attribute value is not a class', () => {
+  const { classes } = describeStylesheet('.ct-card[data-label=".secret"] { color: red }');
+  assert.deepEqual(classes, ['ct-card']);
+});

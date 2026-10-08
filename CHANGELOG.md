@@ -165,7 +165,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   checkmark stuck: the second call used to capture `fa-check` as the icon to
   restore.
 - **`describeStylesheet()` no longer reads quoted attribute values as selectors** —
-  `[data-label=".secret"]` was publishing a class called `secret`.
+  `[data-label=".secret"]` was publishing a class called `secret` — and a paren
+  inside a quoted fallback no longer truncates it, so `var(--x, "a)b")` keeps
+  its string.
+- **The lipsync demo releases a microphone that resolves after `pagehide`.**
+  Invalidating pending requests on a source change left the page-exit path out:
+  a stream arriving after the visitor left was installed on a hidden or cached
+  document. Every release now invalidates what is in flight.
 - **`audit:provenance` checks every published release**, not the newest twenty;
   the two that needed rewriting were the oldest.
 

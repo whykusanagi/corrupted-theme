@@ -267,6 +267,10 @@ function frame(buffer) {           // Float32Array from an AnalyserNode
     let sourceGeneration = 0;
 
     function releaseMicrophone() {
+      // Bumping here invalidates any getUserMedia() still in flight, so a
+      // stream resolving after a source change *or after pagehide* is stopped
+      // rather than installed on a document that has already moved on.
+      sourceGeneration += 1;
       micStream?.getTracks().forEach((t) => t.stop());
       micCtx?.close();
       micStream = null;
@@ -274,7 +278,6 @@ function frame(buffer) {           // Float32Array from an AnalyserNode
     }
 
     function useSynthetic() {
-      sourceGeneration += 1;
       releaseMicrophone();
       readFrame = syntheticFrame;
       buffer = new Float32Array(1024);
@@ -283,8 +286,8 @@ function frame(buffer) {           // Float32Array from an AnalyserNode
 
     async function useMicrophone() {
       const note = el('source-note');
-      const generation = (sourceGeneration += 1);
       releaseMicrophone();           // clicking twice must not stack streams
+      const generation = sourceGeneration;
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         if (generation !== sourceGeneration) {

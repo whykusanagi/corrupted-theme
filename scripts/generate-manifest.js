@@ -360,9 +360,7 @@ export function parseModule(source) {
  * hiding `--ct-cols` entirely. Nested refs need no recursion here: the scan
  * resumes inside the fallback text and matches them on later iterations.
  *
- * ponytail: paren-depth only, not quote-aware — `var(--x, "a)b")` would publish
- * `"a` as the default. No stylesheet here puts a paren inside a quoted
- * fallback; track quote state if one ever does.
+ * Parens inside a quoted CSS string do not close the fallback.
  *
  * @param {string} code
  * @returns {Generator<[string, string|null]>}
@@ -374,9 +372,16 @@ function* varRefs(code) {
     let i = m.index + m[0].length;
     if (code[i] !== ',') { yield [m[1], null]; continue; }
     const start = ++i;
+    let quote = null;
     for (let depth = 1; i < code.length && depth > 0; i += 1) {
-      if (code[i] === '(') depth += 1;
-      else if (code[i] === ')') depth -= 1;
+      const ch = code[i];
+      if (quote) {                                   // inside a CSS string
+        if (ch === quote && code[i - 1] !== '\\') quote = null;
+        continue;
+      }
+      if (ch === '"' || ch === "'") quote = ch;
+      else if (ch === '(') depth += 1;
+      else if (ch === ')') depth -= 1;
     }
     yield [m[1], code.slice(start, i - 1).trim() || null];
   }

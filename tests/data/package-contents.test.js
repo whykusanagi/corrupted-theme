@@ -12,6 +12,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
+import { readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { isInsideRoot } from '../../scripts/static-server.js';
 
@@ -48,4 +49,16 @@ test('the tarball carries package files only — no container, shell or dev stra
     const leaked = files.filter((f) => f.startsWith(dir));
     assert.deepEqual(leaked, [], `${dir} must not ship: ${leaked.join(', ')}`);
   }
+});
+
+test('every generated data module still has its canonical JSON source', () => {
+  // `npm run data:generate` writes a .data.js per src/data/*.json and never
+  // removes anything. Deleting a canonical .json therefore leaves its module
+  // behind, still shipping the data it inlined — and the CI staleness check
+  // stays clean, because regeneration simply doesn't touch the orphan.
+  const dir = path.join(ROOT, 'src/data');
+  const orphans = readdirSync(dir)
+    .filter((f) => f.endsWith('.data.js'))
+    .filter((f) => !existsSync(path.join(dir, `${f.slice(0, -'.data.js'.length)}.json`)));
+  assert.deepEqual(orphans, [], `generated module(s) with no source: ${orphans.join(', ')}`);
 });

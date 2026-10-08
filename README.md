@@ -107,7 +107,7 @@ Both domains serve the same content. Use the domain that matches your site's roo
 <link rel="stylesheet"
       href="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/src/lib/corrupted-text.js"></script>
 ```
 
 **Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):

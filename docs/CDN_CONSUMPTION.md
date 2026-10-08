@@ -26,7 +26,7 @@ third-party warnings.
 <link rel="stylesheet"
       href="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/corrupted-text.min.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/src/lib/corrupted-text.js"></script>
 ```
 
 **Pro:** Breaking changes never auto-propagate. **Con:** Manual version
@@ -38,7 +38,7 @@ bump in each site.
 <link rel="stylesheet"
       href="https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/corrupted-text.min.js"></script>
+        src="https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/corrupted-text.js"></script>
 ```
 
 **Pro:** Publish once, every consumer site updates. **Con:** Breaking
@@ -52,7 +52,7 @@ For production hardening, add SRI hashes:
 
 ```html
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/corrupted-text.min.js"
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.4/dist/corrupted-text.global.js"
         integrity="sha384-<paste-hash-here>"
         crossorigin="anonymous"></script>
 ```

@@ -47,6 +47,16 @@ jobs:
       - name: Test suite
         run: npm test
 
+      # `pretest` rewrites the tracked generated files, so the step above proves
+      # the regenerated content is good — not that what was committed matches it.
+      # Without this, a stale commit is silently repaired in CI and merged.
+      - name: Generated files are committed up to date
+        run: |
+          if ! git diff --exit-code -- src/data docs/COMPONENTS_REFERENCE.md; then
+            echo "::error::generated files are stale — run 'npm run data:generate && npm run manifest:generate' and commit the result"
+            exit 1
+          fi
+
       - name: JS syntax check (all src/)
         run: |
           set -e

@@ -14,7 +14,8 @@ const __dirname = path.dirname(__filename);
 const ROOT_DIR = path.join(__dirname, '..');
 
 const PORT = process.env.STATIC_PORT || 8000;
-const HOST = process.env.HOST || '0.0.0.0';
+// Loopback by default: 0.0.0.0 served the whole repo to anyone on the same network.
+const HOST = process.env.HOST || '127.0.0.1';
 
 // MIME types
 const MIME_TYPES = {
@@ -40,11 +41,23 @@ function getMimeType(filePath) {
   return MIME_TYPES[ext] || 'application/octet-stream';
 }
 
+/**
+ * True when `candidate` is inside `root`.
+ *
+ * A bare startsWith() is not enough: without the trailing separator,
+ * `<root>-secrets/x` passes the prefix test while living outside the root.
+ */
+export function isInsideRoot(candidate, root) {
+  const resolved = path.resolve(candidate);
+  const base = path.resolve(root);
+  return resolved === base || resolved.startsWith(base + path.sep);
+}
+
 function serveFile(filePath, res) {
   const fullPath = path.join(ROOT_DIR, filePath);
-  
+
   // Security: prevent directory traversal
-  if (!fullPath.startsWith(ROOT_DIR)) {
+  if (!isInsideRoot(fullPath, ROOT_DIR)) {
     res.writeHead(403);
     res.end('Forbidden');
     return;
@@ -109,7 +122,10 @@ const server = http.createServer((req, res) => {
   serveFile(filePath, res);
 });
 
-server.listen(PORT, HOST, () => {
-  console.log(`📁 Static file server running on http://${HOST}:${PORT}`);
-});
+// Only listen when run directly, so the helpers above stay importable by tests.
+if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
+  server.listen(PORT, HOST, () => {
+    console.log(`📁 Static file server running on http://${HOST}:${PORT}`);
+  });
+}
 

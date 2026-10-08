@@ -90,7 +90,7 @@ const ALLOWED = {
   // Public API defaults. Changing an exported default colour is a breaking
   // change under CLAUDE.md §12, so these are frozen until a major bump.
   '#ff8c00': 'AnimationBlocks/_blocks-advanced default option colour (API surface)',
-  '#ff69b4': '_blocks-anime heart default + celeste-widget gradient (API surface)',
+  '#ff69b4': '_blocks-anime heart default (API surface)',
 
   // Surfaced when this sweep learned to read rgb()/rgba(). Everything else in
   // that batch was remapped onto the palette; these two are deliberate.

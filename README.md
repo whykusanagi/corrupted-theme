@@ -24,9 +24,8 @@ A production-ready glassmorphic design system for cinematic, cyberpunk-inspired 
 17. [Customization & Tokens](#customization--tokens)
 18. [Coding Standards](#coding-standards)
 19. [Development Workflow](#development-workflow)
-19. [Testing & QA Expectations](#testing--qa-expectations)
-20. [Support](#support)
-21. [Celeste Widget Integration](#celeste-widget-integration-optional)
+20. [Testing & QA Expectations](#testing--qa-expectations)
+21. [Support](#support)
 22. [License](#license)
 
 <div align="center" style="margin: 2rem 0;">
@@ -133,6 +132,23 @@ Markup and data stay with the site; every rule for post content lives here.
 
 It also declares `--font-mono`, which components had referenced since 0.2.x
 without it ever being defined.
+
+Alongside the stylesheet:
+
+- **`fitTitle()`** joins `./micro-gfx`. A card title now shrinks to fit between
+  the rails and ellipsises only as a last resort, instead of being drawn at a
+  fixed size and running off the canvas past ~41 characters. Fullwidth scripts
+  are measured at their real width, so a Japanese title fits too.
+- **An interrupted decode settles on readable text.** `DecryptReveal`'s
+  `stop()`, `cleanup()` and `destroy()` write the final string before
+  cancelling, so a heading in a backgrounded tab no longer freezes mid-corruption.
+  This is a behaviour change on a public API — see the CHANGELOG.
+- **The agent surface describes the stylesheets.** Every CSS export in
+  `dist/manifest.json` now lists its classes, state modifiers and custom-property
+  knobs; `./editorial` reports 86 classes, 15 modifiers and 48 knobs where it
+  used to report only its path.
+- **A [lipsync example](examples/lipsync.html)** — the audio envelope maths
+  driving a mouth, on a synthetic source by default with an opt-in microphone.
 
 ## What's New in 0.3.3
 
@@ -241,8 +257,6 @@ undefined. If you see that pair of errors, switch the tag to
 │   └── lib/
 │       ├── animation-blocks.js        # 10 block classes: TitleDecoder, ProgressBar … (0.2.0)
 │       ├── carousel.js                # carousel/slideshow with autoplay + swipe
-│       ├── celeste-proxy.js           # Celeste CLI proxy integration
-│       ├── celeste-widget.js          # Celeste chat widget
 │       ├── character-corruption.js    # auto-corruption for individual characters
 │       ├── clock-widget.js            # multi-timezone cycling clock (0.2.0)
 │       ├── components.js              # modal, dropdown, tabs, collapse, accordion, toast
@@ -292,7 +306,6 @@ Build and test:
 
 Development servers:
 - `npm run dev:static` – serves the repo root incl. `/examples` (port 8000); `npm start` is an alias
-- `npm run dev:proxy` – Celeste proxy for the widget demo (port 5000)
 
 Generated artifacts (never hand-edit their outputs):
 - `npm run data:generate` – inlines `src/data/*.json` into importable `src/data/*.data.js` modules
@@ -1550,20 +1563,13 @@ npm run build:umd        # compile dist/*.global.js browser-global builds
 npm run watch            # dev rebuild loop
 npm test                 # node test suite (tests/**/*.test.js)
 npm run dev:static       # serve repo root incl. /examples on :8000 (alias: npm start)
-npm run dev:proxy        # optional Celeste proxy on :5000
 npm run data:generate    # inline src/data/*.json into src/data/*.data.js modules
 npm run manifest:generate # emit dist/manifest.json + dist/llms.txt, refresh COMPONENTS_REFERENCE
 npm run nav:sync         # stamp the canonical navbar into every site page (never hand-edit navs)
 npm run validate-data    # AJV schema validation for src/data/*.json
 npm run generate-sri     # SRI hashes for CDN consumers (goes into CHANGELOG.md)
 npm run publish-cdn      # upload dist/ + src tree + agent surface to R2, bump @latest pointer
-
-# Docker showcase
-docker build -t corrupted-theme:latest .
-docker run -d -p 8000:8000 --name corrupted-theme corrupted-theme:latest
 ```
-- The Docker container automatically serves `examples/showcase-complete.html`.
-- Provide `CELESTE_*` env vars to exercise the widget proxy inside the same container.
 
 ## Testing & QA Expectations
 - **Visual regression**: validate against `examples/showcase-complete.html` in latest Chrome, Firefox, Safari, and a mobile viewport.
@@ -1574,53 +1580,6 @@ docker run -d -p 8000:8000 --name corrupted-theme corrupted-theme:latest
 ## Support
 - GitHub Issues: [corrupted-theme/issues](https://github.com/whykusanagi/corrupted-theme/issues)
 - Email: contact@whykusanagi.xyz
-
-## Celeste Widget Integration (Secure Proxy)
-The theme ships with an optional Celeste AI widget that **never exposes credentials to the browser**. It relies on the hardened proxy bundle located in `celeste_widget_pack/`.
-
-### Environment Variables (required)
-| Variable | Purpose |
-|----------|---------|
-| `CELESTE_AGENT_KEY` | Bearer token for the Celeste API |
-| `CELESTE_AGENT_ID` | Agent identifier (UUID) |
-| `CELESTE_AGENT_BASE_URL` | API endpoint root |
-
-> Store these via your platform’s secret manager (Vault, Doppler, AWS Secrets Manager, etc.). Never commit them or inject them into client-side code.
-
-### Docker Workflow
-```bash
-docker build -t corrupted-theme:latest .
-
-docker run -d \
-  -p 8000:8000 \            # static showcase
-  -p 5001:5000 \            # exposes proxy externally
-  -e CELESTE_AGENT_KEY="$CELESTE_AGENT_KEY" \
-  -e CELESTE_AGENT_ID="$CELESTE_AGENT_ID" \
-  -e CELESTE_AGENT_BASE_URL="https://api.your-domain.com" \
-  corrupted-theme:latest
-
-# Visit http://localhost:8000 (UI) and http://localhost:5001/api/health (proxy)
-```
-
-### Local Development (split processes)
-```bash
-# Terminal 1 – proxy server (port defaults to 5000 inside container)
-CELESTE_AGENT_KEY="..." \
-CELESTE_AGENT_ID="..." \
-CELESTE_AGENT_BASE_URL="..." \
-PROXY_PORT=5000 node scripts/celeste-proxy-server.js
-
-# Terminal 2 – static showcase
-STATIC_PORT=8000 node scripts/static-server.js
-```
-
-### Security Guarantees
-- Browser never receives `CELESTE_*` variables (verified via DevTools/HTML scans)
-- All outbound API calls originate from the proxy (`/api/chat`, `/api/health`)
-- Health endpoint surfaces status without leaking secrets
-- Ready for Cloudflare Worker / Pages deployment (see secure pack doc)
-
-For the full hardening guide—including architecture diagrams, Cloudflare steps, and troubleshooting—see `celeste_widget_pack/docs/CELESTE_WIDGET_SECURE_SETUP.md`.
 
 ## License
 MIT © whykusanagi

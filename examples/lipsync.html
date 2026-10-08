@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lipsync — corrupted-theme</title>
+<!--
+  lipsync: four pure functions that turn an audio buffer into a mouth weight.
+
+      rms(buffer)                  → amplitude of this frame, roughly 0..1
+      smoothRms(prev, raw)         → exponential smoothing, so one loud frame
+                                     does not snap the mouth open and shut
+      mouthTarget(smoothed)        → normalised against RMS_CEILING (0.06),
+                                     the amplitude treated as fully open
+      approach(current, target)    → per-frame easing toward that target
+
+  None of them touch the DOM or the Web Audio API, which is the point: the
+  same chain drives a mouth, a meter, a corruption intensity or a shader
+  uniform, and it is testable without a browser.
+
+  This page starts on a SYNTHETIC source so it animates before anything is
+  asked of you. The microphone is opt-in, and a denial is shown in the page
+  rather than left in the console — a demo that dies silently on a declined
+  permission teaches the wrong thing about the API.
+
+  Privacy: nothing here records, uploads or stores audio. The microphone
+  stream is read frame by frame and dropped.
+-->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+<link rel="stylesheet" href="../src/css/theme.css">
+<style>
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font-family: 'Courier New', monospace; min-height: 100vh; }
+  .stage { max-width: 940px; margin: 96px auto 0; padding: 0 24px 72px; }
+  /* The demo surface and the readout row are .ct-card and .ct-grid from the
+     theme — this page ships in the release that exists so a page stops
+     re-deriving them. Only the mouth, which is this page's own illustration,
+     is drawn here. */
+  .sources { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 1rem; }
+  /* The mouth is drawn from the same weight the meter shows, so the number and
+     the picture can never disagree. */
+  .mouth { width: 180px; height: 180px; margin: 0 auto; position: relative; }
+  .mouth-lip { position: absolute; left: 10%; width: 80%; height: 10px; border-radius: 6px;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light)); }
+  .mouth-void { position: absolute; left: 10%; width: 80%; border-radius: 10px;
+    background: var(--corrupted-black); border: 1px solid var(--border); }
+</style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="navbar-content">
+      <a href="../index.html" class="navbar-logo">
+        <i class="fas fa-palette"></i> Corrupted Theme
+      </a>
+      <ul class="navbar-links">
+        <li><a href="../index.html"><i class="fas fa-home"></i> Home</a></li>
+        <li class="has-submenu">
+          <a href="showcase-complete.html">
+            <i class="fas fa-cube"></i> Components
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="showcase-complete.html"><i class="fas fa-layer-group"></i> All Components</a>
+            <a href="showcase-complete.html#glass"><i class="fas fa-square"></i> Glass</a>
+            <a href="button.html"><i class="fas fa-hand-pointer"></i> Buttons</a>
+            <a href="card.html"><i class="fas fa-clone"></i> Cards</a>
+            <a href="form.html"><i class="fas fa-edit"></i> Forms</a>
+            <a href="layout.html"><i class="fas fa-columns"></i> Layouts</a>
+            <a href="editorial.html"><i class="fas fa-newspaper"></i> Editorial & Data</a>
+            <a href="components/showcase.html"><i class="fas fa-th-large"></i> Widgets</a>
+            <a href="showcase-complete.html#api-docs"><i class="fas fa-code"></i> API Docs</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="extensions-showcase.html">
+            <i class="fas fa-puzzle-piece"></i> Extensions
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="extensions-showcase.html"><i class="fas fa-list"></i> All Extensions</a>
+            <a href="extensions-showcase.html#gallery"><i class="fas fa-images"></i> Gallery</a>
+            <a href="extensions-showcase.html#lightbox"><i class="fas fa-expand"></i> Lightbox</a>
+            <a href="extensions-showcase.html#nsfw"><i class="fas fa-eye-slash"></i> NSFW Blur</a>
+            <a href="extensions-showcase.html#social"><i class="fas fa-share-alt"></i> Social Links</a>
+            <a href="extensions-showcase.html#countdown"><i class="fas fa-hourglass-half"></i> Countdown</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="index.html">
+            <i class="fas fa-wand-magic-sparkles"></i> Effects
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="corrupted-flares.html"><i class="fas fa-wand-magic-sparkles"></i> Corrupted Flares</a>
+            <a href="corrupted-flares-in-situ.html"><i class="fas fa-image"></i> Flares In Situ</a>
+            <a href="micro-gfx.html"><i class="fas fa-vector-square"></i> MicroGfx Posters</a>
+            <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
+            <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
+            <a href="corrupted-mandala.html"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
+            <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li class="has-submenu">
+          <a href="stream-overlays.html" class="active">
+            <i class="fas fa-broadcast-tower"></i> Stream & Video
+            <i class="fas fa-chevron-down" style="font-size: 0.7em; margin-left: 4px;"></i>
+          </a>
+          <div class="submenu">
+            <a href="stream-overlays.html"><i class="fas fa-broadcast-tower"></i> Stream Overlays</a>
+            <a href="canvas-seek.html"><i class="fas fa-clock-rotate-left"></i> Deterministic Frames</a>
+            <a href="transitions.html"><i class="fas fa-random"></i> Canvas Transitions</a>
+            <a href="animations.html"><i class="fas fa-th"></i> Animation Gallery</a>
+            <a href="animation-blocks/index.html"><i class="fas fa-film"></i> Animation Blocks</a>
+            <a href="corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
+            <a href="advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
+            <a href="audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="lipsync.html" class="active"><i class="fas fa-microphone-lines"></i> Lipsync</a>
+            <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
+          </div>
+        </li>
+        <li><a href="https://github.com/whykusanagi/corrupted-theme/blob/main/docs/COMPONENTS_REFERENCE.md"><i class="fas fa-book"></i> Docs</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="stage">
+    <article class="ct-article">
+      <header class="ct-masthead">
+        <div class="ct-kicker"><span class="ct-kicker-dot" aria-hidden="true"></span> Core utility</div>
+        <h1 class="ct-title">Lipsync</h1>
+        <p class="ct-dek">An amplitude envelope, four pure functions wide.</p>
+      </header>
+
+      <div class="ct-body">
+        <aside class="ct-callout ct-info">
+          <div class="ct-callout-title"><span class="ct-slash" aria-hidden="true">//</span> What you are watching</div>
+          <p class="ct-p">Every frame reads a buffer of samples, takes its RMS, smooths that against
+            the previous frame, normalises it to a target and eases the current weight toward it.
+            The meter is the weight; so is the mouth.</p>
+        </aside>
+
+        <div class="ct-card">
+          <div class="mouth" id="mouth" role="img" aria-label="Mouth opening with the audio envelope">
+            <div class="mouth-lip" id="lip-top" style="top: 60px"></div>
+            <div class="mouth-void" id="void" style="top: 70px; height: 4px"></div>
+            <div class="mouth-lip" id="lip-bottom" style="top: 74px"></div>
+          </div>
+
+          <div class="ct-label" id="meter-cap">Mouth weight</div>
+          <div class="ct-meter" id="meter" style="--v:0" role="img" aria-labelledby="meter-cap"
+               aria-describedby="weight-value"></div>
+
+          <div class="ct-grid" style="--ct-grid-min:150px">
+            <div class="ct-card is-raised">
+              <div class="ct-label">Raw RMS</div>
+              <div class="ct-value" style="--ct-value-size:1.2rem" id="raw">0.000</div>
+            </div>
+            <div class="ct-card is-raised">
+              <div class="ct-label">Smoothed</div>
+              <div class="ct-value" style="--ct-value-size:1.2rem" id="smoothed">0.000</div>
+            </div>
+            <div class="ct-card is-raised">
+              <div class="ct-label">Target</div>
+              <div class="ct-value" style="--ct-value-size:1.2rem" id="target">0.000</div>
+            </div>
+            <div class="ct-card is-raised">
+              <div class="ct-label">Weight</div>
+              <div class="ct-value" style="--ct-value-size:1.2rem" id="weight-value">0.000</div>
+            </div>
+          </div>
+
+          <div class="sources">
+            <button class="btn btn-primary" id="use-synthetic" type="button">
+              <i class="fas fa-wave-square"></i> Synthetic speech
+            </button>
+            <button class="btn" id="use-mic" type="button">
+              <i class="fas fa-microphone"></i> Use my microphone
+            </button>
+          </div>
+          <p class="ct-detail" id="source-note">Source: synthetic. Nothing is recorded.</p>
+        </div>
+
+        <div class="ct-section-h">
+          <span class="ct-section-n" aria-hidden="true">01</span>
+          <h2 class="ct-section-t">The chain, in the order it runs</h2>
+        </div>
+
+        <ol class="ct-list is-numbered">
+          <li><strong>rms(buffer)</strong> — the frame's amplitude. Feed it time-domain samples
+            (<code>getFloatTimeDomainData</code>); frequency data reads far too hot.</li>
+          <li><strong>smoothRms(previous, raw)</strong> — speech is spiky, and a mouth driven by raw
+            RMS chatters. <code>SMOOTH_FACTOR</code> (0.5) is how much of the previous frame survives.</li>
+          <li><strong>mouthTarget(smoothed)</strong> — divides by <code>RMS_CEILING</code> (0.06), the
+            amplitude treated as fully open, and clamps. That constant is what makes a quiet speaker
+            and a loud one reach the same maximum.</li>
+          <li><strong>approach(current, target)</strong> — moves a fraction (<code>INTERP</code>, 0.35)
+            of the remaining distance each frame, so the mouth has weight instead of snapping.</li>
+        </ol>
+
+        <div class="ct-section-h">
+          <span class="ct-section-n" aria-hidden="true">02</span>
+          <h2 class="ct-section-t">Drive it yourself</h2>
+        </div>
+
+        <pre class="ct-p" tabindex="0" role="region" aria-label="Code sample: driving the envelope"><code>import { rms, smoothRms, mouthTarget, approach }
+  from '@whykusanagi/corrupted-theme/lipsync';
+
+let smoothed = 0, weight = 0;
+function frame(buffer) {           // Float32Array from an AnalyserNode
+  smoothed = smoothRms(smoothed, rms(buffer));
+  weight   = approach(weight, mouthTarget(smoothed));
+  // weight is 0..1 — drive a mouth, a meter, a corruption intensity
+}</code></pre>
+      </div>
+    </article>
+  </main>
+
+  <footer>
+    Corrupted Theme v0.3.4 • <a href="index.html">All examples</a>
+  </footer>
+
+  <script type="module">
+    import { LIPSYNC, rms, smoothRms, mouthTarget, approach }
+      from '../src/core/lipsync.js';
+
+    const el = (id) => document.getElementById(id);
+    const fmt = (n) => n.toFixed(3);
+
+    let smoothed = 0;
+    let weight = 0;
+    let readFrame = syntheticFrame;   // the default source, so the page moves on load
+    let analyser = null;
+    let buffer = new Float32Array(1024);
+
+    /* ── Synthetic source ───────────────────────────────────────────────────
+       A syllable envelope over a carrier: loud bursts with gaps, which is what
+       makes the smoothing visible. No AudioContext, so it runs before any
+       permission prompt and wherever autoplay is blocked. */
+    let t = 0;
+    function syntheticFrame() {
+      const out = buffer;
+      const syllable = Math.max(0, Math.sin(t * 2.1)) ** 2;      // open/closed gate
+      const breath = 0.35 + 0.65 * Math.abs(Math.sin(t * 0.37)); // phrase loudness
+      for (let i = 0; i < out.length; i++) {
+        const phase = t + i / 44100;
+        out[i] = syllable * breath * 0.09
+          * (Math.sin(phase * 2 * Math.PI * 140) + 0.5 * Math.sin(phase * 2 * Math.PI * 310));
+      }
+      t += 1 / 60;
+      return out;
+    }
+
+    /* ── Microphone source ──────────────────────────────────────────────── */
+    function micFrame() {
+      analyser.getFloatTimeDomainData(buffer);
+      return buffer;
+    }
+
+    // The live capture, so it can actually be released: a page that says
+    // "nothing is recorded" must not leave the browser's mic indicator lit.
+    let micStream = null;
+    let micCtx = null;
+    // Bumped on every source change. A getUserMedia() promise that resolves
+    // after its generation is stale must release the device, not install it.
+    let sourceGeneration = 0;
+
+    function releaseMicrophone() {
+      // Bumping here invalidates any getUserMedia() still in flight, so a
+      // stream resolving after a source change *or after pagehide* is stopped
+      // rather than installed on a document that has already moved on.
+      sourceGeneration += 1;
+      micStream?.getTracks().forEach((t) => t.stop());
+      micCtx?.close();
+      micStream = null;
+      micCtx = null;
+    }
+
+    function useSynthetic() {
+      releaseMicrophone();
+      readFrame = syntheticFrame;
+      buffer = new Float32Array(1024);
+      el('source-note').textContent = 'Source: synthetic. Nothing is recorded.';
+    }
+
+    async function useMicrophone() {
+      const note = el('source-note');
+      releaseMicrophone();           // clicking twice must not stack streams
+      const generation = sourceGeneration;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        if (generation !== sourceGeneration) {
+          // The visitor chose another source while the prompt was open.
+          stream.getTracks().forEach((t) => t.stop());
+          return;
+        }
+        micStream = stream;
+        micCtx = new (window.AudioContext ?? window.webkitAudioContext)();
+        // Safari's gesture activation can lapse during the permission prompt,
+        // which leaves the context suspended and the mouth shut.
+        if (micCtx.state === 'suspended') await micCtx.resume();
+        analyser = micCtx.createAnalyser();
+        analyser.fftSize = 2048;
+        buffer = new Float32Array(analyser.fftSize);
+        micCtx.createMediaStreamSource(micStream).connect(analyser);
+        readFrame = micFrame;
+        note.textContent = 'Source: your microphone. Nothing is recorded — each frame is read and dropped.';
+      } catch (err) {
+        if (generation !== sourceGeneration) return;   // superseded; leave it alone
+        // Denied, no device, or a non-secure origin (getUserMedia is undefined
+        // off https, which throws a TypeError). The demo keeps running on the
+        // synthetic source; silence here would read as a broken page.
+        releaseMicrophone();
+        readFrame = syntheticFrame;
+        buffer = new Float32Array(1024);
+        const why = err.name === 'TypeError'
+          ? 'this page needs https (or localhost) to reach a microphone'
+          : err.name;
+        note.textContent = `Microphone unavailable (${why}). Still running on the synthetic source.`;
+      }
+    }
+
+    el('use-mic').addEventListener('click', useMicrophone);
+    el('use-synthetic').addEventListener('click', useSynthetic);
+    // Leaving the page releases the device too.
+    window.addEventListener('pagehide', releaseMicrophone);
+
+    /* ── The frame loop ─────────────────────────────────────────────────── */
+    function tick() {
+      const raw = rms(readFrame());
+      smoothed = smoothRms(smoothed, raw, LIPSYNC.SMOOTH_FACTOR);
+      const target = mouthTarget(smoothed, LIPSYNC.RMS_CEILING);
+      weight = approach(weight, target, LIPSYNC.INTERP);
+
+      el('raw').textContent = fmt(raw);
+      el('smoothed').textContent = fmt(smoothed);
+      el('target').textContent = fmt(target);
+      el('weight-value').textContent = fmt(weight);
+      el('meter').style.setProperty('--v', weight.toFixed(3));
+
+      const gap = 4 + weight * 56;          // px of open mouth
+      el('void').style.height = `${gap}px`;
+      el('lip-bottom').style.top = `${70 + gap}px`;
+
+      frame = requestAnimationFrame(tick);
+    }
+
+    // Reduced motion: hold the mouth at a readable resting weight rather than
+    // animating it, and leave the numbers static. The preference can be turned
+    // on while the page is open, so this is a listener, not a one-time check.
+    let frame = null;
+    const stillness = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function applyMotionPreference() {
+      if (stillness.matches) {
+        if (frame !== null) cancelAnimationFrame(frame);
+        frame = null;
+        weight = 0.35;
+        el('meter').style.setProperty('--v', '0.35');
+        el('void').style.height = '24px';
+        el('lip-bottom').style.top = '94px';
+        el('source-note').textContent = 'Reduced motion: the envelope is held still.';
+        // Nothing reads a frame, so do not hold the device: capturing audio to
+        // drive an animation that is deliberately not running is pure cost to
+        // the visitor.
+        useSynthetic();
+        el('source-note').textContent = 'Reduced motion: the envelope is held still.';
+        el('use-mic').disabled = true;
+        el('use-mic').title = 'Disabled under reduced motion — nothing would move.';
+        return;
+      }
+      el('use-mic').disabled = false;
+      el('use-mic').removeAttribute('title');
+      if (frame === null) frame = requestAnimationFrame(tick);
+    }
+
+    stillness.addEventListener('change', applyMotionPreference);
+    applyMotionPreference();
+  </script>
+</body>
+</html>

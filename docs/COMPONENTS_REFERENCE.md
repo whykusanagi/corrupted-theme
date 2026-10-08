@@ -419,8 +419,8 @@ gallery1.destroy(); // Only destroys gallery1
 
 `src/css/editorial.css`, bundled in `theme.css` — which is what builds into the
 `dist/theme.min.css` the CDN serves — and exported as `./editorial`, from
-**0.3.4**. A CDN or vendored `theme.min.css` pinned to 0.3.3 or earlier
-doesn't contain these classes. These are long-form article and recap-page
+**0.3.4**. A `theme.min.css` pinned to 0.3.3 or earlier — on the CDN, or copied
+into your own site — doesn't contain these classes. These are long-form article and recap-page
 primitives: a masthead, prose blocks, card grids, entity cards, rank badges,
 bar sparklines, meters, ruled rows, chart frames, award rows and the post
 index. Every class is `ct-`-prefixed. A *state* is an `is-*` or `has-*` modifier on a
@@ -3019,7 +3019,7 @@ from the local tree instead — e.g.
 | `@whykusanagi/corrupted-theme/carousel` | initCarousel, destroyCarousel | Carousel / Slideshow Component |
 | `@whykusanagi/corrupted-theme/corrupted-globe` | CorruptedGlobe | CorruptedGlobe — orthographic wireframe globe with great-circle arcs. |
 | `@whykusanagi/corrupted-theme/corrupted-graph` | CorruptedGraph | CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic. |
-| `@whykusanagi/corrupted-theme/micro-gfx` | — | MicroGfx — seeded generative instrument graphics. |
+| `@whykusanagi/corrupted-theme/micro-gfx` | fitTitle | MicroGfx — seeded generative instrument graphics. |
 | `@whykusanagi/corrupted-theme/corrupted-flares` | CorruptedFlares | CorruptedFlares — geometric micro-VFX flares that decay on their own clock, for compositing over video, artwork or a transparent overlay layer. |
 | `@whykusanagi/corrupted-theme/canvas-seek` | createFrameClock, createDissolve | Frame-deterministic canvas rendering. |
 | `@whykusanagi/corrupted-theme/lipsync` | rms, smoothRms, mouthTarget, approach | Audio amplitude envelope — RMS → smoothing → clamped 0..1 target. |
@@ -3448,12 +3448,20 @@ g.start();
 
 MicroGfx — seeded generative instrument graphics.
 
-- npm: `import { … } from '@whykusanagi/corrupted-theme/micro-gfx'`
+- npm: `import { fitTitle } from '@whykusanagi/corrupted-theme/micro-gfx'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/micro-gfx.js`
 - Properties:
   - `formats`: `object` — Named pixel sizes for the `format` option: `card` 1200x630, `banner` 1500x500, `poster` 1080x1350, `portrait` 1080x1920, `square` 1080x1080. Pass `{w, h}` for anything else.
   - `themes`: `string[]` — Valid `theme` values: magenta, violet, mono, void. All four are dark grounds; use `polarity: 'paper'` for a pale one.
   - `primitives`: `string[]` — Valid `primitives` entries: barcode, dotMatrix, gaugeStack, histogram, coordReadout, dimension, sparkline, keyValue, qr.
+- Functions:
+  - `fitTitle(title, available, opts = {})` → `{ size: number, text: string }` — Fit a title to the width available inside the frame rails.
+    - `title`: `string`
+    - `available`: `number` — px between the rails
+    - `opts`: `object`
+    - `opts.max` (default `44`): `number` — starting font-size
+    - `opts.min` (default `28`): `number` — floor; below this the card reads as a caption
+    - `opts.advance` (default `0.6`): `number` — Latin advance as a fraction of size;
 - `MicroGfx` methods:
   - `MicroGfx.generate(options = {})` → `{svg:string, node:SVGSVGElement, seed:number, width:number, height:number}` — Build one artwork.
     - `options` (default `{}`): `object`
@@ -3746,7 +3754,7 @@ DecryptReveal
     - `opts.duration`: `number`
     - `opts.charset`: `string` — Overrides manager-level default
     - returns: Animation ID (pass to cleanup() to cancel early)
-  - `stop()` — Cancel all active animations and clear their timers. Visual state of elements is preserved (text remains as last written). Called automatically when document.hidden becomes true.
+  - `stop()` — Cancel all active animations and clear their timers. Each element is left showing its finished text: a decode interrupted by the tab hiding would otherwise stay frozen on scrambled glyphs and never resume, because start() is deliberately a no-op. Called automatically when document.hidden becomes true.
   - `start()` — Resume hook — called automatically when document becomes visible again. Intentional no-op: animations must be re-queued explicitly by callers. Included to satisfy the symmetric start/stop API surface.
   - `cleanup(id)` — Cancel a single animation by its ID. No-op if id is unknown or already cleaned up.
     - `id`: `number` — Return value from decode()

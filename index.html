@@ -498,6 +498,7 @@
             <a href="examples/corrupted-timeline.html"><i class="fas fa-stream"></i> Corrupted Timeline</a>
             <a href="examples/advanced/crt-effects.html"><i class="fas fa-tv"></i> CRT Effects</a>
             <a href="examples/audio-spectrum.html"><i class="fas fa-wave-square"></i> Audio Spectrum</a>
+            <a href="examples/lipsync.html"><i class="fas fa-microphone-lines"></i> Lipsync</a>
             <a href="examples/index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>
           </div>
         </li>
@@ -534,15 +535,15 @@
     <!-- Stats Bar -->
     <div class="stats-bar">
       <div class="stat-item">
-        <span class="stat-value">50+</span>
-        <span class="stat-label">Components</span>
+        <span class="stat-value">51</span>
+        <span class="stat-label">JS Modules</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value">100+</span>
+        <span class="stat-value">80</span>
         <span class="stat-label">CSS Variables</span>
       </div>
       <div class="stat-item">
-        <span class="stat-value">5</span>
+        <span class="stat-value">6</span>
         <span class="stat-label">Extension Modules</span>
       </div>
       <div class="stat-item">
@@ -698,6 +699,10 @@
         <a href="examples/editorial.html" class="quick-link">
           <i class="fas fa-newspaper"></i>
           <span>Editorial &amp; Data Pages (0.3.4)</span>
+        </a>
+        <a href="examples/lipsync.html" class="quick-link">
+          <i class="fas fa-microphone-lines"></i>
+          <span>Lipsync envelope (0.3.4)</span>
         </a>
         <a href="examples/corrupted-flares.html" class="quick-link">
           <i class="fas fa-wand-magic-sparkles"></i>
@@ -862,11 +867,15 @@
   <script>
     function copyInstall() {
       navigator.clipboard.writeText('npm install @whykusanagi/corrupted-theme');
-      const btn = document.querySelector('.install-code button');
-      const originalHTML = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-check"></i>';
-      setTimeout(() => {
-        btn.innerHTML = originalHTML;
+      const icon = document.querySelector('.install-code button i');
+      if (!icon) return;
+      // Remember the original once and reset any pending restore, so copying
+      // twice inside the window cannot leave the checkmark as the "original".
+      icon.dataset.restore = icon.dataset.restore ?? icon.className;
+      clearTimeout(window.__copyInstallTimer);
+      icon.className = 'fas fa-check';
+      window.__copyInstallTimer = setTimeout(() => {
+        icon.className = icon.dataset.restore;
       }, 2000);
     }
   </script>

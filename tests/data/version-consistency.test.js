@@ -105,3 +105,34 @@ test('the spec header matches its own newest Version History entry', () => {
   assert.equal(header[1], newest[1],
     'spec header and the top Version History entry disagree');
 });
+
+test('the landing page hero states numbers that are actually true', () => {
+  // It claimed "50+ Components" and "100+ CSS Variables": one stale low, the
+  // other simply wrong, both above the fold on the demo site. A claim that
+  // cannot rot beats a claim that happens to be right today.
+  const manifestPath = path.join(ROOT, 'dist/manifest.json');
+  assert.ok(existsSync(manifestPath),
+    'dist/manifest.json is missing — run `npm run manifest:generate`');
+  const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
+  // Labelled "JS Modules", not "Components": the count is every JS export, so
+  // it includes utilities like random-utils and time-utils that nobody would
+  // call a component. Pinning the number and then mislabelling it is still a
+  // false claim above the fold.
+  const modules = manifest.exports.filter((e) => e.type === 'js').length;
+  const tokens = new Set(
+    readdirSync(path.join(ROOT, 'src/css'))
+      .filter((f) => f.endsWith('.css'))
+      .flatMap((f) => [...readFileSync(path.join(ROOT, 'src/css', f), 'utf8')
+        .matchAll(/^\s*(--[a-z0-9-]+):/gm)].map((m) => m[1])),
+  ).size;
+
+  const html = readFileSync(path.join(ROOT, 'index.html'), 'utf8');
+  const stat = (label) => {
+    const re = new RegExp(`<span class="stat-value">([^<]+)</span>\\s*<span class="stat-label">${label}</span>`);
+    const m = re.exec(html);
+    assert.ok(m, `no hero stat labelled ${label}`);
+    return m[1].trim();
+  };
+  assert.equal(stat('JS Modules'), String(modules));
+  assert.equal(stat('CSS Variables'), String(tokens));
+});

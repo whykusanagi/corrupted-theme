@@ -352,6 +352,82 @@ export function parseModule(source) {
            options: uniqueOptions, methods, methodDetail, constructors, namespaces, fnDetail, properties, examples };
 }
 
+/**
+ * Every `var()` in `code` as `[name, fallback]`, with the fallback balanced
+ * across nested parens. A `[^)]+` fallback stopped at the first `)`, so any
+ * default carrying parens reached the agent surface truncated (`var(--accent`
+ * for `--ct-tone`) and a var() nested in a fallback was swallowed with it,
+ * hiding `--ct-cols` entirely. Nested refs need no recursion here: the scan
+ * resumes inside the fallback text and matches them on later iterations.
+ *
+ * Parens inside a quoted CSS string do not close the fallback.
+ *
+ * @param {string} code
+ * @returns {Generator<[string, string|null]>}
+ */
+function* varRefs(code) {
+  const re = /var\(\s*(--[\w-]+)\s*/g;
+  let m;
+  while ((m = re.exec(code))) {
+    let i = m.index + m[0].length;
+    if (code[i] !== ',') { yield [m[1], null]; continue; }
+    const start = ++i;
+    let quote = null;
+    for (let depth = 1; i < code.length && depth > 0; i += 1) {
+      const ch = code[i];
+      if (quote) {                                   // inside a CSS string
+        if (ch === quote && code[i - 1] !== '\\') quote = null;
+        continue;
+      }
+      if (ch === '"' || ch === "'") quote = ch;
+      else if (ch === '(') depth += 1;
+      else if (ch === ')') depth -= 1;
+    }
+    yield [m[1], code.slice(start, i - 1).trim() || null];
+  }
+}
+
+/**
+ * Describe a stylesheet for the agent surface: the classes it defines, the
+ * state modifiers scoped to them, and the custom properties it reads with
+ * their fallbacks. A CSS export used to reach the surface as its path and
+ * nothing else, which left a release whose headline was ~90 classes invisible
+ * to the agents the surface exists for.
+ *
+ * @param {string} source
+ * @returns {{ description?: string, classes: string[], modifiers: string[], knobs: Record<string, string|null> }}
+ */
+export function describeStylesheet(source) {
+  const header = /\/\*\*([\s\S]*?)\*\//.exec(source)?.[1] ?? '';
+  const description = header
+    .split('\n').map((l) => l.replace(/^\s*\*\s?/, '').trim()).find(Boolean);
+
+  const code = source.replace(/\/\*[\s\S]*?\*\//g, '');
+  // Collapse declaration blocks, then drop the at-rules that carry file paths:
+  // `@import './variables.css'` matched the class regex and published a phantom
+  // class named `css`.
+  const selectors = code
+    .replace(/\{[^{}]*\}/g, '{}')
+    .replace(/@(?:import|charset|namespace)[^;]*;/g, '')
+    .replace(/url\([^)]*\)/g, '')
+    // A quoted attribute value is data, not a selector: [data-label=".secret"]
+    // defines no class called `secret`.
+    .replace(/"[^"]*"|'[^']*'/g, '""');
+  const names = [...new Set([...selectors.matchAll(/\.([a-zA-Z][\w-]*)/g)].map((m) => m[1]))].sort();
+
+  const knobs = {};
+  for (const [name, value] of varRefs(code)) {
+    if (!(name in knobs) || (value && knobs[name] === null)) knobs[name] = value;
+  }
+
+  return {
+    description,
+    classes: names.filter((n) => !n.startsWith('is-') && !n.startsWith('has-')),
+    modifiers: names.filter((n) => n.startsWith('is-') || n.startsWith('has-')),
+    knobs,
+  };
+}
+
 /** Build the manifest object from package.json exports. */
 export function buildManifest() {
   const pkg = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
@@ -412,6 +488,9 @@ export function buildManifest() {
         browserOnly: BROWSER_ONLY.has(key) || undefined,
       });
     }
+    if (type === 'css') {
+      Object.assign(entry, describeStylesheet(readFileSync(path.join(ROOT, target), 'utf8')));
+    }
     entries.push(entry);
   }
 
@@ -447,11 +526,23 @@ export function renderLlmsTxt(manifest) {
     `Machine-readable surface: ${manifest.cdn.base}/dist/manifest.json`,
     '',
     '## Conventions (read before generating code)',
+    '- stylesheets: a [css] export lists its class and knob counts here; the full'
+      + ' class list is in manifest.json and the markup contract is in'
+      + ' docs/COMPONENTS_REFERENCE.md',
     ...Object.entries(manifest.conventions).map(([k, v]) => `- ${k}: ${v}`),
     '',
     '## Exports',
   ];
   for (const e of manifest.exports) {
+    if (e.type === 'css') {
+      const knobs = Object.keys(e.knobs ?? {}).filter((k) => k.startsWith('--ct-'));
+      const shape = e.classes?.length
+        ? ` ${e.classes.length} classes${e.modifiers?.length ? `, ${e.modifiers.length} modifiers` : ''}.`
+        : ' tokens only.';
+      lines.push(`- ${e.export} [css] → ${e.cdnUrl}.${shape}`
+        + `${knobs.length ? ` knobs: ${knobs.join(' ')}.` : ''}`);
+      continue;
+    }
     if (e.type !== 'js') {
       lines.push(`- ${e.export} [${e.type}] ${e.npmImport}`);
       continue;

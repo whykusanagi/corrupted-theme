@@ -54,9 +54,12 @@ import { TimerRegistry } from './timer-registry.js';
  * @param {object}       opts
  * @param {number}       [opts.duration=2000]
  * @param {string}       [opts.charset]
- * @returns {{ cleanup: Function, isAnimating: Function }}
+ * @param {Function}     [onDone] - Called when the final text is written, so a
+ *   caller's bookkeeping retires on the same tick the animation does rather
+ *   than on a timeout that can fire while the interval is still live.
+ * @returns {{ cleanup: Function, isAnimating: Function, settle: Function }}
  */
-function _decode(element, finalText, timers, opts = {}) {
+function _decode(element, finalText, timers, opts = {}, onDone) {
   const duration = opts.duration ?? 2000;
   const charset  = opts.charset  ?? CorruptionCharsets.standard;
   const steps    = 20;
@@ -69,6 +72,7 @@ function _decode(element, finalText, timers, opts = {}) {
       element.textContent = finalText;
       timers.clearInterval(id);
       done = true;
+      onDone?.();
       return;
     }
 
@@ -86,6 +90,9 @@ function _decode(element, finalText, timers, opts = {}) {
   return {
     cleanup:     () => { timers.clearInterval(id); done = true; },
     isAnimating: () => !done,
+    /** Write the finished text. Teardown calls this so an interrupted decode
+     *  never leaves the element unreadable (spec Core Tenet 2). */
+    settle:      () => { element.textContent = finalText; },
   };
 }
 
@@ -122,7 +129,7 @@ export class DecryptReveal {
 
     /**
      * Per-animation state keyed by numeric ID.
-     * @type {Map<number, { type: string, handle: { cleanup: Function, isAnimating: Function }, element: object }>}
+     * @type {Map<number, { type: string, handle: { cleanup: Function, isAnimating: Function, settle: Function }, element: object }>}
      */
     this._animations = new Map();
 
@@ -154,17 +161,26 @@ export class DecryptReveal {
    */
   decode(element, content, opts = {}) {
     if (this._destroyed) return -1;
+    // A second decode on the same element supersedes the first. Both write
+    // textContent, so leaving the loser registered means a later stop() or
+    // cleanup() settles it and overwrites the winner's text with stale content.
+    for (const [previousId, previous] of this._animations) {
+      if (previous.element === element) {
+        previous.handle.cleanup();          // cancel without settling
+        this._animations.delete(previousId);
+      }
+    }
     const id = this._nextId++;
     const mergedOpts = { charset: this._defaultCharset, ...opts };
-    const handle = _decode(element, content, this._timers, mergedOpts);
+    // Retire the record when the animation actually writes its final text. A
+    // `duration + 50` timeout fired *before* the interval's 21st tick for every
+    // duration over 1000ms, so a stop() in that window found an empty map,
+    // settled nothing, and then killed the live interval — leaving the element
+    // frozen on a scrambled frame.
+    const handle = _decode(element, content, this._timers, mergedOpts,
+      () => this._animations.delete(id));
 
     this._animations.set(id, { type: 'decode', handle, element });
-
-    // Auto-remove entry when animation completes naturally
-    const duration = mergedOpts.duration ?? 2000;
-    this._timers.setTimeout(() => {
-      this._animations.delete(id);
-    }, duration + 50);
 
     return id;
   }
@@ -172,12 +188,15 @@ export class DecryptReveal {
   /* ── Lifecycle ──────────────────────────────────────────────────────── */
 
   /**
-   * Cancel all active animations and clear their timers.
-   * Visual state of elements is preserved (text remains as last written).
+   * Cancel all active animations and clear their timers. Each element is left
+   * showing its finished text: a decode interrupted by the tab hiding would
+   * otherwise stay frozen on scrambled glyphs and never resume, because
+   * start() is deliberately a no-op.
    * Called automatically when document.hidden becomes true.
    */
   stop() {
     for (const [, anim] of this._animations) {
+      anim.handle.settle();
       anim.handle.cleanup();
     }
     this._animations.clear();
@@ -202,6 +221,7 @@ export class DecryptReveal {
   cleanup(id) {
     const anim = this._animations.get(id);
     if (!anim) return;
+    anim.handle.settle();
     anim.handle.cleanup();
     this._animations.delete(id);
   }
@@ -280,7 +300,14 @@ export class DecryptReveal {
 export function decodeText(element, finalText, opts = {}) {
   const timers = new TimerRegistry();
   const handle = _decode(element, finalText, timers, opts);
-  return () => { handle.cleanup(); timers.clearAll(); };
+  return () => {
+    // Settle only a live animation: a finished one may have had its element
+    // reused by the caller, and re-writing finalText would clobber that.
+    const live = handle.isAnimating();
+    handle.cleanup();
+    if (live) handle.settle();
+    timers.clearAll();
+  };
 }
 
 /* ─────────────────────────────────────────────────────────────────────────

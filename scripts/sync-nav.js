@@ -38,6 +38,7 @@ export const RELEASE_DEMOS = {
   version: '0.3.4',
   pages: [
     'examples/editorial.html',
+    'examples/lipsync.html',
   ],
 };
 
@@ -94,6 +95,7 @@ export const NAV = [
       { label: 'Corrupted Timeline', icon: 'fa-stream', target: 'examples/corrupted-timeline.html' },
       { label: 'CRT Effects', icon: 'fa-tv', target: 'examples/advanced/crt-effects.html' },
       { label: 'Audio Spectrum', icon: 'fa-wave-square', target: 'examples/audio-spectrum.html' },
+      { label: 'Lipsync', icon: 'fa-microphone-lines', target: 'examples/lipsync.html' },
       { label: 'Browse all →', icon: 'fa-ellipsis', target: 'examples/index.html' },
     ],
   },

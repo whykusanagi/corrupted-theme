@@ -55,6 +55,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   it was never declared, so `.event-bar`, `.logo-banner` and `.clock-widget`
   text fell back to Courier New; they now get the declared monospace stack.
 
+
+- **`fitTitle(title, available, opts)`** — new export from `./micro-gfx`. Fits a
+  card title between the rails: shrinks from 44px to a 28px floor so the whole
+  title survives, then clips on a word boundary with an ellipsis only when the
+  floor is still too narrow. Fullwidth code points (CJK, kana, Hangul) cost a
+  full em; Latin costs the 0.6 monospace advance.
+- **CSS exports describe themselves in the agent surface.** Every `type: "css"`
+  entry in `dist/manifest.json` now carries `classes`, `modifiers` and `knobs`
+  (name → default); `./editorial` reports 86 classes, 15 modifiers and 48 knobs
+  where it previously reported its path and nothing else. `dist/llms.txt`
+  carries a dense one-line summary per sheet and points at the manifest for the
+  full inventory. Both blind agents in this release's docs validation reported
+  the gap independently: given only the machine surface, neither could answer a
+  single question about the vocabulary.
+- **Lipsync example** (`examples/lipsync.html`) — the envelope maths (`rms`,
+  `smoothRms`, `mouthTarget`, `approach`) driving a mouth, on a synthetic source
+  by default with an opt-in microphone. Nothing is recorded: each frame is read
+  and dropped, and the capture is released when you switch away.
+- **`npm run audit:provenance`** — release gate E4 as a script. It greps the
+  shipped files *and* the published GitHub release notes, and fails loudly
+  rather than reporting clean when it cannot see a surface.
+
 ### Changed
 
 - **Build toolchain majors** (dev-only; consumers unaffected): `cssnano` 8 → 9,
@@ -75,6 +97,135 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `gitleaks/gitleaks-action` v2 → v3.0.0. The gitleaks bump is a fix, not
   housekeeping — v2 ran on the Node 20 Actions runtime, which GitHub removed on
   2026-09-16. Both remain SHA-pinned.
+
+### Fixed
+
+- **An interrupted decode no longer leaves text unreadable.** `DecryptReveal`'s
+  `stop()`, `cleanup(id)` and `destroy()` now write the final text before
+  cancelling, and `decodeText()`'s returned cleanup does the same for a live
+  animation. **This is a behaviour change on a public API**: the old doc comment
+  promised the opposite ("does not restore the final text"). A heading decoding
+  in a tab the visitor switched away from used to stay frozen on scrambled
+  glyphs — directly against spec Core Tenet 2, "the final state must be
+  readable" — and the consuming site papered over it with a re-run on
+  `visibilitychange`. That workaround can now be deleted.
+  - The record was also retired on a `duration + 50` timeout while the interval
+    writes its final text on the 21st tick, at `21 × floor(duration/20)`. For
+    every duration over 1000ms that lands *after* the deletion, so a `stop()` in
+    that window found an empty map, settled nothing, then killed the live
+    interval. Retirement now happens in the branch that writes the text.
+- **Long card titles are fitted instead of overrunning the frame.** `MicroGfx`
+  drew the title at a fixed 44px from a fixed origin, so anything past ~41
+  characters ran through the right rail and off the canvas — every og:image for
+  a long post. Titles at or under that length render byte-identically; longer
+  ones now shrink, and ellipsise only if 28px is still too narrow.
+- **The agent surface published truncated knob defaults.** The `var()` fallback
+  pattern stopped at the first `)`, so `--ct-tone` reached consumers as
+  `var(--accent`, `--glass` as `rgba(20, 12, 40, 0.6`, and a `var()` nested
+  inside a fallback was swallowed whole — which hid `--ct-cols`, the
+  column-count knob, entirely. An `@import` target was also published as a
+  class, so the root export claimed a class named `css`.
+- **Editorial, from the browser pass and the external review** (all on classes
+  that ship first in this release, so no published markup changes):
+  `.ct-badge.ct-rank` now outranks the badge default, which was painting every
+  rank badge with an accent border and no fill; `.ct-card.is-muted` mutes by
+  tone rather than `opacity`, which composited its own labels down to 2.9:1;
+  badge ink on a raised card lightens to clear AA at 4.50:1 exactly; the
+  masthead reserves a column for its fact block instead of overlapping any
+  title longer than the demo's; `.ct-rows` reflows below 560px instead of
+  collapsing its title column to an ellipsis; `.ct-section-meta` wraps on a
+  phone instead of being `display: none`, which removed it from the
+  accessibility tree too; the chart scanline clears under
+  `prefers-reduced-motion` like the callout's always did; `.ct-divider` carries
+  `aria-hidden`; `.ct-detail` and `.ct-chart-cap` zero the inherited paragraph
+  margin, which added 16px of dead space to every card built from the
+  reference; `.ct-list.is-grid` and `.ct-gallery` read their own `--ct-chip-min`
+  and `--ct-thumb-min` instead of inheriting `--ct-grid-min` from a card grid
+  they sit inside; `<ul class="ct-rows">`, `.ct-grid` and `.ct-badges` reset the
+  theme's list indent and marker, so the documented list markup works as
+  documented; and the rank ink mixes go through `--corrupted-white` rather than
+  the `white` keyword, which no colour guard could see.
+
+### Fixed (review follow-ups)
+
+- **A second `decode()` on the same element now supersedes the first.** Settling
+  on `cleanup()` fixed a freeze but opened a worse case: with both animations
+  registered, retiring the loser wrote its stale final text over the winner's.
+- **`fitTitle()` never returns text wider than the rail it was given.** One
+  fullwidth glyph at the 28px floor plus the ellipsis is 44.8px, so a narrow rail
+  had no room for either — and the truncation path forced the glyph through
+  anyway. It now returns the ellipsis alone.
+- **The lipsync demo releases a microphone stream that arrives late.** Choosing
+  "Synthetic speech" while the permission prompt is open used to leave the
+  resolved stream live and silently switch the page back to microphone input.
+  Source changes now carry a generation, and a stale resolution stops its tracks.
+- **That demo also honours a reduced-motion preference turned on after load**,
+  rather than only at first paint.
+- **Copying the install command twice within two seconds** no longer leaves the
+  checkmark stuck: the second call used to capture `fa-check` as the icon to
+  restore.
+- **`describeStylesheet()` no longer reads quoted attribute values as selectors** —
+  `[data-label=".secret"]` was publishing a class called `secret` — and a paren
+  inside a quoted fallback no longer truncates it, so `var(--x, "a)b")` keeps
+  its string.
+- **The lipsync demo releases a microphone that resolves after `pagehide`.**
+  Invalidating pending requests on a source change left the page-exit path out:
+  a stream arriving after the visitor left was installed on a hidden or cached
+  document. Every release now invalidates what is in flight.
+- **`audit:provenance` checks every published release**, not the newest twenty;
+  the two that needed rewriting were the oldest.
+
+### Removed
+
+- **The Celeste widget and its proxy are gone**, along with the portfolio-site
+  container setup they belonged to: `src/lib/celeste-widget.js`,
+  `src/lib/celeste-proxy.js`, `scripts/celeste-proxy-server.js`, `Dockerfile`,
+  `docker-entrypoint.sh` and `examples/.env.example` (which configured nothing
+  else). The `dev:proxy` script and README's widget section went with them —
+  that section pointed at a `celeste_widget_pack/` directory which has not
+  existed for some time. 1,794 lines out.
+
+  None of it was ever in `exports`, so no `import` can break: with an `exports`
+  map declared, Node refuses deep paths that aren't listed. **The one reachable
+  surface was the CDN** — `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/celeste-widget.js`
+  returned 200 and will 404 from 0.3.4 on. Pinned versions are immutable, so
+  `@0.3.3` keeps serving it. Nothing on whykusanagi.xyz or
+  corrupted.whykusanagi.xyz referenced it (checked before removal — the
+  portfolio has its own Celeste implementation and loads only
+  `dist/theme.min.css` from this package).
+
+  Why remove rather than export it: a browser chat widget for one site's AI
+  agent is not part of a corruption-aesthetic theme. It carried credentials
+  handling, a backend proxy and a Docker runtime into a package whose job is
+  CSS and animation primitives.
+
+### Security
+
+- **The published tarball no longer carries the portfolio site's container setup.**
+  `package.json`'s `files` whitelist named `Dockerfile` and `docker-entrypoint.sh`
+  explicitly, so every release up to 0.3.3 shipped them. Both describe
+  whykusanagi.xyz rather than this package, and their `ENTRYPOINT` runs `scripts/`
+  files the tarball excludes — so a consumer's copy could never build or run. No
+  credentials were exposed (both read them from the environment), but the layout
+  and service names of an unrelated project were.
+- **`tests/data/package-contents.test.js` now asserts what ships**: no `*.sh`
+  anywhere, nothing at the tarball root but documentation and manifests, and no
+  `tests/`, `scripts/` or `docs/planning/`. Nothing previously checked the
+  tarball's contents, which is why the two files rode along for four releases.
+- **`scripts/static-server.js` binds `127.0.0.1` by default** instead of `0.0.0.0`.
+  The dev server has no authentication and serves the repository root, so the old
+  default exposed the working tree — including any untracked `.env` — to everyone
+  on the same network. Set `HOST=0.0.0.0` to opt back in.
+- **The same server's traversal guard is no longer a prefix test.** `startsWith(ROOT_DIR)`
+  without a trailing separator admits a sibling directory that shares the prefix
+  (`<root>-secrets/`). Replaced with a resolved-path check, exported as
+  `isInsideRoot()` and covered by tests.
+- **GitHub Actions hardening.** `checks.yml` and `gitleaks.yml` now set
+  `persist-credentials: false` (neither pushes), and `dependabot-automerge.yml`
+  declares `permissions: {}` at the workflow level with write scopes on the one
+  job that merges.
+- **`index.html`'s copy button swaps an icon class** instead of saving and
+  restoring `innerHTML`.
 
 ## [0.3.3] - 2026-08-25
 

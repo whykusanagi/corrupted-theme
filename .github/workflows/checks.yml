@@ -40,6 +40,13 @@ jobs:
       - name: Security lint (no-unsanitized innerHTML guard)
         run: npm run lint:security
 
+      # The suite gates every release through prepublishOnly, but until now it
+      # only ever ran on a developer's machine — a PR could go green with it
+      # failing. `pretest` regenerates the data and manifest modules first, so
+      # this also catches a generated surface committed stale.
+      - name: Test suite
+        run: npm test
+
       - name: JS syntax check (all src/)
         run: |
           set -e

@@ -18,6 +18,36 @@ import { isInsideRoot } from '../../scripts/static-server.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
+test('the build produces every artifact the CDN serves', () => {
+  // publish-to-cdn.sh uploads whatever is in dist/, so a file the build stops
+  // producing silently disappears from the next @version — and from @latest the
+  // moment the pointer moves. That is how 0.3.4 nearly shipped: `npm run build`
+  // emitted theme.min.css alone, while @0.3.3 served eight files. The three
+  // rollup globals came from `build:umd`, which existed but was wired into
+  // nothing; nikke-utilities.css came from an unscripted postcss invocation; and
+  // corrupted-text.global.js was maintained by hand and had drifted from source.
+  //
+  // This list is the CDN's contract. Removing an entry is a breaking change for
+  // no-build consumers and belongs in a major version with a migration note.
+  const CDN_ARTIFACTS = [
+    'clipboard-helpers.global.js',
+    'corrupted-text.global.js',
+    'llms.txt',
+    'manifest.json',
+    'nikke-utilities.css',
+    'theme.min.css',
+    'timer-registry.global.js',
+    'toast.global.js',
+  ];
+  const dist = path.join(ROOT, 'dist');
+  const missing = CDN_ARTIFACTS.filter((f) => !existsSync(path.join(dist, f)));
+  assert.deepEqual(
+    missing,
+    [],
+    `dist/ is missing ${missing.join(', ')} — run \`npm run build\`. These paths are already live on the CDN; dropping one 404s every pinned consumer that loads it.`,
+  );
+});
+
 test('isInsideRoot rejects a sibling that merely shares the root prefix', () => {
   assert.equal(isInsideRoot('/srv/site/index.html', '/srv/site'), true);
   assert.equal(isInsideRoot('/srv/site', '/srv/site'), true);

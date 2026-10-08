@@ -5,7 +5,7 @@ All notable changes to the Corrupted Theme project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.3.4] - 2026-10-02
+## [0.3.4] - 2026-10-08
 
 ### Added
 
@@ -237,6 +237,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   dependencies. Its version is asserted against `package.json` by
   `tests/data/version-consistency.test.js`, in both places lockfileVersion 3
   records it.
+- **`npm run build` produced one of the eight artifacts the CDN serves.** It
+  emitted `theme.min.css` alone. The three rollup globals came from `build:umd`,
+  a script that existed but was wired into nothing; `nikke-utilities.css` came
+  from an unscripted `postcss` invocation; and `corrupted-text.global.js` was
+  maintained by hand and had drifted from its source — it predated the
+  `typeof document !== 'undefined'` guard and still used CommonJS `exports.`.
+  Caught while publishing: `@0.3.3` serves all eight, so moving `@latest` would
+  have 404'd five paths for every no-build consumer. `build` now produces the
+  full set, `corrupted-text.global.js` is generated from source by
+  `scripts/build-globals.js`, and `tests/data/package-contents.test.js` fails if
+  `dist/` is missing any of them. Three of the five reconstructed files hash
+  byte-identically to `@0.3.3`.
 - **Two high-severity advisories were waiting behind that blind spot**, found by
   `npm audit` within a minute of the lockfile existing: `fast-uri` 3.1.2 (eight
   advisories — host confusion, SSRF, authority injection) via `ajv`, and
@@ -244,6 +256,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   devDependencies, so neither ever reached a consumer, and both took a patch
   bump inside the existing ranges — `package.json` is unchanged. `npm audit` now
   reports zero.
+
+### Subresource Integrity
+
+SHA-384 hashes for the CDN artifacts at `@0.3.4`, as served by
+`cdn.whykusanagi.xyz` and `cdn.nikkers.cc`. Regenerate with
+`npm run generate-sri`.
+
+| File | Integrity |
+|------|-----------|
+| `dist/clipboard-helpers.global.js` | `sha384-UuSlpAWcN5KD5lAax35jyrpHK8Napkyph12QjqPdUgtDoUOiw9fnluFSSTih2f3M` |
+| `dist/corrupted-text.global.js` | `sha384-bXckiUuAkcNxO6ME8+HGze7OfgazJk5p7AoYOUqp0a3ycZZmvxPGCy6vgcx1EA94` |
+| `dist/manifest.json` | `sha384-IuGRhuhnGlp4/5tx/xjpFjXuDOgUON/zMpOITNHIeqG3yWh33XSARBVnxc9/nv42` |
+| `dist/nikke-utilities.css` | `sha384-7Oftp6ruWTxn3PbIvsY9Mkjl2uoLUd4WpboYEmsOkE75w09A6BoKoatSGkbEer0G` |
+| `dist/theme.min.css` | `sha384-n6QGagDxyf0NChCNdoh2/bkFwThczp5UH8oY6nY4cudJDTAVbfkm2DZe4YvBy7Cy` |
+| `dist/timer-registry.global.js` | `sha384-IiU5Z1bTQXBlf9+GN1QAGf9iYAZAJk/LPo2wDktaxKEqZ6H507QZ+EKe9TUzGh+G` |
+| `dist/toast.global.js` | `sha384-E6pgdAS3p1sh+1jLBw3pUw07jUbpNPFFHo0o+D/CWY7yqSDB7T51x/Zr2dTJmpI4` |
+
+`dist/llms.txt` carries no hash: nothing loads it with a `<script>` or `<link>`.
 
 ## [0.3.3] - 2026-08-25
 

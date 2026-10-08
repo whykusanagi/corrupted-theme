@@ -86,6 +86,17 @@ test('every current-version claim matches package.json', () => {
     + 'pin hands the reader the previous release');
 });
 
+test('the committed lockfile carries the same version as package.json', () => {
+  // CLAUDE.md §5 names package-lock.json as a file that must stay in sync, and
+  // lockfileVersion 3 writes the version TWICE — once at the root and once in
+  // packages[""]. A bump that misses either leaves `npm ci` installing a tree
+  // labelled with the previous release.
+  const lock = JSON.parse(readFileSync(path.join(ROOT, 'package-lock.json'), 'utf8'));
+  assert.equal(lock.version, VERSION, 'package-lock.json root version');
+  assert.equal(lock.packages[''].version, VERSION, 'package-lock.json packages[""].version');
+  assert.equal(lock.name, '@whykusanagi/corrupted-theme', 'package-lock.json name');
+});
+
 test('the governance checklist records the current version', () => {
   const p = path.join(ROOT, 'docs/governance/VERSION_REFERENCES.md');
   if (!existsSync(p)) return;   // untracked, local-only; skip where absent

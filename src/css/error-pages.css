@@ -30,7 +30,7 @@
 .error-line {
   max-width: 600px;
   margin: 0 auto 2rem;
-  color: var(--text-muted);
+  color: var(--text-secondary);
   font-size: 1.1rem;
   line-height: 1.6;
 }
@@ -50,7 +50,7 @@
   padding: .75rem 1.5rem;
   border-radius: 999px;
   background: linear-gradient(135deg, var(--corrupted-purple, #8b5cf6), var(--accent));
-  color: #fff;
+  color: var(--corrupted-black);
   font-weight: 700;
   text-decoration: none;
 }

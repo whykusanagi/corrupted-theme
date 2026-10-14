@@ -6,9 +6,16 @@ standard `Error` / `Something went wrong in this reality.` fallback for unlisted
 codes). `400` has provisional copy; the other listed codes use the issue #88
 recorded lines.
 
-Use `@whykusanagi/corrupted-theme/error-pages-css` or the main theme CSS for
-`.error-page`, `.error-code`, `.error-title`, `.error-line`, and `.error-links`.
-The static `errors/<code>.html` documents are self-contained, with embedded
+To import just the error-page module, load the base tokens first:
+
+```css
+@import '@whykusanagi/corrupted-theme/variables';
+@import '@whykusanagi/corrupted-theme/error-pages-css';
+```
+
+Alternatively, import the main theme CSS, which includes both stylesheets.
+The classes are `.error-page`, `.error-code`, `.error-title`, `.error-line`,
+and `.error-links`. The static `errors/<code>.html` documents are self-contained, with embedded
 styles and a default home link. To change navigation, render your own page with
 the exported data and CSS. Escape dynamic values before embedding them in HTML.
 

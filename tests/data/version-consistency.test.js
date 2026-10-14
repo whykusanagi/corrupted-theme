@@ -47,7 +47,9 @@ const ILLUSTRATIVE = new Set([
 ]);
 
 /** Release history — every past version legitimately appears here. */
-const HISTORY = (rel) => rel === 'CHANGELOG.md' || rel.includes('docs/planning/');
+const HISTORY = (rel) => rel === 'CHANGELOG.md'
+  || rel.includes('docs/planning/')
+  || rel === 'docs/specs/RELEASE_0_3_4_CLEAN_PLAN.md';
 
 function docsAndPages() {
   const out = [];

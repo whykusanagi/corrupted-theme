@@ -5,6 +5,14 @@ All notable changes to the Corrupted Theme project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.5] - 2026-10-14
+
+### Added
+
+- Shared HTTP error page styles, status-code copy, static pages, and a preview gallery (#88).
+  Static assets live at `errors/<code>.html`; site-specific navigation belongs in
+  each site's handler. See `docs/HTTP_ERRORS.md` for deployment and usage.
+
 ## [0.3.4] - 2026-10-08
 
 ### Added

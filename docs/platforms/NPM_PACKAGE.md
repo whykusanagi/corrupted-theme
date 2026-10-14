@@ -88,7 +88,7 @@ pnpm add @whykusanagi/corrupted-theme
 
 ```html
 <!-- Full theme (8.2KB gzipped) -->
-<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.3.4/dist/theme.css">
+<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.3.5/dist/theme.min.css">
 ```
 
 > **Preferred CDN**: Use the live-site CDN for zero-latency delivery and SRI-verified assets. See [`docs/CDN_CONSUMPTION.md`](../CDN_CONSUMPTION.md) for details.
@@ -691,7 +691,7 @@ npm update @whykusanagi/corrupted-theme
 npm install @whykusanagi/corrupted-theme@^0.3.2
 
 # Update to specific version
-npm install @whykusanagi/corrupted-theme@0.3.4
+npm install @whykusanagi/corrupted-theme@0.3.5
 
 # Update to latest (including major - may have breaking changes)
 npm install @whykusanagi/corrupted-theme@latest

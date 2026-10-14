@@ -53,6 +53,13 @@ export function isInsideRoot(candidate, root) {
   return resolved === base || resolved.startsWith(base + path.sep);
 }
 
+function serveError(code, res) {
+  fs.readFile(path.join(ROOT_DIR, 'errors', `${code}.html`), (err, data) => {
+    res.writeHead(code, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+    res.end(err ? http.STATUS_CODES[code] : data);
+  });
+}
+
 function serveFile(filePath, res) {
   const fullPath = path.join(ROOT_DIR, filePath);
 
@@ -70,15 +77,13 @@ function serveFile(filePath, res) {
         const indexPath = path.join(fullPath, 'index.html');
         fs.stat(indexPath, (err2, stats2) => {
           if (err2 || !stats2.isFile()) {
-            res.writeHead(404);
-            res.end('Not Found');
+            serveError(404, res);
           } else {
             serveFileContent(indexPath, res);
           }
         });
       } else {
-        res.writeHead(404);
-        res.end('Not Found');
+        serveError(404, res);
       }
       return;
     }
@@ -92,8 +97,7 @@ function serveFileContent(filePath, res) {
   
   fs.readFile(filePath, (err, data) => {
     if (err) {
-      res.writeHead(500);
-      res.end('Internal Server Error');
+      serveError(500, res);
       return;
     }
 

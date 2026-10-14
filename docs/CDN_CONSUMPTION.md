@@ -20,6 +20,20 @@ third-party warnings.
 | `whykusanagi.xyz` (any subdomain) | `https://cdn.whykusanagi.xyz/...` |
 | Third-party / external | Either (cross-origin, see CORS section below) |
 
+## HTTP Error Pages (0.3.5)
+
+The package includes `errors/<code>.html` for 20 selected 4xx/5xx codes,
+`./http-errors` for SSR and Workers, and `./error-pages-css` for reusable
+styling. Generated HTML pages embed the theme tokens and styles; consuming just
+the CSS export also requires importing `./variables` first. See
+[HTTP_ERRORS.md](HTTP_ERRORS.md) for host wiring and status-code handling.
+
+The CDN upload script currently publishes `dist/` and `src/`, **not**
+`errors/`. Load static error pages from the npm package into your site's assets;
+for no-build sites, use the CDN copy of `src/core/http-errors.js` and
+`src/css/error-pages.css` with `src/css/variables.css`. An `@0.3.5` CDN URL
+must not be used until that version is actually published to both hosts.
+
 ## Pinned Version Mode (Recommended for Production)
 
 ```html

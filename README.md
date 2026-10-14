@@ -120,6 +120,20 @@ For production hardening, add SRI hashes (published in `CHANGELOG.md` for each r
 
 Browse every animation on the demo site, which deploys from `main`: [corrupted.whykusanagi.xyz/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
 
+## What's New in 0.3.5
+
+**0.3.5** adds a shared HTTP error-page vocabulary for site handlers:
+
+- [`http-errors`](src/core/http-errors.js) exports `httpErrors`,
+  `getHttpError(code)`, and fallback copy for unknown codes.
+- [`error-pages-css`](src/css/error-pages.css) provides the error page layout,
+  numeric code, message, and action links (also bundled in the main theme).
+- `errors/<code>.html` ships 20 self-contained 4xx/5xx pages for static hosting.
+  Preview them in the [HTTP error gallery](examples/http-errors.html).
+
+The package does not change a consumer site's HTTP status or routing by itself.
+See [HTTP error deployment](docs/HTTP_ERRORS.md) for Worker and CSS-import setup.
+
 ## What's New in 0.3.4
 
 **0.3.4** adds editorial and data-page primitives: one shared stylesheet for

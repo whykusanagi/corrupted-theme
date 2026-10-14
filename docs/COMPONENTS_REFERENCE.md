@@ -2988,7 +2988,7 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.3.4, 51 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.5, 52 JS exports)
 
 Container expectations: overlay-suite and block components position themselves
 absolutely inside their container, so give the container `position: relative`
@@ -3037,6 +3037,7 @@ from the local tree instead — e.g.
 | `@whykusanagi/corrupted-theme/url-state` | serializeFormToParams, applyParamsToForm, buildShareUrl | URL state serialization helpers. |
 | `@whykusanagi/corrupted-theme/websocket-manager` | WebSocketManager | WebSocketManager — auto-reconnecting WebSocket wrapper. |
 | `@whykusanagi/corrupted-theme/toast` | — | Toast — singleton notification helper. |
+| `@whykusanagi/corrupted-theme/http-errors` | getHttpError | Return the copy for a status code, or the generic fallback for an unlisted code. |
 | `@whykusanagi/corrupted-theme/clock-widget` | ClockWidget | ClockWidget — cycling multi-timezone clock display. |
 | `@whykusanagi/corrupted-theme/event-bar` | EventBar | EventBar — horizontal status row with label + content + optional icon. |
 | `@whykusanagi/corrupted-theme/logo-banner` | LogoBanner | LogoBanner — positioned logo with optional subtitle and reveal animation. |
@@ -4169,6 +4170,14 @@ Toast.success('OK', { duration: 3000 });
 Toast.error('Failed');
 Toast.info('Loading...');
 ```
+### `http-errors`
+
+Return the copy for a status code, or the generic fallback for an unlisted code.
+
+- npm: `import { getHttpError } from '@whykusanagi/corrupted-theme/http-errors'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/core/http-errors.js`
+- Functions:
+  - `getHttpError(code)` — Return the copy for a status code, or the generic fallback for an unlisted code.
 ### `clock-widget`
 
 ClockWidget — cycling multi-timezone clock display.

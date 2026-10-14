@@ -1,0 +1,69 @@
+/* HTTP error pages: apply .error-page to a full-page <main>. */
+.error-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem 1.5rem;
+  text-align: center;
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.error-code {
+  color: var(--accent);
+  font-size: 8rem;
+  font-weight: 800;
+  line-height: 1;
+  text-shadow: 0 0 20px rgba(217, 79, 144, .8), 0 0 40px rgba(139, 92, 246, .6);
+}
+
+.error-title {
+  margin: 1rem 0;
+  color: var(--text);
+  font-size: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.error-line {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.error-links {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.error-links a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: .75rem 1.5rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--corrupted-purple, #8b5cf6), var(--accent));
+  color: #fff;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.error-links a:hover {
+  filter: brightness(1.15);
+}
+
+.error-links a:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 3px;
+}
+
+@media (max-width: 768px) {
+  .error-code { font-size: 5rem; }
+}

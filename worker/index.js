@@ -2,9 +2,9 @@
  * Cloudflare Worker — corrupted-theme example site
  *
  * Wraps env.ASSETS.fetch() (Cloudflare Workers Static Assets) with response
- * security headers. Static asset serving, .html-extension stripping, and the
- * 404 page are all handled by the ASSETS binding per wrangler.jsonc; this
- * worker only augments the response with security headers.
+ * security headers. Static asset serving and .html-extension stripping are
+ * handled by the ASSETS binding per wrangler.jsonc. Missing assets use the
+ * packaged error page, while retaining a real HTTP 404 status.
  *
  * Deployed to: https://corrupted.whykusanagi.xyz
  */
@@ -48,7 +48,22 @@ const SECURITY_HEADERS = {
 
 export default {
   async fetch(request, env, ctx) {
-    const assetResponse = await env.ASSETS.fetch(request);
+    let assetResponse = await env.ASSETS.fetch(request);
+
+    // This deployment serves the repository root as assets, but the published
+    // error pages live under errors/. The binding's 404-page mode only looks
+    // for a root 404.html, so serve our packaged page explicitly on misses.
+    // Do not fetch the fallback again when it is itself missing.
+    if (assetResponse.status === 404 && new URL(request.url).pathname !== '/errors/404.html') {
+      const errorUrl = new URL('/errors/404.html', request.url);
+      const errorPage = await env.ASSETS.fetch(new Request(errorUrl));
+      if (errorPage.ok) {
+        assetResponse = new Response(errorPage.body, {
+          status: 404,
+          headers: errorPage.headers,
+        });
+      }
+    }
 
     // Copy headers and add security headers on top. Preserve original
     // content-type, cache-control, etc. from ASSETS binding.

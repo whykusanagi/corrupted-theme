@@ -12,9 +12,11 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { readdirSync, existsSync } from 'node:fs';
+import { readdirSync, existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { isInsideRoot } from '../../scripts/static-server.js';
+import { httpErrors } from '../../src/core/http-errors.js';
+import { renderErrorPage } from '../../scripts/generate-error-pages.js';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..');
 
@@ -46,6 +48,21 @@ test('the build produces every artifact the CDN serves', () => {
     [],
     `dist/ is missing ${missing.join(', ')} — run \`npm run build\`. These paths are already live on the CDN; dropping one 404s every pinned consumer that loads it.`,
   );
+});
+
+test('the package includes every generated HTTP error page with safe HTML', () => {
+  const out = execFileSync('npm', ['pack', '--dry-run', '--json'], {
+    cwd: ROOT, encoding: 'utf8', maxBuffer: 1e8, stdio: ['ignore', 'pipe', 'ignore']
+  });
+  const files = JSON.parse(out)[0].files.map((f) => f.path);
+  for (const [code, copy] of Object.entries(httpErrors)) {
+    const page = `errors/${code}.html`;
+    assert.ok(files.includes(page), `tarball is missing ${page}`);
+    assert.equal(readFileSync(path.join(ROOT, page), 'utf8'), renderErrorPage(code, copy),
+      `${page} is stale — run npm run errors:generate`);
+  }
+  assert.ok(files.includes('src/core/http-errors.js'));
+  assert.ok(files.includes('src/css/error-pages.css'));
 });
 
 test('isInsideRoot rejects a sibling that merely shares the root prefix', () => {

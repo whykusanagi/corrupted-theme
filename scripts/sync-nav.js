@@ -35,10 +35,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
  * Enforced by `tests/data/nav-sync.test.js`.
  */
 export const RELEASE_DEMOS = {
-  version: '0.3.4',
+  version: '0.3.5',
   pages: [
-    'examples/editorial.html',
-    'examples/lipsync.html',
+    'examples/http-errors.html',
   ],
 };
 
@@ -55,6 +54,7 @@ export const NAV = [
       { label: 'Forms', icon: 'fa-edit', target: 'examples/form.html' },
       { label: 'Layouts', icon: 'fa-columns', target: 'examples/layout.html' },
       { label: 'Editorial & Data', icon: 'fa-newspaper', target: 'examples/editorial.html' },
+      { label: 'HTTP Error Pages', icon: 'fa-triangle-exclamation', target: 'examples/http-errors.html' },
       { label: 'Widgets', icon: 'fa-th-large', target: 'examples/components/showcase.html' },
       { label: 'API Docs', icon: 'fa-code', target: 'examples/showcase-complete.html#api-docs' },
     ],

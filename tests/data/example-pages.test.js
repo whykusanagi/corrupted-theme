@@ -22,7 +22,8 @@ test('the release landing pages feature the HTTP error gallery', () => {
     const html = readFileSync(path.join(ROOT, page), 'utf8');
     assert.match(html, /<h2>0\.3\.5 Examples<\/h2>/);
     assert.match(html, /<h3>HTTP Error Pages<\/h3>/);
-    assert.match(html, new RegExp(`href="${href}" class="quick-link"`));
+    assert.ok(html.includes(`href="${href}" class="quick-link"`),
+      `${page} is missing its release quick link to ${href}`);
     assert.ok(existsSync(path.join(ROOT, path.dirname(page), href)),
       `${page} links to missing gallery ${href}`);
   }

@@ -14,6 +14,21 @@ const pages = ['index.html',
     .map(String).filter((f) => f.endsWith('.html'))
     .map((f) => path.join('examples', f).split(path.sep).join('/'))];
 
+test('the release landing pages feature the HTTP error gallery', () => {
+  for (const [page, href] of [
+    ['index.html', 'examples/http-errors.html'],
+    ['examples/index.html', 'http-errors.html'],
+  ]) {
+    const html = readFileSync(path.join(ROOT, page), 'utf8');
+    assert.match(html, /<h2>0\.3\.5 Examples<\/h2>/);
+    assert.match(html, /<h3>HTTP Error Pages<\/h3>/);
+    assert.ok(html.includes(`href="${href}" class="quick-link"`),
+      `${page} is missing its release quick link to ${href}`);
+    assert.ok(existsSync(path.join(ROOT, path.dirname(page), href)),
+      `${page} links to missing gallery ${href}`);
+  }
+});
+
 test('no classic <script src> loads an ES module; all script srcs resolve', () => {
   const problems = [];
   for (const page of pages) {

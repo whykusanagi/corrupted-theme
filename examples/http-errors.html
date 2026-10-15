@@ -4,12 +4,20 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
-  <title>HTTP error pages | Corrupted Theme</title>
+  <title>HTTP Error Pages — Corrupted Theme</title>
+  <!--
+    HTTP status-code gallery (issue #88, docs/HTTP_ERRORS.md).
+    Each preview uses the package's httpErrors map and error-page CSS, so the
+    same titles and copy appear in Workers/SSR and generated errors/*.html.
+    This showcase returns HTTP 200; site handlers set the real error status.
+  -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-<link rel="stylesheet" href="../src/css/theme.css">
+  <link rel="stylesheet" href="../src/css/theme.css">
   <style>
     .error-gallery { padding: calc(var(--navbar-h) + 2rem) 2rem 2rem; background: var(--bg); color: var(--text); }
     .error-gallery h1 { margin-bottom: 1rem; }
+    .error-gallery > p { margin-bottom: 1.5rem; color: var(--text-secondary); }
+    .error-gallery > p a { color: var(--accent-light); }
     .error-gallery nav { display: flex; flex-wrap: wrap; gap: .75rem; margin-bottom: 2rem; }
     .error-gallery #status-list a { color: var(--accent-light); }
     .error-gallery section { border-top: 1px solid var(--border); }
@@ -96,7 +104,8 @@
     </div>
   </nav>
   <main class="error-gallery">
-    <h1>HTTP error pages</h1>
+    <h1>HTTP Error Pages</h1>
+    <p>Preview all 20 status-code designs, or open the standalone <a href="../errors/404.html">404</a> and <a href="../errors/503.html">503</a> pages.</p>
     <nav id="status-list" aria-label="Jump to status code"></nav>
     <div id="previews"></div>
   </main>

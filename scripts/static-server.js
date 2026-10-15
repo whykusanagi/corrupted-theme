@@ -115,9 +115,10 @@ const server = http.createServer((req, res) => {
   const url = new URL(req.url, `http://${req.headers.host}`);
   let filePath = url.pathname;
 
-  // Default to showcase-complete.html for root (comprehensive component showcase)
+  // Serve the root landing page at / so relative navigation resolves from
+  // the same location as its canonical navbar and live site.
   if (filePath === '/') {
-    filePath = '/examples/showcase-complete.html';
+    filePath = '/index.html';
   }
 
   // Remove leading slash
@@ -129,7 +130,7 @@ const server = http.createServer((req, res) => {
 // Only listen when run directly, so the helpers above stay importable by tests.
 if (process.argv[1] && path.resolve(process.argv[1]) === __filename) {
   server.listen(PORT, HOST, () => {
-    console.log(`📁 Static file server running on http://${HOST}:${PORT}`);
+    console.log(`Static file server running on http://${HOST}:${server.address().port}`);
   });
 }
 

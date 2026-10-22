@@ -13,6 +13,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Static assets live at `errors/<code>.html`; site-specific navigation belongs in
   each site's handler. See `docs/HTTP_ERRORS.md` for deployment and usage.
 
+### Subresource Integrity
+
+SHA-384 hashes for the CDN artifacts at `@0.3.5`, as served by
+`cdn.whykusanagi.xyz` and `cdn.nikkers.cc`. Regenerate with
+`npm run generate-sri`.
+
+| File | Integrity |
+|------|-----------|
+| `dist/clipboard-helpers.global.js` | `sha384-UuSlpAWcN5KD5lAax35jyrpHK8Napkyph12QjqPdUgtDoUOiw9fnluFSSTih2f3M` |
+| `dist/corrupted-text.global.js` | `sha384-bXckiUuAkcNxO6ME8+HGze7OfgazJk5p7AoYOUqp0a3ycZZmvxPGCy6vgcx1EA94` |
+| `dist/manifest.json` | `sha384-mLflnyDPwTiiNPrjkY9UMG3eEDTwxPk15RUSh5Jr7vRqluiHc9A+zNb+j0UCJxuX` |
+| `dist/nikke-utilities.css` | `sha384-7Oftp6ruWTxn3PbIvsY9Mkjl2uoLUd4WpboYEmsOkE75w09A6BoKoatSGkbEer0G` |
+| `dist/theme.min.css` | `sha384-kIMpzxf5yLsippKKW1QWDaxNEXnGPzVvYwsgWsOZr8zEK8wijVch27X+WwtYlTzd` |
+| `dist/timer-registry.global.js` | `sha384-IiU5Z1bTQXBlf9+GN1QAGf9iYAZAJk/LPo2wDktaxKEqZ6H507QZ+EKe9TUzGh+G` |
+| `dist/toast.global.js` | `sha384-E6pgdAS3p1sh+1jLBw3pUw07jUbpNPFFHo0o+D/CWY7yqSDB7T51x/Zr2dTJmpI4` |
+
+`dist/llms.txt` carries no hash: nothing loads it with a `<script>` or `<link>`.
+
 ## [0.3.4] - 2026-10-08
 
 ### Added

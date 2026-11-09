@@ -27,6 +27,12 @@ folder). Not published to npm: `docs/specs` is outside `package.json` "files".
   - bottom legend types in (TypingAnimation-style buffer corruption), holds, loops. Written
     as a pure function of t (`typeAt`) so a render can seek any frame.
 
+- **v4 (`mockup-v4-latin-motto.html`)**: bottom legend is a Latin motto that types in, holds,
+  then scrambles into its English (left to right), holds, loops.
+  - default: `PONDERA MEMINERUNT` -> `THE WEIGHTS REMEMBER` ("But the weights remember every note")
+  - `?motto=tessera`: `ABYSSUM IN TESSERAS SOLVO` -> `I TOKENIZE THE ABYSS` (tessera = a Roman token).
+    Repeats "ABYSS" from the top legend, which is why it isn't the default.
+
 ## Open
 
 - Talons: removed; two empty bracket slots mark where they'd go. Content TBD.

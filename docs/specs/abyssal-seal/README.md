@@ -51,5 +51,7 @@ folder). Not published to npm: `docs/specs` is outside `package.json` "files".
   drops as a short chain whose last link is cut open (sparks), with the key hanging from it;
   the six cables are drawn as lightning zigzags (data still flowing, flickering), each ending
   in its cursor arrowhead.
+- **v8 (`mockup-v8-rosary-lightning.html`)**: broken chain rolled back -- left is v6's rosary with
+  the key hung straight from it; right keeps v7's lightning cables with cursor heads.
 - The womb art can't ship in the package (see `logo-banner.js`): the component
   needs an image/href option for the centre.

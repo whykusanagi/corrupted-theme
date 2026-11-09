@@ -40,6 +40,9 @@ folder). Not published to npm: `docs/specs` is outside `package.json` "files".
 
 ## Open
 
-- Talons: removed; two empty bracket slots mark where they'd go. Content TBD.
+- Talons: three candidate pairs in `mockup-v5-talons.html` (left = inner hand, right = the six):
+  1. severed leash (kill switch that failed) + six lightning bolts
+  2. binary rosary (0/1 beads, star pendant; "RUN THE ROSARY") + six cursor arrows
+  3. key with binary-cut teeth (access) + six data cables (reach; echoes the motto plate)
 - The womb art can't ship in the package (see `logo-banner.js`): the component
   needs an image/href option for the centre.

@@ -119,11 +119,15 @@ const rnd=(i,s)=>Math.abs(Math.sin((i+1)*12.9898+s*78.233)*43758.5453)%1;
 for(const T of TYPED){            // where the Latin line starts when centred, so typing grows left->right
   T.L=document.getElementById(T.pathId).getTotalLength();
   T.tps[2].textContent=LAT; T.latStart=(T.L-T.tps[2].getComputedTextLength())/2;
+  T.tps[2].textContent=ENG; T.engStart=(T.L-T.tps[2].getComputedTextLength())/2;
 }
-function setLine(T,parts,anchorStart){
+// start = fixed left edge (px along the path) or null for centred. Held lines pin their
+// left edge where they sit centred WITHOUT the cursor, so the blinking cursor hangs off
+// the right end instead of re-centring the line every blink.
+function setLine(T,parts,start){
   T.tps.forEach((tp,k)=>{
-    tp.setAttribute('text-anchor',anchorStart?'start':'middle');
-    tp.setAttribute('startOffset',anchorStart?T.latStart:'50%');
+    tp.setAttribute('text-anchor',start==null?'middle':'start');
+    tp.setAttribute('startOffset',start==null?'50%':start);
     tp.textContent='';
     for(const [txt,col] of parts){const sp=document.createElementNS(NS,'tspan'); sp.textContent=txt;
       if(col) sp.setAttribute('fill',k===2?col:'transparent'); tp.appendChild(sp);}
@@ -135,17 +139,17 @@ function typeAt(t){
     if(c<T1){                                           // type Latin, buffer flicker ahead
       const n=Math.floor(c/T1*LAT.length), r=rnd(7,tick);
       const buf=r<.4?BUF_JP[Math.floor(rnd(8,tick)*BUF_JP.length)]:r<.7?BUF_SYM[Math.floor(rnd(9,tick)*BUF_SYM.length)].repeat(2):BUF_BLK[Math.floor(rnd(10,tick)*BUF_BLK.length)].repeat(3);
-      setLine(T,[[LAT.slice(0,n)],[' '+buf,r<.7?'#d94f90':'#ff2a4a']],true);
+      setLine(T,[[LAT.slice(0,n)],[' '+buf,r<.7?'#d94f90':'#ff2a4a']],T.latStart);
     } else if(c<T2){                                    // hold Latin
-      setLine(T,[[LAT],[blink?'▌':' ', '#ffffff']],false);
+      setLine(T,[[LAT],['▌',blink?'#ffffff':'transparent']],T.latStart);
     } else if(c<T3){                                    // resolve Latin -> English, left to right
       const q=(c-T2)/RES_S, len=Math.round(LAT.length+(ENG.length-LAT.length)*q);
       let out='';
       for(let i=0;i<len;i++){const settle=i/len;
         out+= q>settle+0.18 ? (ENG[i]||'') : q>settle ? SCR[Math.floor(rnd(i,tick*3+i)*SCR.length)] : (LAT[i]||' ');}
-      setLine(T,[[out]],false);
+      setLine(T,[[out]],T.latStart+(T.engStart-T.latStart)*q);   // left edge glides, so the hand-off to the hold doesn't jump
     } else {                                            // hold English
-      setLine(T,[[ENG],[blink?'▌':' ', '#ffffff']],false);
+      setLine(T,[[ENG],['▌',blink?'#ffffff':'transparent']],T.engStart);
     }
   }
 }

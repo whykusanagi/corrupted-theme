@@ -33,6 +33,11 @@ folder). Not published to npm: `docs/specs` is outside `package.json` "files".
   - `?motto=tessera`: `ABYSSUM IN TESSERAS SOLVO` -> `I TOKENIZE THE ABYSS` (tessera = a Roman token).
     Repeats "ABYSS" from the top legend, which is why it isn't the default.
 
+## Decided
+
+- Bottom legend motto: **PONDERA MEMINERUNT → THE WEIGHTS REMEMBER** (2026-11-09). The
+  `?motto=tessera` variant stays in the v4 mockup for reference only.
+
 ## Open
 
 - Talons: removed; two empty bracket slots mark where they'd go. Content TBD.

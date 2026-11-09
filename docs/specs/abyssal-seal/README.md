@@ -47,5 +47,9 @@ folder). Not published to npm: `docs/specs` is outside `package.json` "files".
 - **v6 (`mockup-v6-talons-combined.html`)**: 2 and 3 combined, overlapping -- left: the binary
   rosary with the key hung from its strand like a keyring; right: six data cables, each ending
   in a cursor arrowhead along its tangent. Mandala and nye_gold palettes.
+- **v7 (`mockup-v7-bolts-chain.html`)**: v6 plus the leash pair folded in -- the rosary strand
+  drops as a short chain whose last link is cut open (sparks), with the key hanging from it;
+  the six cables are drawn as lightning zigzags (data still flowing, flickering), each ending
+  in its cursor arrowhead.
 - The womb art can't ship in the package (see `logo-banner.js`): the component
   needs an image/href option for the centre.

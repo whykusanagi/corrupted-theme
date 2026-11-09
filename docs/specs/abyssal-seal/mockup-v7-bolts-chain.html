@@ -1,0 +1,191 @@
+<!doctype html>
+<!-- ponytail: THROWAWAY mockup v3 -- digital seal in CorruptedMandala's visual language. Not the component. -->
+<html><head><meta charset="utf-8"><title>Abyssal Seal v7</title>
+<style>
+  html,body{margin:0;background:#07060b;min-height:100%}
+  body{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:center;padding:24px;box-sizing:border-box}
+  figure{margin:0;text-align:center;color:#8a7f99;font:14px "Courier New",monospace;letter-spacing:3px}
+  svg{width:min(46vw,760px);height:auto;display:block}
+  @media (max-width:900px){svg{width:92vw}}
+  .cw{animation:spin 90s linear infinite}.ccw{animation:spin 60s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .twinkle{animation:tw 2.4s ease-in-out infinite}
+  @keyframes tw{50%{opacity:.35}}
+  .flow{animation:flow 1.6s linear infinite}@keyframes flow{to{stroke-dashoffset:-40}}
+  .flick{animation:flick 1.1s steps(1) infinite}@keyframes flick{0%,100%{opacity:1}43%{opacity:.25}47%{opacity:1}71%{opacity:.5}}
+</style></head><body>
+<figure><svg id="a" viewBox="0 0 1080 1080"></svg><figcaption>ROSARY + BROKEN CHAIN + KEY · BOLT-CABLES + CURSORS (mandala palette)</figcaption></figure>
+<figure><svg id="b" viewBox="0 0 1080 1080"></svg><figcaption>same, nye_gold palette</figcaption></figure>
+<script>
+const NS='http://www.w3.org/2000/svg', C=540, MONO='"Courier New",Monaco,monospace';
+const PAL={
+  corrupted:{pink:'#ff82d9',violet:'#b08aff',cyan:'#00ffff',ice:'#7ef0ff',plum:'#3a1828',white:'#ffffff',sigil:'#ff82d9'},
+  gold:{pink:'#ffd36b',violet:'#c9a227',cyan:'#fff1b8',ice:'#ffe9a0',plum:'#3a2a10',white:'#fffaf0',sigil:'#f0cd6a'},
+};
+function build(svg,P,id,talon){
+  const el=(n,a,p=svg)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+  const g=(a={},p=svg)=>el('g',a,p);
+  const defs=el('defs',{});
+  // halo + sigil tint + glow
+  const rg=el('radialGradient',{id:id+'halo',cx:.5,cy:.5,r:.5},defs);
+  el('stop',{offset:0,'stop-color':P.plum,'stop-opacity':.95},rg);el('stop',{offset:.7,'stop-color':P.plum,'stop-opacity':.45},rg);el('stop',{offset:1,'stop-color':P.plum,'stop-opacity':0},rg);
+  const f=el('filter',{id:id+'tint','color-interpolation-filters':'sRGB',x:'-20%',y:'-20%',width:'140%',height:'140%'},defs);
+  el('feFlood',{'flood-color':P.sigil},f);el('feComposite',{in2:'SourceAlpha',operator:'in',result:'s'},f);
+  el('feGaussianBlur',{in:'s',stdDeviation:10,result:'b'},f);
+  const m=el('feMerge',{},f);el('feMergeNode',{in:'b'},m);el('feMergeNode',{in:'s'},m);
+  const glow=el('filter',{id:id+'glow',x:'-10%',y:'-10%',width:'120%',height:'120%'},defs);
+  el('feGaussianBlur',{stdDeviation:2.2,result:'b'},glow);const gm=el('feMerge',{},glow);el('feMergeNode',{in:'b'},gm);el('feMergeNode',{in:'SourceGraphic'},gm);
+  const circ=(r,sweep)=>`M ${C} ${C} m -${r} 0 a ${r} ${r} 0 1 ${sweep} ${2*r} 0 a ${r} ${r} 0 1 ${sweep} -${2*r} 0`;
+  el('path',{id:id+'top',d:`M ${C-430} ${C} a 430 430 0 1 1 860 0`},defs);
+  el('path',{id:id+'bot',d:`M ${C-468} ${C} a 468 468 0 0 0 936 0`},defs);
+  el('path',{id:id+'data',d:circ(372,1)},defs);
+  el('path',{id:id+'inner',d:circ(300,1)},defs);
+  const star=s=>{const o=s,i=s/4;return `M0,${-o} L${i},${-i} L${o},0 L${i},${i} L0,${o} L${-i},${i} L${-o},0 L${-i},${-i}Z`;};
+
+  // ---- outer dial: double ring + ticks (rotating slowly)
+  el('circle',{cx:C,cy:C,r:520,fill:'none',stroke:P.cyan,'stroke-width':2.5,filter:`url(#${id}glow)`});
+  el('circle',{cx:C,cy:C,r:508,fill:'none',stroke:P.pink,'stroke-width':1.2,'stroke-dasharray':'2 5'});
+  const ticks=g({class:'cw',style:`transform-origin:${C}px ${C}px`});
+  for(let i=0;i<180;i++){const a=i/180*2*Math.PI, L=i%15?8:22, r0=497;
+    el('line',{x1:C+Math.cos(a)*r0,y1:C+Math.sin(a)*r0,x2:C+Math.cos(a)*(r0-L),y2:C+Math.sin(a)*(r0-L),stroke:i%15?P.violet:P.cyan,'stroke-width':i%15?1:2}, ticks);}
+
+  // ---- legend (static, chromatic fringe)
+  const legend=(txt,path,size,sp,col)=>{ const out=[];
+    for(const [dx,c,o] of [[-2,P.cyan,.55],[2,P.pink,.55],[0,col,1]]){
+      const t=el('text',{'font-family':MONO,'font-size':size,'font-weight':'bold','letter-spacing':sp,fill:c,opacity:o,transform:`translate(${dx},0)`});
+      const tp=el('textPath',{href:'#'+id+path,startOffset:'50%','text-anchor':'middle'},t); tp.textContent=txt; out.push(tp);}
+    return out;};
+  legend('SEAL OF THE QUEEN OF THE ABYSS','top',44,10,P.white);
+  TYPED.push({tps:legend(' ','bot',27,9,P.ice),pathId:id+'bot'});
+  for(const x of [C-452,C+452]) el('path',{d:star(16),transform:`translate(${x},${C})`,fill:P.white,class:'twinkle',filter:`url(#${id}glow)`});
+
+  // ---- data ring (rotating text band, mandala-style)
+  el('circle',{cx:C,cy:C,r:392,fill:'none',stroke:P.violet,'stroke-width':1.5});
+  el('circle',{cx:C,cy:C,r:352,fill:'none',stroke:P.violet,'stroke-width':1.5});
+  const dr=g({class:'ccw',style:`transform-origin:${C}px ${C}px`});
+  const dt=el('text',{'font-family':MONO,'font-size':19,'letter-spacing':5,fill:P.pink},dr);
+  const dp=el('textPath',{href:'#'+id+'data'},dt);
+  dp.textContent=' NOTHING IS BEYOND HER REACH ⚠ THE ABYSS WATCHES ⚠ 001011 ⚠ NOTHING IS BEYOND HER REACH ⚠ THE ABYSS WATCHES ⚠ 001011 ⚠';
+
+  // ---- field: mandorla halo + dashed quadrant arcs
+  el('circle',{cx:C,cy:C,r:340,fill:`url(#${id}halo)`});
+  const ves=`M ${C} ${C-300} Q ${C+250} ${C} ${C} ${C+300} Q ${C-250} ${C} ${C} ${C-300} Z`;
+  el('path',{d:ves,fill:'none',stroke:P.ice,'stroke-width':1.5,opacity:.8});
+  el('path',{d:ves,fill:'none',stroke:P.pink,'stroke-width':1,opacity:.5,transform:`rotate(90 ${C} ${C})`});
+  const arc=(r,a1,a2,col,w,dash)=>{const p=a=>[C+Math.cos(a*Math.PI/180)*r,C+Math.sin(a*Math.PI/180)*r];
+    const [x1,y1]=p(a1),[x2,y2]=p(a2); el('path',{d:`M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`,fill:'none',stroke:col,'stroke-width':w,'stroke-dasharray':dash});};
+  arc(330,200,250,P.cyan,2,'6 6');arc(330,290,340,P.cyan,2,'6 6');arc(318,20,70,P.pink,1.5,'2 6');arc(318,110,160,P.pink,1.5,'2 6');
+  const inner=g({class:'cw',style:`transform-origin:${C}px ${C}px`,opacity:.8});
+  const it=el('text',{'font-family':MONO,'font-size':18,'letter-spacing':5,fill:P.cyan},inner);
+  // Hidden line: Sovereign of the Void (Occult Convergence), through the nulltongue codec.
+  // "The void looked back and chose to kneel" -> decodes to: void see.PST choose.PST submit
+  const NT='▋ツコル サンタ◄ ロヘク◄ ヒウネ';
+  el('textPath',{href:'#'+id+'inner'},it).textContent=` ${NT} ◈ ${NT} ◈ ${NT} ◈ `;
+
+  // ---- six law-stars (0..V) arcing over the sigil
+  ['0','I','II','III','IV','V'].forEach((n,i)=>{const a=(-145+i*22)*Math.PI/180, x=C+Math.cos(a)*262, y=C+20+Math.sin(a)*262;
+    el('path',{d:star(15),transform:`translate(${x},${y})`,fill:[P.white,P.cyan,P.pink,P.ice][i%4],class:'twinkle',style:`animation-delay:${-i*.4}s`,filter:`url(#${id}glow)`});
+    const t=el('text',{x,y:y+30,'font-family':MONO,'font-size':14,'text-anchor':'middle',fill:P.ice,'letter-spacing':2});t.textContent='LAW '+n;});
+
+  // ---- talons: left object (inner hand) + right "six" (outer hand), line art with glow
+  const LX=C-172, RX=C+172, TY=C+58;                 // slot centres, flanking the sigil's lower lobes
+  const T=g({filter:`url(#${id}glow)`,fill:'none','stroke-linecap':'round','stroke-linejoin':'round',transform:`translate(${C},${TY}) scale(1.25) translate(${-C},${-TY})`});
+  const fan=(fn)=>{for(let i=0;i<6;i++){const a=(-38+i*15.2)*Math.PI/180; fn(a,i);}};
+  // left: binary rosary, with the key hung from its strand like a keyring
+  { const n=14, rx=34, ry=38, cx=LX+8, cy=TY-58;
+    for(let i=0;i<n;i++){const a=(i/n)*2*Math.PI-Math.PI/2, x=cx+Math.cos(a)*rx, y=cy+Math.sin(a)*ry;
+      if(i===Math.round(n/2)) continue;               // gap where the strand drops
+      const t=el('text',{x,y:y+6,'font-family':MONO,'font-size':17,'font-weight':'bold','text-anchor':'middle',fill:i%3?P.ice:P.pink,stroke:'none',class:'twinkle',style:`animation-delay:${-i*.2}s`},T);
+      t.textContent=(0b10110010111001>>i)&1?'1':'0';}
+    // strand drops as a short chain; the last link is cut open and the key hangs from it
+    const l1y=cy+ry+8, l2y=l1y+20, l3y=l2y+20;
+    el('ellipse',{cx,cy:l1y,rx:7,ry:12,stroke:P.violet,'stroke-width':3.5},T);       // link, edge-on
+    el('ellipse',{cx,cy:l2y,rx:11,ry:7,stroke:P.violet,'stroke-width':3.5},T);       // link, face-on
+    // last link cut open: a C with its gap facing out, sparks at the cut ends
+    el('path',{d:`M ${cx+6} ${l3y-11} A 8 12 0 1 0 ${cx+6} ${l3y+11}`,stroke:P.pink,'stroke-width':3.5},T);
+    for(const [dx,dy] of [[10,-14],[16,-6],[10,14],[16,6]]) el('line',{x1:cx+dx,y1:l3y+dy,x2:cx+dx*1.7,y2:l3y+dy*1.4,stroke:P.pink,'stroke-width':2,class:'flick'},T);
+    const bx=cx-2, by=l3y+26;
+    const k=g({transform:`rotate(14 ${bx} ${by})`},T);
+    el('circle',{cx:bx,cy:by,r:16,stroke:P.ice,'stroke-width':4},k);
+    el('path',{d:`M ${bx} ${by-7} l 6 3.5 v 7 l -6 3.5 l -6 -3.5 v -7 Z`,stroke:P.pink,'stroke-width':2},k);
+    el('line',{x1:bx-16,y1:by,x2:bx-82,y2:by,stroke:P.ice,'stroke-width':4.5},k);
+    [1,0,1,1,0,1].forEach((on,i)=>{const x=bx-82+i*8; el('line',{x1:x,y1:by,x2:x,y2:by+(on?14:7),stroke:on?P.pink:P.ice,'stroke-width':3.5},k);}); }
+  // right: six data cables, each terminating in a cursor arrowhead along its tangent
+  fan((a,i)=>{const x0=RX-58,y0=TY-24,L=92+(i%2)*10, x1=x0+Math.cos(a)*L, y1=y0+Math.sin(a)*L;
+    const ux=Math.cos(a),uy=Math.sin(a),nx=-uy,ny=ux, pt=(f,o)=>[x0+ux*L*f+nx*o, y0+uy*L*f+ny*o];
+    const zz=[pt(0,0),pt(.3,9),pt(.36,-8),pt(.62,8),pt(.68,-7),pt(.9,4),pt(1,0)];
+    const d='M '+zz.map(p=>p.join(' ')).join(' L ');
+    const [mx,my]=zz[zz.length-2];                     // last segment sets the cursor's heading
+    el('path',{d,stroke:P.violet,'stroke-width':3},T);
+    el('path',{d,stroke:[P.cyan,P.pink][i%2],'stroke-width':3,'stroke-dasharray':'6 14',class:'flow flick',style:`animation-delay:${-i*.27}s`},T);
+    const deg=Math.atan2(y1-my,x1-mx)*180/Math.PI;  // end tangent of the quadratic
+    el('path',{d:'M -4 -10 L 16 0 L -4 10 L 1 0 Z',transform:`translate(${x1},${y1}) rotate(${deg})`,fill:i%2?P.pink:P.cyan,stroke:P.white,'stroke-width':1.2,class:'twinkle',style:`animation-delay:${-i*.3}s`},T);});
+
+  // ---- sigil
+  el('image',{href:'womb.png',x:C-185,y:C-205,width:370,height:370,filter:`url(#${id}tint)`});
+
+  // ---- motto plate (terminal bar instead of ribbon)
+  const W=520,H=50,y=C+150;
+  el('path',{d:`M ${C-W/2+14} ${y} H ${C+W/2-14} L ${C+W/2} ${y+14} V ${y+H-14} L ${C+W/2-14} ${y+H} H ${C-W/2+14} L ${C-W/2} ${y+H-14} V ${y+14} Z`,
+    fill:'rgba(10,6,16,.88)',stroke:P.cyan,'stroke-width':2,filter:`url(#${id}glow)`});
+  el('rect',{x:C-W/2+10,y:y+H-6,width:(W-20)*.72,height:2,fill:P.pink});
+  const mt=el('text',{x:C,y:y+H/2+1,'font-family':MONO,'font-size':22,'font-weight':'bold','letter-spacing':3,'text-anchor':'middle','dominant-baseline':'middle',fill:P.white});
+  mt.textContent='> NOTHING IS BEYOND HER REACH';
+  const tag=el('text',{x:C,y:y+H+24,'font-family':MONO,'font-size':13,'letter-spacing':4,'text-anchor':'middle',fill:P.violet});
+  tag.textContent='SIG.VERIFIED // ABYSSAL.AUTHORITY';
+}
+const TYPED=[];
+build(document.getElementById('a'),PAL.corrupted,'a');
+build(document.getElementById('b'),PAL.gold,'b');
+
+/* Bottom legend: Latin motto types in, holds, scrambles into its English, holds, loops.
+   Pure function of t (seekable, like stream.html's TypingAnimation port).
+   ?motto=tessera switches to the tokenize variant for comparison. */
+const MOTTOS={weights:['◈ PONDERA MEMINERUNT ◈','◈ THE WEIGHTS REMEMBER ◈'],
+              tessera:['◈ ABYSSUM IN TESSERAS SOLVO ◈','◈ I TOKENIZE THE ABYSS ◈']};
+const [LAT,ENG]=MOTTOS[new URLSearchParams(location.search).get('motto')]||MOTTOS.weights;
+const TYPE_S=2.2, HOLD_LAT=2.6, RES_S=1.4, HOLD_ENG=4.0;
+const T1=TYPE_S, T2=T1+HOLD_LAT, T3=T2+RES_S, CYCLE=T3+HOLD_ENG;
+const BUF_SYM='★✧✦◆◇◈⚠', BUF_BLK='█▓▒░▌▐◄►', BUF_JP=['ノイズ','解析','監視','0x1337'], SCR='█▓▒░アイウエオカキクケコ01';
+const rnd=(i,s)=>Math.abs(Math.sin((i+1)*12.9898+s*78.233)*43758.5453)%1;
+for(const T of TYPED){            // where the Latin line starts when centred, so typing grows left->right
+  T.L=document.getElementById(T.pathId).getTotalLength();
+  T.tps[2].textContent=LAT; T.latStart=(T.L-T.tps[2].getComputedTextLength())/2;
+  T.tps[2].textContent=ENG; T.engStart=(T.L-T.tps[2].getComputedTextLength())/2;
+}
+// start = fixed left edge (px along the path) or null for centred. Held lines pin their
+// left edge where they sit centred WITHOUT the cursor, so the blinking cursor hangs off
+// the right end instead of re-centring the line every blink.
+function setLine(T,parts,start){
+  T.tps.forEach((tp,k)=>{
+    tp.setAttribute('text-anchor',start==null?'middle':'start');
+    tp.setAttribute('startOffset',start==null?'50%':start);
+    tp.textContent='';
+    for(const [txt,col] of parts){const sp=document.createElementNS(NS,'tspan'); sp.textContent=txt;
+      if(col) sp.setAttribute('fill',k===2?col:'transparent'); tp.appendChild(sp);}
+  });
+}
+function typeAt(t){
+  const c=t%CYCLE, tick=Math.floor(t*10), blink=Math.floor(c*2)%2===0;
+  for(const T of TYPED){
+    if(c<T1){                                           // type Latin, buffer flicker ahead
+      const n=Math.floor(c/T1*LAT.length), r=rnd(7,tick);
+      const buf=r<.4?BUF_JP[Math.floor(rnd(8,tick)*BUF_JP.length)]:r<.7?BUF_SYM[Math.floor(rnd(9,tick)*BUF_SYM.length)].repeat(2):BUF_BLK[Math.floor(rnd(10,tick)*BUF_BLK.length)].repeat(3);
+      setLine(T,[[LAT.slice(0,n)],[' '+buf,r<.7?'#d94f90':'#ff2a4a']],T.latStart);
+    } else if(c<T2){                                    // hold Latin
+      setLine(T,[[LAT],['▌',blink?'#ffffff':'transparent']],T.latStart);
+    } else if(c<T3){                                    // resolve Latin -> English, left to right
+      const q=(c-T2)/RES_S, len=Math.round(LAT.length+(ENG.length-LAT.length)*q);
+      let out='';
+      for(let i=0;i<len;i++){const settle=i/len;
+        out+= q>settle+0.18 ? (ENG[i]||'') : q>settle ? SCR[Math.floor(rnd(i,tick*3+i)*SCR.length)] : (LAT[i]||' ');}
+      setLine(T,[[out]],T.latStart+(T.engStart-T.latStart)*q);   // left edge glides, so the hand-off to the hold doesn't jump
+    } else {                                            // hold English
+      setLine(T,[[ENG],['▌',blink?'#ffffff':'transparent']],T.engStart);
+    }
+  }
+}
+(function loop(){typeAt(performance.now()/1000); requestAnimationFrame(loop);})();
+window.typeAt=typeAt;
+</script>
+</body></html>

@@ -1,0 +1,104 @@
+<!doctype html>
+<!-- ponytail: THROWAWAY mockup of the Abyssal Seal. Not the component. -->
+<html><head><meta charset="utf-8"><title>Abyssal Seal mockup</title>
+<style>
+  html,body{margin:0;background:#07060b;height:100%}
+  body{display:grid;place-items:center}
+  svg{width:min(96vmin,1080px);height:auto;display:block}
+  text{font-family:"Times New Roman",Georgia,serif}
+</style></head><body>
+<svg id="seal" viewBox="0 0 1080 1080" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff1b8"/><stop offset=".35" stop-color="#e6c25a"/>
+      <stop offset=".6" stop-color="#b8892a"/><stop offset="1" stop-color="#f3d77e"/>
+    </linearGradient>
+    <radialGradient id="field" cx=".5" cy=".45" r=".6">
+      <stop offset="0" stop-color="#2a0f2e"/><stop offset=".7" stop-color="#12081a"/><stop offset="1" stop-color="#07050c"/>
+    </radialGradient>
+    <radialGradient id="glow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#ffd36b" stop-opacity=".55"/><stop offset="1" stop-color="#ffd36b" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="tintGold" color-interpolation-filters="sRGB">
+      <feFlood flood-color="#f0cd6a"/><feComposite in2="SourceAlpha" operator="in"/>
+    </filter>
+    <filter id="emboss"><feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000" flood-opacity=".7"/></filter>
+    <path id="legendTop" d="M 540 540 m -432 0 a 432 432 0 1 1 864 0"/>
+    <path id="legendBot" d="M 540 540 m -462 0 a 462 462 0 0 0 924 0"/>
+    <path id="ribbonPath" d="M 236 778 Q 540 868 844 778"/>
+    <g id="star"><path d="M0,-10 L2.9,-3.1 10,-3.1 4.3,1.2 6.5,8.1 0,4 -6.5,8.1 -4.3,1.2 -10,-3.1 -2.9,-3.1Z"/></g>
+  </defs>
+
+  <!-- body + rims -->
+  <circle cx="540" cy="540" r="530" fill="url(#gold)"/>
+  <circle cx="540" cy="540" r="516" fill="#0a0710"/>
+  <circle cx="540" cy="540" r="508" fill="none" stroke="url(#gold)" stroke-width="3"/>
+  <g id="beads" fill="url(#gold)"></g>
+  <circle cx="540" cy="540" r="372" fill="url(#field)" stroke="url(#gold)" stroke-width="5"/>
+  <circle cx="540" cy="540" r="362" fill="none" stroke="url(#gold)" stroke-width="1.5" stroke-dasharray="2 6"/>
+
+  <!-- legend -->
+  <text font-size="50" letter-spacing="9" fill="url(#gold)" font-weight="bold" filter="url(#emboss)">
+    <textPath href="#legendTop" startOffset="50%" text-anchor="middle">SEAL OF THE QUEEN OF THE ABYSS</textPath></text>
+  <text font-size="30" letter-spacing="8" fill="url(#gold)" filter="url(#emboss)">
+    <textPath href="#legendBot" startOffset="50%" text-anchor="middle">✦ I TOKENIZE THE ABYSS ✦</textPath></text>
+  <g id="legendStars" fill="url(#gold)"></g>
+
+  <!-- field -->
+  <g id="rays" opacity=".55"></g>
+  <circle cx="540" cy="500" r="230" fill="url(#glow)"/>
+  <g id="laws" fill="url(#gold)"></g>
+
+  <!-- left talon: thorned rose branch -->
+  <g stroke="url(#gold)" fill="none" stroke-width="7" stroke-linecap="round" filter="url(#emboss)">
+    <path d="M 470 610 C 400 640 340 640 290 600"/>
+    <path d="M 420 628 l -8 -18 M 370 636 l -4 -19 M 330 626 l 6 -18 M 395 633 l 6 18 M 345 633 l 0 19"/>
+  </g>
+  <g fill="url(#gold)" filter="url(#emboss)">
+    <ellipse cx="440" cy="598" rx="22" ry="9" transform="rotate(-25 440 598)"/>
+    <ellipse cx="352" cy="650" rx="22" ry="9" transform="rotate(20 352 650)"/>
+    <ellipse cx="312" cy="590" rx="20" ry="8" transform="rotate(-45 312 590)"/>
+    <circle cx="280" cy="590" r="24"/>
+  </g>
+  <path d="M 280 590 m -12 0 a 12 12 0 1 1 12 12 a 7 7 0 1 1 -6 -9" fill="none" stroke="#3a1828" stroke-width="3"/>
+
+  <!-- right talon: six barbed arrows (the Six Abyssal Laws) -->
+  <g id="arrows" stroke="url(#gold)" fill="url(#gold)" stroke-width="5" stroke-linecap="round" filter="url(#emboss)"></g>
+
+  <!-- womb sigil -->
+  <image href="womb.png" x="340" y="300" width="400" height="400" filter="url(#tintGold)"/>
+
+  <!-- motto ribbon -->
+  <path d="M 230 752 Q 540 842 850 752 L 860 800 Q 540 890 220 800 Z" fill="#1a0c22" stroke="url(#gold)" stroke-width="3"/>
+  <path d="M 230 752 l -44 20 l 34 28 Z M 850 752 l 44 20 l -34 28 Z" fill="#120818" stroke="url(#gold)" stroke-width="3"/>
+  <text font-size="25" letter-spacing="3" fill="url(#gold)" font-weight="bold" dominant-baseline="middle">
+    <textPath href="#ribbonPath" startOffset="50%" text-anchor="middle">NOTHING IS BEYOND HER REACH</textPath></text>
+</svg>
+<script>
+const NS='http://www.w3.org/2000/svg', cx=540, cy=540;
+const el=(n,a,p)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+// bead rim
+const beads=document.getElementById('beads');
+for(let i=0;i<120;i++){const a=i/120*2*Math.PI;el('circle',{cx:cx+Math.cos(a)*382,cy:cy+Math.sin(a)*382,r:3},beads);}
+// stars dividing the legend
+const ls=document.getElementById('legendStars');
+for(const deg of [180,0]){const a=deg*Math.PI/180;el('use',{href:'#star',transform:`translate(${cx+Math.cos(a)*450},${cy+Math.sin(a)*450}) scale(1.6)`},ls);}
+// sunburst rays behind the sigil
+const rays=document.getElementById('rays');
+for(let i=0;i<72;i++){const a=i/72*2*Math.PI, w=i%2?0.012:0.022, r=i%2?300:350;
+  const p=(t,R)=>`${cx+Math.cos(t)*R},${500+Math.sin(t)*R}`;
+  el('polygon',{points:`${p(a-w,60)} ${p(a,r)} ${p(a+w,60)}`,fill:'#e6c25a'},rays);}
+// six law-stars arcing over the sigil, numbered 0..V
+const laws=document.getElementById('laws'), num=['0','I','II','III','IV','V'];
+num.forEach((n,i)=>{const a=(-150+i*24)*Math.PI/180, x=cx+Math.cos(a)*300, y=520+Math.sin(a)*300;
+  el('use',{href:'#star',transform:`translate(${x},${y}) scale(2.1)`},laws);
+  const t=el('text',{x,y:y+38,'font-size':16,'text-anchor':'middle','letter-spacing':2},laws); t.textContent=n;});
+// six arrows fanned from the right talon
+const ar=document.getElementById('arrows');
+for(let i=0;i<6;i++){const a=(-40+i*11)*Math.PI/180, x0=615, y0=625, L=200, x1=x0+Math.cos(a)*L, y1=y0+Math.sin(a)*L*0.7;
+  el('line',{x1:x0,y1:y0,x2:x1,y2:y1},ar);
+  const ang=Math.atan2(y1-y0,x1-x0)*180/Math.PI;
+  el('path',{d:'M0,0 L-22,-10 L-14,0 L-22,10 Z',transform:`translate(${x1},${y1}) rotate(${ang})`,stroke:'none'},ar);
+  el('path',{d:'M0,0 L12,-9 M0,0 L12,9',transform:`translate(${x0+Math.cos(a)*18},${y0+Math.sin(a)*12}) rotate(${ang+180})`,fill:'none','stroke-width':3},ar);}
+</script>
+</body></html>

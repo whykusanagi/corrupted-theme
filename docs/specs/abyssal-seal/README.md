@@ -18,10 +18,17 @@ folder). Not published to npm: `docs/specs` is outside `package.json` "files".
   - womb sigil centre (tinted + glow), terminal motto plate "> NOTHING IS BEYOND HER REACH"
   - palettes: mandala default (pink/violet/cyan) and nye_gold
 
+- **v3 (`mockup-v3-nulltongue.html`)**: v2 plus
+  - inner rotating ring carries a hidden nulltongue line: `▋ツコル サンタ◄ ロヘク◄ ヒウネ`
+    = "The void looked back and chose to kneel" (*Sovereign of the Void, Extended — Occult
+    Convergence*); the codec decodes it to `void see.PST choose.PST submit`. Same song as the
+    legend's "I TOKENIZE THE ABYSS". Yuubaku / OVERCLOCK were ruled out: explicit, and a
+    decodable line on a safe-platform background must not be.
+  - bottom legend types in (TypingAnimation-style buffer corruption), holds, loops. Written
+    as a pure function of t (`typeAt`) so a render can seek any frame.
+
 ## Open
 
 - Talons: removed; two empty bracket slots mark where they'd go. Content TBD.
-- Typing animation (corrupted-theme TypingAnimation) on the legend / motto plate.
-- Hidden data encoded in the rotating ring.
 - The womb art can't ship in the package (see `logo-banner.js`): the component
   needs an image/href option for the centre.

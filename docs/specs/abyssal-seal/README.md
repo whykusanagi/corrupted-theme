@@ -8,6 +8,10 @@ at a glance while being obviously fictional.
 Open `mockup-v2-digital.html` in a browser (it loads `womb.png` from this
 folder). Not published to npm: `docs/specs` is outside `package.json` "files".
 
+`womb.png` here is a **placeholder** (a plain star in a ring). The real womb
+sigil is private art and is never committed to this public repo; drop a copy
+over the placeholder locally to see the mockups as designed.
+
 ## Where the design stands (2026-11-09)
 
 - **v1 (`mockup-v1-heraldic.html`)**: US-presidential-seal layout in flat gold. Rejected as too literal.

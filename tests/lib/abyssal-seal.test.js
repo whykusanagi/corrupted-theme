@@ -55,3 +55,10 @@ test('palette selects colours; unknown palette throws; colors overrides on top',
   assert.throws(() => new AbyssalSeal(null, { palette: 'Gold' }), RangeError);
   assert.equal(new AbyssalSeal(null, { palette: 'crimson', colors: { white: '#000000' } }).options.colors.white, '#000000');
 });
+
+test('resolve fully settles to English before the hold starts', () => {
+  const T2 = 2.2 + 2.6, T3 = T2 + 1.4;
+  const s = mottoState(T3 - 0.02, M);
+  assert.equal(s.phase, 'resolve');
+  assert.equal(s.text, M.english);
+});

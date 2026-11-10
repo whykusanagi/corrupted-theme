@@ -4577,6 +4577,7 @@ AbyssalSeal — procedural SVG "seal of office" in CorruptedMandala's visual lan
 
 - npm: `import { AbyssalSeal } from '@whykusanagi/corrupted-theme/abyssal-seal'`
 - CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/abyssal-seal.js`
+- Requires stylesheet: `./abyssal-seal-css` → `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/css/abyssal-seal.css`
 - Constructor: `new AbyssalSeal(svgElement, options = {})`
 - Methods:
   - `init()` → `this` — Build at the current size. @returns {this}

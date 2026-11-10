@@ -38,6 +38,7 @@ const REQUIRES_CSS = {
   './terminal-takeover': './stream-overlays-css',
   './stream-ticker': './stream-overlays-css',
   './corrupted-mandala': './corrupted-mandala-css',
+  './abyssal-seal': './abyssal-seal-css',
   './toast': './toast-css',
 };
 

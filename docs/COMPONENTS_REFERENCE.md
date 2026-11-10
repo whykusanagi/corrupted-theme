@@ -4622,7 +4622,8 @@ svg's W x H, so the look is identical at any size or aspect.
 | `sigilHref` | `string|null` | `null` | Centre image (tinted via its alpha); null = a 4-point star |
 | `sigilColor` | `string|null` | `null` | Sigil tint; null = colors.pink |
 | `talons` | `boolean` | `true` | Rosary+key (left) and lightning cables (right) |
-| `colors` | `object` |  | Override tints (same keys as CorruptedMandala) |
+| `palette` | `'abyss'|'gold'|'crimson'` | `'abyss'` | Built-in palette (RFC-0001); unknown names throw |
+| `colors` | `object` |  | One-off tint overrides applied on top of the palette |
 | `size` | `number` | `0.96` | Seal diameter as a fraction of min(W,H) |
 | `rotationSpeed` | `number` | `1` | Ring rotation multiplier |
 | `typing` | `object` |  | {type, holdLatin, resolve, holdEnglish} seconds |

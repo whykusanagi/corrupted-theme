@@ -1,7 +1,7 @@
 // tests/lib/abyssal-seal.test.js — pure-logic tests (no DOM)
 import { strict as assert } from 'node:assert';
 import { test } from 'node:test';
-import { AbyssalSeal, mottoState, mottoCycle } from '../../src/lib/abyssal-seal.js';
+import { AbyssalSeal, SEAL_PALETTES, mottoState, mottoCycle } from '../../src/lib/abyssal-seal.js';
 
 const M = { latin: '◈ PONDERA MEMINERUNT ◈', english: '◈ THE WEIGHTS REMEMBER ◈' };
 
@@ -37,4 +37,21 @@ test('init/seek/destroy are safe without an svg', () => {
   const s = new AbyssalSeal(null);
   s.init().resize(1920, 1080).seek(3).setActive(true);
   s.destroy();
+});
+
+// RFC-0001: these values are locked. Changing one is a breaking visual change.
+test('built-in palettes are pinned (RFC-0001)', () => {
+  assert.deepEqual(JSON.parse(JSON.stringify(SEAL_PALETTES)), {
+    abyss:   { pink: '#ff82d9', violet: '#b08aff', iceCyan: '#7ef0ff', cyan: '#00ffff', plum: '#3a1828', accent: '#d94f90', white: '#ffffff' },
+    gold:    { pink: '#ffd36b', violet: '#c9a227', iceCyan: '#ffe9a0', cyan: '#fff1b8', plum: '#3a2a10', accent: '#e0b040', white: '#fffaf0' },
+    crimson: { pink: '#ff3b5c', violet: '#a0182e', iceCyan: '#ff8095', cyan: '#ffb3c0', plum: '#3a0810', accent: '#d0203a', white: '#fff0f2' },
+  });
+  assert.ok(Object.isFrozen(SEAL_PALETTES) && Object.isFrozen(SEAL_PALETTES.gold));
+});
+
+test('palette selects colours; unknown palette throws; colors overrides on top', () => {
+  assert.equal(new AbyssalSeal(null).options.colors.pink, '#ff82d9');
+  assert.equal(new AbyssalSeal(null, { palette: 'gold' }).options.colors.pink, '#ffd36b');
+  assert.throws(() => new AbyssalSeal(null, { palette: 'Gold' }), RangeError);
+  assert.equal(new AbyssalSeal(null, { palette: 'crimson', colors: { white: '#000000' } }).options.colors.white, '#000000');
 });

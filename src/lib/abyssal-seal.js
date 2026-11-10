@@ -35,10 +35,16 @@ const SVG_NS = 'http://www.w3.org/2000/svg';
 const MONO = '"Courier New", Monaco, monospace';
 const C = 540;                       // authored canvas centre (1080 x 1080)
 
-const DEFAULT_COLORS = {
-  pink: '#ff82d9', violet: '#b08aff', iceCyan: '#7ef0ff', plum: '#3a1828',
-  cyan: '#00ffff', white: '#ffffff', accent: '#d94f90',
-};
+/**
+ * Built-in palettes, locked by docs/rfcs/RFC-0001-abyssal-seal-palettes.md.
+ * Pick one by name (options.palette). Do not add or retune values here without
+ * updating the RFC, the pinned test and the colour-sweep exceptions.
+ */
+export const SEAL_PALETTES = Object.freeze({
+  abyss: Object.freeze({ pink: '#ff82d9', violet: '#b08aff', iceCyan: '#7ef0ff', cyan: '#00ffff', plum: '#3a1828', accent: '#d94f90', white: '#ffffff' }),
+  gold: Object.freeze({ pink: '#ffd36b', violet: '#c9a227', iceCyan: '#ffe9a0', cyan: '#fff1b8', plum: '#3a2a10', accent: '#e0b040', white: '#fffaf0' }),
+  crimson: Object.freeze({ pink: '#ff3b5c', violet: '#a0182e', iceCyan: '#ff8095', cyan: '#ffb3c0', plum: '#3a0810', accent: '#d0203a', white: '#fff0f2' }),
+});
 
 const DEFAULT_TYPING = { type: 2.2, holdLatin: 2.6, resolve: 1.4, holdEnglish: 4.0 };
 
@@ -122,7 +128,8 @@ export function mottoCycle(typing = DEFAULT_TYPING) {
  * @param {string|null} [options.sigilHref=null] - Centre image (tinted via its alpha); null = a 4-point star
  * @param {string|null} [options.sigilColor=null] - Sigil tint; null = colors.pink
  * @param {boolean} [options.talons=true] - Rosary+key (left) and lightning cables (right)
- * @param {object}  [options.colors] - Override tints (same keys as CorruptedMandala)
+ * @param {'abyss'|'gold'|'crimson'} [options.palette='abyss'] - Built-in palette (RFC-0001); unknown names throw
+ * @param {object}  [options.colors] - One-off tint overrides applied on top of the palette
  * @param {number}  [options.size=0.96] - Seal diameter as a fraction of min(W,H)
  * @param {number}  [options.rotationSpeed=1] - Ring rotation multiplier
  * @param {object}  [options.typing] - {type, holdLatin, resolve, holdEnglish} seconds
@@ -130,6 +137,10 @@ export function mottoCycle(typing = DEFAULT_TYPING) {
  */
 export class AbyssalSeal {
   constructor(svgElement, options = {}) {
+    const palette = options.palette ?? 'abyss';
+    if (!Object.hasOwn(SEAL_PALETTES, palette)) {
+      throw new RangeError(`AbyssalSeal: unknown palette "${palette}" (expected ${Object.keys(SEAL_PALETTES).join(', ')})`);
+    }
     this.svg = svgElement;
     this.options = {
       legendTop:  options.legendTop ?? 'SEAL OF THE CORRUPTED ARCHIVE',
@@ -142,7 +153,8 @@ export class AbyssalSeal {
       sigilHref:  options.sigilHref ?? null,
       sigilColor: options.sigilColor ?? null,
       talons:     options.talons ?? true,
-      colors:     { ...DEFAULT_COLORS, ...(options.colors || {}) },
+      palette,
+      colors:     { ...SEAL_PALETTES[palette], ...(options.colors || {}) },
       size:       options.size ?? 0.96,
       rotationSpeed: options.rotationSpeed ?? 1,
       typing:     { ...DEFAULT_TYPING, ...(options.typing || {}) },

@@ -100,7 +100,7 @@ export function mottoState(t, motto, typing = DEFAULT_TYPING) {
     const len = Math.round(LAT.length + (ENG.length - LAT.length) * q);
     let text = '';
     for (let i = 0; i < len; i++) {
-      const settle = i / len;
+      const settle = (i / len) * 0.82;   // last char settles (q > settle + 0.18) before the phase ends
       text += q > settle + 0.18 ? (ENG[i] || '')
         : q > settle ? SCRAMBLE[Math.floor(noise(i, tick * 3 + i) * SCRAMBLE.length)]
         : (LAT[i] || ' ');
@@ -200,6 +200,8 @@ export class AbyssalSeal {
   setActive(active) {
     this.active = !!active;
     if (this.svg) this.svg.classList.toggle('active', this.active);
+    // A seek() while hidden had no layout to measure; redraw now that there is one.
+    if (this.active && this._typed && this._typed.latStart == null && this._lastT != null) this.seek(this._lastT);
     return this;
   }
 
@@ -219,6 +221,7 @@ export class AbyssalSeal {
   seek(t) {
     if (this._destroyed || !this._typed) return this;
     const st = mottoState(t, this._motto, this.options.typing);
+    this._lastT = t;
     const T = this._typed;
     if (T.latStart == null) this._measure();
     const start = st.start == null || T.latStart == null ? null

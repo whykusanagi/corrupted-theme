@@ -80,6 +80,22 @@ const ALLOWED = {
   '#7ef0ff': 'CorruptedMandala artwork tint (documented, overridable)',
   '#3a1828': 'CorruptedMandala artwork tint (documented, overridable)',
 
+  // AbyssalSeal built-in palettes, locked by docs/rfcs/RFC-0001.
+  '#ffd36b': 'AbyssalSeal gold palette (RFC-0001)',
+  '#c9a227': 'AbyssalSeal gold palette (RFC-0001)',
+  '#ffe9a0': 'AbyssalSeal gold palette (RFC-0001)',
+  '#fff1b8': 'AbyssalSeal gold palette (RFC-0001)',
+  '#3a2a10': 'AbyssalSeal gold palette (RFC-0001)',
+  '#e0b040': 'AbyssalSeal gold palette (RFC-0001)',
+  '#fffaf0': 'AbyssalSeal gold palette (RFC-0001)',
+  '#ff3b5c': 'AbyssalSeal crimson palette (RFC-0001)',
+  '#a0182e': 'AbyssalSeal crimson palette (RFC-0001)',
+  '#ff8095': 'AbyssalSeal crimson palette (RFC-0001)',
+  '#ffb3c0': 'AbyssalSeal crimson palette (RFC-0001)',
+  '#3a0810': 'AbyssalSeal crimson palette (RFC-0001)',
+  '#d0203a': 'AbyssalSeal crimson palette (RFC-0001)',
+  '#fff0f2': 'AbyssalSeal crimson palette (RFC-0001)',
+
   // Code syntax highlighting (Material Palenight). Syntax colours are a
   // separate legibility system, not corruption state.
   '#c792ea': 'syntax: keyword',
@@ -422,6 +438,13 @@ const DOCS_SCOPED = [
     files: /(?:^|\/)EDITORIAL_FULL_COVERAGE\.md$/,
     reason: 'the standard rank-scale steps, in the spec that sanctions them (editorial §5)',
     hexes: ['#3b82f6', '#fca5a5', '#f97316', '#fdba74', '#eab308', '#fde047', '#86efac', '#93c5fd', '#6b7280', '#cbd5e1'],
+  },
+  {
+    files: /(?:^|\/)RFC-0001-abyssal-seal-palettes\.md$/,
+    reason: 'the AbyssalSeal palettes, in the RFC that locks them',
+    hexes: ['#ff82d9', '#b08aff', '#7ef0ff', '#3a1828',
+      '#ffd36b', '#c9a227', '#ffe9a0', '#fff1b8', '#3a2a10', '#e0b040', '#fffaf0',
+      '#ff3b5c', '#a0182e', '#ff8095', '#ffb3c0', '#3a0810', '#d0203a', '#fff0f2'],
   },
 ];
 

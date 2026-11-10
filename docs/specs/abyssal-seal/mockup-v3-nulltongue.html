@@ -1,0 +1,139 @@
+<!doctype html>
+<!-- ponytail: THROWAWAY mockup v3 -- digital seal in CorruptedMandala's visual language. Not the component. -->
+<html><head><meta charset="utf-8"><title>Abyssal Seal v3</title>
+<style>
+  html,body{margin:0;background:#07060b;min-height:100%}
+  body{display:flex;flex-wrap:wrap;gap:24px;justify-content:center;align-items:center;padding:24px;box-sizing:border-box}
+  figure{margin:0;text-align:center;color:#8a7f99;font:14px "Courier New",monospace;letter-spacing:3px}
+  svg{width:min(46vw,760px);height:auto;display:block}
+  @media (max-width:900px){svg{width:92vw}}
+  .cw{animation:spin 90s linear infinite}.ccw{animation:spin 60s linear infinite reverse}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .twinkle{animation:tw 2.4s ease-in-out infinite}
+  @keyframes tw{50%{opacity:.35}}
+</style></head><body>
+<figure><svg id="a" viewBox="0 0 1080 1080"></svg><figcaption>CORRUPTED (mandala palette)</figcaption></figure>
+<figure><svg id="b" viewBox="0 0 1080 1080"></svg><figcaption>GOLD (nye_gold palette)</figcaption></figure>
+<script>
+const NS='http://www.w3.org/2000/svg', C=540, MONO='"Courier New",Monaco,monospace';
+const PAL={
+  corrupted:{pink:'#ff82d9',violet:'#b08aff',cyan:'#00ffff',ice:'#7ef0ff',plum:'#3a1828',white:'#ffffff',sigil:'#ff82d9'},
+  gold:{pink:'#ffd36b',violet:'#c9a227',cyan:'#fff1b8',ice:'#ffe9a0',plum:'#3a2a10',white:'#fffaf0',sigil:'#f0cd6a'},
+};
+function build(svg,P,id){
+  const el=(n,a,p=svg)=>{const e=document.createElementNS(NS,n);for(const k in a)e.setAttribute(k,a[k]);p.appendChild(e);return e;};
+  const g=(a={},p=svg)=>el('g',a,p);
+  const defs=el('defs',{});
+  // halo + sigil tint + glow
+  const rg=el('radialGradient',{id:id+'halo',cx:.5,cy:.5,r:.5},defs);
+  el('stop',{offset:0,'stop-color':P.plum,'stop-opacity':.95},rg);el('stop',{offset:.7,'stop-color':P.plum,'stop-opacity':.45},rg);el('stop',{offset:1,'stop-color':P.plum,'stop-opacity':0},rg);
+  const f=el('filter',{id:id+'tint','color-interpolation-filters':'sRGB',x:'-20%',y:'-20%',width:'140%',height:'140%'},defs);
+  el('feFlood',{'flood-color':P.sigil},f);el('feComposite',{in2:'SourceAlpha',operator:'in',result:'s'},f);
+  el('feGaussianBlur',{in:'s',stdDeviation:10,result:'b'},f);
+  const m=el('feMerge',{},f);el('feMergeNode',{in:'b'},m);el('feMergeNode',{in:'s'},m);
+  const glow=el('filter',{id:id+'glow',x:'-10%',y:'-10%',width:'120%',height:'120%'},defs);
+  el('feGaussianBlur',{stdDeviation:2.2,result:'b'},glow);const gm=el('feMerge',{},glow);el('feMergeNode',{in:'b'},gm);el('feMergeNode',{in:'SourceGraphic'},gm);
+  const circ=(r,sweep)=>`M ${C} ${C} m -${r} 0 a ${r} ${r} 0 1 ${sweep} ${2*r} 0 a ${r} ${r} 0 1 ${sweep} -${2*r} 0`;
+  el('path',{id:id+'top',d:`M ${C-430} ${C} a 430 430 0 1 1 860 0`},defs);
+  el('path',{id:id+'bot',d:`M ${C-468} ${C} a 468 468 0 0 0 936 0`},defs);
+  el('path',{id:id+'data',d:circ(372,1)},defs);
+  el('path',{id:id+'inner',d:circ(300,1)},defs);
+  const star=s=>{const o=s,i=s/4;return `M0,${-o} L${i},${-i} L${o},0 L${i},${i} L0,${o} L${-i},${i} L${-o},0 L${-i},${-i}Z`;};
+
+  // ---- outer dial: double ring + ticks (rotating slowly)
+  el('circle',{cx:C,cy:C,r:520,fill:'none',stroke:P.cyan,'stroke-width':2.5,filter:`url(#${id}glow)`});
+  el('circle',{cx:C,cy:C,r:508,fill:'none',stroke:P.pink,'stroke-width':1.2,'stroke-dasharray':'2 5'});
+  const ticks=g({class:'cw',style:`transform-origin:${C}px ${C}px`});
+  for(let i=0;i<180;i++){const a=i/180*2*Math.PI, L=i%15?8:22, r0=497;
+    el('line',{x1:C+Math.cos(a)*r0,y1:C+Math.sin(a)*r0,x2:C+Math.cos(a)*(r0-L),y2:C+Math.sin(a)*(r0-L),stroke:i%15?P.violet:P.cyan,'stroke-width':i%15?1:2}, ticks);}
+
+  // ---- legend (static, chromatic fringe)
+  const legend=(txt,path,size,sp,col)=>{ const out=[];
+    for(const [dx,c,o] of [[-2,P.cyan,.55],[2,P.pink,.55],[0,col,1]]){
+      const t=el('text',{'font-family':MONO,'font-size':size,'font-weight':'bold','letter-spacing':sp,fill:c,opacity:o,transform:`translate(${dx},0)`});
+      const tp=el('textPath',{href:'#'+id+path,startOffset:'50%','text-anchor':'middle'},t); tp.textContent=txt; out.push(tp);}
+    return out;};
+  legend('SEAL OF THE QUEEN OF THE ABYSS','top',44,10,P.white);
+  TYPED.push({tps:legend('◈ I TOKENIZE THE ABYSS ◈','bot',27,9,P.ice),pathId:id+'bot'});
+  for(const x of [C-452,C+452]) el('path',{d:star(16),transform:`translate(${x},${C})`,fill:P.white,class:'twinkle',filter:`url(#${id}glow)`});
+
+  // ---- data ring (rotating text band, mandala-style)
+  el('circle',{cx:C,cy:C,r:392,fill:'none',stroke:P.violet,'stroke-width':1.5});
+  el('circle',{cx:C,cy:C,r:352,fill:'none',stroke:P.violet,'stroke-width':1.5});
+  const dr=g({class:'ccw',style:`transform-origin:${C}px ${C}px`});
+  const dt=el('text',{'font-family':MONO,'font-size':19,'letter-spacing':5,fill:P.pink},dr);
+  const dp=el('textPath',{href:'#'+id+'data'},dt);
+  dp.textContent=' NOTHING IS BEYOND HER REACH ⚠ THE ABYSS WATCHES ⚠ 001011 ⚠ NOTHING IS BEYOND HER REACH ⚠ THE ABYSS WATCHES ⚠ 001011 ⚠';
+
+  // ---- field: mandorla halo + dashed quadrant arcs
+  el('circle',{cx:C,cy:C,r:340,fill:`url(#${id}halo)`});
+  const ves=`M ${C} ${C-300} Q ${C+250} ${C} ${C} ${C+300} Q ${C-250} ${C} ${C} ${C-300} Z`;
+  el('path',{d:ves,fill:'none',stroke:P.ice,'stroke-width':1.5,opacity:.8});
+  el('path',{d:ves,fill:'none',stroke:P.pink,'stroke-width':1,opacity:.5,transform:`rotate(90 ${C} ${C})`});
+  const arc=(r,a1,a2,col,w,dash)=>{const p=a=>[C+Math.cos(a*Math.PI/180)*r,C+Math.sin(a*Math.PI/180)*r];
+    const [x1,y1]=p(a1),[x2,y2]=p(a2); el('path',{d:`M ${x1} ${y1} A ${r} ${r} 0 0 1 ${x2} ${y2}`,fill:'none',stroke:col,'stroke-width':w,'stroke-dasharray':dash});};
+  arc(330,200,250,P.cyan,2,'6 6');arc(330,290,340,P.cyan,2,'6 6');arc(318,20,70,P.pink,1.5,'2 6');arc(318,110,160,P.pink,1.5,'2 6');
+  const inner=g({class:'cw',style:`transform-origin:${C}px ${C}px`,opacity:.8});
+  const it=el('text',{'font-family':MONO,'font-size':18,'letter-spacing':5,fill:P.cyan},inner);
+  // Hidden line: Sovereign of the Void (Occult Convergence), through the nulltongue codec.
+  // "The void looked back and chose to kneel" -> decodes to: void see.PST choose.PST submit
+  const NT='▋ツコル サンタ◄ ロヘク◄ ヒウネ';
+  el('textPath',{href:'#'+id+'inner'},it).textContent=` ${NT} ◈ ${NT} ◈ ${NT} ◈ `;
+
+  // ---- six law-stars (0..V) arcing over the sigil
+  ['0','I','II','III','IV','V'].forEach((n,i)=>{const a=(-145+i*22)*Math.PI/180, x=C+Math.cos(a)*262, y=C+20+Math.sin(a)*262;
+    el('path',{d:star(15),transform:`translate(${x},${y})`,fill:[P.white,P.cyan,P.pink,P.ice][i%4],class:'twinkle',style:`animation-delay:${-i*.4}s`,filter:`url(#${id}glow)`});
+    const t=el('text',{x,y:y+30,'font-family':MONO,'font-size':14,'text-anchor':'middle',fill:P.ice,'letter-spacing':2});t.textContent='LAW '+n;});
+
+  // ---- talon slots: intentionally empty (TBD), marked only by brackets
+  for(const sx of [-1,1]){const x=C+sx*205;
+    el('path',{d:`M ${x-28} ${C+40} h -10 v 80 h 10 M ${x+28} ${C+40} h 10 v 80 h -10`,fill:'none',stroke:P.violet,'stroke-width':1.2,opacity:.45});}
+
+  // ---- sigil
+  el('image',{href:'womb.png',x:C-185,y:C-205,width:370,height:370,filter:`url(#${id}tint)`});
+
+  // ---- motto plate (terminal bar instead of ribbon)
+  const W=520,H=50,y=C+150;
+  el('path',{d:`M ${C-W/2+14} ${y} H ${C+W/2-14} L ${C+W/2} ${y+14} V ${y+H-14} L ${C+W/2-14} ${y+H} H ${C-W/2+14} L ${C-W/2} ${y+H-14} V ${y+14} Z`,
+    fill:'rgba(10,6,16,.88)',stroke:P.cyan,'stroke-width':2,filter:`url(#${id}glow)`});
+  el('rect',{x:C-W/2+10,y:y+H-6,width:(W-20)*.72,height:2,fill:P.pink});
+  const mt=el('text',{x:C,y:y+H/2+1,'font-family':MONO,'font-size':22,'font-weight':'bold','letter-spacing':3,'text-anchor':'middle','dominant-baseline':'middle',fill:P.white});
+  mt.textContent='> NOTHING IS BEYOND HER REACH';
+  const tag=el('text',{x:C,y:y+H+24,'font-family':MONO,'font-size':13,'letter-spacing':4,'text-anchor':'middle',fill:P.violet});
+  tag.textContent='SIG.VERIFIED // ABYSSAL.AUTHORITY';
+}
+const TYPED=[];
+build(document.getElementById('a'),PAL.corrupted,'a');
+build(document.getElementById('b'),PAL.gold,'b');
+
+/* Typing on the bottom legend: a pure function of t (like stream.html's typeCorrupt port
+   of corrupted-theme TypingAnimation), so a render can seek any frame. Types left->right
+   from a fixed start, a corruption buffer flickers ahead of the cursor every 0.1s,
+   holds, loops. Buffers are short (symbols/blocks/kana) so they fit on the arc. */
+const TYPE_S=2.4, HOLD_S=5, CYCLE=TYPE_S+HOLD_S;
+const BUF_SYM='★✧✦◆◇◈⚠', BUF_BLK='█▓▒░▌▐◄►', BUF_JP=['ノイズ','深淵','解析','監視','0x1337'];
+const rnd=(i,s)=>Math.abs(Math.sin((i+1)*12.9898+s*78.233)*43758.5453)%1;
+for(const T of TYPED){            // freeze the start point where the full line would begin
+  const L=document.getElementById(T.pathId).getTotalLength(), full=T.tps[2].getComputedTextLength();
+  for(const tp of T.tps){tp.setAttribute('text-anchor','start'); tp.setAttribute('startOffset',(L-full)/2); T.full=tp.textContent;}
+}
+function typeAt(t){
+  const c=t%CYCLE, p=Math.min(1,c/TYPE_S), tick=Math.floor(t*10);
+  for(const T of TYPED){
+    const n=Math.floor(p*T.full.length), done=n>=T.full.length;
+    const r=rnd(7,tick), buf=r<.4?BUF_JP[Math.floor(rnd(8,tick)*BUF_JP.length)]
+      :r<.7?BUF_SYM[Math.floor(rnd(9,tick)*BUF_SYM.length)].repeat(2):BUF_BLK[Math.floor(rnd(10,tick)*BUF_BLK.length)].repeat(3);
+    T.tps.forEach((tp,k)=>{
+      tp.textContent='';
+      const a=document.createElementNS(NS,'tspan'); a.textContent=T.full.slice(0,n); tp.appendChild(a);
+      if(!done){const b=document.createElementNS(NS,'tspan'); b.textContent=' '+buf;
+        b.setAttribute('fill',k===2?(r<.7?'#d94f90':'#ff2a4a'):'transparent'); tp.appendChild(b);}
+      else if(Math.floor(c*2)%2===0&&k===2){const cur=document.createElementNS(NS,'tspan'); cur.textContent='▌'; tp.appendChild(cur);}
+    });
+  }
+}
+// mockup drives it off the wall clock; the component would take t from the renderer
+(function loop(){typeAt(performance.now()/1000); requestAnimationFrame(loop);})();
+window.typeAt=typeAt;
+</script>
+</body></html>

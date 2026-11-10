@@ -1,0 +1,22 @@
+/* abyssal-seal.css — animations + layout for AbyssalSeal.
+ * Rotation speed: --seal-speed on the <svg> (set from options.rotationSpeed).
+ * All motion is CSS animation, so seekAnimations(svg, t) frame-locks it. */
+.abyssal-seal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
+.abyssal-seal.active { display: block; }
+
+@keyframes abyssal-seal-spin { to { transform: rotate(360deg); } }
+.abyssal-seal-cw      { animation: abyssal-seal-spin calc(90s  / var(--seal-speed, 1)) linear infinite; }
+.abyssal-seal-cw-slow { animation: abyssal-seal-spin calc(180s / var(--seal-speed, 1)) linear infinite; }
+.abyssal-seal-ccw     { animation: abyssal-seal-spin calc(60s  / var(--seal-speed, 1)) linear infinite reverse; }
+
+@keyframes abyssal-seal-tw { 50% { opacity: .35; } }
+.abyssal-seal-twinkle { animation: abyssal-seal-tw 2.4s ease-in-out infinite; }
+
+@keyframes abyssal-seal-flow { to { stroke-dashoffset: -40; } }
+.abyssal-seal-flow { animation: abyssal-seal-flow 1.6s linear infinite; }
+
+@keyframes abyssal-seal-flick { 0%, 100% { opacity: 1; } 43% { opacity: .25; } 47% { opacity: 1; } 71% { opacity: .5; } }
+/* Must stay AFTER .abyssal-seal-flow: elements carry both classes and this rule's
+ * animation list (flow + flick) has to win, or the flicker silently drops. */
+.abyssal-seal-flick { animation-name: abyssal-seal-flow, abyssal-seal-flick; animation-duration: 1.6s, 1.1s;
+  animation-timing-function: linear, steps(1); animation-iteration-count: infinite; }

@@ -17,6 +17,9 @@
  * @module scripts/generate-manifest
  */
 
+// GFM table cells: a literal `|` (even inside a code span) starts a new column.
+const cell = (v) => String(v).replace(/[\\|]/g, '\\$&');
+
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import path from 'path';
@@ -601,7 +604,7 @@ export function renderReferenceBlock(manifest) {
   });
 
   const optRows = (arr) => arr.map((o) =>
-    `| \`${o.name}\` | \`${o.type}\` | ${o.default !== undefined ? '\`' + o.default + '\`' : ''} | ${o.description ?? ''} |`);
+    `| \`${o.name}\` | \`${cell(o.type)}\` | ${o.default !== undefined ? '\`' + cell(o.default) + '\`' : ''} | ${cell(o.description ?? '')} |`);
   const details = js.map((e) => {
     const out = [`### \`${e.export.replace('./', '')}\``, ''];
     if (e.description) out.push(e.description, '');

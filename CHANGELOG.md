@@ -5,6 +5,34 @@ All notable changes to the Corrupted Theme project will be documented in this fi
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.6] - 2026-11-09
+
+### Added
+
+- `AbyssalSeal` (`./abyssal-seal`, `./abyssal-seal-css`): a procedural SVG seal
+  of office in the CorruptedMandala visual language (#99, #100). A rotating tick
+  dial, chromatic-fringe legend, two rotating data bands, a mandorla halo, six law
+  stars, a sigil image slot (`sigilHref`, a 4-point star when unset), talons and a
+  terminal motto plate. The bottom motto types in Latin, holds, then resolves into
+  English. `seek(t)` is a pure function of `t`; pair it with `seekAnimations` for
+  frame-locked video export. Demo: `examples/abyssal-seal.html`.
+- `SEAL_PALETTES` and `options.palette` (`abyss` | `gold` | `crimson`), locked
+  by RFC-0001 (`docs/rfcs/`, the first RFC). Unknown names throw `RangeError`.
+  Every hex is pinned in the tests and declared in the colour sweep.
+- `mottoState(t, motto, typing)` and `mottoCycle(typing)`: the motto timeline as
+  pure functions.
+
+### Fixed
+
+- Generated docs: options-table types containing `|` (e.g. `string|null`) split
+  into extra columns. Pipes and backslashes are now escaped (75 rows across all
+  components).
+
+### Security
+
+- `minimatch` forced to `^11.0.1` via `overrides` (GHSA, Dependabot alert #6):
+  eslint 10.x still requests minimatch 10. Dev-only; nothing ships in the tarball.
+
 ## [0.3.5] - 2026-10-22
 
 ### Added

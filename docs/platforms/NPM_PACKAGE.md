@@ -88,7 +88,7 @@ pnpm add @whykusanagi/corrupted-theme
 
 ```html
 <!-- Full theme (8.2KB gzipped) -->
-<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.3.5/dist/theme.min.css">
+<link rel="stylesheet" href="https://unpkg.com/@whykusanagi/corrupted-theme@0.3.6/dist/theme.min.css">
 ```
 
 > **Preferred CDN**: Use the live-site CDN for zero-latency delivery and SRI-verified assets. See [`docs/CDN_CONSUMPTION.md`](../CDN_CONSUMPTION.md) for details.
@@ -664,6 +664,7 @@ Example: 0.3.2
 
 | Version | Date | Changes | Migration |
 |---------|------|---------|-----------|
+| **0.3.6** | 2026-11-09 | `AbyssalSeal` (`./abyssal-seal`, `./abyssal-seal-css`): procedural SVG seal of office with a typed Latin→English motto and frame-locked `seek(t)`. Three locked palettes (`abyss`, `gold`, `crimson`, RFC-0001). | Additive; import the CSS export alongside the component. |
 | **0.3.5** | 2026-10-14 | HTTP error copy and fallback (`./http-errors`), shared page CSS (`./error-pages-css`), 20 standalone `errors/<code>.html` pages, and an all-codes demo. | Additive; configure HTTP status and site-specific links in your handler. See [HTTP errors](../HTTP_ERRORS.md). |
 | **0.3.4** | 2026-10-02 | Editorial & data-page primitives (`editorial.css`, exported as `./editorial`) — one vocabulary for a blog or data page: masthead, prose blocks, card grids, entity cards, rank badges, bar sparklines, meters, ruled rows, chart frames, award rows, post index; all `ct-`-prefixed, tokens only but for the sanctioned rank scale. Declares the `--font-mono` token. | N/A — additive |
 | 0.3.3 | 2026-08-25 | CorruptedFlares — 25 geometric micro-VFX flare loops for compositing over video, artwork or an overlay layer (spec Pattern 6: Ambient Mark Decay); colour driven by each mark's own corruption age with a mandatory settled end state; `plate: false`, `toPNG()`, `drawAt()` for offline capture. Palette gains a four-step surface ramp and first-class element colours, and `npm run audit:colors` enforces both repo-wide | N/A — additive; CorruptedFlares was not in published 0.3.2, so its option changes break no caller |
@@ -692,7 +693,7 @@ npm update @whykusanagi/corrupted-theme
 npm install @whykusanagi/corrupted-theme@^0.3.2
 
 # Update to specific version
-npm install @whykusanagi/corrupted-theme@0.3.5
+npm install @whykusanagi/corrupted-theme@0.3.6
 
 # Update to latest (including major - may have breaking changes)
 npm install @whykusanagi/corrupted-theme@latest

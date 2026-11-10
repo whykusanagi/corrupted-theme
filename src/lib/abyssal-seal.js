@@ -11,15 +11,25 @@
  * Geometry is authored in a fixed 1080x1080 space (centre 540) and fitted into the
  * svg's W x H, so the look is identical at any size or aspect.
  *
+ * Setup order: init() builds the SVG, resize(W, H) fits it to the svg's pixel size
+ * (call it again on layout changes), setActive(true) shows it (the stylesheet
+ * hides it until then). Load the `abyssal-seal-css` stylesheet or nothing shows.
+ * Without npm, import from the CDN tree: src/lib/abyssal-seal.js and
+ * src/core/time-utils.js (seekAnimations), and link src/css/abyssal-seal.css.
+ *
  * @example Background seal
  *   import { AbyssalSeal } from '@whykusanagi/corrupted-theme/abyssal-seal';
- *   const seal = new AbyssalSeal(svgEl, { legendTop: 'SEAL OF THE ARCHIVE', sigilHref: 'mark.png' });
- *   seal.init().resize(1920, 1080).setActive(true).play();
+ *   // plus <link rel="stylesheet" href="…/src/css/abyssal-seal.css">
+ *   const seal = new AbyssalSeal(svgEl, { legendTop: 'SEAL OF THE ARCHIVE', palette: 'gold', seed: 7 });
+ *   seal.init().resize(svgEl.clientWidth, svgEl.clientHeight).setActive(true).play();
  *
  * @example Deterministic video export (frame-locked)
  *   import { seekAnimations } from '@whykusanagi/corrupted-theme/time-utils';
+ *   // CDN: import { seekAnimations } from '…/corrupted-theme/@<ver>/src/core/time-utils.js';
+ *   seal.init().resize(1920, 1080).setActive(true);   // no play() when exporting
  *   seal.seek(t);               // typed motto: a pure function of t
  *   seekAnimations(svgEl, t);   // rings, twinkles, cable flow: CSS animations
+ *   // seek(t) + seekAnimations(svg, t) is the whole frame: same t, same pixels.
  *
  *
  * @module lib/abyssal-seal
@@ -120,21 +130,21 @@ export function mottoCycle(typing = DEFAULT_TYPING) {
  * @param {SVGSVGElement|null} svgElement - Target <svg> (cleared and rebuilt)
  * @param {object} [options={}]
  * @param {string}  [options.legendTop='SEAL OF THE CORRUPTED ARCHIVE'] - Top legend arc
- * @param {{latin:string, english:string}} [options.motto] - Bottom legend; types Latin, resolves to English
+ * @param {{latin:string, english:string}} [options.motto={latin:'EX STREPITU ORDO', english:'FROM NOISE, ORDER'}] - Bottom legend, plain text: types Latin, resolves to English. The component adds the ◈ … ◈ wrapping
  * @param {string}  [options.plate='> SIGNAL VERIFIED'] - Terminal motto plate text
  * @param {string}  [options.tagline='SIG.VERIFIED // ARCHIVE.AUTHORITY'] - Line under the plate
  * @param {string|null} [options.dataRing=null] - Outer rotating band; null = seeded SFW phrases
  * @param {string|null} [options.hiddenRing=null] - Inner rotating band (repeated x3); null = seeded tokens
- * @param {string[]} [options.lawLabels] - Labels for the six arc stars
+ * @param {string[]} [options.lawLabels=['LAW 0','LAW I','LAW II','LAW III','LAW IV','LAW V']] - Labels for the six arc stars (first six used)
  * @param {string|null} [options.sigilHref=null] - Centre image (tinted via its alpha); null = a 4-point star
  * @param {string|null} [options.sigilColor=null] - Sigil tint; null = colors.pink
  * @param {boolean} [options.talons=true] - Rosary+key (left) and lightning cables (right)
- * @param {'abyss'|'gold'|'crimson'} [options.palette='abyss'] - Built-in palette (RFC-0001); unknown names throw
+ * @param {'abyss'|'gold'|'crimson'} [options.palette='abyss'] - Built-in palette, locked by RFC-0001; exact hexes are exported as SEAL_PALETTES. Unknown names throw RangeError
  * @param {object}  [options.colors] - One-off tint overrides applied on top of the palette
  * @param {number}  [options.size=0.96] - Seal diameter as a fraction of min(W,H)
  * @param {number}  [options.rotationSpeed=1] - Ring rotation multiplier
- * @param {object}  [options.typing] - {type, holdLatin, resolve, holdEnglish} seconds
- * @param {number|null} [options.seed=null] - Seed for the default ring text
+ * @param {object}  [options.typing={type:2.2, holdLatin:2.6, resolve:1.4, holdEnglish:4}] - Motto phase lengths in seconds (one cycle = their sum, 10.2s)
+ * @param {number|null} [options.seed=null] - Seed for the default ring text. null = a new random seed per instance, so set one for reproducible renders
  */
 export class AbyssalSeal {
   constructor(svgElement, options = {}) {

@@ -65,6 +65,8 @@
     "./stream-overlays-css": "./src/css/stream-overlays.css",
     "./corrupted-mandala": "./src/lib/corrupted-mandala.js",
     "./corrupted-mandala-css": "./src/css/corrupted-mandala.css",
+    "./abyssal-seal": "./src/lib/abyssal-seal.js",
+    "./abyssal-seal-css": "./src/css/abyssal-seal.css",
     "./terminal-vocab": "./src/core/terminal-vocab.js",
     "./abyssal-cables": "./src/lib/abyssal-cables.js",
     "./geometric-morpher": "./src/lib/geometric-morpher.js",

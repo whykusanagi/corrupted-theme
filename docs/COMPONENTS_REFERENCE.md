@@ -4597,35 +4597,39 @@ AbyssalSeal — procedural SVG "seal of office" in CorruptedMandala's visual lan
 _Background seal_
 ```js
 import { AbyssalSeal } from '@whykusanagi/corrupted-theme/abyssal-seal';
-const seal = new AbyssalSeal(svgEl, { legendTop: 'SEAL OF THE ARCHIVE', sigilHref: 'mark.png' });
-seal.init().resize(1920, 1080).setActive(true).play();
+// plus <link rel="stylesheet" href="…/src/css/abyssal-seal.css">
+const seal = new AbyssalSeal(svgEl, { legendTop: 'SEAL OF THE ARCHIVE', palette: 'gold', seed: 7 });
+seal.init().resize(svgEl.clientWidth, svgEl.clientHeight).setActive(true).play();
 ```
 
 _Deterministic video export (frame-locked)_
 ```js
 import { seekAnimations } from '@whykusanagi/corrupted-theme/time-utils';
+// CDN: import { seekAnimations } from '…/corrupted-theme/@<ver>/src/core/time-utils.js';
+seal.init().resize(1920, 1080).setActive(true);   // no play() when exporting
 seal.seek(t);               // typed motto: a pure function of t
 seekAnimations(svgEl, t);   // rings, twinkles, cable flow: CSS animations
+// seek(t) + seekAnimations(svg, t) is the whole frame: same t, same pixels.
 ```
 
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `legendTop` | `string` | `'SEAL OF THE CORRUPTED ARCHIVE'` | Top legend arc |
-| `motto` | `{latin:string, english:string}` |  | Bottom legend; types Latin, resolves to English |
+| `motto` | `{latin:string, english:string}` | `{latin:'EX STREPITU ORDO', english:'FROM NOISE, ORDER'}` | Bottom legend, plain text: types Latin, resolves to English. The component adds the ◈ … ◈ wrapping |
 | `plate` | `string` | `'> SIGNAL VERIFIED'` | Terminal motto plate text |
 | `tagline` | `string` | `'SIG.VERIFIED // ARCHIVE.AUTHORITY'` | Line under the plate |
 | `dataRing` | `string\|null` | `null` | Outer rotating band; null = seeded SFW phrases |
 | `hiddenRing` | `string\|null` | `null` | Inner rotating band (repeated x3); null = seeded tokens |
-| `lawLabels` | `string[]` |  | Labels for the six arc stars |
+| `lawLabels` | `string[]` | `['LAW 0','LAW I','LAW II','LAW III','LAW IV','LAW V']` | Labels for the six arc stars (first six used) |
 | `sigilHref` | `string\|null` | `null` | Centre image (tinted via its alpha); null = a 4-point star |
 | `sigilColor` | `string\|null` | `null` | Sigil tint; null = colors.pink |
 | `talons` | `boolean` | `true` | Rosary+key (left) and lightning cables (right) |
-| `palette` | `'abyss'\|'gold'\|'crimson'` | `'abyss'` | Built-in palette (RFC-0001); unknown names throw |
+| `palette` | `'abyss'\|'gold'\|'crimson'` | `'abyss'` | Built-in palette, locked by RFC-0001; exact hexes are exported as SEAL_PALETTES. Unknown names throw RangeError |
 | `colors` | `object` |  | One-off tint overrides applied on top of the palette |
 | `size` | `number` | `0.96` | Seal diameter as a fraction of min(W,H) |
 | `rotationSpeed` | `number` | `1` | Ring rotation multiplier |
-| `typing` | `object` |  | {type, holdLatin, resolve, holdEnglish} seconds |
-| `seed` | `number\|null` | `null` | Seed for the default ring text |
+| `typing` | `object` | `{type:2.2, holdLatin:2.6, resolve:1.4, holdEnglish:4}` | Motto phase lengths in seconds (one cycle = their sum, 10.2s) |
+| `seed` | `number\|null` | `null` | Seed for the default ring text. null = a new random seed per instance, so set one for reproducible renders |
 ### `terminal-vocab`
 
 Terminal vocabulary + charset generators for transition effects.

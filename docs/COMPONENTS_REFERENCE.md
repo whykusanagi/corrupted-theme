@@ -3179,7 +3179,7 @@ const typing = new TypingAnimation(element, {
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `duration` | `number|null` | `null` | Total ms for one typing pass. When set, char interval = max(33, duration/length). Takes priority over typingSpeed. |
+| `duration` | `number\|null` | `null` | Total ms for one typing pass. When set, char interval = max(33, duration/length). Takes priority over typingSpeed. |
 | `typingSpeed` | `number` | `12` | Chars/sec; used only when duration is null. |
 | `bufferEnabled` | `boolean` | `true` | Show always-on buffer corruption phrase. Set false for a clean typewriter effect with no buffer. |
 | `bufferFlickerSpeed` | `number` | `100` | ms between buffer phrase swaps (independent of char-advance rate). |
@@ -3233,7 +3233,7 @@ corrupted.settle('Final Text');
 | `cycleDelay` | `number` | `100` | Delay between character corruption steps (ms) |
 | `startDelay` | `number` | `0` | Initial delay before animation starts (ms) |
 | `loop` | `boolean` | `true` | Whether to loop through variants continuously |
-| `finalText` | `string|null` | `null` | Text to settle on after cycle (if loop=false) |
+| `finalText` | `string\|null` | `null` | Text to settle on after cycle (if loop=false) |
 ### `corruption-loading`
 
 Corruption Loading Animation A dramatic loading screen with corrupted text, glyphs, and multi-language phrases
@@ -3383,12 +3383,12 @@ globe.fire({ lat: 51.5, lon: -0.13 }, { weight: 0.8 });
 | `spin` | `number` | `0.0009` | Rotation in radians per ms; 0 = static |
 | `tilt` | `number` | `-18` | Axial tilt in degrees |
 | `radius` | `number` | `0.42` | Globe radius as a fraction of min(w, h) |
-| `graticule` | `{parallels:number,meridians:number}|false` |  | Grid step in degrees |
+| `graticule` | `{parallels:number,meridians:number}\|false` |  | Grid step in degrees |
 | `arc` | `{lift:number, duration:number, trail:number, steps:number, impactRing:boolean}` |  | arc flight behaviour; see the arc.* entries below |
 | `palette` | `object` |  | Colour overrides; see DEFAULT_PALETTE |
 | `maxArcs` | `number` | `200` | Cap on queued arcs; the oldest is dropped past it |
 | `interactive` | `{drag:boolean}` |  | Pointer drag to rotate |
-| `reducedMotion` | `boolean|'auto'` | `'auto'` | Honour prefers-reduced-motion |
+| `reducedMotion` | `boolean\|'auto'` | `'auto'` | Honour prefers-reduced-motion |
 ### `corrupted-graph`
 
 CorruptedGraph — node-and-edge graph on canvas, in the corrupted aesthetic.
@@ -3428,24 +3428,24 @@ g.start();
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `nodes` | `Array<{id:string,type?:string,weight?:number,x?:number,y?:number}>` | `[]` |  |
-| `edges` | `Array<{source:string|number,target:string|number,weight?:number}>` | `[]` |  |
-| `layout` | `'force'|'bipartite'|'fixed'` | `'force'` |  |
+| `edges` | `Array<{source:string\|number,target:string\|number,weight?:number}>` | `[]` |  |
+| `layout` | `'force'\|'bipartite'\|'fixed'` | `'force'` |  |
 | `force` | `{charge:number, linkDistance:number, linkStrength:number, gravity:number, damping:number, alphaMin:number, maxTicks:number}` |  | charge is negative (repulsion, default -120); linkDistance is the spring rest length in layout units (default 40) |
-| `bipartite` | `{leftTypes:string[], gap:number, sort:'degree'|'weight'|'id'}` |  | leftTypes are node `type` values placed in the left column; gap is column separation as a fraction of width (default 0.6); sort orders each column (default 'degree') |
-| `nodeShape` | `'glyph'|'circle'` | `'glyph'` |  |
+| `bipartite` | `{leftTypes:string[], gap:number, sort:'degree'\|'weight'\|'id'}` |  | leftTypes are node `type` values placed in the left column; gap is column separation as a fraction of width (default 0.6); sort orders each column (default 'degree') |
+| `nodeShape` | `'glyph'\|'circle'` | `'glyph'` |  |
 | `glyphSet` | `string` | `'katakana'` | CorruptionCharsets key |
 | `nodeColors` | `Object<string,string>` |  | node type → colour |
-| `edgeStyle` | `'line'|'cable'` | `'cable'` |  |
-| `labels` | `'none'|'hover'|'always'` | `'hover'` |  |
+| `edgeStyle` | `'line'\|'cable'` | `'cable'` |  |
+| `labels` | `'none'\|'hover'\|'always'` | `'hover'` |  |
 | `labelDecode` | `boolean` | `true` | decode labels out of corruption on hover |
 | `idleGlitch` | `number` | `0.02` | per-frame chance a glyph re-rolls |
 | `interactive` | `{pan:boolean, zoom:boolean, hover:boolean, select:boolean, drag:boolean}` |  | all default true; drag applies to force layout only |
-| `padding` | `number|{top:number,right:number,bottom:number,left:number}` | `26` | inset from the canvas edge |
+| `padding` | `number\|{top:number,right:number,bottom:number,left:number}` | `26` | inset from the canvas edge |
 | `maxNodes` | `number` | `2000` | hard cap; excess is dropped with a warning |
 | `maxEdges` | `number` | `8000` | hard cap; excess is dropped with a warning |
-| `reducedMotion` | `boolean|'auto'` | `'auto'` |  |
-| `onSelect` | `Function|null` |  | (node|null) => void; caller owns any HTML |
-| `onHover` | `Function|null` |  | (node|null) => void |
+| `reducedMotion` | `boolean\|'auto'` | `'auto'` |  |
+| `onSelect` | `Function\|null` |  | (node\|null) => void; caller owns any HTML |
+| `onHover` | `Function\|null` |  | (node\|null) => void |
 ### `micro-gfx`
 
 MicroGfx — seeded generative instrument graphics.
@@ -3494,10 +3494,10 @@ const blob = await MicroGfx.toPNG(art, { scale: 2 });
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `seed` | `number|null` | `null` | null picks one; the seed used is returned |
-| `format` | `'card'|'banner'|'poster'|'portrait'|'square'|{w:number,h:number}` | `'card'` | see MicroGfx.formats for pixel sizes |
-| `theme` | `'magenta'|'violet'|'mono'|'void'|object` | `'magenta'` | colour set; all four are dark grounds, use polarity for a pale one |
-| `polarity` | `'dark'|'paper'` |  | 'paper' gives a pale ground with dark ink; omit to let the seed choose |
+| `seed` | `number\|null` | `null` | null picks one; the seed used is returned |
+| `format` | `'card'\|'banner'\|'poster'\|'portrait'\|'square'\|{w:number,h:number}` | `'card'` | see MicroGfx.formats for pixel sizes |
+| `theme` | `'magenta'\|'violet'\|'mono'\|'void'\|object` | `'magenta'` | colour set; all four are dark grounds, use polarity for a pale one |
+| `polarity` | `'dark'\|'paper'` |  | 'paper' gives a pale ground with dark ink; omit to let the seed choose |
 | `layers` | `object` |  | base, halftone, rails, scanlines, glyphs |
 | `primitives` | `string[]` |  | which instrument primitives to place |
 | `density` | `number` | `0.5` | 0..1, how much of the frame primitives fill |
@@ -3606,7 +3606,7 @@ const png = await flares.toPNG({ scale: 2 });
 | `loopMs` | `number` | `1400` | Duration of one recipe loop |
 | `loops` | `number` | `3` | Corruption cycles before a cell settles to a static, readable white mark. `Infinity` keeps the board corrupting forever — decorative, but it never reaches the readable end state Core Tenet 2 requires, so prefer a finite count for content surfaces. |
 | `speed` | `number` | `1` |  |
-| `seed` | `number|null` | `null` |  |
+| `seed` | `number\|null` | `null` |  |
 | `recipes` | `string[]` |  | Override grid recipe list |
 | `ramp` | `{wavefront: string, mid: string, settled: string}` |  | Override the corruption-age colour ramp |
 | `rounded` | `boolean` | `true` | Round cell corners via clip |
@@ -3705,14 +3705,14 @@ spectrum.start();
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `source` | `HTMLMediaElement|MediaStream|AudioNode|null` | `null` |  |
+| `source` | `HTMLMediaElement\|MediaStream\|AudioNode\|null` | `null` |  |
 | `fftSize` | `number` | `256` | power of two, 32..32768 |
 | `bands` | `number` | `48` | drawn bars |
 | `smoothing` | `number` | `0.8` | AnalyserNode smoothing, 0..1 |
-| `style` | `'bars'|'mirror'|'terminal'` | `'bars'` |  |
+| `style` | `'bars'\|'mirror'\|'terminal'` | `'bars'` |  |
 | `palette` | `string[]` |  | low → high colour ramp |
 | `reconnectDestination` | `boolean` | `true` | keep audio audible |
-| `reducedMotion` | `boolean|'auto'` | `'auto'` |  |
+| `reducedMotion` | `boolean\|'auto'` | `'auto'` |  |
 ### `corrupted-vortex`
 
 src/lib/corrupted-vortex.js
@@ -3872,7 +3872,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `duration` | `number` | `2000` |  |
 | `color` | `string` | `'#ffffff'` |  |
 | `height` | `number` | `4` | px |
-| `position` | `string` | `'bottom'` | 'top'|'bottom' |
+| `position` | `string` | `'bottom'` | 'top'\|'bottom' |
 | `glitch` | `boolean` | `true` |  |
 
 **ScanlineSweep** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
@@ -3907,9 +3907,9 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `duration` | `number` | `1500` |  |
 | `color` | `string` | `'#ff8c00'` |  |
 | `thickness` | `number` | `2` | unused in current impl (visual scale) |
-| `style` | `string` | `'double'` | 'single'|'double'|'heavy'|'rounded' |
+| `style` | `string` | `'double'` | 'single'\|'double'\|'heavy'\|'rounded' |
 | `padding` | `number` | `20` |  |
-| `drawOrder` | `string` | `'clockwise'` | 'clockwise'|'simultaneous'|'corners-first' |
+| `drawOrder` | `string` | `'clockwise'` | 'clockwise'\|'simultaneous'\|'corners-first' |
 
 **SystemDiagnostic** options (methods: `start()`, `play()`, `stop()`, `destroy()`):
 
@@ -3918,7 +3918,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `duration` | `number` | `3000` |  |
 | `lines` | `string[]` |  | array of diagnostic log lines. ⚠️ SECURITY: rendered as raw HTML via innerHTML. Pass static/author- controlled content only. If lines could contain user input, escape HTML entities (`&`, `<`, `>`, `"`) before passing. |
 | `color` | `string` | `'#00ff00'` |  |
-| `position` | `string` | `'left'` | 'left'|'right'|'center' |
+| `position` | `string` | `'left'` | 'left'\|'right'\|'center' |
 | `fontSize` | `string` | `'16px'` |  |
 | `scrollSpeed` | `number` | `1.0` | multiplier (0.5=slow, 2.0=fast) |
 | `showCursor` | `boolean` | `true` |  |
@@ -3931,7 +3931,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `bars` | `Array` |  | array of { label, speed, color } |
 | `width` | `number` | `400` |  |
 | `height` | `number` | `20` |  |
-| `position` | `string` | `'center'` | 'center'|'bottom'|'top' |
+| `position` | `string` | `'center'` | 'center'\|'bottom'\|'top' |
 | `showPercentage` | `boolean` | `true` |  |
 | `glitchEffect` | `boolean` | `true` |  |
 
@@ -3941,7 +3941,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 |---|---|---|---|
 | `duration` | `number` | `2500` |  |
 | `color` | `string` | `'#ffffff'` |  |
-| `direction` | `string` | `'horizontal'` | 'horizontal'|'vertical' |
+| `direction` | `string` | `'horizontal'` | 'horizontal'\|'vertical' |
 | `packetCount` | `number` | `20` |  |
 | `packetSize` | `number` | `6` | px |
 | `showDataRate` | `boolean` | `true` |  |
@@ -3953,7 +3953,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `duration` | `number` | `2000` | max total ms (safety cap) |
 | `commands` | `string[]` |  | lines to type |
 | `color` | `string` | `'#00ff00'` |  |
-| `position` | `string` | `'bottom-left'` | 'bottom-left'|'top-left'|'center' |
+| `position` | `string` | `'bottom-left'` | 'bottom-left'\|'top-left'\|'center' |
 | `fontSize` | `string` | `'16px'` |  |
 | `typingSpeed` | `number` | `50` | ms per character |
 
@@ -3962,7 +3962,7 @@ Animation Building Blocks ========================= Ten modular animation compon
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `nsfw` | `boolean` | `false` | Source phrases from the NSFW pool (lewdMode/includeLewd are deprecated aliases). |
-| `intensity` | `string` | `medium` | 'low'|'medium'|'high' — phrase-particle count 10/15/20 (lewdIntensity is a deprecated alias). |
+| `intensity` | `string` | `medium` | 'low'\|'medium'\|'high' — phrase-particle count 10/15/20 (lewdIntensity is a deprecated alias). |
 | `kanjiCount` | `number` | `8` | Number of large pulsing kanji. |
 | `kanjiSymbols` | `string[]` |  | Override the default (neutral) kanji glyph set. |
 | `particleCount` | `number` | `80` | Small glitch-speck count. |
@@ -3980,9 +3980,9 @@ Animation Building Blocks ========================= Ten modular animation compon
 | `density` | `number` | `50` | Particle density, 0–100%. |
 | `speed` | `number` | `50` | Particle speed, 0–100%. |
 | `enabled` | `boolean` | `true` | When false, play() is a no-op until enable(). |
-| `glowColor` | `string` | `purple` | One of purple|magenta|black|cyan|yellow|red. |
-| `target` | `HTMLElement|string` |  | Character element (or CSS selector) whose edges emit particles; spawns from container center when absent. |
-| `scaleWrapper` | `HTMLElement|string` |  | Element (or selector) applying a CSS scale() transform, so bounds math stays correct. |
+| `glowColor` | `string` | `purple` | One of purple\|magenta\|black\|cyan\|yellow\|red. |
+| `target` | `HTMLElement\|string` |  | Character element (or CSS selector) whose edges emit particles; spawns from container center when absent. |
+| `scaleWrapper` | `HTMLElement\|string` |  | Element (or selector) applying a CSS scale() transform, so bounds math stays correct. |
 ### `corrupted-particles-background`
 
 src/lib/corrupted-particles-background.js
@@ -4205,7 +4205,7 @@ widget.start();
 |---|---|---|---|
 | `timezones` | `string[]` | `['America/Los_Angeles']` | IANA timezone names |
 | `cycleMs` | `number` | `10000` | ms between timezone rotations |
-| `format` | `'12h'|'24h'` | `'12h'` | Time format |
+| `format` | `'12h'\|'24h'` | `'12h'` | Time format |
 | `showDate` | `boolean` | `true` | Whether to render the date line |
 ### `event-bar`
 
@@ -4263,9 +4263,9 @@ banner.show();
 | `src` | `string` | `''` | Image src (empty = no image) |
 | `subtitle` | `string` | `''` | Subtitle text |
 | `showSubtitle` | `boolean` | `true` | Whether to render subtitle |
-| `size` | `'small'|'normal'|'large'` | `'normal'` |  |
-| `animation` | `'fade'|'slide'|'none'` | `'fade'` |  |
-| `position` | `'top-left'|'top-right'|'top-center'|'center'|'bottom-left'|'bottom-right'` | `'top-right'` |  |
+| `size` | `'small'\|'normal'\|'large'` | `'normal'` |  |
+| `animation` | `'fade'\|'slide'\|'none'` | `'fade'` |  |
+| `position` | `'top-left'\|'top-right'\|'top-center'\|'center'\|'bottom-left'\|'bottom-right'` | `'top-right'` |  |
 | `zIndex` | `number` | `250` |  |
 ### `png-export`
 
@@ -4294,7 +4294,7 @@ await exportElementAsPng(document.getElementById('card'), {
 |---|---|---|---|
 | `filename` | `string` | `'export.png'` | Download filename |
 | `scale` | `number` | `2` | Render scale (1 = 1:1, 2 = retina) |
-| `backgroundColor` | `string|null` | `null` | Optional background fill (transparent if null) |
+| `backgroundColor` | `string\|null` | `null` | Optional background fill (transparent if null) |
 ### `nsfw-reveal`
 
 NsfwReveal — blur-until-clicked overlay.
@@ -4355,8 +4355,8 @@ new PhraseCycle(loaderEl, {
 |---|---|---|---|
 | `phrases` | `string[]` | `[]` | Ordered array of phrases to cycle through |
 | `interval` | `number` | `200` | ms between phrase swaps |
-| `duration` | `number|null` | `null` | Total ms before settling. null = phrases.length × interval (one full pass) |
-| `finalText` | `string|null` | `null` | Text written after cycle ends. null = leave last-shown phrase visible |
+| `duration` | `number\|null` | `null` | Total ms before settling. null = phrases.length × interval (one full pass) |
+| `finalText` | `string\|null` | `null` | Text written after cycle ends. null = leave last-shown phrase visible |
 | `loop` | `boolean` | `false` | If true, cycle forever; ignore duration + finalText |
 ### `chromatic-pulse`
 
@@ -4392,7 +4392,7 @@ pulse.renderFrame(frameIdx, 60);   // same frame → same pixels
 | `intensity` | `number` | `1` | Fringe offset multiplier (1 = up to 4px) |
 | `interval` | `number[]` | `[2000,6000]` | [min,max] ms between pulse starts (live mode) |
 | `pulseMs` | `number` | `150` | Duration of one pulse |
-| `seed` | `number|null` | `null` | Seed for deterministic cadence (null = Math.random) |
+| `seed` | `number\|null` | `null` | Seed for deterministic cadence (null = Math.random) |
 ### `binary-particles`
 
 BinaryParticles — rising binary/hex/phrase token field.
@@ -4418,12 +4418,12 @@ new BinaryParticles(stageEl, { count: 30, charset: 'mixed' }).start();
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `count` | `number` | `24` | Particles alive at any moment |
-| `charset` | `'binary'|'hex'|'phrases'|'mixed'` | `'mixed'` | Token pool |
+| `charset` | `'binary'\|'hex'\|'phrases'\|'mixed'` | `'mixed'` | Token pool |
 | `speed` | `number` | `1` | Rise-speed multiplier |
 | `opacity` | `number` | `0.3` | Peak particle opacity |
-| `beats` | `number[]|null` | `null` | Beat times (s) for burst emission; null = continuous |
+| `beats` | `number[]\|null` | `null` | Beat times (s) for burst emission; null = continuous |
 | `nsfw` | `boolean` | `false` | Include NSFW phrases (opt-in) |
-| `seed` | `number|null` | `null` | Base seed (null = random per instance) |
+| `seed` | `number\|null` | `null` | Base seed (null = random per instance) |
 ### `glitch-title-card`
 
 GlitchTitleCard — █▓▒░ buffer-fill intro/outro title cards.
@@ -4453,11 +4453,11 @@ new GlitchTitleCard(stageEl, { text: 'ABYSS ONLINE', mode: 'intro' })
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `text` | `string` | `''` | Title text |
-| `mode` | `'intro'|'outro'` | `'intro'` | Card behavior |
+| `mode` | `'intro'\|'outro'` | `'intro'` | Card behavior |
 | `duration` | `number` | `3000` | Reveal duration ms (intro) / hold ms before onComplete (outro) |
-| `subtitle` | `string|null` | `null` | Outro sub-line (null = seeded corruption phrase) |
+| `subtitle` | `string\|null` | `null` | Outro sub-line (null = seeded corruption phrase) |
 | `nsfw` | `boolean` | `false` | Include NSFW phrases in seeded subtitle (opt-in) |
-| `seed` | `number|null` | `null` | Seed for deterministic subtitle/buffer |
+| `seed` | `number\|null` | `null` | Seed for deterministic subtitle/buffer |
 ### `terminal-takeover`
 
 TerminalTakeover — container-filling "system corrupted" terminal card (size the container to the viewport for a full-screen takeover).
@@ -4484,11 +4484,11 @@ new TerminalTakeover(stageEl, { title: 'SIGNAL LOST', duration: 800 }).start();
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `title` | `string` | `'SIGNAL LOST'` | Banner line |
-| `messages` | `string[]|null` | `null` | Fixed lines; null = seeded corruption phrases |
+| `messages` | `string[]\|null` | `null` | Fixed lines; null = seeded corruption phrases |
 | `lines` | `number` | `18` | Line count when messages is null |
 | `duration` | `number` | `4000` | ms visible before auto-clear |
 | `nsfw` | `boolean` | `false` | Include NSFW phrases (opt-in) |
-| `seed` | `number|null` | `null` | Seed for deterministic line picks |
+| `seed` | `number\|null` | `null` | Seed for deterministic line picks |
 ### `stream-ticker`
 
 StreamTicker — ambient corner logo + scrolling corruption ticker.
@@ -4518,12 +4518,12 @@ new StreamTicker(stageEl, {
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `logoText` | `string` | `''` | Corner badge text ('' = hidden) |
-| `logoSrc` | `string|null` | `null` | Corner logo image URL (null = none) |
+| `logoSrc` | `string\|null` | `null` | Corner logo image URL (null = none) |
 | `label` | `string` | `''` | Small label under the badge text |
-| `items` | `string[]|null` | `null` | Ticker items; null = seeded corruption phrases |
+| `items` | `string[]\|null` | `null` | Ticker items; null = seeded corruption phrases |
 | `speed` | `number` | `120` | Ticker scroll speed, px/s |
 | `nsfw` | `boolean` | `false` | Include NSFW phrases (opt-in) |
-| `seed` | `number|null` | `null` | Seed for deterministic phrase picks |
+| `seed` | `number\|null` | `null` | Seed for deterministic phrase picks |
 ### `corrupted-mandala`
 
 CorruptedMandala — procedural SVG sacred-geometry background.
@@ -4562,15 +4562,15 @@ seekAnimations(svgEl, frameIdx / 60);
 |---|---|---|---|
 | `labelTop` | `string` | `'CORRUPTED'` | Frame top label |
 | `labelBottom` | `string` | `'ARCHIVE.SYS'` | Frame bottom label |
-| `starDensity` | `'low'|'medium'|'high'` | `'medium'` | Star ring density |
+| `starDensity` | `'low'\|'medium'\|'high'` | `'medium'` | Star ring density |
 | `mandorla` | `boolean` | `true` | true = vesica-piscis halo, false = circle |
-| `ringPhrases` | `object|null` | `null` | {outer, middle, inner} phrase arrays; null = seeded picks from corruption-phrases |
+| `ringPhrases` | `object\|null` | `null` | {outer, middle, inner} phrase arrays; null = seeded picks from corruption-phrases |
 | `rotationSpeed` | `number` | `1` | Ring rotation multiplier (1 = 60s/40s cycles) |
 | `textScale` | `number` | `2.0` | Ring text size multiplier |
 | `elements` | `object` |  | Visibility: {frame, mandorla, arcs, rings, text, stars} |
 | `colors` | `object` |  | Override artwork tints (see DEFAULT_COLORS) |
 | `nsfw` | `boolean` | `false` | Include NSFW phrases in seeded picks (opt-in) |
-| `seed` | `number|null` | `null` | Seed for deterministic phrase picks |
+| `seed` | `number\|null` | `null` | Seed for deterministic phrase picks |
 ### `abyssal-seal`
 
 AbyssalSeal — procedural SVG "seal of office" in CorruptedMandala's visual language.
@@ -4602,12 +4602,9 @@ seal.init().resize(1920, 1080).setActive(true).play();
 
 _Deterministic video export (frame-locked)_
 ```js
-  import { seekAnimations } from '@whykusanagi/corrupted-theme/time-utils';
-  seal.seek(t);               // typed motto: a pure function of t
-  seekAnimations(svgEl, t);   // rings, twinkles, cable flow: CSS animations
-
-Geometry is authored in a fixed 1080x1080 space (centre 540) and fitted into the
-svg's W x H, so the look is identical at any size or aspect.
+import { seekAnimations } from '@whykusanagi/corrupted-theme/time-utils';
+seal.seek(t);               // typed motto: a pure function of t
+seekAnimations(svgEl, t);   // rings, twinkles, cable flow: CSS animations
 ```
 
 | Option | Type | Default | Description |
@@ -4616,18 +4613,18 @@ svg's W x H, so the look is identical at any size or aspect.
 | `motto` | `{latin:string, english:string}` |  | Bottom legend; types Latin, resolves to English |
 | `plate` | `string` | `'> SIGNAL VERIFIED'` | Terminal motto plate text |
 | `tagline` | `string` | `'SIG.VERIFIED // ARCHIVE.AUTHORITY'` | Line under the plate |
-| `dataRing` | `string|null` | `null` | Outer rotating band; null = seeded SFW phrases |
-| `hiddenRing` | `string|null` | `null` | Inner rotating band (repeated x3); null = seeded tokens |
+| `dataRing` | `string\|null` | `null` | Outer rotating band; null = seeded SFW phrases |
+| `hiddenRing` | `string\|null` | `null` | Inner rotating band (repeated x3); null = seeded tokens |
 | `lawLabels` | `string[]` |  | Labels for the six arc stars |
-| `sigilHref` | `string|null` | `null` | Centre image (tinted via its alpha); null = a 4-point star |
-| `sigilColor` | `string|null` | `null` | Sigil tint; null = colors.pink |
+| `sigilHref` | `string\|null` | `null` | Centre image (tinted via its alpha); null = a 4-point star |
+| `sigilColor` | `string\|null` | `null` | Sigil tint; null = colors.pink |
 | `talons` | `boolean` | `true` | Rosary+key (left) and lightning cables (right) |
-| `palette` | `'abyss'|'gold'|'crimson'` | `'abyss'` | Built-in palette (RFC-0001); unknown names throw |
+| `palette` | `'abyss'\|'gold'\|'crimson'` | `'abyss'` | Built-in palette (RFC-0001); unknown names throw |
 | `colors` | `object` |  | One-off tint overrides applied on top of the palette |
 | `size` | `number` | `0.96` | Seal diameter as a fraction of min(W,H) |
 | `rotationSpeed` | `number` | `1` | Ring rotation multiplier |
 | `typing` | `object` |  | {type, holdLatin, resolve, holdEnglish} seconds |
-| `seed` | `number|null` | `null` | Seed for the default ring text |
+| `seed` | `number\|null` | `null` | Seed for the default ring text |
 ### `terminal-vocab`
 
 Terminal vocabulary + charset generators for transition effects.
@@ -4765,7 +4762,7 @@ new CorruptedTimeline({ autoplay: false, onComplete: null }).play();
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `autoplay` | `boolean` | `false` | play() immediately on first add() |
-| `onComplete` | `Function|null` | `null` | Fires once every entry has completed |
+| `onComplete` | `Function\|null` | `null` | Fires once every entry has completed |
 ### `glitch-stagger-grid`
 
 GlitchStaggerGrid — Pattern 4: staggered grid corruption.
@@ -4794,7 +4791,7 @@ new GlitchStaggerGrid(tileWall, { origin: 'center', wave: 80 })
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `selector` | `string` | `':scope > *'` | Which children ripple |
-| `origin` | `'center'|number|number[]` | `'center'` | Ripple origin: 'center', an element index, or [x, y] px within the container |
+| `origin` | `'center'\|number\|number[]` | `'center'` | Ripple origin: 'center', an element index, or [x, y] px within the container |
 | `wave` | `number` | `80` | ms per grid-unit of distance (clamped ≥40) |
 | `charset` | `string` | `'standard'` | CorruptionCharsets set name |
 | `maxConcurrent` | `number` | `12` | Simultaneous bursts (spec cap) |

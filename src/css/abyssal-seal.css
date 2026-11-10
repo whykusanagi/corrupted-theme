@@ -16,5 +16,7 @@
 .abyssal-seal-flow { animation: abyssal-seal-flow 1.6s linear infinite; }
 
 @keyframes abyssal-seal-flick { 0%, 100% { opacity: 1; } 43% { opacity: .25; } 47% { opacity: 1; } 71% { opacity: .5; } }
+/* Must stay AFTER .abyssal-seal-flow: elements carry both classes and this rule's
+ * animation list (flow + flick) has to win, or the flicker silently drops. */
 .abyssal-seal-flick { animation-name: abyssal-seal-flow, abyssal-seal-flick; animation-duration: 1.6s, 1.1s;
   animation-timing-function: linear, steps(1); animation-iteration-count: infinite; }

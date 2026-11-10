@@ -8,6 +8,9 @@
  * rosary with a key; six lightning data cables ending in cursors) and a terminal
  * motto plate. Everything is generated; the package ships no image assets.
  *
+ * Geometry is authored in a fixed 1080x1080 space (centre 540) and fitted into the
+ * svg's W x H, so the look is identical at any size or aspect.
+ *
  * @example Background seal
  *   import { AbyssalSeal } from '@whykusanagi/corrupted-theme/abyssal-seal';
  *   const seal = new AbyssalSeal(svgEl, { legendTop: 'SEAL OF THE ARCHIVE', sigilHref: 'mark.png' });
@@ -18,8 +21,6 @@
  *   seal.seek(t);               // typed motto: a pure function of t
  *   seekAnimations(svgEl, t);   // rings, twinkles, cable flow: CSS animations
  *
- * Geometry is authored in a fixed 1080x1080 space (centre 540) and fitted into the
- * svg's W x H, so the look is identical at any size or aspect.
  *
  * @module lib/abyssal-seal
  * @version 0.1.0
@@ -223,7 +224,7 @@ export class AbyssalSeal {
     const start = st.start == null || T.latStart == null ? null
       : T.latStart + (T.engStart - T.latStart) * st.start;
     const parts = [[st.text, null]];
-    if (st.buffer) parts.push([' ' + st.buffer, st.bufferHot ? '#ff0000' : this.options.colors.accent]);
+    if (st.buffer) parts.push([' ' + st.buffer, st.bufferHot ? this.options.colors.pink : this.options.colors.accent]);
     // The cursor glyph is always present on a held line and only its fill toggles, so
     // the line's width never changes between blinks.
     if (st.cursorOn !== null) parts.push(['▌', st.cursorOn ? this.options.colors.white : 'transparent']);
@@ -245,7 +246,11 @@ export class AbyssalSeal {
   play() {
     if (this._raf || typeof requestAnimationFrame !== 'function') return this;
     const t0 = performance.now();
-    const step = () => { this.seek((performance.now() - t0) / 1000); this._raf = requestAnimationFrame(step); };
+    const step = () => {
+      if (this._raf === null || this._destroyed) return;   // stop()/destroy() ran mid-frame
+      this.seek((performance.now() - t0) / 1000);
+      if (this._raf !== null) this._raf = requestAnimationFrame(step);
+    };
     this._raf = requestAnimationFrame(step);
     return this;
   }

@@ -2988,7 +2988,7 @@ Multi-layer parallax tiled background with depth opacity, blur, and brightness f
 ## Machine-Readable Surface (auto-generated — do not edit by hand)
 
 Full manifest: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/manifest.json` · LLM surface: `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/dist/llms.txt`
-Regenerate: `npm run manifest:generate` (v0.3.5, 52 JS exports)
+Regenerate: `npm run manifest:generate` (v0.3.5, 53 JS exports)
 
 Container expectations: overlay-suite and block components position themselves
 absolutely inside their container, so give the container `position: relative`
@@ -3050,6 +3050,7 @@ from the local tree instead — e.g.
 | `@whykusanagi/corrupted-theme/terminal-takeover` | TerminalTakeover | TerminalTakeover — container-filling "system corrupted" terminal card (size the container to the viewport for a full-screen takeover). |
 | `@whykusanagi/corrupted-theme/stream-ticker` | StreamTicker | StreamTicker — ambient corner logo + scrolling corruption ticker. |
 | `@whykusanagi/corrupted-theme/corrupted-mandala` | CorruptedMandala | CorruptedMandala — procedural SVG sacred-geometry background. |
+| `@whykusanagi/corrupted-theme/abyssal-seal` | AbyssalSeal, mottoState, mottoCycle | AbyssalSeal — procedural SVG "seal of office" in CorruptedMandala's visual language. |
 | `@whykusanagi/corrupted-theme/terminal-vocab` | generateHex, generateKatakana, generateHiragana, getRandomCharacter | Terminal vocabulary + charset generators for transition effects. |
 | `@whykusanagi/corrupted-theme/abyssal-cables` | AbyssalCableSystem | Abyssal Cables - Tentacle/Cable System for Neural Corruption Transitions |
 | `@whykusanagi/corrupted-theme/geometric-morpher` | GeometricMorpher | Geometric Morpher Transition - ENHANCED WITH BUILDING BLOCKS |
@@ -4570,6 +4571,62 @@ seekAnimations(svgEl, frameIdx / 60);
 | `colors` | `object` |  | Override artwork tints (see DEFAULT_COLORS) |
 | `nsfw` | `boolean` | `false` | Include NSFW phrases in seeded picks (opt-in) |
 | `seed` | `number|null` | `null` | Seed for deterministic phrase picks |
+### `abyssal-seal`
+
+AbyssalSeal — procedural SVG "seal of office" in CorruptedMandala's visual language.
+
+- npm: `import { AbyssalSeal } from '@whykusanagi/corrupted-theme/abyssal-seal'`
+- CDN (ES module): `https://cdn.whykusanagi.xyz/corrupted-theme/@latest/src/lib/abyssal-seal.js`
+- Constructor: `new AbyssalSeal(svgElement, options = {})`
+- Methods:
+  - `init()` → `this` — Build at the current size. @returns {this}
+  - `setActive(active)` → `this` — Show/hide (display toggle). @returns {this}
+  - `resize(w, h)` → `this` — Resize; full rebuild. @returns {this}
+  - `seek(t)` → `this` — Render the typed motto as it is at time t (seconds). Deterministic: the same t always draws the same frame. Pair with seekAnimations(svg, t) for a full frame.
+  - `play()` → `this` — Drive seek() from requestAnimationFrame (live use). @returns {this}
+  - `stop()` → `this` — Stop the live loop. @returns {this}
+  - `destroy()` — Clear the SVG and release references. Not reusable after.
+- Functions:
+  - `mottoState(t, motto, typing = DEFAULT_TYPING)` → `{phase:string, text:string, buffer:string|null, bufferHot:boolean, cursorOn:boolean|null, start:number}` — State of the typed motto at time t (seconds). Pure: no DOM, no clock.
+    - `t`: `number`
+    - `motto`: `{latin:string, english:string}` — already wrapped (e.g. '◈ … ◈')
+    - `typing`: `{type:number, holdLatin:number, resolve:number, holdEnglish:number}`
+  - `mottoCycle(typing = DEFAULT_TYPING)` — Total length of one motto cycle in seconds.
+
+_Background seal_
+```js
+import { AbyssalSeal } from '@whykusanagi/corrupted-theme/abyssal-seal';
+const seal = new AbyssalSeal(svgEl, { legendTop: 'SEAL OF THE ARCHIVE', sigilHref: 'mark.png' });
+seal.init().resize(1920, 1080).setActive(true).play();
+```
+
+_Deterministic video export (frame-locked)_
+```js
+  import { seekAnimations } from '@whykusanagi/corrupted-theme/time-utils';
+  seal.seek(t);               // typed motto: a pure function of t
+  seekAnimations(svgEl, t);   // rings, twinkles, cable flow: CSS animations
+
+Geometry is authored in a fixed 1080x1080 space (centre 540) and fitted into the
+svg's W x H, so the look is identical at any size or aspect.
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `legendTop` | `string` | `'SEAL OF THE CORRUPTED ARCHIVE'` | Top legend arc |
+| `motto` | `{latin:string, english:string}` |  | Bottom legend; types Latin, resolves to English |
+| `plate` | `string` | `'> SIGNAL VERIFIED'` | Terminal motto plate text |
+| `tagline` | `string` | `'SIG.VERIFIED // ARCHIVE.AUTHORITY'` | Line under the plate |
+| `dataRing` | `string|null` | `null` | Outer rotating band; null = seeded SFW phrases |
+| `hiddenRing` | `string|null` | `null` | Inner rotating band (repeated x3); null = seeded tokens |
+| `lawLabels` | `string[]` |  | Labels for the six arc stars |
+| `sigilHref` | `string|null` | `null` | Centre image (tinted via its alpha); null = a 4-point star |
+| `sigilColor` | `string|null` | `null` | Sigil tint; null = colors.pink |
+| `talons` | `boolean` | `true` | Rosary+key (left) and lightning cables (right) |
+| `colors` | `object` |  | Override tints (same keys as CorruptedMandala) |
+| `size` | `number` | `0.96` | Seal diameter as a fraction of min(W,H) |
+| `rotationSpeed` | `number` | `1` | Ring rotation multiplier |
+| `typing` | `object` |  | {type, holdLatin, resolve, holdEnglish} seconds |
+| `seed` | `number|null` | `null` | Seed for the default ring text |
 ### `terminal-vocab`
 
 Terminal vocabulary + charset generators for transition effects.

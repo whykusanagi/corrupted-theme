@@ -18,7 +18,7 @@
  */
 
 // GFM table cells: a literal `|` (even inside a code span) starts a new column.
-const cell = (v) => String(v).replace(/\|/g, '\\|');
+const cell = (v) => String(v).replace(/[\\|]/g, '\\$&');
 
 import { readFileSync, writeFileSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';

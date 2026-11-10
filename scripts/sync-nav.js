@@ -79,6 +79,7 @@ export const NAV = [
       { label: 'Corrupted Globe', icon: 'fa-globe', target: 'examples/corrupted-globe.html' },
       { label: 'Corrupted Graph', icon: 'fa-circle-nodes', target: 'examples/corrupted-graph.html' },
       { label: 'Corrupted Mandala', icon: 'fa-dharmachakra', target: 'examples/corrupted-mandala.html' },
+      { label: 'Abyssal Seal', icon: 'fa-stamp', target: 'examples/abyssal-seal.html' },
       { label: 'Glitch Stagger Grid', icon: 'fa-border-all', target: 'examples/glitch-stagger-grid.html' },
       { label: 'Character Corruption', icon: 'fa-terminal', target: 'examples/basic/corrupted-text.html' },
       { label: 'Browse all →', icon: 'fa-ellipsis', target: 'examples/index.html' },

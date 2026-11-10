@@ -81,7 +81,7 @@ npm install @whykusanagi/corrupted-theme
 ```html
 <!-- Pinned version (recommended for production) -->
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.5/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.6/dist/theme.min.css">
 
 <!-- Floating @latest (use only for sites you control and update together) -->
 <link rel="stylesheet"
@@ -105,9 +105,9 @@ Both domains serve the same content. Use the domain that matches your site's roo
 **Pinned version** (production-safe — breaking changes never auto-propagate):
 ```html
 <link rel="stylesheet"
-      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.5/dist/theme.min.css">
+      href="https://cdn.nikkers.cc/corrupted-theme/@0.3.6/dist/theme.min.css">
 <script type="module"
-        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.5/src/lib/corrupted-text.js"></script>
+        src="https://cdn.nikkers.cc/corrupted-theme/@0.3.6/src/lib/corrupted-text.js"></script>
 ```
 
 **Floating `@latest`** (first-party sites that publish together — updates within ~5 minutes):
@@ -119,6 +119,25 @@ Both domains serve the same content. Use the domain that matches your site's roo
 For production hardening, add SRI hashes (published in `CHANGELOG.md` for each release; regenerate with `npm run generate-sri`). See [docs/CDN_CONSUMPTION.md](docs/CDN_CONSUMPTION.md) for the same-origin rule, CSP guidance, CORS allowlist, and JSON data fetching.
 
 Browse every animation on the demo site, which deploys from `main`: [corrupted.whykusanagi.xyz/examples/animations](https://corrupted.whykusanagi.xyz/examples/animations).
+
+## What's New in 0.3.6
+
+**0.3.6** adds `AbyssalSeal`, a procedural SVG "seal of office" in the
+CorruptedMandala visual language:
+
+- [`abyssal-seal`](src/lib/abyssal-seal.js) exports `AbyssalSeal`,
+  `SEAL_PALETTES`, `mottoState` and `mottoCycle`. A rotating tick dial and
+  data bands, six law stars, a sigil image slot, and a bottom motto that types
+  in Latin then resolves into English.
+- [`abyssal-seal-css`](src/css/abyssal-seal.css) carries its animations; the
+  component is hidden without it.
+- Frame-locked: `seal.seek(t)` plus `seekAnimations(svg, t)` render any
+  frame identically, for video export ([docs/RENDER_TO_VIDEO.md](docs/RENDER_TO_VIDEO.md)).
+- Three built-in palettes, `abyss` (default), `gold` and `crimson`, locked by
+  [RFC-0001](docs/rfcs/RFC-0001-abyssal-seal-palettes.md). An unknown palette
+  name throws instead of falling back.
+
+Try it on the [Abyssal Seal demo](examples/abyssal-seal.html).
 
 ## What's New in 0.3.5
 
@@ -212,7 +231,7 @@ It builds on the **0.3.0** library summarized below — a large set of animation
 | Area | Exports |
 |---|---|
 | Stream overlay suite | `ChromaticPulse`, `BinaryParticles`, `GlitchTitleCard`, `TerminalTakeover`, `StreamTicker`, plus `stream-overlays-css`. Each runs live on rAF or renders exact frames via `renderFrame(frameIdx, fps)` with a `seed` |
-| Procedural background | `CorruptedMandala`: SVG rings, stars, and frame, generated at runtime. This visual is exclusive to this package |
+| Procedural background | `CorruptedMandala`: SVG rings, stars, and frame, generated at runtime. This visual is exclusive to this package. `AbyssalSeal` (0.3.6) is its seal-of-office companion |
 | Canvas transitions | `AbyssalCableSystem`, `GeometricMorpher`, `NeuralDeserializer`, `SpectrumTerminal`, and 12 composites via the `transitions` barrel |
 | Animation blocks | 17 classes added to `animation-blocks`: TypingTextReveal, ChromaticAberrationGlitch, ShatterGrid, DataStream, and 13 more |
 | Orchestration | `ScrollDecode` decodes text on viewport entry or scroll position. `CorruptedTimeline` sequences scenes with labels. `GlitchStaggerGrid` implements spec Pattern 4. `corruption-easings` adds `--ease-*` tokens |
@@ -227,11 +246,11 @@ Every file under `src/` is an ES module. Load one of two ways:
 ```html
 <!-- Module import (npm or CDN) -->
 <script type="module">
-  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.5/src/lib/scroll-decode.js';
+  import { ScrollDecode } from 'https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.6/src/lib/scroll-decode.js';
 </script>
 
 <!-- Browser global for no-build sites (IIFE builds only; SRI in CHANGELOG.md) -->
-<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.5/dist/toast.global.js"></script>
+<script src="https://cdn.whykusanagi.xyz/corrupted-theme/@0.3.6/dist/toast.global.js"></script>
 ```
 
 A classic `<script src>` pointing at a `src/` file throws

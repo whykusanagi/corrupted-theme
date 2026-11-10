@@ -23,7 +23,7 @@
   .controls { position: fixed; top: calc(var(--navbar-h) + 20px); left: 16px; z-index: 100; display: flex; flex-direction: column; gap: 8px; max-width: 260px; }
   .controls label { font-family: 'Courier New', monospace; font-size: 0.8rem; color: var(--text-secondary); }
   /* Selected state is a theme colour — accents carry no state meaning (§1). */
-  .controls button.active { border-color: #ff00ff; color: #ff00ff; }
+  .controls button.active { outline: 2px solid #ffffff; outline-offset: 2px; }
 </style>
 </head>
 <body>
@@ -78,6 +78,7 @@
             <a href="corrupted-globe.html"><i class="fas fa-globe"></i> Corrupted Globe</a>
             <a href="corrupted-graph.html"><i class="fas fa-circle-nodes"></i> Corrupted Graph</a>
             <a href="corrupted-mandala.html" class="active"><i class="fas fa-dharmachakra"></i> Corrupted Mandala</a>
+            <a href="abyssal-seal.html"><i class="fas fa-stamp"></i> Abyssal Seal</a>
             <a href="glitch-stagger-grid.html"><i class="fas fa-border-all"></i> Glitch Stagger Grid</a>
             <a href="basic/corrupted-text.html"><i class="fas fa-terminal"></i> Character Corruption</a>
             <a href="index.html"><i class="fas fa-ellipsis"></i> Browse all →</a>

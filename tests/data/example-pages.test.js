@@ -14,18 +14,16 @@ const pages = ['index.html',
     .map(String).filter((f) => f.endsWith('.html'))
     .map((f) => path.join('examples', f).split(path.sep).join('/'))];
 
-test('the release landing pages feature the HTTP error gallery', () => {
-  for (const [page, href] of [
-    ['index.html', 'examples/http-errors.html'],
-    ['examples/index.html', 'http-errors.html'],
-  ]) {
+test('the release landing pages feature the current release and keep the HTTP error gallery', () => {
+  const { version } = JSON.parse(readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
+  for (const [page, prefix] of [['index.html', 'examples/'], ['examples/index.html', '']]) {
     const html = readFileSync(path.join(ROOT, page), 'utf8');
-    assert.match(html, /<h2>0\.3\.5 Examples<\/h2>/);
+    assert.ok(html.includes(`<h2>${version} Examples</h2>`), `${page} has no "${version} Examples" release block`);
     assert.match(html, /<h3>HTTP Error Pages<\/h3>/);
-    assert.ok(html.includes(`href="${href}" class="quick-link"`),
-      `${page} is missing its release quick link to ${href}`);
-    assert.ok(existsSync(path.join(ROOT, path.dirname(page), href)),
-      `${page} links to missing gallery ${href}`);
+    for (const href of [`${prefix}http-errors.html`, `${prefix}abyssal-seal.html`]) {
+      assert.ok(html.includes(`href="${href}" class="quick-link"`), `${page} is missing its quick link to ${href}`);
+      assert.ok(existsSync(path.join(ROOT, path.dirname(page), href)), `${page} links to missing page ${href}`);
+    }
   }
 });
 

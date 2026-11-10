@@ -172,5 +172,8 @@
     "html2canvas": {
       "optional": true
     }
+  },
+  "overrides": {
+    "minimatch": "^11.0.1"
   }
 }
